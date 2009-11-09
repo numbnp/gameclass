@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Прибыль по часам" description="Прибыль клуба по часам 
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="set nocount on 
+CREATE TABLE #tph (   
+[id] [int] NOT NULL ,   
+[name] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL 
+) ON [PRIMARY]   
+INSERT INTO #tph (id, name) VALUES (0, N'00:00') 
+INSERT INTO #tph (id, name) VALUES (1, N'01:00') 
+INSERT INTO #tph (id, name) VALUES (2, N'02:00') 
+INSERT INTO #tph (id, name) VALUES (3, N'03:00') 
+INSERT INTO #tph (id, name) VALUES (4, N'04:00') 
+INSERT INTO #tph (id, name) VALUES (5, N'05:00') 
+INSERT INTO #tph (id, name) VALUES (6, N'06:00') 
+INSERT INTO #tph (id, name) VALUES (7, N'07:00') 
+INSERT INTO #tph (id, name) VALUES (8, N'08:00') 
+INSERT INTO #tph (id, name) VALUES (9, N'09:00') 
+INSERT INTO #tph (id, name) VALUES (10, N'10:00') 
+INSERT INTO #tph (id, name) VALUES (11, N'11:00') 
+INSERT INTO #tph (id, name) VALUES (12, N'12:00') 
+INSERT INTO #tph (id, name) VALUES (13, N'13:00') 
+INSERT INTO #tph (id, name) VALUES (14, N'14:00') 
+INSERT INTO #tph (id, name) VALUES (15, N'15:00') 
+INSERT INTO #tph (id, name) VALUES (16, N'16:00') 
+INSERT INTO #tph (id, name) VALUES (17, N'17:00') 
+INSERT INTO #tph (id, name) VALUES (18, N'18:00') 
+INSERT INTO #tph (id, name) VALUES (19, N'19:00') 
+INSERT INTO #tph (id, name) VALUES (20, N'20:00') 
+INSERT INTO #tph (id, name) VALUES (21, N'21:00') 
+INSERT INTO #tph (id, name) VALUES (22, N'22:00') 
+INSERT INTO #tph (id, name) VALUES (23, N'23:00') 
+select #tph.name as [Час суток],  SUM([summa]) as [Сумма] from [repDetails]  
+inner join #tph on (#tph.[id] = DATEPART(hour, [moment])) 
+where ([moment]  &gt;= %TIME-START%) and ([moment]&lt;=%TIME-STOP%) 
+GROUP BY #tph.name 
+order by  [Час суток] 
+if object_id('tempdb..#tph') is not null   
+DROP TABLE #tph   " author="NodaSoft" guid="{466B4151-06B5-4c8f-9821-22259AEF9E1A}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>
