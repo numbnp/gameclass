@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Журнал операторов" description="Отчет показывает суммы, сданные операторами в своих сменах 
+--- 
+Author: GameClass Software 
+support@gameclass.ru" code="select 
+ operator as [Оператор],
+ moment as [Дата],
+ CAST(CAST(traffic as [numeric] (12,2))/1024/1024 as [numeric] (12,1)) [Трафик, МБ],
+ summa as [Сумма],
+ comment as [Комментарий]
+from [repJournalOp] 
+where ([repJournalOp].[moment] between %TIME-START% and %TIME-STOP%)" author="NodaSoft" guid="{83CE2732-CBE5-4401-A8E1-B00BFC9EBC8D}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>
