@@ -35,7 +35,11 @@ set DCCReturnPath=..
 call Install\Src\Batch\compile_project.bat
 set DCCProjectName=GCSyncCfg
 call Install\Src\Batch\compile_project.bat
-
+set DCCFlags=ASPROTECT
+set DCCProjectPath=Security\OSql
+set DCCProjectName=GCOsql
+set DCCReturnPath=..\..
+call Install\Src\Batch\compile_project.bat
 for /f %%i in (%DCCLogs%\ErrorCheck.txt) DO @SET error_check=%%i
 if "%error_check%"=="" goto no_error
 echo Ошибка компиляции !
