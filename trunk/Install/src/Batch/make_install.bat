@@ -11,5 +11,5 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcsetup.gi2
+"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
 cd ..\..\..

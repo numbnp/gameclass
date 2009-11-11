@@ -24,13 +24,13 @@ call copy_packages_files_tools.bat
 rem Кодирование sql-файлов в sqp
 call encode_sql_tools.bat
 
-ech "Создание проекта gi2 на основе tools.gi2 ... "
-Create_GI2_for_Tools.vbs  %APP_NAME% "%APP_FULLNAME%" %APP_VERSION% "%APP_MESSAGE%"
+ech "Создание проекта gpr на основе tools.gpr ... "
+Create_gpr_for_Tools.vbs  %APP_NAME% "%APP_FULLNAME%" %APP_VERSION% "%APP_MESSAGE%"
 echo Ok
 
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" %APP_NAME%.gi2
+"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" %APP_NAME%.gpr
 cd ..\..\..
 
 exit
