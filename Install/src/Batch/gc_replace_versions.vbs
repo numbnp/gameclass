@@ -36,11 +36,11 @@ Else
   While objExec.Status = 0
   WEnd
 '  <var name="AppVersion" value="3.85"/>
-  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcsetup.gi2" + " 'AppVersion'  ""  <var name='AppVersion' value='" + strAppVersionDot + "'/>""")
+  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcsetup.gpr" + " 'AppVersion'  ""  <var name='AppVersion' value='" + strAppVersionDot + "'/>""")
   While objExec.Status = 0
   WEnd
 '  <var name='AppName' value="GameClass3 v3.85"/>
-  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcsetup.gi2" + " 'AppName'  ""  <var name='AppName' value='GameClass3 " + strBaseVersion + "'/>""")
+  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcsetup.gpr" + " 'AppName'  ""  <var name='AppName' value='GameClass3 " + strBaseVersion + "'/>""")
   While objExec.Status = 0
   WEnd
 ' Меняем имя дистрибутива и версии для цифровой подписи

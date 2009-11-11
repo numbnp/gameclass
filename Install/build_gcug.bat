@@ -25,5 +25,5 @@ rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files_gcug.bat
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcug.gi2
+"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcug.gpr
 cd ..\..\..
