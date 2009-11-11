@@ -10,8 +10,8 @@ Else
     WshShell.CurrentDirectory = ".."
   wend
   
-  Set InFile=FSO.OpenTextFile("Install\src\GI\tools.gi2",1)
-  Set OutFile=FSO.OpenTextFile("Install\src\GI\" + FileName + ".gi2",2,true)
+  Set InFile=FSO.OpenTextFile("Install\src\GI\tools.gpr",1)
+  Set OutFile=FSO.OpenTextFile("Install\src\GI\" + FileName + ".gpr",2,true)
   
   while not InFile.AtEndOfStream
     line=InFile.Readline()

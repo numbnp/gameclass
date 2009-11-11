@@ -19,7 +19,7 @@ Else
   'ƒл€ инсталл€ционного файла нужны точки вместо пробелов
   strAppVersion = Replace(strAppVersion, " ", ".")
 '  <var name="AppVersion" value="3.85"/>
-  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcviewer.gi2" + " 'AppVersion'  ""  <var name='AppVersion' value='" + strAppVersion + "'/>""")
+  Set objExec = objWSH.Exec(strCmd + "Install\src\GI\gcviewer.gpr" + " 'AppVersion'  ""  <var name='AppVersion' value='" + strAppVersion + "'/>""")
   While objExec.Status = 0
   WEnd
 
