@@ -19,9 +19,6 @@ echo Собирается версия %APP_VERSION%
 rem Компиляция exe-файлов
 call compile_release_gcviewer.bat
 
-rem Компиляция exe-файлов
-call asprotect_gcviewer.bat
-
 rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files_gcviewer.bat
 

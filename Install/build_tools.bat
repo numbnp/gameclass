@@ -33,7 +33,7 @@ cd Install\Src\GI
 "c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" %APP_NAME%.gpr
 cd ..\..\..
 
-exit
+pause
 
 :parameter_needed
 echo Необходимо правильно установить переменные APP_NAME, APP_FULLNAME, APP_VERSION, APP_MESSAGE
