@@ -18,7 +18,8 @@ uses
   ufrmLogin in 'ufrmLogin.pas' {frmLogin},
   uIPInformation in '..\..\Parts\InternetControl\uIPInformation.pas',
   ufrmMain in 'ufrmMain.pas' {frmMain},
-  uUGConfig in 'uUGConfig.pas';
+  uUGConfig in 'uUGConfig.pas',
+  uRegistryOptionsStorage in '..\..\Parts\OptionsBase\uRegistryOptionsStorage.pas';
 
 {$R *.res}
 
