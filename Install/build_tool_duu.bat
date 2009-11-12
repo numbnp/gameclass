@@ -10,6 +10,7 @@ for /d %%i in (Install\Src\Batch\) do set GCMakePath=%%~dpi
 set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
+call Install\src\Batch\compile_osql.bat
 
 set APP_NAME=DeleteUnregisteredUsers
 set APP_FULLNAME%=Утилита удаления незарегистрированных в GameClass 3 пользователей
