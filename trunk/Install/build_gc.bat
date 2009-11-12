@@ -15,7 +15,7 @@ set BASE_VERSION=3.85
 set APP_VERSION=3.85 Beta 10 Free
 set SQL_SCRIPT_VERSION=385
 
-Install\src\Batch\gc_replace_versions.vbs "%BASE_VERSION%" "%APP_VERSION%"
+rem Install\src\Batch\gc_replace_versions.vbs "%BASE_VERSION%" "%APP_VERSION%"
 echo Собирается версия %APP_VERSION%
 rem ToDo need compile GameClass.chm
 

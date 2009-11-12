@@ -74,8 +74,8 @@
 	</packages>
 	<variables>
 		<var name="AppID" value="{080D0A9C-A5E5-424f-9F5B-D156D5666ECC}"/>
-		<var name="AppName" value="GameClass3 Restore BackupOperator Tool"/>
-		<var name="AppVersion" value="1.1"/>
+  <var name="AppName" value="GameClass3 Restore BackupOperator Tool"/>
+  <var name="AppVersion" value="1.1"/>
 		<var name="AdminRights" value="1"/>
 		<var name="OutputPath" value="..\..\..\Output\Setup\Tools"/>
 		<var name="Password"/>
@@ -83,7 +83,7 @@
 		<var name="AutoSelectLanguage" value="1"/>
 		<var name="Uninstall" value="0"/>
 		<var name="InstallPath" value="%Templates%"/>
-		<var name="Message" value="Restoring BackupOperator ..."/>
-		<var name="Tool" value="rbotool"/>
+  <var name="Message" value="Restoring BackupOperator ..."/>
+  <var name="Tool" value="rbotool"/>
 	</variables>
 </giproject>
