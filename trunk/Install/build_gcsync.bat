@@ -18,9 +18,6 @@ rem ToDo need compile GameClass.chm
 rem Компиляция exe-файлов
 call compile_release_gcsync.bat
 
-rem Компиляция exe-файлов
-call asprotect_gcsync.bat
-
 rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files_gcsync.bat
 
