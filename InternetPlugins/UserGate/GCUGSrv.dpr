@@ -32,7 +32,8 @@ uses
   uY2KCommon in '..\..\Parts\Y2KCommon\uY2KCommon.pas',
   uY2KString in '..\..\Parts\Y2KCommon\uY2KString.pas',
   uCoder in '..\..\Parts\Security\uCoder.pas',
-  uUGConfig in 'uUGConfig.pas';
+  uUGConfig in 'uUGConfig.pas',
+  uRegistryOptionsStorage in '..\..\Parts\OptionsBase\uRegistryOptionsStorage.pas';
 
 {$R *.RES}
 
