@@ -8,6 +8,7 @@ uses
   uOption,
   uOptionsFolder,
   uOptionsStorage,
+  uRegistryOptionsStorage,
   uOptions;
 
 
@@ -193,7 +194,7 @@ constructor TGCUGOptions.CreateInstance();
 begin
   inherited Create();
 
-  FSystemOptionsStorage := TOptionsRegStorage.Create(
+  FSystemOptionsStorage := TRegistryOptionsStorage.Create(
       HKEY_LOCAL_MACHINE, REGISTRY_PATH);
 
   FGeneralOptionsFolder := TGeneralOptionsFolder.Create(
