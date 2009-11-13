@@ -30,7 +30,7 @@ echo Ok
 
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" %APP_NAME%.gpr
+"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" %APP_NAME%.gpr
 cd ..\..\..
 
 pause
