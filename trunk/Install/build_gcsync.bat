@@ -25,5 +25,5 @@ rem Кодирование sql-файлов в sqp
 call encode_sql_gcsync.bat
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcsync.gpr
+"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsync.gpr
 cd ..\..\..
