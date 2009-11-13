@@ -35,6 +35,6 @@ call encode_sql.bat
  
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
+"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
 cd ..\..\..
 

@@ -23,5 +23,5 @@ rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files_gcviewer.bat
 
 cd Install\Src\GI
-"c:\Program Files\gInstall\Ghost Installer\Bin\GIBuild.exe" gcviewer.gpr
+"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcviewer.gpr
 cd ..\..\..
