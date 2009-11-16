@@ -85,7 +85,7 @@ var
   strSendData: String;
 begin
 {$IFDEF LINUX}
-   GSafeStorage.Push(ThreadSafeOperation_OldServerWarning,
+   TSafeStorage.Instance.Push(ThreadSafeOperation_OldServerWarning,
        Integer(FormAction_Show));
 {$ENDIF}
 //  strTasksList := _GetExtendedInfo();
