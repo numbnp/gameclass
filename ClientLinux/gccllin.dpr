@@ -7,7 +7,6 @@ uses
   DateUtils,
   Types,
   gcconst in '../Server/gcconst.pas',
-  GCGuardUtils in '../Parts/Security/GCGuardUtils.pas',
   uAnswerRemoteCommand in '../Parts/RemoteCommands/uAnswerRemoteCommand.pas',
   uBlockingsAndNotifications in '../Parts/Blocking/uBlockingsAndNotifications.pas',
   uBlockRemoteCommand in '../Parts/RemoteCommands/uBlockRemoteCommand.pas',
@@ -71,7 +70,8 @@ uses
   usrvGCCL in 'usrvGCCL.pas',
   uUninstallRemoteCommand in '../Parts/RemoteCommands/uUninstallRemoteCommand.pas',
   uY2KCommon in '../Parts/Y2KCommon/uY2KCommon.pas',
-  uY2KString in '../Parts/Y2KCommon/uY2KString.pas';
+  uY2KString in '../Parts/Y2KCommon/uY2KString.pas',
+  uFileInfo in '../Parts/FileTools/uFileInfo.pas';
 
 {$R *.res}
 var
@@ -100,7 +100,7 @@ begin
           XNextEvent(dpy, @event);
           if (event.xtype = XLib.KeyPress) then begin
             if (event.xkey.keycode = 31) then // 'I'
-              GSafeStorage.Push(ThreadSafeOperation_MainFormAction,
+              TSafeStorage.Instance.Push(ThreadSafeOperation_MainFormAction,
                   Integer(FormAction_Show));
           end;
         except
@@ -134,7 +134,7 @@ try
       GClientInfo.Init;
     Debug.Trace5('Before CreateForm TfrmMain');
     Application.CreateForm(TfrmMain, frmMain);
-    Debug.Trace5('After CreateForm TfrmMain');
+  Debug.Trace5('After CreateForm TfrmMain');
     Application.CreateForm(TfrmSmallInfo, frmSmallInfo);
     Application.ShowMainForm := False;
     Application.CreateForm(TdmMain, dmMain);
