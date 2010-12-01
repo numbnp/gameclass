@@ -158,7 +158,7 @@ begin
   if (TypeCost = stcSeparate) then begin
     nComputerIndex := StrToIntDef(cboComputerNumber.Text, -1);
     if (nComputerIndex <> -1) then
-      nComputerIndex := ComputersGetIndex(nComputerIndex);
+      nComputerIndex := ComputersGetIndex(nComputerIndex) + 1;
     Sideline.ToSell(FnServiceId, seQuantity.Value, FTypeCost, nComputerIndex);
   end else
     Sideline.ToSell(FnServiceId, seQuantity.Value, FTypeCost,
