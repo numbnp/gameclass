@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Ремонт" description="Отчет показывает интервалы времени, во время которых был применен ремонт с длительностью более минуты  
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="select 
+number as [Компьютер], 
+ipaddress as [ip-Адрес], 
+start as [Начало], 
+stop as [Конец], 
+length as [Минут], 
+operator as [Оператор], 
+description as [Комментарий] 
+from [repRepair]  
+where   
+([repRepair].[moment] &gt;= %TIME-START%) and   
+([repRepair].[moment] &lt;= %TIME-STOP%) " author="NodaSoft" guid="{240153A5-D7F1-472f-ACE8-1F7C935D6563}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

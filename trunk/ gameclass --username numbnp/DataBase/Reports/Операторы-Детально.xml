@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Операторы-Детально" description="Отчет показывает детальную информацию по закрытым сменам операторов
+--- 
+Author: GameClass Software 
+support@gameclass.ru" code="Declare @TimeStart datetime
+Declare @TimeStop datetime
+
+set @TimeStart = %TIME-START%
+set @TimeStop = %TIME-STOP%
+
+select
+[name] [Оператор],
+ShiftStop [Закрытие смены],
+FullSumm [Общая сумма],
+isnull(CompSumm,0) [Вручную],
+isnull(AccSumm,0) [Оплачено с УЗ],
+isnull(ServSumm,0) [Услуги],
+isnull(AccAdded,0) [Добавлено на УЗ],
+isnull(AccReturned,0) [Возвращено на УЗ],
+comment [Комментарий] from
+(select ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm, ServSumm, AccAdded, sum(AccountsReturned.summa) AccReturned from
+(select ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm, ServSumm, sum(summa) AccAdded from
+(select ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm, sum(count*price) ServSumm from
+(select ShiftStart, ShiftStop, FullSumm, CompSumm, sum (summa) AccSumm from
+(select ShiftStart, ShiftStop, FullSumm, sum (summa) CompSumm --, OpName, OpComment
+from (SELECT ISNULL(op2.moment,'01-01-2001') ShiftStart,
+            op.moment ShiftStop,
+            op.summa FullSumm
+        FROM dbo.JournalOp as Op
+            left outer join dbo.JournalOp as Op2
+            on (op.id = op2.id+1)
+        where (op.moment between @TimeStart and @TimeStop)
+    ) AS Operators
+    LEFT OUTER JOIN (select moment, summa from repDetails where (idClients=0) AND (moment between @TimeStart and @TimeStop)) AS OpSessions
+    ON (OpSessions.moment between ShiftStart and ShiftStop)
+GROUP BY ShiftStart, ShiftStop, FullSumm) as Rep1
+    LEFT OUTER JOIN (select moment, summa from repDetails where (idClients&lt;&gt;0) AND (moment between @TimeStart and @TimeStop)) AS AccountsSessions
+    ON (AccountsSessions.moment between Rep1.ShiftStart and Rep1.ShiftStop)
+GROUP BY ShiftStart, ShiftStop, FullSumm, CompSumm) AS Rep2
+    LEFT OUTER JOIN [repServices]
+    ON (repServices.moment between Rep2.ShiftStart and Rep2.ShiftStop)
+        AND (repServices.moment between @TimeStart and @TimeStop) and (TypeCost = 1)
+GROUP BY ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm) AS Rep3
+    LEFT OUTER JOIN
+        (select moment,summa from AccountsHistory
+            inner join users on (users.id=operator)
+            inner join usersgroup on (usersgroup.id=users.idUsersGroup)
+        where (What=0)  AND (AccountsHistory.moment between @TimeStart and @TimeStop)
+            and usersgroup.name='Staff') AS AccountsAdded
+    ON (AccountsAdded.moment between Rep3.ShiftStart and Rep3.ShiftStop)
+GROUP BY ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm, ServSumm) AS Rep4
+    LEFT OUTER JOIN
+        (select moment,summa from AccountsHistory
+            inner join users on (users.id=operator)
+            inner join usersgroup on (usersgroup.id=users.idUsersGroup)
+        where (What=1)  AND (AccountsHistory.moment between @TimeStart and @TimeStop)
+            and usersgroup.name='Staff') AS AccountsReturned
+    ON (AccountsReturned.moment between Rep4.ShiftStart and Rep4.ShiftStop)
+GROUP BY ShiftStart, ShiftStop, FullSumm, CompSumm, AccSumm, ServSumm, AccAdded) AS Rep5
+
+    INNER JOIN JournalOp
+    ON ShiftStop = JournalOp.moment
+    INNER JOIN dbo.Users
+    ON JournalOp.operator = dbo.Users.id" author="NodaSoft" guid="{65F6D45B-5C98-497c-A249-F761102F60B0}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

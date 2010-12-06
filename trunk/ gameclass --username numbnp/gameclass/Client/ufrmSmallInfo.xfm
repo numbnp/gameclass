@@ -1,0 +1,33 @@
+object frmSmallInfo: TfrmSmallInfo
+  Left = 900
+  Top = 120
+  Width = 115
+  Height = 104
+  BorderIcons = []
+  Caption = 'frmSmallInfo'
+  Color = clButton
+  Font.Color = clText
+  Font.Height = 8
+  Font.Name = 'misc-fixed'
+  Font.Pitch = fpFixed
+  Font.Style = []
+  ParentFont = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnDblClick = FormDblClick
+  OnMouseDown = FormMouseDown
+  OnMouseMove = FormMouseMove
+  OnMouseUp = FormMouseUp
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 10
+  TextWidth = 7
+  object tmrRedraw: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = tmrRedrawTimer
+    Left = 64
+    Top = 8
+  end
+end
