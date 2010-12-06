@@ -188,6 +188,9 @@ type
     procedure RedrawListCompsLanguage;
     procedure RedrawListConsoleLanguage;
     procedure RedrawLanguage;
+
+    procedure UpdateSelectedCompList;
+
     procedure timerCompsListTimer(Sender: TObject);
     procedure mnuStartClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -283,6 +286,9 @@ type
     procedure mnuTimeBonus5Click(Sender: TObject);
     procedure mnuTimeBonus10Click(Sender: TObject);
     procedure mnuTimeBonus15Click(Sender: TObject);
+    procedure gridCompsKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure mnuLogoutClick(Sender: TObject);
   private
     { Private declarations }
     FTrayIcon: TNotifyIconData;
@@ -458,6 +464,77 @@ begin
   end;
 end;
 
+// Обновляем список выделеных компов
+procedure TformMain.UpdateSelectedCompList;
+var
+  i,j: integer;
+  index: integer;
+  bookmark: TBookmarkStr;
+begin
+   if (not dsConnected) then exit;
+
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+{  cdsComps.Edit;
+   cdsComps.FieldValues['Selection'] := DS_SELECTION_CLICK;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if cdsComps.FieldValues['Selection'] <> DS_SELECTION_CLICK then begin
+         cdsComps.Edit;
+         cdsComps.FieldValues['Selection'] := DS_SELECTION_UNSELECTED;
+      end;
+      cdsComps.Next;
+   end;}
+
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      cdsComps.Edit;
+      cdsComps.FieldValues['Selection'] := DS_SELECTION_UNSELECTED;
+      cdsComps.Next;
+   end;
+
+   cdsComps.Bookmark := bookmark;
+   cdsComps.Edit;
+   cdsComps.FieldValues['Selection'] := DS_SELECTION_CLICK;
+
+   j:=1; //0 индекс оставим для текущей записи
+   for i := 0 to gridComps.SelectedRows.Count-1 do begin
+      cdsComps.GotoBookmark(pointer(gridComps.SelectedRows.Items[i]));
+      cdsComps.Edit;
+      if cdsComps.FieldValues['Selection'] = DS_SELECTION_CLICK then
+         begin
+           cdsComps.FieldValues['Selection'] := DS_SELECTION_CURSOR;
+         end
+      else begin
+         cdsComps.FieldValues['Selection'] := DS_SELECTION_SELECTED;
+         CompsSel[j] := cdsComps.FieldValues['id'];
+         Inc(j);
+      end;
+   end;
+   cdsComps.Bookmark := bookmark;
+   CompsSel[0] := cdsComps.FieldValues['id'];
+   cdsComps.EnableControls;
+
+  // считаем количество выделенных строк
+//  CompsSelCount := formMain.gridComps.SelectedRows.Count;
+  CompsSelCount := j;
+
+  DoInterfaceComps;
+  // отображаем доп.информацию
+  if (OperatorProfile.bShowTechCompsInfo) then begin
+    memoClientInfo.Clear;
+    if (CompsSelCount=1) then begin
+      index := ComputersGetIndex(formMain.cdsComps.FieldValues['id']);
+      memoClientInfo.Lines.Add('Computer '+Comps[index].GetStrNumber);
+      memoClientInfo.Lines.Add('-----------');
+      memoClientInfo.Lines.Add('Disk C: '+Comps[index].strInfoFreespaceC);
+      memoClientInfo.Lines.Add('Disk D: '+Comps[index].strInfoFreespaceD);
+      memoClientInfo.Lines.Add('WinVer: '+Comps[index].strInfoWinver);
+      memoClientInfo.Lines.Add('ClientVer: '+Comps[index].strInfoClientver);
+    end;
+  end;
+
+end;
 
 // call every time when change language
 procedure TformMain.RedrawLanguage;
@@ -520,6 +597,7 @@ end;
 
 procedure TformMain.mnuStartClick(Sender: TObject);
 begin
+  UpdateSelectedCompList;
   DoEvent(FN_COMP_START);
 end;
 
@@ -540,11 +618,13 @@ end;
 
 procedure TformMain.tbCompStartClick(Sender: TObject);
 begin
+  UpdateSelectedCompList;
   DoEvent(FN_COMP_START);
 end;
 
 procedure TformMain.tbCompStopClick(Sender: TObject);
 begin
+  UpdateSelectedCompList;
   DoEvent(FN_COMP_STOP);
 end;
 
@@ -555,6 +635,7 @@ end;
 
 procedure TformMain.mnuStopClick(Sender: TObject);
 begin
+  UpdateSelectedCompList;
   DoEvent(FN_COMP_STOP);
 end;
 
@@ -611,6 +692,7 @@ end;
 
 procedure TformMain.mnuAddClick(Sender: TObject);
 begin
+  UpdateSelectedCompList;
   DoEvent(FN_COMP_ADD);
 end;
 
@@ -901,6 +983,7 @@ var
   bCalcBySum: Boolean;
   state: TClientState;
   lstStringList: TStringList;
+  iUserLevel:Integer;
 
 begin
   DataStringStream := TStringStream.Create('');
@@ -1077,7 +1160,7 @@ begin
 
         end;
       end;
-      if (cmd = STR_CMD_AUTH_QUERYTARIFS_2) then begin
+{      if (cmd = STR_CMD_AUTH_QUERYTARIFS_2) then begin
         rettarifs := '';
         for i:=1 to (TarifsCount-1) do
           if (Tarifs[i].idGroup = Comps[index].IdGroup) then begin
@@ -1088,7 +1171,37 @@ begin
           end;
         rettarifs := MidStr(rettarifs,1,strlen(PChar(rettarifs))-1);
         UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_RETTARIFS_2+ '='+rettarifs);
+      end; // STR_CMD_AUTH_QUERYTARIFS_2 }
+
+      if (cmd = STR_CMD_AUTH_QUERYTARIFS_2) then begin
+        rettarifs := '';
+        if GAccountSystem.Accounts[Comps[index].a.number].IsTarifsLimit then
+          begin
+            iUserLevel:=GAccountSystem.Accounts[Comps[index].a.number].UserLevel;
+            for i:=1 to (TarifsCount-1) do
+              if (Tarifs[i].idGroup = Comps[index].IdGroup) and
+              (Tarifs[i].userlevel <= iUserLevel) then begin
+                rettarifs := rettarifs + Tarifs[i].name + '/';
+                for j:=0 to Tarifs[i].variantscount-1 do
+                  if (Tarifs[i].tarifvariants[j].IsAvailable(GetVirtualTime)) then
+                    rettarifs := rettarifs + Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name + '/';
+              end;
+          end
+          else
+          for i:=1 to (TarifsCount-1) do
+            if (Tarifs[i].idGroup = Comps[index].IdGroup) then begin
+              rettarifs := rettarifs + Tarifs[i].name + '/';
+              for j:=0 to Tarifs[i].variantscount-1 do
+                if (Tarifs[i].tarifvariants[j].IsAvailable(GetVirtualTime)) then
+                  rettarifs := rettarifs + Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name + '/';
+            end;
+        rettarifs := MidStr(rettarifs,1,strlen(PChar(rettarifs))-1);
+        UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_RETTARIFS_2+ '='+rettarifs);
       end; // STR_CMD_AUTH_QUERYTARIFS_2
+
+
+
+
 
       if (cmd = STR_CMD_AUTH_QUERYCOSTTIME_2) then begin
         strTarifName := GetParamFromString(param,0);
@@ -1601,60 +1714,8 @@ begin
 end;
 
 procedure TformMain.gridCompsCellClick(Column: TColumnEh);
-var
-  i,j: integer;
-  index: integer;
-  bookmark: TBookmarkStr;
 begin
-   if (not dsConnected) then exit;
-
-   cdsComps.DisableControls;
-   bookmark := cdsComps.Bookmark;
-   cdsComps.Edit;
-   cdsComps.FieldValues['Selection'] := DS_SELECTION_CLICK;
-   cdsComps.First;
-   while (not cdsComps.Eof) do begin
-      if cdsComps.FieldValues['Selection'] <> DS_SELECTION_CLICK then begin
-         cdsComps.Edit;
-         cdsComps.FieldValues['Selection'] := DS_SELECTION_UNSELECTED;
-      end;
-      cdsComps.Next;
-   end;
-   j:=1; //0 индекс оставим для текущей записи
-   for i := 0 to gridComps.SelectedRows.Count-1 do begin
-      cdsComps.GotoBookmark(pointer(gridComps.SelectedRows.Items[i]));
-      cdsComps.Edit;
-      if cdsComps.FieldValues['Selection'] = DS_SELECTION_CLICK then
-         cdsComps.FieldValues['Selection'] := DS_SELECTION_CURSOR
-      else begin
-         cdsComps.FieldValues['Selection'] := DS_SELECTION_SELECTED;
-         CompsSel[j] := cdsComps.FieldValues['id'];
-         Inc(j);
-      end;
-   end;
-   cdsComps.Bookmark := bookmark;
-   CompsSel[0] := cdsComps.FieldValues['id'];
-   cdsComps.EnableControls;
-
-  // считаем количество выделенных строк
-//  CompsSelCount := formMain.gridComps.SelectedRows.Count;
-  CompsSelCount := j;
-
-  DoInterfaceComps;
-  // отображаем доп.информацию
-  if (OperatorProfile.bShowTechCompsInfo) then begin
-    memoClientInfo.Clear;
-    if (CompsSelCount=1) then begin
-      index := ComputersGetIndex(formMain.cdsComps.FieldValues['id']);
-      memoClientInfo.Lines.Add('Computer '+Comps[index].GetStrNumber);
-      memoClientInfo.Lines.Add('-----------');
-      memoClientInfo.Lines.Add('Disk C: '+Comps[index].strInfoFreespaceC);
-      memoClientInfo.Lines.Add('Disk D: '+Comps[index].strInfoFreespaceD);
-      memoClientInfo.Lines.Add('WinVer: '+Comps[index].strInfoWinver);
-      memoClientInfo.Lines.Add('ClientVer: '+Comps[index].strInfoClientver);
-    end;
-  end;
-
+  UpdateSelectedCompList;
 end;
 
 procedure TformMain.gridCompsDblClick(Sender: TObject);
@@ -1777,6 +1838,19 @@ begin
       gridComps.DataSource.DataSet.Locate('Computer', FstrHotNumber,
           [loCaseInsensitive	]);
   end;
+
+  if Key=VK_RETURN then
+    if mnuAdd.Enabled then
+      begin
+        UpdateSelectedCompList;
+        DoEvent(FN_COMP_ADD);
+      end
+    else
+      begin
+        UpdateSelectedCompList;
+        DoEvent(FN_COMP_START);
+      end
+
 {  if (Shift=[ssCtrl]) and (Key=Ord('U')) then
     mnuInstallClick(Sender);}
 end;
@@ -2001,6 +2075,19 @@ procedure TformMain.mnuTimeBonus15Click(Sender: TObject);
 begin
   GnMinPenalty := 15;
   dmActions.actTimeBonus.Execute;
+end;
+
+procedure TformMain.gridCompsKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key=VK_UP) or (Key=VK_DOWN) or (Key=VK_HOME) or
+     (Key=VK_END) or (Key=VK_PRIOR) or (Key=VK_NEXT) then
+    UpdateSelectedCompList;
+end;
+
+procedure TformMain.mnuLogoutClick(Sender: TObject);
+begin
+  ehsLogout;
 end;
 
 end.

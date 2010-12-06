@@ -149,7 +149,7 @@ const
   DS_PRINTER_SCAN = 'PrinterScan';
   DS_PRINTERS_SELECT = 'PrintersSelect';
   DS_ACCOUNTS_SELECT = 'AccountsSelect';
-  DS_ACCOUNTS_INSERT = 'AccountsNew';
+  DS_ACCOUNTS_INSERT = 'AccountsInsert';
   DS_ACCOUNTS_DELETE = 'AccountsDelete';
   DS_ACCOUNTS_UPDATECODES = 'AccountsUpdateCodes';
   DS_ACCOUNTS_UNBLOCK = 'AccountsUnblock';

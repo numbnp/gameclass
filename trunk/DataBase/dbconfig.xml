@@ -30,6 +30,7 @@
           <Script383patch DataBaseVersion="3.84" FileName="GCBaseUpdate384update.sqp" Description="Updating database for v3.84 ..."/>
           <Script384 DataBaseVersion="3.84" FileName="GCBaseUpdate384to385.sqp" Description="Updating database to v3.85 ..."/>
           <Script384patch DataBaseVersion="3.85" FileName="GCBaseUpdate385update.sqp" Description="Updating database for v3.85 ..."/>
+          <Script385beta101 DataBaseVersion="3.85" FileName="GCBaseUpdate385beta101update.sqp" Description="Updating database for v3.85 ..."/>
   </Scripts>
   <Reports>
           <Report FileName="Важные сообщения.xml" Description="Обновление отчета Важные сообщения.xml ..."/>

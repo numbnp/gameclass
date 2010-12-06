@@ -62,6 +62,11 @@ type
     imgAccountPhoto: TEDBImage;
     cbxPeriodOfValidity: TDBCheckBox;
     dtpExpirationDate: TDBDateEdit;
+    gbTarifsInfo: TGroupBox;
+    cbTarifsLimit: TDBCheckBoxEh;
+    lblUserLevel: TLabel;
+    cbUserLevel: TComboBox;
+    editUserLevel: TDBEditEh;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -86,6 +91,10 @@ type
     procedure editSummaryChange(Sender: TObject);
     procedure dtpExpirationDateChange(Sender: TObject);
     procedure cbxPeriodOfValidityClick(Sender: TObject);
+    procedure cbTarifsLimitClick(Sender: TObject);
+    procedure dsrcAccountsStateChange(Sender: TObject);
+    procedure cbUserLevelChange(Sender: TObject);
+    procedure editUserLevelChange(Sender: TObject);
   private
     { Private declarations }
     FbDirty: Boolean;
@@ -169,6 +178,9 @@ begin
       and bRecordSelected;
   editPrivelegedDiscount.Enabled := bManagerPermission
       and cbAccountPrivileged.Checked;
+  cbTarifsLimit.Enabled := bManagerPermission;
+  lblUserLevel.Enabled := bManagerPermission;
+  cbUserLevel.Enabled := bManagerPermission;
   editAccountZeroBalance.Enabled := bManagerPermission;
   butAccountAdd.Visible := bCreateRigth;
   butAccountSave.Visible := bCreateRigth;
@@ -191,6 +203,7 @@ begin
   cbxPeriodOfValidity.Enabled := bEditPermission;
   butClearPass.Visible := (isManager
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
+  cbUserLevel.Enabled:=cbTarifsLimit.Checked;
   UpdateDiscount;
   DoDesignExpirationDate;
 end;
@@ -272,7 +285,7 @@ procedure TfrmAccounts.butGenerateSecCodesClick(Sender: TObject);
 begin
   if GAccountsCopy.IsEmpty then exit;
 
-  if (MessageBox(HWND_TOP,'Старые коды будут затерты новыми. Вы уверены?',
+  if (MessageBox(HWND_TOP,'Старые коды будут затерты новыми. Вы уверены?',       //перевести
       PChar(translate('Warning')),MB_YESNO or MB_ICONQUESTION)<>IDYES) then
     exit;
   GAccountsCopy.Current.GenerateSecCodes;
@@ -287,7 +300,7 @@ begin
     exit;
   // Оператор всегда может разблокировать пользователя
   if not(isManager or FunctionAmIRight(FN_ACCOUNTS_CREATE)) then begin
-    if (MessageBox(HWND_TOP,'Разблокировать учетную запись? Вы уверены?',
+    if (MessageBox(HWND_TOP,'Разблокировать учетную запись? Вы уверены?',        //перевести
         PChar(translate('Warning')),
         MB_YESNO or MB_ICONQUESTION)<>IDYES) then begin
       DisableControls;
@@ -321,7 +334,7 @@ end;
 procedure TfrmAccounts.butAccountSaveClick(Sender: TObject);
 begin
   if not GAccountsCopy.CheckFreeName(editAccountName.Text) then begin
-       MessageBox(HWND_TOP,'Учетная запись с таким именем уже существует',
+       MessageBox(HWND_TOP,'Учетная запись с таким именем уже существует',        // перевести
           PChar(translate('Warning')),MB_OK);
        exit;
   end;
@@ -354,7 +367,7 @@ begin
   if GAccountsCopy.IsEmpty then exit;
   Application.CreateForm(TformInputSumm, formInputSumm);
   // ToDo translate
-  formInputSumm.Caption := 'Пополнение баланса';
+  formInputSumm.Caption := 'Пополнение баланса';                                 //перевести
   formInputSumm.lblAccountInfo.Caption :=
       IntToStr(GAccountsCopy.Current.Id) + ' ('
       + GAccountsCopy.Current.Name +')';
@@ -365,17 +378,17 @@ begin
     if GRegistry.Modules.KKM.Active
         and (not isManager
         or not GRegistry.Modules.KKM.OnlyForOperator) then begin
-      bActionCanceled := not CashIncome(res, 'Внесение денег на счет '
+      bActionCanceled := not CashIncome(res, 'Внесение денег на счет '           //перевести
           + GAccountsCopy.Current.Name)
           and GRegistry.Modules.KKM.DisconnectBlock;
     end;
     if bActionCanceled then
       Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-          'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
+          'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)       //перевести
     else begin
       GAccountsCopy.Current.MoneyPut(res);
-      Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_0, 'Учетная запись '
-          + GAccountsCopy.Current.Name + '. Внесение денег на счет :'
+      Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_0, 'Учетная запись '         //перевести
+          + GAccountsCopy.Current.Name + '. Внесение денег на счет :'            //перевести
           + FloatToStrGC(res));
     end;
   end;
@@ -393,13 +406,13 @@ begin
       butAccountSaveClick(Nil);
   if GAccountsCopy.IsEmpty then exit;
   if (GAccountsCopy.Current.Balance <= 0) then begin
-    MessageBox(HWND_TOP,PChar('На счете нет средств.'),
+    MessageBox(HWND_TOP,PChar('На счете нет средств.'),                          //перевести
         PChar(translate('Warning')),MB_OK);
     exit;
   end;
   Application.CreateForm(TformInputSumm, formInputSumm);
   // ToDo translate
-  formInputSumm.Caption := 'Снятие со счета';
+  formInputSumm.Caption := 'Снятие со счета';                                    //перевести
   formInputSumm.lblAccountInfo.Caption :=
       IntToStr(GAccountsCopy.Current.Id)
       + ' ('+ GAccountsCopy.Current.Name +')';
@@ -416,12 +429,12 @@ begin
     end;
     if bActionCanceled then
       Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-          'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
+          'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)      //перевести
     else begin
       GAccountsCopy.Current.MoneyRemove(res);
       Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_0,
           'Учетная запись ' + GAccountsCopy.Current.Name
-          + '. Снятие денег со счета: '
+          + '. Снятие денег со счета: '                                          //перевести
           + FloatToStrGC(res));
     end;
   end;
@@ -439,7 +452,7 @@ end;
 procedure TfrmAccounts.UpdateDiscount;
 begin
   if (GAccountsCopy.RecordCount > 0) then
-    lblSummaryDiscount.Caption := 'Скидка = '
+    lblSummaryDiscount.Caption := 'Скидка = '                                    //перевести
         + IntToStr(GAccountsCopy.Current.Discount) + ' %';
 end;
 
@@ -581,6 +594,27 @@ procedure TfrmAccounts.cbxPeriodOfValidityClick(Sender: TObject);
 begin
   DoDesignExpirationDate;
   _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.cbTarifsLimitClick(Sender: TObject);
+begin
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.dsrcAccountsStateChange(Sender: TObject);
+begin
+//  cbUserLevel.Text := editUserLevel.Text;
+end;
+
+procedure TfrmAccounts.cbUserLevelChange(Sender: TObject);
+begin
+  editUserLevel.Text := cbUserLevel.Text;
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.editUserLevelChange(Sender: TObject);
+begin
+  cbUserLevel.Text := editUserLevel.Text;
 end;
 
 end.

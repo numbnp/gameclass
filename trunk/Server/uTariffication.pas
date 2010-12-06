@@ -118,6 +118,7 @@ type
     roundmoney: double;
     variantscount: integer;
     idGroup: Integer;
+    userlevel: Integer; // требуемый уровень доступа пользователя
 
     tarifvariants: array[0..(MAX_TARIFS_VARIANTS-1)] of TTarifVariants;
     property BytesInMB: Integer read FnBytesInMB write FnBytesInMB;
