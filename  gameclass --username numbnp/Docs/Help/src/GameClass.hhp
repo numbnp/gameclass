@@ -1,0 +1,18 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=..\GameClass.chm
+Contents file=GameClass.hhc
+Default Window=GameClass Help
+Default topic=HTML\general.htm
+Display compile progress=No
+Full-text search=Yes
+Index file=gcti.hhk
+Language=0x419 Русский
+Title=GameClass Help
+
+[WINDOWS]
+GameClass Help="GameClass Help","GameClass.hhc","GameClass.hhk","HTML\general.htm",,,,,,0x23520,,0x300e,,,,,,,,0
+
+
+[INFOTYPES]
+

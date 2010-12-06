@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link href="scripts/style.css" rel="stylesheet" type="text/css">
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<Title>FAQ</Title>
+</HEAD>
+
+<BODY topmargin="0" leftmargin="0">
+
+<TABLE  border="0" cellspacing="0" cellpadding="1" width=100%>
+<TR bgcolor="#D0D0FF" height="22">
+<TD width="6"></TD>
+<TD width="16"><A href="http://www.nodasoft.com/products/gc/"><IMG border="0" src="img/home.gif" alt="Домашняя страница продукта"></A></TD>
+<TD width="16"><A href="mailto:info@nodasoft.com"><IMG border="0" src="img/mail.gif" alt="Сообщить разработчикам свое мнение о данной статье "></A></TD>
+<TD width="10"></TD>
+<TD class="Part">Часто задаваемые вопросы</TD>
+</TR>
+</TABLE>
+<TABLE class="Base" width=90%>
+<TR>
+<TD>
+
+<BR>
+<SPAN class="ArticleTitle">Ошибка подключения к SQL-серверу</SPAN>
+<BR>
+<BR>
+
+Ошибка может возникнуть по нескольким причинам:<br>
+<br>
+<ul>
+<li><b>Неверный адрес  SQL-сервера</b><br>
+Решение проблемы: в диалоге подключения вы указали IP-адрес несуществующего компьютера, либо компьютера, на котором не установлен SQL сервер, либо установлен, но не сконфигурирован полной инсталляцией GameClass. Если вы подключались к локальному серверу, то смотрите следующую причину.</li>
+<br><br>
+
+<li><b>Не установлен SQL-сервер</b><br>
+Решение проблемы: установить SQL-сервер. Смотрите раздел <a href="installation.html">инсталляция</a></li>
+<br><br>
+
+<li><b>SQL-сервер установлен, но не запущен либо находится в режиме паузы</b><br>
+Решение проблемы: запустите SQL-сервер командой "net start mssqlserver"</a></li>
+<br><br>
+
+<li><b>SQL-сервер установлен, запущен, но не сконфигурирован полной инсталляцией GameClass</b><br>
+Решение проблемы: Вы установили SQL-сервер (MSDE2000), но забыли провести ПОЛНУЮ <a href="installation.html">инсталляцию</a> GameClass, которая помимо копирования на ваш компьютер приложения оператора конфигурирует SQL-сервер.</li>
+</ul>
+<br>
+Нередкий вопрос: <a href="faq_sqlbig.html">Я не хочу устанавливать SQL-сервер MSDE2000. Он столько весит! Зачем мне это?</a>
+
+<P align="center">
+<BR>
+<BR>
+<SPAN class="copyright"><A href="copyrights.htm">&copy 2000-2007 NodaSoft. All Rights Reserved.</A>
+</SPAN>
+</P>
+</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

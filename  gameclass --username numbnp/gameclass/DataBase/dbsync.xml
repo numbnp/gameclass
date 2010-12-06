@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1251"?>
+<DataBaseConfiguration>
+  <Connection Login="" Pssword="" Server="127.0.0.1"/>
+  <Scripts Path="">
+          <ScriptSync100 DataBaseVersion="3.84" FileName="GCSync100.sqp" Description="Updating database for GCSync v1.0.0 ..."/>
+          <ScriptSync101 DataBaseVersion="3.84" FileName="GCSync101.sqp" Description="Updating database for GCSync v1.0.1 ..."/>
+          <ScriptSync102 DataBaseVersion="3.84" FileName="GCSync102.sqp" Description="Updating database for GCSync v1.0.2 ..."/>
+  </Scripts>
+  <Reports>
+  </Reports>
+</DataBaseConfiguration>

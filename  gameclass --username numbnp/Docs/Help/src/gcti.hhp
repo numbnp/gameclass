@@ -1,0 +1,18 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=..\gcti.chm
+Contents file=gcti.hhc
+Default Window=Traffic Inspector Plug-in 2.0
+Default topic=HTML\inet\ti\about.htm
+Display compile progress=No
+Full-text search=Yes
+Index file=gcti.hhk
+Language=0x419 Русский
+Title=Traffic Inspector Plug-in 2.0 Help
+
+[WINDOWS]
+Traffic Inspector Plug-in 2.0="Traffic Inspector Plug-in 2.0 Help","gcti.hhc","gcti.hhk","HTML\inet\ti\about.htm",,,,,,0x23520,,0x300e,,,,,,,,0
+
+
+[INFOTYPES]
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Прибыль по тарифам без УЗ" description="Распределение прибыли по тарифам без учета учетных записей
+--- 
+Author: NodaSoft
+support@nodasoft.ru" code="CREATE TABLE #tptwa (
+[id] [int] IDENTITY (1, 1) NOT NULL ,
+[name] [varchar] (50) COLLATE Cyrillic_General_CI_AS NULL ,
+[summa] [money]
+) ON [PRIMARY]
+
+insert into #tptwa (name, summa)
+select
+ Tarifs.[name] as [Тариф],
+ sum(SessionsAdd2.summa) as [Сумма]
+from Sessions
+ inner join SessionsAdd on (Sessions.id = SessionsAdd.idSessions)
+ inner join SessionsAdd2 on (SessionsAdd.id = SessionsAdd2.idSessionsAdd)
+ inner join Tarifs on (SessionsAdd.idTarif = Tarifs.id)
+where
+ (SessionsAdd2.[moment] &gt;= %TIME-START%) and
+ (SessionsAdd2.[moment] &lt;= %TIME-STOP%) and
+ (idClients = 0)
+
+group by
+ Tarifs.[name]
+
+insert into #tptwa (name, summa) values ('------',0)
+
+insert into #tptwa (name, summa)
+select
+ 'Итого:',
+ sum(SessionsAdd2.summa) as [Сумма]
+from Sessions
+ inner join SessionsAdd on (Sessions.id = SessionsAdd.idSessions)
+ inner join SessionsAdd2 on (SessionsAdd.id = SessionsAdd2.idSessionsAdd)
+where
+ (SessionsAdd2.[moment] &gt;= %TIME-START%) and
+ (SessionsAdd2.[moment] &lt;= %TIME-STOP%)
+select
+ name [Тариф],
+ summa [Сумма]
+from #tptwa order by id
+
+if object_id('tempdb..#tptwa') is not null DROP TABLE #tptwa" author="NodaSoft" guid="{508BF66C-16AA-4129-82DB-02D4AED96297}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

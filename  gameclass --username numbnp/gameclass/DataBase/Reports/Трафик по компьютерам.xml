@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Трафик по компьютерам" description="Name: Отчет по трафику, показывает объем в МБ по компьютерам за указанный интервал времени
+Author: NodaSoft
+E-mail: support@gameclass.ru" code="if object_id('tempdb..#ttc') is not null DROP TABLE #ttc
+
+CREATE TABLE #ttc (
+[id] [int] IDENTITY (1, 1) NOT NULL ,
+[number] [int],
+[ipaddress] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL,
+[traffic_MB] [numeric] (12,2) NULL,
+[traffic_KB] [numeric] (12,2) NULL
+) ON [PRIMARY]
+
+INSERT INTO #ttc (number,ipaddress,traffic_MB, traffic_KB)
+select
+ 0,
+ N'Итого:',
+ sum(SessionsAdd.Traffic)/1024/1024 [traffic in MB],
+ sum(SessionsAdd.Traffic)/1024 [traffic in KB]
+from Sessions
+ inner join SessionsAdd on (SessionsAdd.idSessions = Sessions.id)
+ --left join Computers on (SessionsAdd.idComp = Computers.id)
+where
+ Sessions.[started] &gt; %TIME-START% and
+ Sessions.[started] &lt; %TIME-STOP%
+
+INSERT INTO #ttc (number,ipaddress,traffic_MB, traffic_KB)
+ VALUES (0, N'---------------', 0 , 0 )
+
+insert into #ttc (number,ipaddress,traffic_MB, traffic_KB)
+select
+ S.number,
+ S.ipaddress,
+ sum(CAST(S.traffic as [numeric] (12,2)))/1024/1024 [traffic in MB],
+ sum(CAST(S.traffic as [numeric] (12,2)))/1024 [traffic in KB]
+from (select distinct Sessions.id,traffic,started,number,ipaddress from Sessions
+ inner join SessionsAdd on (SessionsAdd.idSessions = Sessions.id)
+ left join Computers on (SessionsAdd.idComp = Computers.id)
+where
+ Sessions.[started] &gt; %TIME-START% and
+ Sessions.[started] &lt; %TIME-STOP%
+) As S
+group by
+ S.number,
+ S.ipaddress
+order by
+ S.number
+
+SELECT
+ number [Computer],
+ ipaddress [IP],
+ traffic_MB [traffic in MB],
+ traffic_KB [traffic in KB]
+FROM #ttc" author="NodaSoft" guid="{CC7DF4C3-7CAA-40ca-B149-D40EEEC790E6}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>
