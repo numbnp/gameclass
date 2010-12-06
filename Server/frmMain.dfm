@@ -1,13 +1,13 @@
 object formMain: TformMain
-  Left = 247
-  Top = 155
+  Left = 239
+  Top = 407
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 'GameClass3 Server'
-  ClientHeight = 415
-  ClientWidth = 696
+  ClientHeight = 571
+  ClientWidth = 919
   Color = clBtnFace
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 696
+    Width = 919
     Height = 54
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 574
+      Width = 797
       Height = 54
       Align = alClient
       AutoSize = True
@@ -114,7 +114,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 574
+      Left = 797
       Top = 0
       Width = 122
       Height = 54
@@ -188,8 +188,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 54
-    Width = 696
-    Height = 361
+    Width = 919
+    Height = 517
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -198,8 +198,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 201
-        Width = 688
+        Top = 357
+        Width = 911
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -207,8 +207,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 688
-        Height = 201
+        Width = 911
+        Height = 357
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -236,6 +236,7 @@ object formMain: TformMain
         OnContextPopup = gridCompsContextPopup
         OnDblClick = gridCompsDblClick
         OnKeyDown = gridCompsKeyDown
+        OnKeyUp = gridCompsKeyUp
         OnSortMarkingChanged = gridCompsSortMarkingChanged
         Columns = <
           item
@@ -362,8 +363,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 207
-        Width = 688
+        Top = 363
+        Width = 911
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -371,7 +372,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 688
+          Width = 911
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -392,7 +393,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 688
+          Left = 911
           Top = 0
           Width = 0
           Height = 126
@@ -424,36 +425,36 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 688
-        Height = 333
+        Width = 911
+        Height = 489
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 292
-          Width = 688
+          Top = 448
+          Width = 911
           DesignSize = (
-            688
+            911
             41)
           inherited edtMessage: TEdit
-            Width = 577
+            Width = 800
           end
           inherited btnSend: TButton
-            Left = 599
+            Left = 822
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 688
-          Height = 292
+          Width = 911
+          Height = 448
           inherited memMessages: TMemo
-            Width = 526
-            Height = 290
+            Width = 749
+            Height = 446
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 290
+            Height = 446
             inherited lvUsers: TListView
-              Height = 288
+              Height = 444
             end
           end
         end

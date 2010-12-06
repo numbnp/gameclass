@@ -321,6 +321,7 @@ begin
     Tarifs[0].BytesInMB := 1048576;
     Tarifs[0].SpeedLimitInKB := 0;
     Tarifs[0].PluginGroupName := '';
+    Tarifs[0].userlevel:=0;
     Tarifs[0].variantscount := 1;
     Tarifs[0].tarifvariants[0] := TTarifVariants.Create;
     Tarifs[0].tarifvariants[0].id := 0;
@@ -356,6 +357,7 @@ begin
       Tarifs[i].BytesInMB := dts.Recordset.Fields.Item['BytesInMB'].Value;
       Tarifs[i].SpeedLimitInKB := dts.Recordset.Fields.Item['SpeedLimitInKB'].Value;
       Tarifs[i].PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
+      Tarifs[i].userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
       // подгрузим цельные интервалы TarifsWhole
       Tarifs[i].variantscount := 0;
       dts2 := TADODataSet.Create(nil);

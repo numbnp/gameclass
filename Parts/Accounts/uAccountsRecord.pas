@@ -49,6 +49,10 @@ type
     procedure SetPeriodOfValidity(AValue: Boolean);
     function GetExpirationDate: TDateTime;
     procedure SetExpirationDate(AValue: TDateTime);
+    function GetIsTarifsLimit: Boolean;
+    procedure SetIsTarifsLimit(Value: Boolean);
+    function GetUserLevel: Integer;
+    procedure SetUserLevel(Value: Integer);
   public
     constructor Create(AAccountsDataSet: TAccountsDataSet);
 //      function GetPhoto:boolean;        // загрузить фоту, если она есть
@@ -101,7 +105,10 @@ type
         read GetPeriodOfValidity write SetPeriodOfValidity;
     property ExpirationDate: TDateTime
         read GetExpirationDate write SetExpirationDate;
-
+    property IsTarifsLimit: Boolean
+        read GetIsTarifsLimit write SetIsTarifsLimit;
+    property UserLevel: Integer
+        read GetUserLevel write SetUserLevel;
   end;
 
 
@@ -406,7 +413,7 @@ var
   query: string;
 begin
   Result := '';
-    query := 'exec AccountsHistorySelect @idAccount=' + IntToStr(Id);
+    query := 'exec ' + DS_ACCOUNTS_MONEYHISTORYSELECT + ' @idAccount=' + IntToStr(Id);
     dts := TADODataSet.Create(nil);
     dsDoQuery(FAccountsDataSet.Connection, dts, query);
     query := '';
@@ -452,6 +459,33 @@ procedure TAccountsRecord.SetExpirationDate(AValue: TDateTime);
 begin
   FAccountsDataSet.Edit;
   FAccountsDataSet.FieldValues['ExpirationDate'] := AValue;
+  FAccountsDataSet.Post;
+end;
+
+function TAccountsRecord.GetIsTarifsLimit: Boolean;
+begin
+  Result := (FAccountsDataSet.FieldValues['assigntarif'] = 1);
+end;
+
+procedure TAccountsRecord.SetIsTarifsLimit(Value: Boolean);
+begin
+  FAccountsDataSet.Edit;
+  if Value then
+    FAccountsDataSet.FieldValues['assigntarif'] := 1
+  else
+    FAccountsDataSet.FieldValues['assigntarif'] := 0;
+  FAccountsDataSet.Post;
+end;
+
+function TAccountsRecord.GetUserLevel: Integer;
+begin
+  Result := FAccountsDataSet.FieldValues['userlevel'];
+end;
+
+procedure TAccountsRecord.SetUserLevel(Value: Integer);
+begin
+  FAccountsDataSet.Edit;
+  FAccountsDataSet.FieldValues['userlevel'] := Value;
   FAccountsDataSet.Post;
 end;
 

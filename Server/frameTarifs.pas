@@ -73,6 +73,8 @@ type
     gbTrafficSeparatePayment: TGroupBox;
     gbPlugin: TGroupBox;
     cbxFreePacket: TCheckBox;
+    lblUserLevel: TLabel;
+    cbUserLevel: TComboBox;
     procedure lvTarifsClick(Sender: TObject);
     procedure butMoveUpClick(Sender: TObject);
     procedure butTarifAddClick(Sender: TObject);
@@ -99,6 +101,7 @@ type
     procedure cbTrafficSeparatePaymentClick(Sender: TObject);
     procedure editBytesInMBExit(Sender: TObject);
     procedure cbxFreePacketClick(Sender: TObject);
+    procedure cbUserLevelChange(Sender: TObject);
   private
     { Private declarations }
     lockwhole: boolean;
@@ -272,6 +275,7 @@ begin
       Tarif.BytesInMB := dts.Recordset.Fields.Item['BytesInMB'].Value;
       Tarif.SpeedLimitInKB := dts.Recordset.Fields.Item['SpeedLimitInKB'].Value;
       Tarif.PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
+      Tarif.userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
 
       li := lvTarifs.Items.Add;
       li.Caption := Tarif.name;
@@ -293,6 +297,7 @@ begin
     editPluginGroup.Text := '';
     cbInternet.Checked := false;
     cbCalcTraffic.Checked := false;
+    cbUserLevel.Text := '';  
   end;
 
   pgctrlDetails.ActivePage := tabNoTarif;
@@ -458,6 +463,7 @@ begin
    editTrafficFree.Enabled := cbInternet.Checked;
    editTrafficCost.Enabled := cbInternet.Checked;
    cbTrafficSeparatePayment.Enabled := cbInternet.Checked;
+   cbUserLevel.Text := IntToStr(Tarif.userlevel); 
 
    UpdateVariantsList;
    locktarif := false;
@@ -540,7 +546,8 @@ begin
       ', @idGroup='+ IntToStr(TComputerGroup(cbComputerGroup.Items.Objects[cbComputerGroup.ItemIndex]).Id)+
       ', @BytesInMB='+editBytesInMB.Text
       + ', @SpeedLimitInKB='+ editSpeedLimitInKB.Text
-      + ', @PluginGroupName=''' + editPluginGroup.Text + '''');
+      + ', @PluginGroupName=''' + editPluginGroup.Text
+      + ''', @userlevel=' + cbUserLevel.Text);
     UpdateTarifsList;
   end;
 end;
@@ -907,6 +914,11 @@ end;
 procedure TframTarifs.cbxFreePacketClick(Sender: TObject);
 begin
   UpdateVariantsInterface;
+end;
+
+procedure TframTarifs.cbUserLevelChange(Sender: TObject);
+begin
+  UpdateTarifsInterface
 end;
 
 end.

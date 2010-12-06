@@ -342,7 +342,7 @@ begin
     FfrmSessionsChart.Visible := False;
     pnlScale.Visible := False;
     Width := 660;
-    Height := 272;
+    Height := 273;
   end else begin
     FfrmSessionsChart.Visible := True;
     pnlScale.Visible := True;

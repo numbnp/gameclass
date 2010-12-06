@@ -1,10 +1,10 @@
 object frmAccounts: TfrmAccounts
-  Left = 298
-  Top = 270
+  Left = 392
+  Top = 193
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
-  ClientHeight = 450
+  ClientHeight = 521
   ClientWidth = 634
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -619,7 +619,7 @@ object frmAccounts: TfrmAccounts
       OnClick = cbAccountBlockedClick
     end
     object butAccountAdd: TButton
-      Left = 300
+      Left = 303
       Top = 17
       Width = 75
       Height = 25
@@ -628,7 +628,7 @@ object frmAccounts: TfrmAccounts
       OnClick = butAccountAddClick
     end
     object butAccountSave: TButton
-      Left = 300
+      Left = 303
       Top = 47
       Width = 75
       Height = 25
@@ -637,7 +637,7 @@ object frmAccounts: TfrmAccounts
       OnClick = butAccountSaveClick
     end
     object butAccountDelete: TButton
-      Left = 300
+      Left = 303
       Top = 77
       Width = 75
       Height = 25
@@ -646,7 +646,7 @@ object frmAccounts: TfrmAccounts
       OnClick = butAccountDeleteClick
     end
     object butViewSecCodes: TButton
-      Left = 300
+      Left = 303
       Top = 181
       Width = 75
       Height = 25
@@ -655,7 +655,7 @@ object frmAccounts: TfrmAccounts
       OnClick = butViewSecCodesClick
     end
     object butGenerateSecCodes: TButton
-      Left = 300
+      Left = 302
       Top = 211
       Width = 75
       Height = 25
@@ -734,7 +734,7 @@ object frmAccounts: TfrmAccounts
   end
   object gbBalanceInfo: TGroupBox
     Left = 236
-    Top = 248
+    Top = 312
     Width = 388
     Height = 129
     Caption = #1041#1072#1083#1072#1085#1089' '#1091#1095#1077#1090#1085#1086#1081' '#1079#1072#1087#1080#1089#1080
@@ -857,7 +857,7 @@ object frmAccounts: TfrmAccounts
   end
   object butClose: TButton
     Left = 469
-    Top = 413
+    Top = 477
     Width = 75
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -866,7 +866,7 @@ object frmAccounts: TfrmAccounts
   end
   object butHelp: TButton
     Left = 549
-    Top = 413
+    Top = 477
     Width = 75
     Height = 25
     Caption = #1055#1086#1084#1086#1097#1100
@@ -875,7 +875,7 @@ object frmAccounts: TfrmAccounts
   end
   object gbFilter: TGroupBox
     Left = 237
-    Top = 377
+    Top = 441
     Width = 164
     Height = 68
     Caption = #1060#1080#1083#1100#1090#1088
@@ -915,7 +915,7 @@ object frmAccounts: TfrmAccounts
     Left = 8
     Top = 7
     Width = 217
-    Height = 430
+    Height = 506
     AutoFitColWidths = True
     DataSource = dsrcAccounts
     FooterColor = clWindow
@@ -948,12 +948,73 @@ object frmAccounts: TfrmAccounts
         Width = 150
       end>
   end
+  object gbTarifsInfo: TGroupBox
+    Left = 237
+    Top = 251
+    Width = 385
+    Height = 54
+    Caption = #1041#1077#1079#1086#1087#1072#1089#1085#1086#1089#1090#1100
+    TabOrder = 6
+    object lblUserLevel: TLabel
+      Left = 211
+      Top = 24
+      Width = 90
+      Height = 13
+      Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072':'
+    end
+    object cbTarifsLimit: TDBCheckBoxEh
+      Left = 8
+      Top = 16
+      Width = 153
+      Height = 25
+      Caption = #1054#1075#1088#1072#1085#1080#1095#1080#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
+      DataField = 'assigntarif'
+      DataSource = dsrcAccounts
+      TabOrder = 0
+      ValueChecked = '1'
+      ValueUnchecked = '0'
+      OnClick = cbTarifsLimitClick
+    end
+    object cbUserLevel: TComboBox
+      Left = 304
+      Top = 21
+      Width = 73
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 1
+      OnChange = cbUserLevelChange
+      Items.Strings = (
+        '0'
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8'
+        '9'
+        '10')
+    end
+    object editUserLevel: TDBEditEh
+      Left = 304
+      Top = 48
+      Width = 73
+      Height = 21
+      DataField = 'userlevel'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 2
+      Visible = False
+      OnChange = editUserLevelChange
+    end
+  end
   object dsrcAccounts: TDataSource
     Left = 400
-    Top = 376
+    Top = 440
   end
   object OpenDialog1: TOpenDialog
     Left = 428
-    Top = 376
+    Top = 440
   end
 end

@@ -2,7 +2,7 @@ unit uAccountsDataSet;
 
 
 interface
-uses uGCDataSet, ADODB;
+uses uGCDataSet, ADODB, gcconst;
 
 type
   TAccountsDataSet = class(TGCDataSet)
@@ -33,14 +33,14 @@ uses
 function TAccountsDataSet.DoSelectAll(
     var AdtsResult: TADODataSet): Boolean;
 begin
-  Result := dsDoQuery(Connection, AdtsResult, 'exec AccountsSelect');
+  Result := dsDoQuery(Connection, AdtsResult, 'exec ' + DS_ACCOUNTS_SELECT);
 end;
 
 function TAccountsDataSet.DoSelect(const AnId: Integer;
   var AdtsResult: TADODataSet): Boolean;
 begin
   Result := dsDoQuery(Connection, AdtsResult,
-      'exec AccountsSelect @id=' + IntToStr(AnId));
+      'exec ' + DS_ACCOUNTS_SELECT + ' @id=' + IntToStr(AnId));
 end;
 
 function TAccountsDataSet.DoUpdate(const AnId: Integer): Boolean;
@@ -77,7 +77,7 @@ begin
   except
   end;
   Result := Result and dsDoCommand(Connection,
-      'exec AccountsUpdate @id='+ IntToStr(FieldValues['id'])
+      'exec ' + DS_ACCOUNTS_UPDATE + ' @id='+ IntToStr(FieldValues['id'])
       + ', @name=N''' + FieldValues['name']
       + ''', @password=N''' + FieldValues['password']
       + ''', @email=N''' + FieldValues['email']
@@ -92,8 +92,11 @@ begin
       + ''', @summary=' + FloatToStr(FieldValues['summary'])
       + ', @PeriodOfValidity='+ IntToStr(FieldValues['PeriodOfValidity'])
       + ', @ExpirationDate=N'''+ DateTimeToSQLStr(FieldValues['ExpirationDate'])
-      + '''');
-  Result := Result and dsDoCommand(Connection, 'exec AccountsUpdateCodes'
+      + ''', @assigntarif='+ IntToStr(FieldValues['assigntarif'])
+      + ', @userlevel='+ IntToStr(FieldValues['userlevel']));
+
+
+  Result := Result and dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_UPDATECODES
       + ' @id=' + IntToStr(FieldValues['id']) + ', @seccodes='''
       + FieldValues['seccodes'] + '''');
 end;
@@ -101,7 +104,7 @@ end;
 function TAccountsDataSet.DoUpdateMoneyPut(const AnId: Integer;
     AfMoney: Double): Boolean;
 begin
-  Result := dsDoCommand(Connection, 'exec AccountsMoneyPay'
+  Result := dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_MONEYPAY
       + ' @id=' + IntToStr(FieldValues['id'])
       + ', @summa=' + FloatToSQLStr(AfMoney)
       + ', @moment=''' + DateTimeToSQLStr(GetVirtualTimeReset) + '''');
@@ -110,7 +113,7 @@ end;
 function TAccountsDataSet.DoUpdateMoneyRemove(const AnId: Integer;
     AfMoney: Double): Boolean;
 begin
-  Result := dsDoCommand(Connection, 'exec AccountsMoneyReturn'
+  Result := dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_MONEYRETURN
       + ' @id=' + IntToStr(FieldValues['id'])
       + ', @summa=' + FloatToSQLStr(AfMoney)
       + ', @moment=''' + DateTimeToSQLStr(GetVirtualTimeReset) + '''');
@@ -119,13 +122,13 @@ end;
 function TAccountsDataSet.DoDelete(const AnId: Integer): Boolean;
 begin
   Result := dsDoCommand(Connection,
-      'exec AccountsDelete @id=' + IntToStr(AnId));
+      'exec ' + DS_ACCOUNTS_DELETE + ' @id=' + IntToStr(AnId));
 end;
 
 function TAccountsDataSet.DoInsert(var AdtsResult: TADODataSet): Boolean;
 begin
   Result := dsDoQuery(Connection, AdtsResult,
-      'exec AccountsInsert');
+      'exec ' + DS_ACCOUNTS_INSERT);
 end;
 
 function TAccountsDataSet.LocateByName(const AstrName: String): Boolean;
