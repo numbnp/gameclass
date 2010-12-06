@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link href="scripts/style.css" rel="stylesheet" type="text/css">
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<Title>FAQ</Title>
+<script language="JavaScript" src="scripts/master.js"></script>
+</HEAD>
+
+<BODY topmargin="0" leftmargin="0">
+
+<TABLE  border="0" cellspacing="0" cellpadding="1" width=100%>
+<TR bgcolor="#D0D0FF" height="22">
+<TD width="6"></TD>
+<TD width="16"><A href="http://www.nodasoft.com/products/gc/"><IMG border="0" src="img/home.gif" alt="Домашняя страница продукта"></A></TD>
+<TD width="16"><A href="mailto:info@nodasoft.com"><IMG border="0" src="img/mail.gif" alt="Сообщить разработчикам свое мнение о данной статье "></A></TD>
+<TD width="10"></TD>
+<TD class="Part">Работа с GameClass</TD>
+</TR>
+</TABLE>
+<TABLE class="Base" width=90%>
+<TR>
+<TD>
+
+<BR>
+<SPAN class="ArticleTitle">Первый запуск</SPAN><BR>
+<BR>
+
+<font color="red">Инсталляция системы автоматически создает 2 пользователя: manager(управляющий клубом) и operator (оператор клуба). Пароли у обоих пользователей по умолчанию пустые. Настоятельно рекомендуем установить сложный пароль для пользователя manager!!!</font><br>
+<br>
+Работа с программой начинается с подключения. Необходимо ввести имя и пароль пользователя и нажать кнопку "Войти". При этом происходит подключение к базе данных, и начинается работа с программой. По умолчанию GameClass подключается к локально-установленной базе данных MSDE2000 (т.е. к IP-адресу 127.0.0.1). Если Вы подключаетесь удаленно, то необходимо ввести IP-адрес сервера, на котором установлен MSDE-Сервер, использующийся GameClass'ом в вашем клубе. При подключении через Internet необходимо выполненение следующих условий: открыт TCP порт номер 1433, а компьютер, к которому вы подключаетесь, имеет реальный IP-адрес, и он вам известен.<br>
+<br>
+В системе одновременно могут работать несколько пользователей. Например, оператор со своего рабочего места (работа с клиентами) и менеджер со своего личного кабинета (мониторинг действий оператора и просмотр отчетности). Работа одновременно двух операторов не рекомендуется.<br>
+<br>
+<a onclick="doSection(foo)" class="anchorclass" href="#">Посмотреть, как выглядит окно подключения к системе</a>
+<DIV CLASS="divclass" ID="foo" STYLE="display: none"> 
+<br>
+<img src="img/logon.gif" class="Plus20" alt="Подключение к системе">
+<br>
+</DIV>
+<br><br>
+Если при подключении возникли проблемы, то ознакомьтесь с разделом<br>
+<a href="faq_err_sqlconnect.html">Ошибка при подключении к SQL-серверу</a><br>
+<br>
+
+
+<P align="center">
+<BR>
+<BR>
+<SPAN class="copyright"><A href="copyrights.htm">&copy 2000-2007 NodaSoft. All Rights Reserved.</A>
+</SPAN>
+</P>
+</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,108 @@
+body, .normal, td {
+        font-family: Verdana, Geneva, Arial, sans-serif;
+        font-size: 11px;
+}
+
+
+A {
+	color : #0000FF;
+	text-decoration : none;
+}
+
+A:HOVER {
+	color : #0000FF;
+	text-decoration : underline;
+}
+
+.sidebartext {
+position: relative;
+left: -22px;
+height: 72px;
+width: 300px;
+margin-top: .6em;
+margin-right: 3em;
+margin-left: 0;
+margin-bottom: .6em;
+padding-top: .75em;
+padding-right: 6px;
+padding-left: .75em;
+padding-bottom: .75em;
+cursor: hand;
+border-left: 4pt solid #339900;
+background-color: #F0F0F0; 
+}
+
+
+.notice {
+        color: Red;
+}
+
+.part {
+        font-family: Verdana, Geneva, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+}
+
+.copyright {
+        color: Green;
+        font-size: 9px;
+}
+
+.Minus20 {
+        margin-left: -20px;
+}
+
+.Plus20 {
+        margin-left: 20px;
+}
+
+.Base {
+        margin-left: 10px;
+        font-size: 11px;
+}
+
+.Plus30 {
+        margin-left: 30px;
+}
+
+.Minus30 {
+        margin-left: -30px;
+}
+
+.ArticleTitle {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight : bold;
+}
+
+.ArticleSubTitle {
+        font-family: Verdana, Geneva, Arial, sans-serif;
+        font-size: 11px;
+        font-weight : bold;
+}
+
+h1 {
+        font-size: 23px;
+}
+
+h2 {
+        font-family: Verdana, Geneva, Arial, sans-serif;
+        font-size: 13px;
+        font-weight: normal;
+        font-style: italic;
+}
+
+
+.fake_link {
+        color: Blue;
+        text-decoration: underline;
+}
+
+.white {
+        color: White;
+}
+
+.underline {
+        text-decoration: underline;
+}
+
