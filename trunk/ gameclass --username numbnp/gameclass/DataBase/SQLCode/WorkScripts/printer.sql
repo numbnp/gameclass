@@ -1,2 +1,0 @@
-INSERT INTO [GameClass].[dbo].[_pm_jobs]( [idPrinter], [idUser], [idComputer], [dt], [jid], [doc], [tbytes], [tpages], [pbytes], [ppages], [copies], [isColor], [isDuplex], [format], [isDelete], [isOk], [comment], [reserved1], [reserved2], [reserved3], [isVisible], [PaperWidth], [PaperLength], [SPLFormat], [SPLFileName])
-VALUES( 1, 1, 1, GETDATE(), 50, '', 7, 7, 7, 7, 1, 0, 0, 'A4', 0, 1, '', '', '', '', 1, 1000, 1000, '', '')

@@ -1,2 +1,0 @@
-DBCC SHRINKDATABASE (GameClass)
-GO
