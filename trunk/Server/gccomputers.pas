@@ -11,7 +11,8 @@ uses
   Dialogs, ComCtrls, DateUtils, frmGCMessageBox, Proxy,
   SysUtils, DB, ADODB, StrUtils, IdSocketHandle,
   IdUDPServer, IdUDPClient, IdICMPClient,
-  GCSessions, uClientInfoConst;
+  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2;{,
+  IdBaseComponent,IdComponent,IdUDPBase,IdGlobal;}
 
 
 procedure SendAllOptionsToClient(index: integer);
@@ -40,6 +41,13 @@ procedure CompStop(AnComputerIndex: Integer);
 
 function GetClientState(AnComputerIndex: Integer): Integer;
 
+// Получение Mac адреса по свойсву ip
+function GetMacFromIP(IPAddr:PAnsichar):string;
+
+// Процедура для посылки WOL пакета
+procedure WakeUPComputer(aMacAddress: string);
+
+
 const
   MAX_DOUBLE = 1700000000000000000000000000000000000000000.0;
 type
@@ -54,6 +62,8 @@ type
     nFailedAuthentication: integer;  // количество неверных логинов
     LogonOrStopMoment: TDateTime;  // момент залогинивания
   end;
+
+  TMacAddress = array [0..5] of byte;
 
   PInteger = ^integer;
 
@@ -104,18 +114,19 @@ type
     function GetBusy: Boolean;
     function GetReserved: Boolean;
     function GetRealyPingable: Boolean;
+
   public
     constructor Create;
     function GetStrNumber:string;
     function GetInfo:string; // выдача краткой инфы на табло клиента на время когда комп свободен
     function GetInfoFull:string; // выдача полной инфы на табло клиента в первые 10 сек после завершения и в систрее во время работы
     function IsLikely(const AAction: TComputerAction): Boolean;
-
   // properties
   public
     id: longword;        // id computer
     number: integer;    // number computer
     ipaddr: string;     // ip address
+    macaddr: string;    // mac address
     control: boolean;   // if controlled;
     pings: integer;     // quantity of unsuccessfull pings
 //    busy: boolean;      // free or busy
@@ -1336,6 +1347,71 @@ begin
       or (session.State = ClientState_OperatorAgreement)) then
     Result := True;
 end; //function TComputer.Agreement: Boolean;
+
+function GetMAC(Value: TMacAddress; Length: integer): String;
+var
+  I: Integer;
+begin
+  if Length = 0 then Result := '00-00-00-00-00-00' else
+  begin
+    Result := '';
+    for i:= 0 to Length - 2 do
+      Result := Result + IntToHex(Value[i], 2) + '-';
+    Result := Result + IntToHex(Value[Length-1], 2);
+  end;
+end;
+
+// Получение Mac адреса по свойсву ip
+function GetMacFromIP(IPAddr:PAnsichar):string;
+var
+  DestIP, SrcIP: ULONG;
+  pMacAddr: TMacAddress;
+  PhyAddrLen: ULONG;
+begin
+  DestIP := inet_addr(IPAddr);
+  PhyAddrLen := 6;
+  SendArp(DestIP, 0, @pMacAddr, PhyAddrLen);
+  Result := GetMAC(pMacAddr, PhyAddrLen);
+end;
+
+// Процедура для посылки WOL пакета
+procedure WakeUPComputer(aMacAddress: string);
+type
+     TMacAddress = array [1..6] of byte;
+
+     TWakeRecord = packed record
+       Waker : TMACAddress;
+       MAC   : array[0..15] of TMACAddress;
+     end;
+
+var i : integer;
+    WR : TWakeRecord;
+    MacAddress : TMacAddress;
+    UDP : TIdUDPClient;
+    sData : string;
+begin
+  // Convert MAC string into MAC array
+  fillchar(MacAddress,SizeOf(TMacAddress),0); 
+  sData := trim(AMacAddress); 
+
+  if length(sData) = 17 then begin 
+    for i := 1 to 6 do begin 
+      MacAddress[i] := StrToIntDef('$' + copy(sData,1,2),0); 
+      sData := copy(sData,4,17); 
+    end;
+  end; 
+
+  for i := 1 To 6 do WR.Waker[i] := $FF; 
+  for i := 0 to 15 do WR.MAC[i] := MacAddress; 
+  // Create UDP and Broadcast data structure
+  UDP := TIdUDPClient.Create(nil);
+  UDP.Host := '255.255.255.255';
+  UDP.Port := 32767;
+  UDP.BroadCastEnabled := true;
+  UDP.SendBuffer(WR,SizeOf(TWakeRecord));
+  UDP.BroadcastEnabled := false;
+  UDP.Free;
+end;
 
 initialization
   GbUnregisteredLinuxClinentMessageShowed := False;

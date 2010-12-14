@@ -2,26 +2,30 @@ object framComputers: TframComputers
   Left = 0
   Top = 0
   Width = 449
-  Height = 409
+  Height = 430
   TabOrder = 0
   object lvComps: TListView
     Left = 0
     Top = 41
     Width = 449
-    Height = 282
+    Height = 303
     Align = alClient
     Columns = <
       item
         Caption = 'Number'
-        Width = 130
+        Width = 60
       end
       item
         Caption = 'IP addr'
-        Width = 138
+        Width = 110
       end
       item
         Caption = 'Group'
-        Width = 181
+        Width = 130
+      end
+      item
+        Caption = 'MAC addr'
+        Width = 130
       end>
     HideSelection = False
     ReadOnly = True
@@ -32,13 +36,13 @@ object framComputers: TframComputers
   end
   object gbEditor: TGroupBox
     Left = 0
-    Top = 323
+    Top = 344
     Width = 449
     Height = 86
     Align = alBottom
     TabOrder = 1
     object lblIPaddr: TLabel
-      Left = 120
+      Left = 61
       Top = 11
       Width = 50
       Height = 13
@@ -52,16 +56,31 @@ object framComputers: TframComputers
       Caption = 'Number'
     end
     object lblGroup: TLabel
-      Left = 248
+      Left = 170
       Top = 11
       Width = 29
       Height = 13
       Caption = 'Group'
     end
+    object lblMAC: TLabel
+      Left = 292
+      Top = 11
+      Width = 63
+      Height = 13
+      Caption = 'MAC address'
+    end
+    object SpeedButton1: TSpeedButton
+      Left = 408
+      Top = 24
+      Width = 33
+      Height = 25
+      Caption = '>>>'
+      OnClick = SpeedButton1Click
+    end
     object editIPaddr: TEdit
-      Left = 120
+      Left = 61
       Top = 27
-      Width = 113
+      Width = 100
       Height = 21
       TabOrder = 0
       OnChange = editNumberChange
@@ -69,7 +88,7 @@ object framComputers: TframComputers
     object editNumber: TEdit
       Left = 8
       Top = 27
-      Width = 97
+      Width = 49
       Height = 21
       TabOrder = 1
       OnChange = editNumberChange
@@ -104,15 +123,22 @@ object framComputers: TframComputers
       OnClick = butDeleteClick
     end
     object cbGroup: TComboBox
-      Left = 246
+      Left = 166
       Top = 27
-      Width = 150
+      Width = 117
       Height = 21
       AutoComplete = False
       Style = csDropDownList
       ItemHeight = 13
       TabOrder = 5
       OnSelect = editNumberChange
+    end
+    object editMAC: TEdit
+      Left = 288
+      Top = 27
+      Width = 121
+      Height = 21
+      TabOrder = 6
     end
   end
   object pnGroups: TPanel

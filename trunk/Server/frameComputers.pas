@@ -5,7 +5,7 @@ interface
 uses 
   GCConst, GCComputers, GCCommon, ADODB, GCLangUtils,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, ComCtrls, StdCtrls;
+  ExtCtrls, ComCtrls, StdCtrls, Buttons;
 
 type
   TframComputers = class(TFrame)
@@ -25,6 +25,9 @@ type
     cbGroups: TComboBox;
     cbGroup: TComboBox;
     lblGroup: TLabel;
+    editMAC: TEdit;
+    lblMAC: TLabel;
+    SpeedButton1: TSpeedButton;
     procedure butAddClick(Sender: TObject);
     procedure editNumberChange(Sender: TObject);
     procedure butDeleteClick(Sender: TObject);
@@ -35,6 +38,7 @@ type
     procedure butGroupDeleteClick(Sender: TObject);
     procedure cbGroupsChange(Sender: TObject);
     procedure cbGroupsSelect(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
     nIdGroupSel: Integer;
@@ -111,6 +115,7 @@ begin
       Comp.id := dts.Recordset.Fields.Item['id'].Value;
       Comp.number := dts.Recordset.Fields.Item['number'].Value;
       Comp.ipaddr := dts.Recordset.Fields.Item['ipaddress'].Value;
+      Comp.macaddr := dts.Recordset.Fields.Item['macaddress'].Value;
       Comp.IdGroup := dts.Recordset.Fields.Item['idGroup'].Value;
       for i:=0 to cbGroups.Items.Count-1 do
         if (TComputerGroup(cbGroups.Items.Objects[i]).Id = Comp.IdGroup) then begin
@@ -121,6 +126,7 @@ begin
       li.Caption := IntToStr(Comp.number);
       li.SubItems.Insert(0, Comp.ipaddr);
       li.SubItems.Insert(1,Comp.GroupName);
+      li.SubItems.Insert(2,Comp.macaddr);
       li.Data := Comp;
       dts.Recordset.MoveNext;
     end;
@@ -131,6 +137,7 @@ begin
     butUpdate.Enabled := false;
     editIPaddr.Text := '';
     editNumber.Text := '';
+    editMac.Text := '';
 //    cbVip.Checked := false;
   end;
 end;
@@ -162,8 +169,11 @@ end;
 
 procedure TframComputers.butAddClick(Sender: TObject);
 begin
+  if editMAC.Text='' then editMAC.Text := '00-00-00-00-00-00';
   dsDoCommand(DS_COMPUTERS_ADD + ' @number='+editNumber.Text+', @ipaddress='''+editIPaddr.Text+''', @idGroup='+
-  IntToStr(TComputerGroup(cbGroup.Items.Objects[cbGroup.ItemIndex]).Id));
+  IntToStr(TComputerGroup(cbGroup.Items.Objects[cbGroup.ItemIndex]).Id) +
+  ', @macaddress='''+ UpperCase(editMAC.Text)+'''');
+
   UpdateCompsList;
 end;
 
@@ -194,6 +204,7 @@ begin
    butUpdate.Enabled := true;
    editNumber.Text := IntToStr(Comp.number);
    editIPaddr.Text := Comp.ipaddr;
+   editMAC.Text := Comp.macaddr;
    for i:=0 to cbGroups.Items.Count-1 do
      if (TComputerGroup(cbGroup.Items.Objects[i]).Id = Comp.IdGroup) then begin
        cbGroup.ItemIndex := i;
@@ -210,10 +221,12 @@ begin
   if (lvComps.ItemIndex <> -1) then
   begin
 //    if (cbVip.Checked) then vip:='1' else vip:='0';
+    if editMAC.Text='' then editMAC.Text := '00-00-00-00-00-00';
     Comp := lvComps.Items[lvComps.ItemIndex].Data;
     dsDoCommand(DS_COMPUTERS_UPDATE + ' @idComp='+IntToStr(Comp.id)+', @number='+
       editNumber.Text+', @ipaddress='''+editIPaddr.Text+''', @idGroup='+
-      IntToStr(TComputerGroup(cbGroup.Items.Objects[cbGroup.ItemIndex]).Id));
+      IntToStr(TComputerGroup(cbGroup.Items.Objects[cbGroup.ItemIndex]).Id) +
+       ', @macaddress='''+UpperCase(editMAC.Text)+'''' );
     UpdateCompsList;
   end;
 end;
@@ -263,6 +276,17 @@ begin
   UpdateCompsList;
 end;
 
+
+procedure TframComputers.SpeedButton1Click(Sender: TObject);
+var
+  l_ipaddr:PAnsiChar;
+begin
+  if (editIPaddr.Text<>'') then
+  begin
+    l_ipaddr:=pchar(editIPaddr.Text);
+    editMAC.Text:= GetMacFromIP( l_ipaddr);
+  end;
+end;
 
 end.
 

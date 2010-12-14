@@ -238,6 +238,7 @@ begin
       Comps[i].number := dts.Recordset.Fields.Item['number'].Value;
       Comps[i].ipaddr := dts.Recordset.Fields.Item['ipaddress'].Value;
       Comps[i].IdGroup := dts.Recordset.Fields.Item['idGroup'].Value;
+      Comps[i].macaddr  := dts.Recordset.Fields.Item['macaddress'].Value;
       Comps[i].GroupName := ComputerGroupsGetName(Comps[i].IdGroup);
       i := i + 1;
       dts.Recordset.MoveNext;
@@ -841,6 +842,7 @@ begin
         Comps[ComputersGetIndex(index)].control := false;
       dts.Recordset.MoveNext;
     end;
+  
     dts.Close;
     dts.Destroy;
   end;
