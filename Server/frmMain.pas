@@ -182,6 +182,7 @@ type
     mnuTimeBonus5: TMenuItem;
     mnuTimeBonus10: TMenuItem;
     mnuTimeBonus15: TMenuItem;
+    mnuWakeUp: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -289,6 +290,7 @@ type
     procedure gridCompsKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure mnuLogoutClick(Sender: TObject);
+    procedure mnuWakeUpClick(Sender: TObject);
   private
     { Private declarations }
     FTrayIcon: TNotifyIconData;
@@ -475,17 +477,6 @@ begin
 
    cdsComps.DisableControls;
    bookmark := cdsComps.Bookmark;
-{  cdsComps.Edit;
-   cdsComps.FieldValues['Selection'] := DS_SELECTION_CLICK;
-   cdsComps.First;
-   while (not cdsComps.Eof) do begin
-      if cdsComps.FieldValues['Selection'] <> DS_SELECTION_CLICK then begin
-         cdsComps.Edit;
-         cdsComps.FieldValues['Selection'] := DS_SELECTION_UNSELECTED;
-      end;
-      cdsComps.Next;
-   end;}
-
    cdsComps.First;
    while (not cdsComps.Eof) do begin
       cdsComps.Edit;
@@ -516,7 +507,6 @@ begin
    cdsComps.EnableControls;
 
   // считаем количество выделенных строк
-//  CompsSelCount := formMain.gridComps.SelectedRows.Count;
   CompsSelCount := j;
 
   DoInterfaceComps;
@@ -575,6 +565,8 @@ procedure  TformMain.RedrawListConsoleLanguage;
 begin formMain.lvConsole.Column[0].Caption := translate('lvConsoleColumn0');end;
 
 procedure TformMain.timerCompsListTimer(Sender: TObject);
+var
+  i: integer;
 begin
   if not dsConnected then
     exit;
@@ -583,6 +575,13 @@ begin
     dsControlClubTimer        // control all club
   else
     dsLoadUncontrolComputers;
+
+   // ¬ключаем выключеные компы с оплаченым временем
+  if GRegistry.Client.UseWOL then
+    for i:=0 to CompsCount-1 do
+      if (not Comps[i].control) and Comps[i].Busy then
+        WakeUPComputer(Comps[i].macaddr);
+
 
 //  ehsPingComputers;          // ping all computers
   ehsEvent5Minutes;          // event "5 minutes left"
@@ -593,6 +592,9 @@ begin
   if (GSessions <> Nil) then
     GSessions.Check;
   dmActions.actRedrawComps.Execute;
+
+
+
 end;
 
 procedure TformMain.mnuStartClick(Sender: TObject);
@@ -2089,6 +2091,15 @@ procedure TformMain.mnuLogoutClick(Sender: TObject);
 begin
   ehsLogout;
 end;
+
+procedure TformMain.mnuWakeUpClick(Sender: TObject);
+var
+  index: integer;
+begin
+  index := ComputersGetIndex(CompsSel[0]);
+  WakeUPComputer(Comps[index].macaddr);
+end;
+
 
 end.
 

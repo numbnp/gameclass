@@ -8,7 +8,7 @@ object framGC3Client: TframGC3Client
     Left = 0
     Top = 126
     Width = 443
-    Height = 110
+    Height = 131
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
@@ -16,7 +16,7 @@ object framGC3Client: TframGC3Client
       Left = 0
       Top = 0
       Width = 169
-      Height = 110
+      Height = 131
       Align = alLeft
       Caption = #1047#1072#1074#1077#1088#1096#1077#1085#1080#1077' '#1089#1077#1072#1085#1089#1072
       TabOrder = 0
@@ -86,7 +86,7 @@ object framGC3Client: TframGC3Client
       Left = 169
       Top = 0
       Width = 274
-      Height = 110
+      Height = 131
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -94,7 +94,7 @@ object framGC3Client: TframGC3Client
         Left = 0
         Top = 52
         Width = 274
-        Height = 58
+        Height = 79
         Align = alClient
         Caption = #1044#1088#1091#1075#1086#1077
         TabOrder = 0
@@ -115,6 +115,15 @@ object framGC3Client: TframGC3Client
           Caption = #1057#1085#1080#1084#1072#1090#1100' '#1079#1072#1076#1072#1095#1080' '#1087#1077#1088#1077#1076' '#1085#1072#1095#1072#1083#1086#1084' '#1089#1077#1072#1085#1089#1072
           TabOrder = 1
           OnClick = cbxTaskKillBeforeStartClick
+        end
+        object cbxUseWOL: TCheckBox
+          Left = 8
+          Top = 48
+          Width = 265
+          Height = 17
+          Caption = #1040#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080' '#1074#1082#1083#1102#1095#1072#1090#1100' '#1086#1087#1083#1072#1095#1077#1085#1099#1081' '#1082#1086#1084#1087#1100#1102#1090#1077#1088
+          TabOrder = 2
+          OnClick = cbxUseWOLClick
         end
       end
       object gbShell: TGroupBox
@@ -368,9 +377,9 @@ object framGC3Client: TframGC3Client
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 236
+    Top = 257
     Width = 443
-    Height = 167
+    Height = 146
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -378,7 +387,7 @@ object framGC3Client: TframGC3Client
       Left = 0
       Top = 0
       Width = 443
-      Height = 167
+      Height = 146
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
@@ -386,7 +395,7 @@ object framGC3Client: TframGC3Client
         Left = 0
         Top = 0
         Width = 443
-        Height = 49
+        Height = 50
         Align = alTop
         Caption = '    '
         TabOrder = 0

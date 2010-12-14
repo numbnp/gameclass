@@ -55,6 +55,7 @@ type
     cbxTaskKillBeforeStart: TCheckBox;
     pnlBottom: TPanel;
     lblDistribPath: TLabel;
+    cbxUseWOL: TCheckBox;
     procedure cbxKeyboardClick(Sender: TObject);
     procedure cbxMouseClick(Sender: TObject);
     procedure cbxTasksClick(Sender: TObject);
@@ -84,6 +85,7 @@ type
     procedure editInstallPathChange(Sender: TObject);
     procedure cbxAutoInstallClick(Sender: TObject);
     procedure cbxTaskKillBeforeStartClick(Sender: TObject);
+    procedure cbxUseWOLClick(Sender: TObject);
   private
     { Private declarations }
 //    FbUnblockPasswordNotChanged: Boolean;
@@ -192,6 +194,7 @@ begin
   editInstallPath.FileName := GRegistry.Options.InstallPath;
   cbxAutoInstall.Checked := GRegistry.Options.AutoInstall;
   cbxTaskKillBeforeStart.Checked := GRegistry.Client.TaskKillBeforeStart;
+  cbxUseWOL.Checked := GRegistry.Client.UseWOL; 
   GbFormGC3ClientLock := False;
 end;
 
@@ -504,6 +507,14 @@ begin
   if GbFormGC3ClientLock then exit;  GbFormGC3ClientLock := True;;
    GRegistry.Client.TaskKillBeforeStart := cbxTaskKillBeforeStart.Checked;
   _AfterControlDataChange;
+end;
+
+procedure TframGC3Client.cbxUseWOLClick(Sender: TObject);
+begin
+  if GbFormGC3ClientLock then exit;  GbFormGC3ClientLock := True;;
+   GRegistry.Client.UseWOL := cbxUseWOL.Checked;
+  _AfterControlDataChange;
+
 end;
 
 end.

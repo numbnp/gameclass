@@ -106,6 +106,7 @@ type
     FbIsFirstRun: Boolean;
     FstrKDEUser: String;
     FbDebugLog: Boolean;
+    FbUseWOL: Boolean;
 
     // private helper methods
     function _GetStringOption(const AstrFolder: String;
@@ -310,6 +311,10 @@ type
     // показывать кнпку "Гость"
     property GuestSession: Boolean
         read FbGuestSession write FbGuestSession;
+    // Пытаться автоматически включить оплаченый компьютер
+    property UseWOL: Boolean
+        read FbUseWOL write FbUseWOL;
+
 {    // еще не используется
     property AutoInstall: Boolean
         read FbAutoInstall write FbAutoInstall;
@@ -613,6 +618,10 @@ try
   SetTaskList(GRegistry.TaskKill.Template);
   FTaskKillMode := GRegistry.TaskKill.Mode;
   FbGuestSession := GRegistry.Client.GuestSession;
+  FbUseWOL := GRegistry.Client.UseWOL;
+
+
+
   SetDebugLog(GRegistry.Options.DebugLog);
   {$ELSE}
   FstrClientScriptFileName := _GetStringOption(
@@ -630,6 +639,9 @@ try
       OPTIONS_GENERAL_FOLDER, 'TaskKillMode', DEF_TASKKILLMODE));
   FbGuestSession := _GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'GuestSession',
+      DEF_GUEST_SESSION);
+  FbUseWOL := _GetBooleanOption(
+      OPTIONS_GENERAL_FOLDER, 'UseWOL',
       DEF_GUEST_SESSION);
   SetDebugLog(_GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'DebugLog',
@@ -719,6 +731,7 @@ try
           FbClientScriptHideWindow);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'TaskList', FlstTaskList.Text);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'GuestSession', FbGuestSession);
+      SaveOption(OPTIONS_GENERAL_FOLDER, 'UseWOL', FbUseWOL);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'TaskKillMode',
           Integer(FTaskKillMode));
       SaveOption(OPTIONS_GENERAL_FOLDER, 'DebugLog',

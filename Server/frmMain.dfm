@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 239
-  Top = 407
+  Left = 303
+  Top = 213
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -636,6 +636,10 @@ object formMain: TformMain
         object mnuShutdown: TMenuItem
           Caption = #1042#1099#1082#1083#1102#1095#1077#1085#1080#1077
           OnClick = mnuShutdownClick
+        end
+        object mnuWakeUp: TMenuItem
+          Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077
+          OnClick = mnuWakeUpClick
         end
         object mnuKillTask: TMenuItem
           Caption = #1057#1085#1103#1090#1100' '#1079#1072#1076#1072#1095#1080

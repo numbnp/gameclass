@@ -101,4 +101,78 @@ IF (EXISTS (SELECT * FROM Accounts WHERE [id] = @id AND [isdeleted] = 0)) BEGIN
 END
 GO
 
+/* -----------------------------------------------------------------------------
+	Колонки для хранения MAC-адресов компов
+----------------------------------------------------------------------------- */
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'macaddress' 
+  AND id = object_id(N'[GameClass].[dbo].[Computers]')) 
+ALTER TABLE [Computers] ADD [macaddress] [nvarchar] (17) COLLATE Cyrillic_General_CI_AS NOT NULL DEFAULT ('00-00-00-00-00-00')
+GO
 
+
+/* -----------------------------------------------------------------------------
+	Функция обновления информации о компьютере
+----------------------------------------------------------------------------- */
+
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ComputersUpdate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[ComputersUpdate]
+GO
+
+CREATE PROCEDURE ComputersUpdate
+@idComp int,
+@number int,
+@ipaddress nvarchar(15),
+@idGroup int,
+@macaddress nvarchar(17)
+/*WITH ENCRYPTION*/
+AS 
+
+set nocount on
+
+if (exists(select * from Computers where ([number]=@number or [ipaddress]=@ipaddress) and [id]<>@idComp and [isdelete]=0))
+begin
+  raiserror 50000 'Computers with these number or ip-addres already exist!'
+  return 50000
+end
+else
+  update Computers set [number]=@number, [ipaddress]=@ipaddress, [idGroup]=@idGroup, [macaddress]=@macaddress where [id]=@idComp
+GO
+
+/* -----------------------------------------------------------------------------
+	Функция добовления компьютера
+----------------------------------------------------------------------------- */
+
+
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ComputersAdd]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[ComputersAdd]
+GO
+
+
+CREATE PROCEDURE ComputersAdd
+@number int,
+@ipaddress nvarchar(15),
+@idGroup int,
+@macaddress nvarchar(17)
+/*WITH ENCRYPTION*/
+AS 
+
+set nocount on
+
+if (exists(select * from Computers where ([number]=@number or [ipaddress]=@ipaddress) and [isdelete]=0))
+begin
+  raiserror 50000 'Computers with these number or ip-addres already exist!'
+  return 50000
+end
+else
+  insert into Computers ([number], [ipaddress], [idGroup], [macaddress]) values (@number, @ipaddress, @idGroup, @macaddress)
+GO
+
+
+
+/* -----------------------------------------------------------------------------
+                               UPDATE Version
+----------------------------------------------------------------------------- */
+UPDATE Registry SET [value]='3.85.1' WHERE [key]='BaseVersion'
+GO

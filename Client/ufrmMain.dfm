@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 268
-  Top = 355
+  Left = 392
+  Top = 481
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'GameClass3 Client'
