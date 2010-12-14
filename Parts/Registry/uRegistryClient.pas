@@ -25,7 +25,9 @@ type
     function LocateTaskKillBeforeStart: Boolean;
     function GetTaskKillBeforeStart: Boolean;
     procedure SetTaskKillBeforeStart(AValue: Boolean);
-
+    function LocateUseWOL: Boolean;
+    function GetUseWOL: Boolean;
+    procedure SetUseWOL(AValue: Boolean);
 
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
@@ -40,6 +42,9 @@ type
         read GetGuestSessionTarifName write SetGuestSessionTarifName;
     property TaskKillBeforeStart: Boolean
         read GetTaskKillBeforeStart write SetTaskKillBeforeStart;
+    property UseWOL: Boolean
+        read GetUseWOL write SetUseWOL;
+
   end;
 
 implementation
@@ -47,7 +52,7 @@ implementation
 uses
   SysUtils,
   DB, uGCDataSet;
-
+  
 {*******************************************************************************
                       class  TRegistryClient
 *******************************************************************************}
@@ -129,6 +134,23 @@ end;
 procedure TRegistryClient.SetTaskKillBeforeStart(AValue: Boolean);
 begin
   LocateTaskKillBeforeStart;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryClient.LocateUseWOL: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('Client\UseWOL', '0');
+end;
+
+function TRegistryClient.GetUseWOL: Boolean;
+begin
+  LocateUseWOL;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryClient.SetUseWOL(AValue: Boolean);
+begin
+  LocateUseWOL;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 

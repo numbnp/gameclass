@@ -37,25 +37,30 @@ set DCCFlags=GCCL,ASPROTECT
 set DCCProjectPath=Client
 set DCCProjectName=gccl
 call Install\Src\Batch\compile_project.bat
+
 set DCCFlags=GCCLSRV,ASPROTECT
 set DCCProjectPath=ClientService
 set DCCProjectName=gcclsrv
 call Install\Src\Batch\compile_project.bat
+
 set DCCFlags=ASPROTECT
 set DCCProjectPath=Security\OSql
 set DCCProjectName=GCOsql
 set DCCReturnPath=..\..
 call Install\Src\Batch\compile_project.bat
+
 set DCCFlags=ASPROTECT
 set DCCProjectPath=Parts\winhkg
 set DCCProjectName=winhkg
 set DCCReturnPath=..\..
 call Install\Src\Batch\compile_project.bat
+
 set DCCFlags=ASPROTECT
 set DCCProjectPath=BackupRestore
 set DCCProjectName=GCBackupRestore
 set DCCReturnPath=..
 call Install\Src\Batch\compile_project.bat
+
 set DCCFlags=ASPROTECT
 set DCCProjectPath=Parts\ProcessSupervisor
 set DCCProjectName=ProcUtils
