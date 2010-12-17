@@ -846,19 +846,48 @@ end;
 procedure TformMain.mnuRestartClick(Sender: TObject);
 var
   index: integer;
+  bookmark: TBookmarkStr;
 begin
-  index := ComputersGetIndex(CompsSel[0]);
-  UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-      + '=' + BoolToStr(True));
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+           + '=' + BoolToStr(True));
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
 end;
+
 
 procedure TformMain.mnuShutdownClick(Sender: TObject);
 var
   index: integer;
+  bookmark: TBookmarkStr;
 begin
-  index := ComputersGetIndex(CompsSel[0]);
-  UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
 end;
+
+
 
 procedure TformMain.mnuKillTasksTemplateClick(Sender: TObject);
 var
@@ -2085,6 +2114,11 @@ begin
   if (Key=VK_UP) or (Key=VK_DOWN) or (Key=VK_HOME) or
      (Key=VK_END) or (Key=VK_PRIOR) or (Key=VK_NEXT) then
     UpdateSelectedCompList;
+  if (Key = ord('A'))  and (ssCtrl in Shift) then
+  begin
+    gridComps.SelectedRows.SelectAll;
+    UpdateSelectedCompList;
+  end;
 end;
 
 procedure TformMain.mnuLogoutClick(Sender: TObject);
@@ -2095,9 +2129,22 @@ end;
 procedure TformMain.mnuWakeUpClick(Sender: TObject);
 var
   index: integer;
+  bookmark: TBookmarkStr;
 begin
-  index := ComputersGetIndex(CompsSel[0]);
-  WakeUPComputer(Comps[index].macaddr);
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         WakeUPComputer(Comps[index].macaddr);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
 end;
 
 
