@@ -1,6 +1,6 @@
 object formCompStart: TformCompStart
-  Left = 241
-  Top = 127
+  Left = 410
+  Top = 130
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 10
@@ -17,6 +17,7 @@ object formCompStart: TformCompStart
   OldCreateOrder = False
   Position = poOwnerFormCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   DesignSize = (
     628
     402)
@@ -29,7 +30,8 @@ object formCompStart: TformCompStart
     Height = 222
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 0
+    TabOrder = 1
+    TabStop = True
     object lblDescription: TLabel
       Left = 0
       Top = 100
@@ -51,7 +53,7 @@ object formCompStart: TformCompStart
       Height = 91
       BevelOuter = bvNone
       Caption = 'pnlComputers'
-      TabOrder = 6
+      TabOrder = 4
     end
     object gbStartTime: TGroupBox
       Left = 118
@@ -133,7 +135,7 @@ object formCompStart: TformCompStart
         Format = 'd MMMM'
         Time = 37647.816879976900000000
         Enabled = False
-        TabOrder = 0
+        TabOrder = 2
         OnChange = dtpEndDateChange
       end
       object dtpEndTime: TDateTimePicker
@@ -153,7 +155,7 @@ object formCompStart: TformCompStart
         Font.Style = []
         Kind = dtkTime
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 3
         OnChange = dtpEndTimeChange
       end
       object butEndTimeMinutes: TButton
@@ -163,7 +165,7 @@ object formCompStart: TformCompStart
         Height = 18
         Caption = 'min'
         PopupMenu = popupTimeMinuts
-        TabOrder = 2
+        TabOrder = 0
         OnMouseDown = butEndTimeMinutesMouseDown
       end
       object butEndTimeHours: TButton
@@ -173,7 +175,7 @@ object formCompStart: TformCompStart
         Height = 18
         Caption = 'hour'
         PopupMenu = popupTimeHours
-        TabOrder = 3
+        TabOrder = 1
         OnMouseDown = butTimeHoursMouseDown
       end
     end
@@ -183,7 +185,7 @@ object formCompStart: TformCompStart
       Width = 87
       Height = 17
       Caption = #1047#1072#1082#1086#1085#1095#1080#1090#1100' '#1074
-      TabOrder = 9
+      TabOrder = 6
       OnKeyUp = cbEndTimeModeKeyUp
       OnMouseUp = cbEndTimeModeMouseUp
     end
@@ -192,7 +194,7 @@ object formCompStart: TformCompStart
       Top = 116
       Width = 428
       Height = 21
-      TabOrder = 10
+      TabOrder = 5
       OnChange = editDescriptionChange
     end
     object lvTarifs: TListView
@@ -212,6 +214,7 @@ object formCompStart: TformCompStart
       TabOrder = 1
       ViewStyle = vsReport
       OnClick = lvTarifsClick
+      OnKeyPress = lvTarifsKeyPress
     end
     object cbPostPay: TCheckBox
       Left = 438
@@ -219,7 +222,7 @@ object formCompStart: TformCompStart
       Width = 150
       Height = 14
       Caption = 'Pay after job'
-      TabOrder = 2
+      TabOrder = 9
       OnKeyUp = cbPostPayKeyUp
       OnMouseUp = cbPostPayMouseUp
     end
@@ -229,7 +232,7 @@ object formCompStart: TformCompStart
       Width = 75
       Height = 25
       Caption = 'Cancel'
-      TabOrder = 5
+      TabOrder = 2
       OnClick = butCancelClick
     end
     object butOk: TButton
@@ -239,7 +242,7 @@ object formCompStart: TformCompStart
       Height = 25
       Caption = 'OK'
       Default = True
-      TabOrder = 4
+      TabOrder = 3
       OnClick = butOkClick
     end
     object cbReserve: TCheckBox
@@ -248,7 +251,7 @@ object formCompStart: TformCompStart
       Width = 118
       Height = 17
       Caption = 'Reserve'
-      TabOrder = 3
+      TabOrder = 10
       OnKeyUp = cbReserveKeyUp
       OnMouseUp = cbReserveMouseUp
     end
@@ -333,6 +336,7 @@ object formCompStart: TformCompStart
             TabOrder = 0
             OnChange = editMoneyChange
             OnClick = editMoneyClick
+            OnKeyUp = editMoneyKeyUp
           end
         end
         object pnlTimeLength: TPanel
@@ -358,6 +362,7 @@ object formCompStart: TformCompStart
             Caption = 'hour'
             PopupMenu = popupTimeLengthHours
             TabOrder = 0
+            TabStop = False
             OnClick = butTimeLengthHoursClick
             OnMouseDown = butTimeLengthHoursMouseDown
           end
@@ -368,7 +373,8 @@ object formCompStart: TformCompStart
             Height = 20
             Caption = 'min'
             PopupMenu = popupTimeLengthMinuts
-            TabOrder = 2
+            TabOrder = 1
+            TabStop = False
             OnClick = butTimeLengthMinutesClick
             OnMouseDown = butTimeLengthMinutesMouseDown
           end
@@ -388,7 +394,8 @@ object formCompStart: TformCompStart
             Font.Style = []
             Kind = dtkTime
             ParentFont = False
-            TabOrder = 1
+            TabOrder = 2
+            TabStop = False
             OnChange = dtpTimeLengthChange
             OnEnter = dtpTimeLengthClick
           end
@@ -421,7 +428,7 @@ object formCompStart: TformCompStart
     Height = 49
     Anchors = [akTop, akRight]
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
     object radio12Hours: TRadioButton
       Left = 3
       Top = 0

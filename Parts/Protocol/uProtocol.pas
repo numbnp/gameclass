@@ -142,7 +142,7 @@ const
 
   // команды для изменения настроек клиента
   // передать параметр/значение
-  STR_CMD_OPTION_SET                 = 'option_set';
+  STR_CMD_OPTION_SET                = 'option_set';
   // запросить параметр или 'all' - все параметры
   STR_CMD_OPTION_GET                = 'option_get';
 
