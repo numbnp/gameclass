@@ -1024,6 +1024,7 @@ begin
     strData := TrimLeft(TrimRight(DataStringStream.DataString));
     // распаковываем пакет
     UnWrapProtocol(strData, @protocol, @cmd, @param);
+     
     if (ABinding.PeerIP = GRegistry.Options.UnixServerIP)
         and (protocol = PROTOCOL_V01) then begin
     //Здесь обработка линксовых пакетов
@@ -1206,6 +1207,7 @@ begin
 
       if (cmd = STR_CMD_AUTH_QUERYTARIFS_2) then begin
         rettarifs := '';
+        if Comps[index].a.state <> ClientState_Authentication then
         if GAccountSystem.Accounts[Comps[index].a.number].IsTarifsLimit then
           begin
             iUserLevel:=GAccountSystem.Accounts[Comps[index].a.number].UserLevel;

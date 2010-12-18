@@ -362,8 +362,9 @@ begin
 
   formMain.mnuKillTask.Enabled := (CompsSelCount=1) and FunctionAmIRight(FN_REMOTE_TASKS_KILLING) and (Not isManager);
   formMain.mnuKillTasksTemplate.Enabled := (CompsSelCount=1) and FunctionAmIRight(FN_REMOTE_TASKS_KILLING) and (Not isManager);
-  formMain.mnuShutdown.Enabled := (CompsSelCount=1) and (Not isManager);
-  formMain.mnuRestart.Enabled := (CompsSelCount=1) and (Not isManager);
+  formMain.mnuShutdown.Enabled := (CompsSelCount>0) and (Not isManager);
+  formMain.mnuWakeUp.Enabled := (CompsSelCount>0) and (Not isManager);
+  formMain.mnuRestart.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompReset.Enabled := formMain.mnuRestart.Enabled;
   result := FunctionAmIRight(FN_VOLUME) and (Not isManager);
   formMain.mnuVolumes.Enabled := result;
