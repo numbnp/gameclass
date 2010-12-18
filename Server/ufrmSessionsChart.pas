@@ -297,7 +297,7 @@ var
 begin
   if ( Sender = chartComps.LeftAxis ) then
     try
-      nIndex := StrToInt(LabelText);
+      nIndex := StrToint(LabelText);
       if (nIndex>=0) and (nIndex<CompsCount) then
         LabelText := IntToStr(Comps[nIndex].number);
     except;

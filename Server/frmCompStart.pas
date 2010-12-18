@@ -170,6 +170,11 @@ type
     procedure frameSessionsChart1chartCompsClickSeries(
       Sender: TCustomChart; Series: TChartSeries; ValueIndex: Integer;
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure FormShow(Sender: TObject);
+    procedure editMoneyKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+
+    procedure lvTarifsKeyPress(Sender: TObject; var Key: Char);
 
   private
     FfrmComputers: TfrmComputers;
@@ -179,6 +184,7 @@ type
     FSavedValue: string;
     FCanceledReserveSession: TGCSession;
     FDesignedSession: TGCSession;
+    ReserveEditSumm: string;
     procedure UpdateInformation;
     procedure DoDesign(AbSetFocus: Boolean);
     procedure DoDesignSessionChart;
@@ -281,6 +287,7 @@ begin
   butOk.Enabled := false;
   editMoney.Enabled := True;
 
+
   if (FDesignedSession <> nil) then
     FDesignedSession.Destroy;
   FDesignedSession := GCSessions.TGCSession.Create;
@@ -328,6 +335,7 @@ begin
 //  timerFrmCompStartTimer(Sender);
   timerFrmCompStart.Enabled := true;
   editMoney.Text := '';
+
 {  frameSessionsChart1.DoDesign;
   frameSessionsChart1.Activate;
   frameSessionsChart1.Invalidate;
@@ -340,11 +348,13 @@ begin
       or (GRegistry.UserInterface.HideSessionChartWithoutReserve
       and not cbReserve.Checked) then begin
     FfrmSessionsChart.Visible := False;
+    pnlTop.Visible := False;
     pnlScale.Visible := False;
     Width := 660;
     Height := 273;
   end else begin
     FfrmSessionsChart.Visible := True;
+    pnlTop.Visible := True;
     pnlScale.Visible := True;
     Width := 660;
     Height := 495;
@@ -477,6 +487,8 @@ var
   dtMaxStop: TDateTime;
   d1,d2,d3,d4: Integer;
 begin
+  if not dsConnected then
+    exit;
 //init session   кроме тарифа
   FDesignedSession.IdComp := CompsSel[0];
   FDesignedSession.PostPay := False;
@@ -609,6 +621,7 @@ begin
   CopyDataToGSessions;
   FfrmSessionsChart.StartTime := GetVirtualTime ;
   FfrmSessionsChart.StopTime := IncHour(GetVirtualTime,FnHoursInterval);
+
   FfrmSessionsChart.UpdateData;
 end;
 
@@ -623,6 +636,7 @@ procedure TformCompStart.lvTarifsClick(Sender: TObject);
 var
   Whole: TTarifVariants;
 begin
+//  editMoney.Text := ReserveEditSumm;
   if (lvTarifs.ItemIndex = -1) then exit;
   if (lvTarifs.Items[lvTarifs.ItemIndex].Data = nil) then begin
     FState := FState - [PacketTarif] - [FreePacketTarif];
@@ -634,6 +648,9 @@ begin
     timerFrmCompStartTimer(Sender);
   end
   else begin
+
+
+  
     Whole := lvTarifs.Items[lvTarifs.ItemIndex].Data;
     if (Whole.FreePacket) then
       FState := FState + [FreePacketTarif] - [PacketTarif]
@@ -666,6 +683,7 @@ end;
 
 procedure TformCompStart.DoDesign(AbSetFocus: Boolean);
 begin
+// editMoney.SetFocus;
   pnlHideTotalCost.Visible := (CompsSelCount <= 1);
   cbReserve.Checked := (Reserve in FState);
   cbPostPay.Enabled := Not((OnlyPrePay in FState) or (Reserve in FState));
@@ -683,6 +701,7 @@ begin
       and not(FreePacketTarif in FState)
       and not(PostPay in FState);
   editMoney.Enabled := gbMoneyTimeLength.Enabled;
+  
   dtpTimeLength.Enabled := gbMoneyTimeLength.Enabled;
   butTimeLengthHours.Enabled := gbMoneyTimeLength.Enabled;
   butTimeLengthMinutes.Enabled := gbMoneyTimeLength.Enabled;
@@ -717,6 +736,7 @@ begin
   else
     FfrmSessionsChart.State := DesignStart;
   FfrmSessionsChart.DoDesign;
+
 end;
 
 procedure TformCompStart.butTimeHoursMouseDown(Sender: TObject;
@@ -1120,6 +1140,23 @@ begin
   DoDesign(False);
 end;
 
+
+procedure TformCompStart.FormShow(Sender: TObject);
+begin
+  if editMoney.Enabled then editMoney.SetFocus;
+//  ReserveEditSumm := '';
+end;
+
+procedure TformCompStart.editMoneyKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ // ReserveEditSumm := editMoney.Text;
+end;
+
+procedure TformCompStart.lvTarifsKeyPress(Sender: TObject; var Key: Char);
+begin
+  lvTarifsClick(Sender);
+end;
 
 end.
 
