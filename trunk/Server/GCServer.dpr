@@ -177,7 +177,8 @@ uses
   uframeDiscounts in 'uframeDiscounts.pas' {frameDiscounts: TFrame},
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
   uCommon in '..\Parts\Common\uCommon.pas',
-  uFileInfo in '..\Parts\FileTools\uFileInfo.pas';
+  uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
+  SynHighlighterSQL in '..\Parts\Reports\SynHighlighterSQL.pas';
 
 {$R *.res}
 
@@ -223,7 +224,6 @@ begin
   Application.CreateForm(TformCompStart, formCompStart);
   Application.CreateForm(TformCompStop, formCompStop);
   Application.CreateForm(TfrmVolume, frmVolume);
-
   Application.Run;
 
   FreeAndNilWithAssert(Debug);

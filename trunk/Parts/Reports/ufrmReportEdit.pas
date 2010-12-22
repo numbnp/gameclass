@@ -23,7 +23,7 @@ uses
   uReportCommon,
   uReport,
   uReportColumn,
-  ufrmReport, RXSpin, ComCtrls;
+  ufrmReport, RXSpin, ComCtrls, Menus;
 
 
 type
@@ -53,6 +53,10 @@ type
     tabCode: TTabSheet;
     tabDescription: TTabSheet;
     redtDescription: TRichEdit;
+    PopupMenuEdit: TPopupMenu;
+    mnuCopy: TMenuItem;
+    mnuCut: TMenuItem;
+    mnuPaste: TMenuItem;
     procedure lbxColumnsNamesClick(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
     procedure ColumnsValueListEditorStringsChange(Sender: TObject);
@@ -60,6 +64,9 @@ type
       Y: Integer; State: TDragState; var Accept: Boolean);
     procedure lbxColumnsNamesDragDrop(Sender, Source: TObject; X,
       Y: Integer);
+    procedure mnuCutClick(Sender: TObject);
+    procedure mnuCopyClick(Sender: TObject);
+    procedure mnuPasteClick(Sender: TObject);
 
   private
     // class constants
@@ -523,7 +530,7 @@ begin
   end else if AReportColumn.ChartRole = ChartRole_Y then begin
     ColumnsValueListEditor.Values[CPL_CHART_ROLE_KEY] := CPL_CHART_ROLE_Y;
   end else begin
-    ASSERT(FALSE, 'Unknown Chart Role!');
+    ASSERT(FALSE, 'U~known Chart Role!');
     ColumnsValueListEditor.Values[CPL_CHART_ROLE_KEY] := CPL_CHART_ROLE_NO;
   end;
 
@@ -627,6 +634,22 @@ begin
   end;
 end; // TfrmReportEdit._FireModifyReport
 
+procedure TfrmReportEdit.mnuCutClick(Sender: TObject);
+begin
+  inherited;
+  edtReportCode.CutToClipboard; 
+end;
 
+procedure TfrmReportEdit.mnuCopyClick(Sender: TObject);
+begin
+  inherited;
+  edtReportCode.CopyToClipboard;
+end;
+
+procedure TfrmReportEdit.mnuPasteClick(Sender: TObject);
+begin
+  inherited;
+  edtReportCode.PasteFromClipboard; 
+end;
 
 end.

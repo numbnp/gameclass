@@ -1,6 +1,6 @@
 object frmReportView: TfrmReportView
-  Left = 214
-  Top = 150
+  Left = 245
+  Top = 206
   BorderStyle = bsNone
   Caption = 'frmReportView'
   ClientHeight = 453
