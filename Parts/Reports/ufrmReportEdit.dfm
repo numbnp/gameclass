@@ -1,6 +1,6 @@
 object frmReportEdit: TfrmReportEdit
-  Left = 236
-  Top = 149
+  Left = 206
+  Top = 202
   BorderStyle = bsNone
   Caption = 'frmReportEdit'
   ClientHeight = 508
@@ -175,6 +175,7 @@ object frmReportEdit: TfrmReportEdit
         Font.Height = -13
         Font.Name = 'Courier New'
         Font.Style = []
+        PopupMenu = PopupMenuEdit
         TabOrder = 0
         Gutter.Font.Charset = DEFAULT_CHARSET
         Gutter.Font.Color = clWindowText
@@ -204,5 +205,24 @@ object frmReportEdit: TfrmReportEdit
     SQLDialect = sqlStandard
     Left = 296
     Top = 80
+  end
+  object PopupMenuEdit: TPopupMenu
+    Left = 396
+    Top = 73
+    object mnuCut: TMenuItem
+      Caption = 'Cut'
+      ShortCut = 16472
+      OnClick = mnuCutClick
+    end
+    object mnuCopy: TMenuItem
+      Caption = 'Copy'
+      ShortCut = 16451
+      OnClick = mnuCopyClick
+    end
+    object mnuPaste: TMenuItem
+      Caption = 'Paste'
+      ShortCut = 16470
+      OnClick = mnuPasteClick
+    end
   end
 end

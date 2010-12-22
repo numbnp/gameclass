@@ -363,9 +363,11 @@ begin
   formMain.mnuKillTask.Enabled := (CompsSelCount=1) and FunctionAmIRight(FN_REMOTE_TASKS_KILLING) and (Not isManager);
   formMain.mnuKillTasksTemplate.Enabled := (CompsSelCount=1) and FunctionAmIRight(FN_REMOTE_TASKS_KILLING) and (Not isManager);
   formMain.mnuShutdown.Enabled := (CompsSelCount>0) and (Not isManager);
+  formMain.tbCompShutdown.Enabled := formMain.mnuShutdown.Enabled;
   formMain.mnuWakeUp.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.mnuRestart.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompReset.Enabled := formMain.mnuRestart.Enabled;
+
   result := FunctionAmIRight(FN_VOLUME) and (Not isManager);
   formMain.mnuVolumes.Enabled := result;
   formMain.mnuCompVolume.Enabled := result;
@@ -412,6 +414,7 @@ begin
       and firstComputer.IsFree
       and (firstComputer.a.state = ClientState_Blocked);
   FunctionEnable(FN_REMONT_1, bOneSelected and firstComputer.IsFree);
+  FunctionEnable(FN_TIMEBONUS, bOneSelected and (not firstComputer.IsFree));
   FunctionEnable(FN_REMONT_LONG, bOneSelected and firstComputer.IsFree);
   FunctionEnable(FN_MANUAL_PRINT, bOneSelected and firstComputer.Busy);
   FunctionEnable(FN_PENALTY, bOneSelected and firstComputer.Busy

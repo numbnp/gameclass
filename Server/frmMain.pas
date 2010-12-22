@@ -183,6 +183,10 @@ type
     mnuTimeBonus10: TMenuItem;
     mnuTimeBonus15: TMenuItem;
     mnuWakeUp: TMenuItem;
+    tbCompShutdown: TToolButton;
+    PopupMenuShutdown: TPopupMenu;
+    cmnShutdownAll: TMenuItem;
+    cmnShutdownFree: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -291,6 +295,11 @@ type
       Shift: TShiftState);
     procedure mnuLogoutClick(Sender: TObject);
     procedure mnuWakeUpClick(Sender: TObject);
+    procedure gridCompsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure tbCompShutdownClick(Sender: TObject);
+    procedure cmnShutdownAllClick(Sender: TObject);
+    procedure cmnShutdownFreeClick(Sender: TObject);
   private
     { Private declarations }
     FTrayIcon: TNotifyIconData;
@@ -538,6 +547,8 @@ begin
   tbCompStop.Caption := translate('tbStop');
   tbCompMove.Caption := translate('tbMove');
   tbSideline.Caption := translate('Sideline');
+  tbCompReset.Caption := translate('mnuRestart');
+  tbCompShutdown.Caption := translate('mnuShutdown');
 //  tbCurrentReport.Caption := translate('tbCurrent');
   PageControl.Pages[0].Caption := translate('Computers');
   PageControl.Pages[1].Caption := translate('Reports');
@@ -576,12 +587,17 @@ begin
   else
     dsLoadUncontrolComputers;
 
+  if not dsConnected then    // Проверяем подключение к базе для
+    exit;                    // для стабильности
+
    // Включаем выключеные компы с оплаченым временем
   if GRegistry.Client.UseWOL then
     for i:=0 to CompsCount-1 do
       if (not Comps[i].control) and Comps[i].Busy then
         WakeUPComputer(Comps[i].macaddr);
 
+  if not dsConnected then    // Проверяем подключение к базе для
+    exit;                    // для стабильности
 
 //  ehsPingComputers;          // ping all computers
   ehsEvent5Minutes;          // event "5 minutes left"
@@ -589,11 +605,13 @@ begin
  {
   if Not isManager then
     PrinterScan;      }
+
+  if not dsConnected then    // Проверяем подключение к базе для
+    exit;                    // для стабильности
+
   if (GSessions <> Nil) then
     GSessions.Check;
   dmActions.actRedrawComps.Execute;
-
-
 
 end;
 
@@ -1762,6 +1780,8 @@ end;
 procedure TformMain.gridCompsContextPopup(Sender: TObject;
   MousePos: TPoint; var Handled: Boolean);
 begin
+   if cdsComps.FieldValues['Selection'] = DS_SELECTION_UNSELECTED then
+    gridComps.SelectedRows.Clear;
    formMain.gridCompsCellClick(Nil);
 end;
 
@@ -1789,6 +1809,7 @@ end;
 procedure TformMain.mnuPenalty1Click(Sender: TObject);
 begin
   GnMinPenalty := 1;
+
   DoEvent(FN_PENALTY);
 end;
 
@@ -2149,6 +2170,35 @@ begin
    cdsComps.EnableControls;
 end;
 
+
+procedure TformMain.gridCompsMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ // if mbRight = Button then gridComps.SelectedRows.Clear;  
+end;
+
+procedure TformMain.tbCompShutdownClick(Sender: TObject);
+begin
+  mnuShutdownClick(nil);
+end;
+
+procedure TformMain.cmnShutdownAllClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+
+end;
+
+procedure TformMain.cmnShutdownFreeClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    if not Comps[index].Busy then
+      UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+end;
 
 end.
 
