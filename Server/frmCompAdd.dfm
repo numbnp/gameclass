@@ -17,6 +17,7 @@ object formCompAdd: TformCompAdd
   OldCreateOrder = False
   Position = poOwnerFormCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
