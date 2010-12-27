@@ -23,6 +23,7 @@ type
     gbServiceOptions: TGroupBox;
     cbxServiceByPrepay: TCheckBox;
     cbxServiceByPostpay: TCheckBox;
+    cbxServiceNoClose: TCheckBox;
     procedure lvSidelineClick(Sender: TObject);
     procedure editGoodsChange(Sender: TObject);
     procedure editPriceChange(Sender: TObject);
@@ -31,6 +32,7 @@ type
     procedure butUpdateClick(Sender: TObject);
     procedure cbxServiceByPrepayClick(Sender: TObject);
     procedure cbxServiceByPostpayClick(Sender: TObject);
+    procedure cbxServiceNoCloseClick(Sender: TObject);
   private
     { Private declarations }
     procedure ResetFrame;
@@ -101,6 +103,7 @@ begin
 
   cbxServiceByPrepay.Checked := GRegistry.Options.ServiceByPrepay;
   cbxServiceByPostpay.Checked := GRegistry.Options.ServiceByPostpay;
+  cbxServiceNoClose.Checked := GRegistry.Options.ServiceNoClose;
 
   UpdateInformation;
 end;
@@ -180,6 +183,11 @@ end;
 procedure TframSideline.cbxServiceByPostpayClick(Sender: TObject);
 begin
   GRegistry.Options.ServiceByPostpay := cbxServiceByPostpay.Checked;
+end;
+
+procedure TframSideline.cbxServiceNoCloseClick(Sender: TObject);
+begin
+  GRegistry.Options.ServiceNoClose := cbxServiceNoClose.Checked;
 end;
 
 end.

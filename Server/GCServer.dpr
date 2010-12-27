@@ -178,7 +178,9 @@ uses
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
   uCommon in '..\Parts\Common\uCommon.pas',
   uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
-  SynHighlighterSQL in '..\Parts\Reports\SynHighlighterSQL.pas';
+  SynHighlighterSQL in '..\Parts\Reports\SynHighlighterSQL.pas',
+  Grids,
+  ufrmOperatorOpt in 'ufrmOperatorOpt.pas' {frmOperatorOpt};
 
 {$R *.res}
 
@@ -224,6 +226,7 @@ begin
   Application.CreateForm(TformCompStart, formCompStart);
   Application.CreateForm(TformCompStop, formCompStop);
   Application.CreateForm(TfrmVolume, frmVolume);
+  Application.CreateForm(TfrmOperatorOpt, frmOperatorOpt);
   Application.Run;
 
   FreeAndNilWithAssert(Debug);

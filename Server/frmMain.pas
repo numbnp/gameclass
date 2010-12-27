@@ -49,7 +49,9 @@ uses
   bsPolyglotUn,
   udmActions,
   ufrmReports,
-  udmMain;
+  udmMain,
+  Graphics, XPMan,
+  ufrmOperatorOpt;
 
 type
   TformMain = class(TForm)
@@ -187,6 +189,17 @@ type
     PopupMenuShutdown: TPopupMenu;
     cmnShutdownAll: TMenuItem;
     cmnShutdownFree: TMenuItem;
+    ToolButton2: TToolButton;
+    tbCompWakeUp: TToolButton;
+    tbCompLogoff: TToolButton;
+    PopupMenuReset: TPopupMenu;
+    cmnResetAll: TMenuItem;
+    cmnResetFree: TMenuItem;
+    PopupMenuWakeup: TPopupMenu;
+    cmnWakeupAll: TMenuItem;
+    cmnWakeFree: TMenuItem;
+    cmnWakeupNoFree: TMenuItem;
+    mnuTableOpt: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -300,6 +313,16 @@ type
     procedure tbCompShutdownClick(Sender: TObject);
     procedure cmnShutdownAllClick(Sender: TObject);
     procedure cmnShutdownFreeClick(Sender: TObject);
+    procedure tbCompWakeUpClick(Sender: TObject);
+    procedure cmnResetAllClick(Sender: TObject);
+    procedure cmnResetFreeClick(Sender: TObject);
+    procedure cmnWakeupAllClick(Sender: TObject);
+    procedure cmnWakeFreeClick(Sender: TObject);
+    procedure cmnWakeupNoFreeClick(Sender: TObject);
+    procedure gridCompsGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure mnuTableOptClick(Sender: TObject);
+
   private
     { Private declarations }
     FTrayIcon: TNotifyIconData;
@@ -540,6 +563,9 @@ procedure TformMain.RedrawLanguage;
 begin
   // call for every components
   MenuRecursive(nil);
+  MenuRecursive(PopupMenuShutdown.Items);
+  MenuRecursive(PopupMenuReset.Items);
+  MenuRecursive(PopupMenuWakeup.Items);
   RedrawListCompsLanguage;
   RedrawListConsoleLanguage;
   tbCompStart.Caption := translate('tbStart');
@@ -549,6 +575,7 @@ begin
   tbSideline.Caption := translate('Sideline');
   tbCompReset.Caption := translate('mnuRestart');
   tbCompShutdown.Caption := translate('mnuShutdown');
+  tbCompWakeUp.Caption := translate('mnuWakeUp');
 //  tbCurrentReport.Caption := translate('tbCurrent');
   PageControl.Pages[0].Caption := translate('Computers');
   PageControl.Pages[1].Caption := translate('Reports');
@@ -599,7 +626,7 @@ begin
   if not dsConnected then    // Проверяем подключение к базе для
     exit;                    // для стабильности
 
-//  ehsPingComputers;          // ping all computers
+//  ehsPingComputers;        // ping all computers
   ehsEvent5Minutes;          // event "5 minutes left"
   ehsAutoKillTasksAfterStop; // после N секунд, если компьютер не заняли
  {
@@ -609,10 +636,16 @@ begin
   if not dsConnected then    // Проверяем подключение к базе для
     exit;                    // для стабильности
 
-  if (GSessions <> Nil) then
+  if (GSessions <> Nil) then // Обновление информации о сессия
     GSessions.Check;
-  dmActions.actRedrawComps.Execute;
 
+  if GRegistry.Options.ReserveAutoActivate then     // Автоактивация брони
+    for i:=0 to CompsCount-1 do
+      if (Comps[i].session <> nil) then
+        if Comps[i].session.Status = ssReserve then
+          ReserveActivate(Comps[i].session);
+
+  dmActions.actRedrawComps.Execute;
 end;
 
 procedure TformMain.mnuStartClick(Sender: TObject);
@@ -624,7 +657,8 @@ end;
 procedure TformMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 {$IFOPT D-}
-  if (MessageBox(HWND_TOP,'Are you sure on to exit?',FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then
+  if (MessageBox(HWND_TOP,'Are you sure on to exit?',FORM_MAIN_CAPTION,MB_YESNO
+    or MB_ICONQUESTION) <> IDYES) then
   begin
     Action := caNone;
     exit;
@@ -1893,7 +1927,7 @@ begin
           [loCaseInsensitive	]);
   end;
 
-  if Key=VK_RETURN then
+  if (Key=VK_RETURN) or (Key=VK_ADD) then
     if mnuAdd.Enabled then
       begin
         UpdateSelectedCompList;
@@ -1903,7 +1937,14 @@ begin
       begin
         UpdateSelectedCompList;
         DoEvent(FN_COMP_START);
-      end
+      end;
+
+   if (Key=VK_SUBTRACT) then
+    begin
+      UpdateSelectedCompList;
+      DoEvent(FN_COMP_STOP);
+    end
+
 
 {  if (Shift=[ssCtrl]) and (Key=Ord('U')) then
     mnuInstallClick(Sender);}
@@ -1968,7 +2009,6 @@ procedure TformMain.frameMessagesbtnSendClick(Sender: TObject);
 begin
   frameMessages.btnSendClick(Sender);
   frameMessages.edtMessage.Text := '';
-
 end;
 
 procedure TformMain.Edit1Change(Sender: TObject);
@@ -2161,8 +2201,8 @@ begin
    while (not cdsComps.Eof) do begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
-         index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         WakeUPComputer(Comps[index].macaddr);
+        index := ComputersGetIndex(cdsComps.FieldValues['id']);
+        WakeUPComputer(Comps[index].macaddr);
       end;
       cdsComps.Next;
    end;
@@ -2196,8 +2236,89 @@ var
   index : integer;
 begin
   for index := 0 to CompsCount-1 do
-    if not Comps[index].Busy then
+    if Comps[index].IsFree then
       UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+end;
+
+procedure TformMain.tbCompWakeUpClick(Sender: TObject);
+begin
+  mnuWakeUpClick(Nil);
+end;
+
+procedure TformMain.cmnResetAllClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    UDPSend(Comps[index].ipaddr,STR_CMD_RESTART);
+end;
+
+procedure TformMain.cmnResetFreeClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    if Comps[index].IsFree then
+      UDPSend(Comps[index].ipaddr,STR_CMD_RESTART);
+end;
+
+procedure TformMain.cmnWakeupAllClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    WakeUPComputer(Comps[index].macaddr);
+end;
+
+procedure TformMain.cmnWakeFreeClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    if Comps[index].IsFree then
+      WakeUPComputer(Comps[index].macaddr);
+end;
+
+procedure TformMain.cmnWakeupNoFreeClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    if not Comps[index].IsFree then
+      WakeUPComputer(Comps[index].macaddr);
+end;
+
+procedure TformMain.gridCompsGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+var
+  tmp_value:string;
+begin
+  try
+    tmp_value := cdsComps.FieldByName('SysState').Value;
+  except
+    tmp_value := '';
+  end;
+  if tmp_value = 'Blocked' then
+    AFont.Assign( GRegistry.UserInterface.BlockedFont);
+  if tmp_value = 'notBusy' then
+    AFont.Assign( GRegistry.UserInterface.NotBusyFont);
+  if tmp_value = 'Authenticated' then
+    AFont.Assign( GRegistry.UserInterface.AuthenticatedFont);
+  if tmp_value = 'Reserve' then
+    AFont.Assign( GRegistry.UserInterface.ReserveFont);
+  if tmp_value = 'Accupied' then
+    AFont.Assign( GRegistry.UserInterface.AccupiedFont);
+  if tmp_value = 'Prevented'then
+    AFont.Assign( GRegistry.UserInterface.PreventedFont);
+
+end;
+
+procedure TformMain.mnuTableOptClick(Sender: TObject);
+begin
+  Application.CreateForm(TfrmOperatorOpt, frmOperatorOpt);
+  frmOperatorOpt.ShowModal;
+  frmOperatorOpt.Destroy;
 end;
 
 end.

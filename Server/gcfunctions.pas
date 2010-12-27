@@ -85,6 +85,7 @@ procedure ehsChangeTarif;
 procedure dsLoadSessions;
 procedure ehsManualRemoteInstall;
 procedure ehsReserveActivate;
+procedure ReserveActivate(ASession: TGCSession);
 procedure ehsReserveCancel;
 procedure ReserveCancel(ASession: TGCSession);
 
@@ -96,6 +97,8 @@ procedure PingComputer(const AnComputerIndex: Integer);
 function WrapProtocol(sdata: string): string;
 procedure UnWrapProtocol(sdata: string; protocol, cmd, param: pstring);
 function IsTimeOff: Boolean;
+
+function SystemErrorMessage: string;
 
 type
 
@@ -364,6 +367,8 @@ begin
   formMain.mnuKillTasksTemplate.Enabled := (CompsSelCount=1) and FunctionAmIRight(FN_REMOTE_TASKS_KILLING) and (Not isManager);
   formMain.mnuShutdown.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompShutdown.Enabled := formMain.mnuShutdown.Enabled;
+  formMain.tbCompWakeUp.Enabled := formMain.mnuShutdown.Enabled;
+  formMain.tbCompLogoff.Enabled := formMain.mnuShutdown.Enabled;
   formMain.mnuWakeUp.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.mnuRestart.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompReset.Enabled := formMain.mnuRestart.Enabled;
@@ -611,6 +616,7 @@ begin
             STR_CMD_GETEXTENDEDINFO);
     formMain.mnuColor.Enabled := True;
     formMain.mnuFont.Enabled := True;
+    formMain.mnuTableOpt.Enabled := True;
     if bNeedShowTrial then
       ShowTrialWarning;
     if (FunctionAmIRight(FN_REMOTE_CONTROL)
@@ -724,6 +730,7 @@ begin
   isManager := false;
   formMain.mnuColor.Enabled := False;
   formMain.mnuFont.Enabled := False;
+  formMain.mnuTableOpt.Enabled := False;
   KKMPluginStop;
 end;
 
@@ -756,6 +763,9 @@ begin
  traLang := 2;
  GCCommonRegistryWriteInt('Lng',traLang);
  MenuRecursive(nil);
+ MenuRecursive(formMain.PopupMenuShutdown.Items);
+ MenuRecursive(formMain.PopupMenuReset.Items);
+ MenuRecursive(formMain.PopupMenuWakeup.Items);
  formMain.RedrawLanguage;
 end;
 
@@ -763,8 +773,11 @@ end;
 procedure ehsLangEnglish;
 begin
  traLang := 1;
- GCCommonRegistryWriteInt('Lng',traLang); 
+ GCCommonRegistryWriteInt('Lng',traLang);
  MenuRecursive(nil);
+ MenuRecursive(formMain.PopupMenuShutdown.Items);
+ MenuRecursive(formMain.PopupMenuReset.Items);
+ MenuRecursive(formMain.PopupMenuWakeup.Items);
  formMain.RedrawLanguage;
 end;
 
@@ -811,19 +824,34 @@ begin
       if (not Comps[i].busy) then
       begin
          if(Comps[i].a.state = ClientState_Blocked) then
-            formMain.cdsComps.FieldValues['State'] := translate('Blocked');
+            formMain.cdsComps.FieldValues['SysState'] := 'Blocked';
          if(Comps[i].a.state = ClientState_Authentication) then
-            formMain.cdsComps.FieldValues['State'] := translate('notBusy');
+            formMain.cdsComps.FieldValues['SysState'] := 'notBusy';
          if(Comps[i].a.state = ClientState_Order) then
-            formMain.cdsComps.FieldValues['State'] := translate('Authenticated');
+            formMain.cdsComps.FieldValues['SysState'] := 'Authenticated';
          if(Comps[i].session <> Nil) then
-            formMain.cdsComps.FieldValues['State'] := translate('Reserve');
+            formMain.cdsComps.FieldValues['SysState'] := 'Reserve';
       end
       else
          if(Comps[i].a.state = ClientState_Session) then
-            formMain.cdsComps.FieldValues['State'] := translate('Authenticated')
+            formMain.cdsComps.FieldValues['SysState'] := 'Authenticated'
          else
-            formMain.cdsComps.FieldValues['State'] := '';
+            begin
+
+              formMain.cdsComps.FieldValues['SysState'] := 'Accupied';
+              if GClientOptions.UseTextMessage then
+                if (MinuteOf(Comps[i].session.TimeStop - GetVirtualTime) <
+                  GClientOptions.UseTextMessageMin) and
+                  (HourOf(Comps[i].session.TimeStop - GetVirtualTime) = 0)then
+                  formMain.cdsComps.FieldValues['SysState'] := 'Prevented';
+              if GClientOptions.UseBaloons then
+                if (MinuteOf(Comps[i].session.TimeStop - GetVirtualTime) <
+                  DEF_USE_TEXT_MESSAGE_MIN) and
+                  (HourOf(Comps[i].session.TimeStop - GetVirtualTime) = 0) then
+                  formMain.cdsComps.FieldValues['SysState'] := 'Prevented';
+
+            end;
+      formMain.cdsComps.FieldValues['State'] := translate(formMain.cdsComps.FieldValues['SysState']);
       formMain.cdsComps.FieldValues['Time'] := Null;
       if (Comps[i].session <> Nil) then
       begin
@@ -1583,7 +1611,6 @@ begin
 }
 end;
 
-
 procedure ehsReserveActivate;
 var
   i: integer;
@@ -1595,21 +1622,26 @@ begin
     session := Comps[ComputersGetIndex(CompsSel[i])].session;
     if (session <> Nil) then
       if (session.Status = ssReserve) then begin
-        session.Status := ssActive;
-          if GClientOptions.Agreement then
-            session.State := ClientState_OperatorAgreement
-          else
-            session.State := ClientState_OperatorSession;
-        Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-            translate('SessionActivated') + ' ' + session.ConsoleInfo);
-        session.UpdateOnDB(0, 0, 0, 0, 0, 0, 0, 0);
-        RunSessionScript(saStart, session);
-        if GRegistry.Client.TaskKillBeforeStart then
-          UDPSend(Comps[ComputersGetIndex(session.IdComp)].ipaddr,
-              STR_CMD_KILLTASK + '=');
-        SendAllOptionsToClient(ComputersGetIndex(session.IdComp));
+        ReserveActivate(session);
       end;
   end;
+end;
+
+procedure ReserveActivate(ASession: TGCSession);
+begin
+  ASession.Status := ssActive;
+  if GClientOptions.Agreement then
+    ASession.State := ClientState_OperatorAgreement
+  else
+    ASession.State := ClientState_OperatorSession;
+  Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+      translate('SessionActivated') + ' ' + ASession.ConsoleInfo);
+  ASession.UpdateOnDB(0, 0, 0, 0, 0, 0, 0, 0);
+  RunSessionScript(saStart, ASession);
+  if GRegistry.Client.TaskKillBeforeStart then
+    UDPSend(Comps[ComputersGetIndex(ASession.IdComp)].ipaddr,
+      STR_CMD_KILLTASK + '=');
+  SendAllOptionsToClient(ComputersGetIndex(ASession.IdComp));
 end;
 
 procedure ehsReserveCancel;
@@ -1818,5 +1850,25 @@ begin
         and (CompareTime(GetVirtualTime, OperatingTimeEnd) = GreaterThanValue)
         or (CompareTime(GetVirtualTime, OperatingTimeBegin) = LessThanValue);
 end;
+
+function SystemErrorMessage: string;
+var
+  P: PChar;
+begin
+  if FormatMessage(Format_Message_Allocate_Buffer + Format_Message_From_System,
+                   nil,
+                   GetLastError,
+                   0,
+                   @P,
+                   0,
+                   nil) <> 0 then
+  begin
+    Result := P;
+    LocalFree(Integer(P))
+  end
+  else
+    Result := '';
+end;
+
 
 end.

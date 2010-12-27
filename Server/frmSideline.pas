@@ -154,7 +154,7 @@ var
   nComputerIndex: Integer;
   str: String;
 begin
-  ModalResult := mrOk;
+  if not GRegistry.Options.ServiceNoClose then ModalResult := mrOk;
   if (TypeCost = stcSeparate) then begin
     nComputerIndex := StrToIntDef(cboComputerNumber.Text, -1);
     if (nComputerIndex <> -1) then
@@ -163,6 +163,16 @@ begin
   end else
     Sideline.ToSell(FnServiceId, seQuantity.Value, FTypeCost,
         Session.IdComp, Session.IdClient);
+
+  if GRegistry.Options.ServiceNoClose then
+  begin
+    cboComputerNumber.Text := '';
+    cboComputerIP.Text := '';
+    edtAccountName.Text := '';
+    editFilterCode.Text := '';
+    editMoney.Text := '';
+    seQuantity.Value := 1; 
+  end;
 end;
 
 procedure TformSideline.editFilterCodeChange(Sender: TObject);

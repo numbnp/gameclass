@@ -71,6 +71,7 @@ type
     cbxOperatingTime: TCheckBox;
     cbxEnableChangeForSeparateTraffic: TCheckBox;
     cbxDebugLog: TCheckBox;
+    cbxReserveAutoActivate: TCheckBox;
     procedure cbxPrepayOnlyClick(Sender: TObject);
     procedure rbtnPrepayClick(Sender: TObject);
     procedure rbtnPostpayClick(Sender: TObject);
@@ -97,6 +98,7 @@ type
     procedure dtpOperatingTimeEndChange(Sender: TObject);
     procedure cbxEnableChangeForSeparateTrafficClick(Sender: TObject);
     procedure cbxDebugLogClick(Sender: TObject);
+    procedure cbxReserveAutoActivateClick(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     { Private declarations }
@@ -145,6 +147,8 @@ begin
     //  and not cbxPrepayOnly.Checked;
   rbtnPrepay.Checked := not rbtnPostpay.Checked or cbxPrepayOnly.Checked;
   cbxReserveDisable.Checked := GRegistry.Options.ReserveDisable;
+  cbxReserveAutoActivate.Checked := GRegistry.Options.ReserveAutoActivate;
+  cbxReserveAutoActivate.Enabled := not cbxReserveDisable.Checked;
   cbxDisableChange.Checked := GRegistry.Options.DisableChange;
   cbxEnableChangeForPackets.Checked := GRegistry.Options.EnableChangeForPackets
       and not cbxDisableChange.Checked;
@@ -333,6 +337,7 @@ procedure TframeOptions.cbxReserveDisableClick(Sender: TObject);
 begin
   if not ControlsEnabled then exit;
   GRegistry.Options.ReserveDisable := cbxReserveDisable.Checked;
+  cbxReserveAutoActivate.Enabled := not cbxReserveDisable.Checked;
 end;
 
 procedure TframeOptions.edtOperatorIPChange(Sender: TObject);
@@ -411,6 +416,12 @@ procedure TframeOptions.cbxDebugLogClick(Sender: TObject);
 begin
   if not ControlsEnabled then exit;
   GRegistry.Options.DebugLog := cbxDebugLog.Checked;
+end;
+
+procedure TframeOptions.cbxReserveAutoActivateClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.Options.ReserveAutoActivate := cbxReserveAutoActivate.Checked;
 end;
 
 end.

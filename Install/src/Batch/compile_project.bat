@@ -6,11 +6,3 @@ cd %DCCReturnPath%
 grep Error: %DCCLogs%\%DCCProjectName%.log >>%DCCLogs%\ErrorCheck.txt
 grep Fatal: %DCCLogs%\%DCCProjectName%.log >>%DCCLogs%\ErrorCheck.txt
 echo  OK
-ech "  Compressing %DCCProjectName% ..."
-cd %DCCProjectPath%
-if exist "%DCCReturnPath%\%DCCOutput%\%DCCProjectName%.exe" upx.exe -q -9 %DCCReturnPath%\%DCCOutput%\%DCCProjectName%.exe > "%DCCReturnPath%\%DCCLogs%\compress_%DCCProjectName%.log"
-if exist "%DCCReturnPath%\%DCCOutput%\%DCCProjectName%.dll" upx.exe -q -9 %DCCReturnPath%\%DCCOutput%\%DCCProjectName%.dll > "%DCCReturnPath%\%DCCLogs%\compress_%DCCProjectName%.log"
-cd %DCCReturnPath%
-grep Error: %DCCLogs%\%DCCProjectName%.log >>%DCCLogs%\ErrorCheck.txt
-grep Fatal: %DCCLogs%\%DCCProjectName%.log >>%DCCLogs%\ErrorCheck.txt
-echo  OK

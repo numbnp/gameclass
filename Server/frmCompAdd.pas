@@ -128,6 +128,7 @@ type
     procedure dtpEndDateChange(Sender: TObject);
     procedure dtpEndTimeChange(Sender: TObject);
     procedure butTimeLengthClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FState: TFormCompAddState;
     FfrmComputers: TfrmComputers;
@@ -702,6 +703,11 @@ procedure TformCompAdd.butTimeLengthClick(Sender: TObject);
 begin
   FState := casTimeLength;
   DoDesign(True);
+end;
+
+procedure TformCompAdd.FormShow(Sender: TObject);
+begin
+  if edtMoney.Enabled then edtMoney.SetFocus;
 end;
 
 end.
