@@ -1,11 +1,11 @@
 object formSideline: TformSideline
-  Left = 206
-  Top = 181
+  Left = 430
+  Top = 100
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'formSideline'
   ClientHeight = 448
-  ClientWidth = 632
+  ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -39,9 +39,6 @@ type
     function LocateColumnWidth(AnColumnNumber: Integer): Boolean;
     function GetColumnWidth(AnColumnNumber: Integer): Integer;
     procedure SetColumnWidth(AnColumnNumber: Integer; AValue: Integer);
-    function LocateTableFont: Boolean;
-    function GetTableFont: TFont;
-    procedure SetTableFont(AValue: TFont);
     function LocateMultiActionsFullControl: Boolean;
     function GetMultiActionsFullControl: Boolean;
     procedure SetMultiActionsFullControl(AValue: Boolean);
@@ -51,6 +48,27 @@ type
     function LocateSoundGuestSession: Boolean;
     function GetSoundGuestSession: Boolean;
     procedure SetSoundGuestSession(AValue: Boolean);
+    function LocateTableFont: Boolean;
+    function GetTableFont: TFont;
+    procedure SetTableFont(AValue: TFont);
+    function LocateBlockedFont: Boolean;
+    function GetBlockedFont: TFont;
+    procedure SetBlockedFont(AValue: TFont);
+    function LocateNotBusyFont: Boolean;
+    function GetNotBusyFont: TFont;
+    procedure SetNotBusyFont(AValue: TFont);
+    function LocateAuthenticatedFont: Boolean;
+    function GetAuthenticatedFont: TFont;
+    procedure SetAuthenticatedFont(AValue: TFont);
+    function LocateReserveFont: Boolean;
+    function GetReserveFont: TFont;
+    procedure SetReserveFont(AValue: TFont);
+    function LocateAccupiedFont: Boolean;
+    function GetAccupiedFont: TFont;
+    procedure SetAccupiedFont(AValue: TFont);
+    function LocatePreventedFont: Boolean;
+    function GetPreventedFont: TFont;
+    procedure SetPreventedFont(AValue: TFont);
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
         ARegistryRecord: TRegistryRecord);
@@ -74,8 +92,6 @@ type
         read GetShowCopmTechInfo write SetShowCopmTechInfo;
     property ColumnWidth[AnColumnNumber: Integer]: Integer
         read GetColumnWidth write SetColumnWidth;
-    property TableFont: TFont
-        read GetTableFont write SetTableFont;
     property MultiActionsFullControl: Boolean
         read GetMultiActionsFullControl write SetMultiActionsFullControl;
     property HideSessionChartWithoutReserve: Boolean
@@ -83,7 +99,20 @@ type
         write SetHideSessionChartWithoutReserve;
     property SoundGuestSession: Boolean
         read GetSoundGuestSession write SetSoundGuestSession;
-
+    property TableFont: TFont
+        read GetTableFont write SetTableFont;
+    property BlockedFont: TFont
+        read GetBlockedFont write SetBlockedFont;
+    property NotBusyFont: TFont
+        read GetNotBusyFont write SetNotBusyFont;
+    property AuthenticatedFont: TFont
+        read GetAuthenticatedFont write SetAuthenticatedFont;
+    property ReserveFont: TFont
+        read GetReserveFont write SetReserveFont;
+    property AccupiedFont: TFont
+        read GetAccupiedFont write SetAccupiedFont;
+    property PreventedFont: TFont
+        read GetPreventedFont write SetPreventedFont;
   end;
 
 implementation
@@ -258,7 +287,6 @@ begin
   FRegistryRecord.ValueAsInteger := AValue;
 end;
 
-
 function TRegistryInterface.LocateTableFont: Boolean;
 begin
   Result := FRegistryDataSet.LocateByKeyWithUserName('TableFont',
@@ -277,6 +305,113 @@ begin
   FRegistryRecord.Value := FontToStr(AValue);
 end;
 
+function TRegistryInterface.LocateBlockedFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('BlockedFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetBlockedFont: TFont;
+begin
+  LocateBlockedFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetBlockedFont(AValue: TFont);
+begin
+  LocateBlockedFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
+
+function TRegistryInterface.LocateNotBusyFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('notBusyFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetNotBusyFont: TFont;
+begin
+  LocateNotBusyFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetNotBusyFont(AValue: TFont);
+begin
+  LocateNotBusyFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
+
+function TRegistryInterface.LocateAuthenticatedFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('AuthenticatedFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetAuthenticatedFont: TFont;
+begin
+  LocateAuthenticatedFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetAuthenticatedFont(AValue: TFont);
+begin
+  LocateAuthenticatedFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
+
+function TRegistryInterface.LocateReserveFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('ReserveFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetReserveFont: TFont;
+begin
+  LocateReserveFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetReserveFont(AValue: TFont);
+begin
+  LocateReserveFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
+
+function TRegistryInterface.LocateAccupiedFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('AccupiedFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetAccupiedFont: TFont;
+begin
+  LocateAccupiedFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetAccupiedFont(AValue: TFont);
+begin
+  LocateAccupiedFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
+
+function TRegistryInterface.LocatePreventedFont: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('PreventedFont',
+      FontToStr(formMain.Font));
+end;
+
+function TRegistryInterface.GetPreventedFont: TFont;
+begin
+  LocatePreventedFont;
+  Result := StrToFont(FRegistryRecord.Value);
+end;
+
+procedure TRegistryInterface.SetPreventedFont(AValue: TFont);
+begin
+  LocatePreventedFont;
+  FRegistryRecord.Value := FontToStr(AValue);
+end;
 
 function TRegistryInterface.LocateMultiActionsFullControl: Boolean;
 begin

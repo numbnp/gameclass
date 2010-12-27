@@ -64,6 +64,9 @@ type
     function LocateReserveDisable: Boolean;
     function GetReserveDisable: Boolean;
     procedure SetReserveDisable(AValue: Boolean);
+    function LocateReserveAutoActivate: Boolean;
+    function GetReserveAutoActivate: Boolean;
+    procedure SetReserveAutoActivate(AValue: Boolean);
     function LocateClientQueryTime: Boolean;
     function GetClientQueryTime: Integer;
     procedure SetClientQueryTime(AValue: Integer);
@@ -73,6 +76,9 @@ type
     function LocateServiceByPostpay: Boolean;
     function GetServiceByPostpay: Boolean;
     procedure SetServiceByPostpay(AValue: Boolean);
+    function LocateServiceNoClose: Boolean;
+    function GetServiceNoClose: Boolean;
+    procedure SetServiceNoClose(AValue: Boolean);
     function LocateOperatorIP: Boolean;
     function GetOperatorIP: String;
     procedure SetOperatorIP(AValue: String);
@@ -155,12 +161,16 @@ type
         read GetEnableInternetRemont write SetEnableInternetRemont;
     property ReserveDisable: Boolean
         read GetReserveDisable write SetReserveDisable;
+    property ReserveAutoActivate: Boolean
+        read GetReserveAutoActivate write SetReserveAutoActivate;
     property ClientQueryTime : Integer
         read GetClientQueryTime write SetClientQueryTime;
     property ServiceByPrepay: Boolean
         read GetServiceByPrepay write SetServiceByPrepay;
     property ServiceByPostpay: Boolean
         read GetServiceByPostpay write SetServiceByPostpay;
+    property ServiceNoClose: Boolean
+        read GetServiceNoClose write SetServiceNoClose;
     property OperatorIP : String
         read GetOperatorIP write SetOperatorIP;
     property OperatorPrinterControl: Boolean
@@ -490,7 +500,6 @@ begin
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
-
 function TRegistryOptions.LocateReserveDisable: Boolean;
 begin
   Result := FRegistryDataSet.LocateByKey('ReserveDisable', '0');
@@ -505,6 +514,23 @@ end;
 procedure TRegistryOptions.SetReserveDisable(AValue: Boolean);
 begin
   LocateReserveDisable;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryOptions.LocateReserveAutoActivate: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('ReserveAutoActivate', '0');
+end;
+
+function TRegistryOptions.GetReserveAutoActivate: Boolean;
+begin
+  LocateReserveAutoActivate;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetReserveAutoActivate(AValue: Boolean);
+begin
+  LocateReserveAutoActivate;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
@@ -559,6 +585,22 @@ begin
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
+function TRegistryOptions.LocateServiceNoClose: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('ServiceNoClose', '0');
+end;
+
+function TRegistryOptions.GetServiceNoClose: Boolean;
+begin
+  LocateServiceNoClose;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetServiceNoClose(AValue: Boolean);
+begin
+  LocateServiceNoClose;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
 
 function TRegistryOptions.LocateOperatorIP: Boolean;
 begin

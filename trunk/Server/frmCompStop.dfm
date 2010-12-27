@@ -182,7 +182,7 @@ object formCompStop: TformCompStop
       Height = 25
       Anchors = [akTop, akRight]
       Caption = 'Cancel'
-      TabOrder = 0
+      TabOrder = 1
       OnClick = butCancelClick
     end
     object butOk: TButton
@@ -193,7 +193,7 @@ object formCompStop: TformCompStop
       Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
-      TabOrder = 1
+      TabOrder = 0
       OnClick = butOkClick
     end
     object editResult: TAlignEdit

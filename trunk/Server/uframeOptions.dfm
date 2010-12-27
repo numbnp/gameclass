@@ -2,13 +2,13 @@ object frameOptions: TframeOptions
   Left = 0
   Top = 0
   Width = 451
-  Height = 413
+  Height = 410
   TabOrder = 0
   object gbPayment: TGroupBox
     Left = 0
     Top = 0
     Width = 451
-    Height = 217
+    Height = 225
     Align = alTop
     Caption = #1054#1087#1083#1072#1090#1072
     TabOrder = 0
@@ -16,15 +16,15 @@ object frameOptions: TframeOptions
       Left = 2
       Top = 15
       Width = 224
-      Height = 200
+      Height = 208
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object gbChange: TGroupBox
         Left = 0
-        Top = 112
+        Top = 121
         Width = 224
-        Height = 88
+        Height = 87
         Align = alClient
         Caption = #1057#1076#1072#1095#1072
         TabOrder = 0
@@ -69,15 +69,15 @@ object frameOptions: TframeOptions
         Left = 0
         Top = 0
         Width = 224
-        Height = 112
+        Height = 121
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
         object gbPaymentMode: TGroupBox
           Left = 0
           Top = 0
-          Width = 137
-          Height = 112
+          Width = 145
+          Height = 121
           Align = alLeft
           Caption = #1056#1077#1078#1080#1084' '#1088#1072#1073#1086#1090#1099
           TabOrder = 0
@@ -93,7 +93,7 @@ object frameOptions: TframeOptions
           object gbPaymentModeDefault: TGroupBox
             Left = 8
             Top = 32
-            Width = 121
+            Width = 129
             Height = 53
             Caption = #1055#1086'-'#1091#1084#1086#1083#1095#1072#1085#1080#1102
             TabOrder = 1
@@ -120,19 +120,28 @@ object frameOptions: TframeOptions
           end
           object cbxReserveDisable: TCheckBox
             Left = 8
-            Top = 90
+            Top = 88
             Width = 110
-            Height = 17
+            Height = 14
             Caption = #1047#1072#1087#1088#1077#1090#1080#1090#1100' '#1073#1088#1086#1085#1100
             TabOrder = 2
             OnClick = cbxReserveDisableClick
           end
+          object cbxReserveAutoActivate: TCheckBox
+            Left = 8
+            Top = 104
+            Width = 129
+            Height = 12
+            Caption = #1040#1074#1090#1086#1072#1082#1090#1080#1074#1072#1094#1080#1103' '#1073#1088#1086#1085#1080
+            TabOrder = 3
+            OnClick = cbxReserveAutoActivateClick
+          end
         end
         object pnlOperatingTime: TGroupBox
-          Left = 137
+          Left = 145
           Top = 0
-          Width = 87
-          Height = 112
+          Width = 79
+          Height = 121
           Align = alClient
           Caption = '          '
           TabOrder = 1
@@ -190,7 +199,7 @@ object frameOptions: TframeOptions
       Left = 226
       Top = 15
       Width = 223
-      Height = 200
+      Height = 208
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
@@ -287,7 +296,7 @@ object frameOptions: TframeOptions
         Left = 0
         Top = 153
         Width = 223
-        Height = 47
+        Height = 55
         Align = alClient
         Caption = #1042#1072#1083#1102#1090#1072
         TabOrder = 1
@@ -312,7 +321,7 @@ object frameOptions: TframeOptions
   end
   object gbOthers: TGroupBox
     Left = 0
-    Top = 217
+    Top = 225
     Width = 451
     Height = 64
     Align = alTop
@@ -346,7 +355,7 @@ object frameOptions: TframeOptions
   end
   object gbOperator: TGroupBox
     Left = 0
-    Top = 343
+    Top = 351
     Width = 451
     Height = 58
     Align = alTop
@@ -389,7 +398,7 @@ object frameOptions: TframeOptions
   end
   object Panel1: TPanel
     Left = 0
-    Top = 281
+    Top = 289
     Width = 451
     Height = 62
     Align = alTop

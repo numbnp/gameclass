@@ -1404,13 +1404,18 @@ begin
   for i := 1 To 6 do WR.Waker[i] := $FF; 
   for i := 0 to 15 do WR.MAC[i] := MacAddress; 
   // Create UDP and Broadcast data structure
-  UDP := TIdUDPClient.Create(nil);
-  UDP.Host := '255.255.255.255';
-  UDP.Port := 32767;
-  UDP.BroadCastEnabled := true;
-  UDP.SendBuffer(WR,SizeOf(TWakeRecord));
-  UDP.BroadcastEnabled := false;
-  UDP.Free;
+  try
+    UDP := TIdUDPClient.Create(nil);
+    UDP.Host := '255.255.255.255';
+    UDP.Port := 32767;
+    UDP.BroadCastEnabled := true;
+    UDP.SendBuffer(WR,SizeOf(TWakeRecord));
+  except
+    Console.AddEvent(EVENT_ICON_ERROR, LEVEL_ERROR,SystemErrorMessage + ' >> ' +
+      aMacAddress );
+  end;
+    UDP.BroadcastEnabled := false;
+    UDP.Free;
 end;
 
 initialization
