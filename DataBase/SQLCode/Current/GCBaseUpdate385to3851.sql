@@ -169,6 +169,52 @@ else
   insert into Computers ([number], [ipaddress], [idGroup], [macaddress]) values (@number, @ipaddress, @idGroup, @macaddress)
 GO
 
+/* -----------------------------------------------------------------------------
+	Обновляем функции для перехода с платной версии на бесплатную
+----------------------------------------------------------------------------- */
+
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[OnInitDatabase]') AND OBJECTPROPERTY(id,N'IsProcedure') = 1)
+DROP PROCEDURE [dbo].[OnInitDatabase]
+GO
+
+CREATE PROCEDURE OnInitDatabase
+/*WITH ENCRYPTION*/ 
+AS 
+set dateformat dmy
+
+GO
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+GRANT  EXECUTE  ON [dbo].[OnInitDatabase]  TO [public]
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS OFF 
+GO
+
+
+ALTER PROCEDURE GetLogonInfo
+@id int,
+@Value bigint
+/*WITH ENCRYPTION*/
+AS
+BEGIN
+  SET NOCOUNT ON
+    DECLARE @isManager int
+    DECLARE @idGroup int
+  
+    SET @isManager = 0
+    SET @idGroup = -1
+    SELECT @idGroup = [idUsersGroup] FROM Users WHERE ([name] = SYSTEM_USER) AND ([isdelete]=0)
+    IF (@idGroup = 2)
+      SET @isManager = 1
+    SELECT GETDATE(), CAST(@isManager AS bit)
+END
+GO
 
 
 /* -----------------------------------------------------------------------------
@@ -176,3 +222,5 @@ GO
 ----------------------------------------------------------------------------- */
 UPDATE Registry SET [value]='3.85.1' WHERE [key]='BaseVersion'
 GO
+
+
