@@ -241,6 +241,16 @@ type
     procedure btnChangePasswordOkClick(Sender: TObject);
     procedure btnChangePasswordCancelClick(Sender: TObject);
     procedure tmrOldServerWarningShowTimer(Sender: TObject);
+    procedure edtLoginKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtPasswordKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure editOldPassKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure editNewPassKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure editRepeatKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     FstrURLPath: String;
@@ -1183,6 +1193,39 @@ begin
   edtUnblockPassword.Text := '';
   pnlUnblockByPassword.Visible := True;
   tmrUnblockByPasswordHide.Enabled := True;
+end;
+
+procedure TfrmMain.edtLoginKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then  edtPassword.SetFocus;
+end;
+
+procedure TfrmMain.edtPasswordKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then butLogonClick(nil);
+end;
+
+procedure TfrmMain.editOldPassKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then  editNewPass.SetFocus;
+  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
+end;
+
+procedure TfrmMain.editNewPassKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then  editRepeat.SetFocus;
+  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
+end;
+
+procedure TfrmMain.editRepeatKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then btnChangePasswordOkClick(nil);
+  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
 end;
 
 end. ////////////////////////// end of file //////////////////////////////////

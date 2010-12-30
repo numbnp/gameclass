@@ -667,6 +667,7 @@ object frmMain: TfrmMain
               Height = 21
               MaxLength = 50
               TabOrder = 0
+              OnKeyDown = edtLoginKeyDown
             end
             object edtPassword: TEdit
               Left = 72
@@ -682,6 +683,7 @@ object frmMain: TfrmMain
               ParentFont = False
               PasswordChar = 'l'
               TabOrder = 1
+              OnKeyDown = edtPasswordKeyDown
             end
             object edtSecCode: TEdit
               Left = 214
@@ -1009,6 +1011,7 @@ object frmMain: TfrmMain
       MaxLength = 50
       PasswordChar = '*'
       TabOrder = 0
+      OnKeyDown = editOldPassKeyDown
     end
     object editNewPass: TEdit
       Left = 112
@@ -1019,6 +1022,7 @@ object frmMain: TfrmMain
       PasswordChar = '*'
       TabOrder = 1
       OnChange = editNewPassChange
+      OnKeyDown = editNewPassKeyDown
     end
     object editRepeat: TEdit
       Left = 112
@@ -1029,6 +1033,7 @@ object frmMain: TfrmMain
       PasswordChar = '*'
       TabOrder = 2
       OnChange = editNewPassChange
+      OnKeyDown = editRepeatKeyDown
     end
     object btnChangePasswordOk: TButton
       Left = 72
@@ -1226,7 +1231,7 @@ object frmMain: TfrmMain
   end
   object tmrChangePasswordHide: TTimer
     Enabled = False
-    Interval = 10000
+    Interval = 20000
     OnTimer = tmrChangePasswordHideTimer
     Left = 52
     Top = 121
