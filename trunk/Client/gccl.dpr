@@ -86,6 +86,7 @@ begin
     else
       GClientInfo.Init;
   BlockingsAndNotifications.StartChecking();
+  Application.Title := 'GCCL';
   Application.CreateForm(TfrmMain, frmMain);
   GWinhkg.SetClientHandle(frmMain.Handle);
   Application.CreateForm(TdmMain, dmMain);
