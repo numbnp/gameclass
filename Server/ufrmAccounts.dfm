@@ -1,6 +1,6 @@
 object frmAccounts: TfrmAccounts
-  Left = 392
-  Top = 193
+  Left = 557
+  Top = 471
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'

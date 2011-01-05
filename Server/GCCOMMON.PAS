@@ -122,7 +122,8 @@ Uses
   udmMain,
   uTariffication,
   uRegistration,
-  uDebugLog;
+  uDebugLog,
+  comobj;
 
 // errors
 function ProcessLastError:string;
@@ -485,17 +486,48 @@ begin
       cmd.CommandType := cmdText;
       cmd.ParamCheck := false;
       cmd.CommandText := 'exec ' + str;
-      cmd.execute;      
+      cmd.execute;
       cmd.Destroy;
       dsDoCommand := true;
     end;
   except
+    on E: EOleException do
+      Case E.ErrorCode Of
+        -2147467259: begin
+                        formMain.tmrCyclicCompAction.Enabled := false;
+                        formMain.timerCompsList.Enabled := false;
+                        formMain.tmrFileSynchronization.Enabled := false;
+                        formMain.timerGSessionsLoad.Enabled := false;
+                        // блокируем список компов, чтобы бардака не было
+                        formMain.gridComps.Enabled := False;
+                        MessageBox(HWND_TOP, PChar(translate('msgBaseConnectLost')),
+                          PChar('GameClass Error'),MB_OK or MB_ICONERROR);
+                        formMain.tmrCyclicCompAction.Enabled := true;
+                        formMain.timerCompsList.Enabled := true;
+                        ehsExit;
+                     end;
+        else
+          begin
+            ShowMessage(E.Message + ' Error code : ' + inttostr(E.ErrorCode) );
+            raise;
+          end;
+      end;
     // сперва остановим таймер, чтобы бардака не было
-    raise;
+{    formMain.tmrCyclicCompAction.Enabled := false;
+    formMain.timerCompsList.Enabled := false;
+    formMain.tmrFileSynchronization.Enabled := false;
+    formMain.timerGSessionsLoad.Enabled := false;
+    // блокируем список компов, чтобы бардака не было
+    formMain.gridComps.Enabled := False;
+    MessageBox(HWND_TOP, PChar(translate('msgBaseConnectLost')),PChar('GameClass Error'),MB_OK or MB_ICONERROR);
+    formMain.tmrCyclicCompAction.Enabled := true;
+    formMain.timerCompsList.Enabled := true; }
+//    ehsExit;
+//    raise;
     // ToDo надо вычислить ошибку потери сети и отреагировать как закоментировано ниже
 //    MessageBox(HWND_TOP, PChar(translate('msgBaseConnectLost')),PChar('GameClass Error'),MB_OK or MB_ICONERROR);
 //    ehsExit;
-  end;  
+  end;
 end;
 
 // процедура выполняет хранимую процедуру без возвращение рекордсета
@@ -798,7 +830,7 @@ function FloatToStrGC(value: double):string;
 var
   str: string;
 begin
-  str := FloatToStr(value);
+  str := FloatToStr(RoundTo(value,-3));
   FloatToStrGC := AnsiReplaceStr(str,',','.');
 end;
 

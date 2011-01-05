@@ -35,7 +35,7 @@ object frameInterface: TframeInterface
     Left = 0
     Top = 57
     Width = 445
-    Height = 56
+    Height = 72
     Align = alTop
     Caption = #1047#1072#1087#1091#1089#1082' '#1089#1077#1072#1085#1089#1072
     TabOrder = 1
@@ -56,6 +56,15 @@ object frameInterface: TframeInterface
       Caption = #1043#1088#1091#1087#1087#1086#1074#1099#1077' '#1076#1077#1081#1089#1090#1074#1080#1103' '#1090#1086#1083#1100#1082#1086' '#1076#1083#1103' '#1086#1076#1080#1085#1072#1082#1086#1074#1099#1093' '#1089#1077#1072#1085#1089#1086#1074
       TabOrder = 1
       OnClick = cbxMultiActionsLimitedControlClick
+    end
+    object cbxAutoSelectDefaultTarif: TCheckBox
+      Left = 8
+      Top = 48
+      Width = 401
+      Height = 17
+      Caption = #1055#1088#1080' '#1079#1072#1087#1091#1089#1082#1077' '#1089#1077#1089#1089#1080#1080' '#1072#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1080' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1090#1072#1088#1080#1092' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
+      TabOrder = 2
+      OnClick = cbxAutoSelectDefaultTarifClick
     end
   end
 end

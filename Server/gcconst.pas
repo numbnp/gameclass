@@ -11,8 +11,8 @@ uses QGraphics;
 
 const
   // misc2
-  BASE_VERSION = '3.85.1';
-  APP_VERSION = '3.85.1 Beta 3 Free';
+  BASE_VERSION = '3.85.2';
+  APP_VERSION = '3.85.2 Beta 1 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';

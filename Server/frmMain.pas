@@ -637,7 +637,10 @@ begin
     exit;                    // для стабильности
 
   if (GSessions <> Nil) then // Обновление информации о сессия
+  begin
     GSessions.Check;
+    GSessions.Load;
+  end;
 
   if GRegistry.Options.ReserveAutoActivate then     // Автоактивация брони
     for i:=0 to CompsCount-1 do
@@ -2294,6 +2297,8 @@ procedure TformMain.gridCompsGetCellParams(Sender: TObject;
 var
   tmp_value:string;
 begin
+  if (not dsConnected) then exit; // Если еще не подключились то и нечего отображать
+
   try
     tmp_value := cdsComps.FieldByName('SysState').Value;
   except

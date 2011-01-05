@@ -23,10 +23,12 @@ type
     gbStartSession: TGroupBox;
     cbxHideSessionChartWithoutReserve: TCheckBox;
     cbxMultiActionsLimitedControl: TCheckBox;
+    cbxAutoSelectDefaultTarif: TCheckBox;
     procedure cbxDontHideIntoSysTrayClick(Sender: TObject);
     procedure cbxActivateMessageTabClick(Sender: TObject);
     procedure cbxMultiActionsLimitedControlClick(Sender: TObject);
     procedure cbxHideSessionChartWithoutReserveClick(Sender: TObject);
+    procedure cbxAutoSelectDefaultTarifClick(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     procedure ResetFrame;
@@ -62,6 +64,8 @@ begin
       not GRegistry.UserInterface.MultiActionsFullControl;
   cbxHideSessionChartWithoutReserve.Checked :=
       GRegistry.UserInterface.HideSessionChartWithoutReserve;
+  cbxAutoSelectDefaultTarif.Checked :=
+      GRegistry.Options.AutoSelectDefaultTarif;  
   FbControlsEnabled := True;
 end;
 
@@ -119,6 +123,11 @@ begin
   if not ControlsEnabled then exit;
   GRegistry.UserInterface.HideSessionChartWithoutReserve :=
       cbxHideSessionChartWithoutReserve.Checked;
+end;
+
+procedure TframeInterface.cbxAutoSelectDefaultTarifClick(Sender: TObject);
+begin
+  GRegistry.Options.AutoSelectDefaultTarif := cbxAutoSelectDefaultTarif.Checked;
 end;
 
 end.

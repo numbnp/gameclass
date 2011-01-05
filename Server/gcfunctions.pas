@@ -52,6 +52,7 @@ procedure ehsAutoKillTasksAfterStop;
 procedure ehsLastLogin;
 procedure ehsLogon;
 procedure ehsLogout;
+procedure ehsExit;
 procedure ehsAbout;
 procedure ehsHelp;
 procedure ehsLangRussian;
@@ -733,6 +734,61 @@ begin
   formMain.mnuTableOpt.Enabled := False;
   KKMPluginStop;
 end;
+
+// logout
+procedure ehsExit;
+begin
+  formMain.tmrCyclicCompAction.Enabled := False;
+  formMain.tmrFileSynchronization.Enabled := False;
+  formMain.timerCompsList.Enabled := false;
+  formMain.DisableSockets();
+  RunServerScript(aLogoff, CurOperatorName);
+  if dsConnected then begin
+    OperatorProfile.Save;
+    if ((not isManager) and (FProxy <> nil)) then begin
+      FProxy.Stop;
+      FProxy.Reset;
+      FProxy.Destroy;
+      FProxy := nil;
+    end;
+    FProxy := nil;
+    formMain.FfrmReports.DisableReports;
+  end;
+ // GCPC_Destroy;
+
+// Не добавляем запись в лог из-за возможного отсутствия связи с базой
+//  Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,translate('LogoutOk'));
+
+
+  if (dmMain.cnnMain <> nil) then
+    dmMain.cnnMain.Close;
+
+  // сбрасываем профайл (интерфейс) в начальный уровень
+  OperatorProfile.Reset;
+  OperatorProfile.DoInterface;
+  if (GSessions <> Nil) then begin
+    GSessions.Free;
+    GSessions := Nil;
+  end;
+  dsUnloadComputers;
+  dsUnloadTarifs;
+  dmActions.actRedrawComps.Execute;
+  FunctionRightClear;
+  formMain.Caption := FORM_MAIN_CAPTION;
+  dmActions.actConnect.Enabled := True;
+  dmActions.actDisconnect.Enabled := False;
+  FreeAndNil(GAccountsCopy);
+
+  FreeAndNil(GAutoUpdate);
+
+  isManager := false;
+  formMain.mnuColor.Enabled := False;
+  formMain.mnuFont.Enabled := False;
+  formMain.mnuTableOpt.Enabled := False;
+  KKMPluginStop;
+  Application.Terminate;
+end;
+
 
 // about
 procedure ehsAbout;

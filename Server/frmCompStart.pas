@@ -907,9 +907,14 @@ begin
       end;
     end;
   lvTarifs.ItemIndex := 0;
-  for i:=1 to lvTarifs.Items.Count-1 do
-    if (lvTarifs.Items[i].Caption = strSelectedTarif) then
-      lvTarifs.ItemIndex := i;
+  if not GRegistry.Options.AutoSelectDefaultTarif then
+  begin
+    for i:=1 to lvTarifs.Items.Count-1 do
+      if (lvTarifs.Items[i].Caption = strSelectedTarif) then
+        lvTarifs.ItemIndex := i;
+  end
+  else
+    lvTarifs.ItemIndex := 0;
   lvTarifsClick(Self);
 end;
 

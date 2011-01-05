@@ -121,6 +121,10 @@ type
     function LocateDebugLog: Boolean;
     function GetDebugLog: Boolean;
     procedure SetDebugLog(AValue: Boolean);
+    function LocateAutoSelectDefaultTarif: Boolean;
+    function GetAutoSelectDefaultTarif: Boolean;
+    procedure SetAutoSelectDefaultTarif(AValue: Boolean);
+
 
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
@@ -201,6 +205,8 @@ type
         read GetOperatingTimeEnd write SetOperatingTimeEnd;
     property DebugLog : Boolean
         read GetDebugLog write SetDebugLog;
+    property AutoSelectDefaultTarif : Boolean
+        read GetAutoSelectDefaultTarif write SetAutoSelectDefaultTarif;
   end;
 
 implementation
@@ -839,6 +845,23 @@ end;
 procedure TRegistryOptions.SetDebugLog(AValue: Boolean);
 begin
   LocateDebugLog;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryOptions.LocateAutoSelectDefaultTarif: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('AutoSelectDefaultTarif', '0');
+end;
+
+function TRegistryOptions.GetAutoSelectDefaultTarif: Boolean;
+begin
+  LocateAutoSelectDefaultTarif;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetAutoSelectDefaultTarif(AValue: Boolean);
+begin
+  LocateAutoSelectDefaultTarif;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
