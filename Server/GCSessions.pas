@@ -390,6 +390,7 @@ procedure TGCSession.UpdateOnDB(  // обновление данных сессии в БД
     AfTrafficDiff: Double;
     AnAdditionalMinutesDiff: Integer);
 begin
+
   FfCommonPay := FfCommonPay + AfCommonPayDiff;
   FfCurrentCommonPay := FfCurrentCommonPay + AfCommonPayDiff;
   FfSeparateTrafficPay := FfSeparateTrafficPay + AfSeparateTrafficPayDiff;
@@ -400,6 +401,7 @@ begin
   FfServiceCost := FfServiceCost + AfServiceCostDiff;
   FfCurrentTraffic := FfCurrentTraffic + AfTrafficDiff;
   FnAdditionalMinutes := FnAdditionalMinutes + AnAdditionalMinutesDiff;
+
   if (isManager) then exit;
   if (IdTarif = ID_TARIF_REMONT) then exit;
 
@@ -892,7 +894,8 @@ begin
    if PostPay then
       tempMoney := - GetCostTotal
    else
-      tempMoney := CommonPay - GetCostTotal;
+      tempMoney := (CommonPay - GetCostTotal)+ (SeparateTrafficPay - SeparateTrafficCost );
+
    //Почему-то 0,7-0,7=0.000...1
    tempMoney := RoundTo(tempMoney,-3);
    if (tempMoney > 0)
@@ -917,7 +920,6 @@ begin
   if (tempMoney < 0) then
     str := str + ' ' + FormatFloat('0.00',-tempMoney) + ' '
         + GRegistry.Options.Currency;
-
 
   GetInfoStop := str;
 end;
@@ -1168,10 +1170,10 @@ end;
 
 procedure TGCSessions.Load;
 var
-  dts: TADODataSet;
-  nIndex, nCount: integer;
-  nIdSessionsAdd: Longword;
-  query: string;
+  dts, dts_d: TADODataSet;
+  nIndex, nCount, nCount_d: integer;
+  tmp_CurrentSeparateTraffPay, nIdSessionsAdd: Longword;
+  query, query_d : string;
 begin
 
   // процедура считывает все сессии, нужные в данный момент
@@ -1179,6 +1181,7 @@ begin
 
   dts := TADODataSet.Create(nil);
   dts.ParamCheck := false;
+
   query := 'SessionsSelect @id=NULL, @dt='''
       + DateTimeToSql(GetVirtualTime) + '''';
   dsDoQuery(query, @dts);
@@ -1188,9 +1191,24 @@ begin
   while (nCount > 0) and (not dts.Recordset.EOF) do begin
     nIdSessionsAdd := dts.Recordset.Fields.Item['idSessionsAdd'].Value;
     nIndex := Index(nIdSessionsAdd);
+
+    dts_d := TADODataSet.Create(nil);
+    dts_d.ParamCheck := false;
+
+    query_d := 'SessionsSeparateTrafficConstSelect @id=' +
+      IntToStr(dts.Recordset.Fields.Item['IdSessions'].Value) + '';
+    dsDoQuery(query_d, @dts_d);
+    nCount_d := dts_d.Recordset.RecordCount;
+    tmp_CurrentSeparateTraffPay := 0;
+    if (nCount_d > 0) then
+      tmp_CurrentSeparateTraffPay := dts_d.Recordset.Fields.Item['CurrentSeparateTrafficPay'].Value;
+
+    dts_d.Close;
+    dts_d.Destroy;
+
     with dts.Recordset.Fields do
       if nIndex = -1 then begin
-        nIndex :=             Item['IdSessions'].Value;
+        nIndex := Item['IdSessions'].Value;
 
         Add(
             Item['IdSessions'].Value,
@@ -1208,13 +1226,13 @@ begin
             Item['CommonPay'].Value,
             Item['CurrentCommonPay'].Value,
             Item['SeparateTrafficPay'].Value,
-            Item['CurrentSeparateTrafficPay'].Value,
+            tmp_CurrentSeparateTraffPay,
             Item['SummaryTraffic'].Value,
             Item['SummaryTrafficCost'].Value,
             Item['SummarySeparateTrafficCost'].Value,
             Item['CurrentTraffic'].Value,
             Item['CurrentTrafficCost'].Value,
-            Item['CurrentSeparateTrafficCost'].Value,
+            Item['SummarySeparateTrafficCost'].Value,
             Item['PrintCost'].Value,
             Item['ServiceCost'].Value,
             Item['State'].Value,
@@ -1237,21 +1255,23 @@ begin
             Item['CommonPay'].Value,
             Item['CurrentCommonPay'].Value,
             Item['SeparateTrafficPay'].Value,
-            Item['CurrentSeparateTrafficPay'].Value,
+            tmp_CurrentSeparateTraffPay,
             Item['SummaryTraffic'].Value,
             Item['SummaryTrafficCost'].Value,
             Item['SummarySeparateTrafficCost'].Value,
             Item['CurrentTraffic'].Value,
             Item['CurrentTrafficCost'].Value,
-            Item['CurrentSeparateTrafficCost'].Value,
+            Item['SummarySeparateTrafficCost'].Value,
             Item['PrintCost'].Value,
             Item['ServiceCost'].Value,
             Item['State'].Value,
             Item['Status'].Value);
     dts.Recordset.MoveNext;
   end; // while
+
   dts.Close;
   dts.Destroy;
+
   for nIndex:=Count-1 downto 0 do
       with Items[nIndex] do
         if ((Status = ssActive) or (Status = ssReserve)) and
@@ -1568,6 +1588,7 @@ begin
       UpdateOnDB(0, 0, 0, CalculatedCurrentSeparateTrafficCost
           - FfCurrentSeparateTrafficCost, 0, 0, AnTrafficDiff, 0);
       FfCurrentTrafficCost := CalculatedCurrentSeparateTrafficCost;
+      FfSummaryTraffic := FfCurrentTraffic;
     end else begin
       UpdateOnDB(0, 0, RoundMoney(AnTrafficDiff * ByteTrafficCost)
           - FfCurrentTrafficCost, 0, 0, 0, AnTrafficDiff, 0);
@@ -1640,8 +1661,8 @@ begin
     lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_MIXEDTRAFFIC,
         [GetShortSizeString(AfTraffic), AfTrafficCost, AfSeparateTrafficCost])
   else if bCost then
-    lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_TRAFFIC,
-        [GetShortSizeString(AfTraffic), AfTrafficCost])
+   lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_TRAFFIC,
+        [GetShortSizeString(AfTraffic), RoundMoney(AfTraffic * ByteTrafficCost) ])
   else if bSeparateCost then
     lstInfo.Text := lstInfo.Text + Format(strIndention + INFO_SEPARATETRAFFIC,
         [GetShortSizeString(AfTraffic), AfSeparateTrafficCost]);

@@ -8,75 +8,82 @@
   resources were bound to the produced executable.
 */
 
-#define GCSessions_INFO_COMMONPAY 64720
-#define GCSessions_INFO_SEPARATETRAFFICPAY 64721
-#define GCSessions_INFO_SERVICE 64722
-#define GCSessions_INFO_TOTAL 64723
-#define GCSessions_INFO_INDENTION 64724
-#define SynEditTextBuffer_SInvalidCapacity 64736
-#define JConsts_sChangeJPGSize 64737
-#define JConsts_sJPEGError 64738
-#define JConsts_sJPEGImageFile 64739
-#define ufrmClearStatistic_WARNING 64740
-#define ufrmClearStatistic_MESSAGE_STR 64741
-#define ufrmClearStatistic_AFFIRMATION 64742
-#define ufrmClearStatistic_CLEAR_COMPLETE_BY_USER 64743
-#define ufrmClearStatistic_CLEAR_COMPLETE 64744
-#define GCSessions_INFO_PREV_TARIF 64745
-#define GCSessions_INFO_CURRENT_TARIF 64746
-#define GCSessions_INFO_TIME 64747
-#define GCSessions_INFO_PRINT 64748
-#define GCSessions_INFO_TRAFFIC 64749
-#define GCSessions_INFO_SEPARATETRAFFIC 64750
-#define GCSessions_INFO_MIXEDTRAFFIC 64751
-#define SynEditStrConst_SYNS_AttrIdentifier 64752
-#define SynEditStrConst_SYNS_AttrNumber 64753
-#define SynEditStrConst_SYNS_AttrPLSQL 64754
-#define SynEditStrConst_SYNS_AttrReservedWord 64755
-#define SynEditStrConst_SYNS_AttrSpace 64756
-#define SynEditStrConst_SYNS_AttrSQLPlus 64757
-#define SynEditStrConst_SYNS_AttrString 64758
-#define SynEditStrConst_SYNS_AttrSymbol 64759
-#define SynEditStrConst_SYNS_AttrTableName 64760
-#define SynEditStrConst_SYNS_AttrVariable 64761
-#define SynEditStrConst_SYNS_ScrollInfoFmt 64762
-#define SynEditStrConst_SYNS_ScrollInfoFmtTop 64763
-#define SynEditStrConst_SYNS_EDuplicateShortcut 64764
-#define SynEditStrConst_SYNS_FilterSQL 64765
-#define SynEditStrConst_SYNS_LangSQL 64766
-#define SynEditTextBuffer_SListIndexOutOfBounds 64767
-#define SqlConst_SDRIVERRESTRICTED 64768
-#define SqlConst_SLOCALTRANSACTIVE 64769
-#define SqlConst_SMULTIPLETRANSNOTENABLED 64770
-#define VirtualTrees_SEditLinkIsNil 64771
-#define VirtualTrees_SWrongMoveError 64772
-#define VirtualTrees_SWrongStreamFormat 64773
-#define VirtualTrees_SWrongStreamVersion 64774
-#define VirtualTrees_SStreamTooSmall 64775
-#define VirtualTrees_SCorruptStream1 64776
-#define VirtualTrees_SCorruptStream2 64777
-#define VirtualTrees_SClipboardFailed 64778
-#define SynEditStrConst_SYNS_AttrComment 64779
-#define SynEditStrConst_SYNS_AttrDataType 64780
-#define SynEditStrConst_SYNS_AttrDefaultPackage 64781
-#define SynEditStrConst_SYNS_AttrException 64782
-#define SynEditStrConst_SYNS_AttrFunction 64783
-#define SqlConst_SNOMEMORY 64784
-#define SqlConst_SINVALIDFLDTYPE 64785
-#define SqlConst_SINVALIDHNDL 64786
-#define SqlConst_SINVALIDTIME 64787
-#define SqlConst_SNOTSUPPORTED 64788
-#define SqlConst_SINVALIDXLATION 64789
-#define SqlConst_SINVALIDPARAM 64790
-#define SqlConst_SOUTOFRANGE 64791
-#define SqlConst_SSQLPARAMNOTSET 64792
-#define SqlConst_SEOF 64793
-#define SqlConst_SINVALIDUSRPASS 64794
-#define SqlConst_SINVALIDPRECISION 64795
-#define SqlConst_SINVALIDLEN 64796
-#define SqlConst_SINVALIDXISOLEVEL 64797
-#define SqlConst_SINVALIDTXNID 64798
-#define SqlConst_SDUPLICATETXNID 64799
+#define GCSessions_INFO_PREV_TARIF 64720
+#define GCSessions_INFO_CURRENT_TARIF 64721
+#define GCSessions_INFO_TIME 64722
+#define GCSessions_INFO_PRINT 64723
+#define GCSessions_INFO_TRAFFIC 64724
+#define GCSessions_INFO_SEPARATETRAFFIC 64725
+#define GCSessions_INFO_MIXEDTRAFFIC 64726
+#define GCSessions_INFO_COMMONPAY 64727
+#define GCSessions_INFO_SEPARATETRAFFICPAY 64728
+#define GCSessions_INFO_SERVICE 64729
+#define GCSessions_INFO_TOTAL 64730
+#define GCSessions_INFO_INDENTION 64731
+#define SynEditStrConst_SYNS_AttrVariable 64736
+#define SynEditStrConst_SYNS_ScrollInfoFmt 64737
+#define SynEditStrConst_SYNS_ScrollInfoFmtTop 64738
+#define SynEditStrConst_SYNS_EDuplicateShortcut 64739
+#define SynEditStrConst_SYNS_FilterSQL 64740
+#define SynEditStrConst_SYNS_LangSQL 64741
+#define SynEditTextBuffer_SListIndexOutOfBounds 64742
+#define SynEditTextBuffer_SInvalidCapacity 64743
+#define JConsts_sChangeJPGSize 64744
+#define JConsts_sJPEGError 64745
+#define JConsts_sJPEGImageFile 64746
+#define ufrmClearStatistic_WARNING 64747
+#define ufrmClearStatistic_MESSAGE_STR 64748
+#define ufrmClearStatistic_AFFIRMATION 64749
+#define ufrmClearStatistic_CLEAR_COMPLETE_BY_USER 64750
+#define ufrmClearStatistic_CLEAR_COMPLETE 64751
+#define VirtualTrees_SCorruptStream2 64752
+#define VirtualTrees_SClipboardFailed 64753
+#define SynEditStrConst_SYNS_AttrComment 64754
+#define SynEditStrConst_SYNS_AttrDataType 64755
+#define SynEditStrConst_SYNS_AttrDefaultPackage 64756
+#define SynEditStrConst_SYNS_AttrException 64757
+#define SynEditStrConst_SYNS_AttrFunction 64758
+#define SynEditStrConst_SYNS_AttrIdentifier 64759
+#define SynEditStrConst_SYNS_AttrNumber 64760
+#define SynEditStrConst_SYNS_AttrPLSQL 64761
+#define SynEditStrConst_SYNS_AttrReservedWord 64762
+#define SynEditStrConst_SYNS_AttrSpace 64763
+#define SynEditStrConst_SYNS_AttrSQLPlus 64764
+#define SynEditStrConst_SYNS_AttrString 64765
+#define SynEditStrConst_SYNS_AttrSymbol 64766
+#define SynEditStrConst_SYNS_AttrTableName 64767
+#define SqlConst_SINVALIDTXNID 64768
+#define SqlConst_SDUPLICATETXNID 64769
+#define SqlConst_SDRIVERRESTRICTED 64770
+#define SqlConst_SLOCALTRANSACTIVE 64771
+#define SqlConst_SMULTIPLETRANSNOTENABLED 64772
+#define SqlConst_SCONNECTIONFAILED 64773
+#define SqlConst_SDRIVERINITFAILED 64774
+#define SqlConst_SOPTLOCKFAILED 64775
+#define SqlConst_SINVALIDREF 64776
+#define SqlConst_SNOTABLE 64777
+#define VirtualTrees_SEditLinkIsNil 64778
+#define VirtualTrees_SWrongMoveError 64779
+#define VirtualTrees_SWrongStreamFormat 64780
+#define VirtualTrees_SWrongStreamVersion 64781
+#define VirtualTrees_SStreamTooSmall 64782
+#define VirtualTrees_SCorruptStream1 64783
+#define SqlConst_SNOERROR 64784
+#define SqlConst_SWARNING 64785
+#define SqlConst_SNOMEMORY 64786
+#define SqlConst_SINVALIDFLDTYPE 64787
+#define SqlConst_SINVALIDHNDL 64788
+#define SqlConst_SNOTSUPPORTED 64789
+#define SqlConst_SINVALIDTIME 64790
+#define SqlConst_SINVALIDXLATION 64791
+#define SqlConst_SOUTOFRANGE 64792
+#define SqlConst_SINVALIDPARAM 64793
+#define SqlConst_SEOF 64794
+#define SqlConst_SSQLPARAMNOTSET 64795
+#define SqlConst_SINVALIDUSRPASS 64796
+#define SqlConst_SINVALIDPRECISION 64797
+#define SqlConst_SINVALIDLEN 64798
+#define SqlConst_SINVALIDXISOLEVEL 64799
 #define bdeconst_SDatabaseOpen 64800
 #define bdeconst_SDatabaseClosed 64801
 #define bdeconst_SDatabaseHandleSet 64802
@@ -815,11 +822,25 @@
 #define SysConst_SEndOfFile 65535
 STRINGTABLE
 BEGIN
+	GCSessions_INFO_PREV_TARIF,	"По предыдущим тарифам:"
+	GCSessions_INFO_CURRENT_TARIF,	"По текущему тарифу:"
+	GCSessions_INFO_TIME,	"Потрачено времени ( %s ) = %m"
+	GCSessions_INFO_PRINT,	"Распечатка = %m"
+	GCSessions_INFO_TRAFFIC,	"Трафик ( %s ) = %m"
+	GCSessions_INFO_SEPARATETRAFFIC,	"Трафик ( %s ) = отдельная оплата %m"
+	GCSessions_INFO_MIXEDTRAFFIC,	"Трафик ( %s ) = %m + отдельная оплата %m"
 	GCSessions_INFO_COMMONPAY,	"Внесено предоплатой = %m"
 	GCSessions_INFO_SEPARATETRAFFICPAY,	"Внесено предоплатой отдельно за трафик = %m"
 	GCSessions_INFO_SERVICE,	"За услуги = %m"
 	GCSessions_INFO_TOTAL,	"Итого = %m"
 	GCSessions_INFO_INDENTION,	"   "
+	SynEditStrConst_SYNS_AttrVariable,	"Variable"
+	SynEditStrConst_SYNS_ScrollInfoFmt,	"%d - %d"
+	SynEditStrConst_SYNS_ScrollInfoFmtTop,	"Top Line: %d"
+	SynEditStrConst_SYNS_EDuplicateShortcut,	"Shortcut already exists"
+	SynEditStrConst_SYNS_FilterSQL,	"SQL Files (*.sql)|*.sql"
+	SynEditStrConst_SYNS_LangSQL,	"SQL"
+	SynEditTextBuffer_SListIndexOutOfBounds,	"Invalid stringlist index %d"
 	SynEditTextBuffer_SInvalidCapacity,	"Stringlist capacity cannot be smaller than count"
 	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
 	JConsts_sJPEGError,	"JPEG error #%d"
@@ -829,13 +850,13 @@ BEGIN
 	ufrmClearStatistic_AFFIRMATION,	"Возможно, Вам стоит еще раз все взвесить, прежде чем выполнять\r\nоперацию очистки статистики.  Вы точно уверены, что хотите это сделать?"
 	ufrmClearStatistic_CLEAR_COMPLETE_BY_USER,	"Статистика была очищена пользователем"
 	ufrmClearStatistic_CLEAR_COMPLETE,	"Статистика очищена!"
-	GCSessions_INFO_PREV_TARIF,	"По предыдущим тарифам:"
-	GCSessions_INFO_CURRENT_TARIF,	"По текущему тарифу:"
-	GCSessions_INFO_TIME,	"Потрачено времени ( %s ) = %m"
-	GCSessions_INFO_PRINT,	"Распечатка = %m"
-	GCSessions_INFO_TRAFFIC,	"Трафик ( %s ) = %m"
-	GCSessions_INFO_SEPARATETRAFFIC,	"Трафик ( %s ) = отдельная оплата %m"
-	GCSessions_INFO_MIXEDTRAFFIC,	"Трафик ( %s ) = %m + отдельная оплата %m"
+	VirtualTrees_SCorruptStream2,	"Stream data corrupt. Unexpected data after node's end position."
+	VirtualTrees_SClipboardFailed,	"Clipboard operation failed."
+	SynEditStrConst_SYNS_AttrComment,	"Comment"
+	SynEditStrConst_SYNS_AttrDataType,	"Data Type"
+	SynEditStrConst_SYNS_AttrDefaultPackage,	"Default Packages"
+	SynEditStrConst_SYNS_AttrException,	"Exception"
+	SynEditStrConst_SYNS_AttrFunction,	"Function"
 	SynEditStrConst_SYNS_AttrIdentifier,	"Identifier"
 	SynEditStrConst_SYNS_AttrNumber,	"Number"
 	SynEditStrConst_SYNS_AttrPLSQL,	"PL/SQL Reserved Word"
@@ -845,45 +866,38 @@ BEGIN
 	SynEditStrConst_SYNS_AttrString,	"String"
 	SynEditStrConst_SYNS_AttrSymbol,	"Symbol"
 	SynEditStrConst_SYNS_AttrTableName,	"Table Name"
-	SynEditStrConst_SYNS_AttrVariable,	"Variable"
-	SynEditStrConst_SYNS_ScrollInfoFmt,	"%d - %d"
-	SynEditStrConst_SYNS_ScrollInfoFmtTop,	"Top Line: %d"
-	SynEditStrConst_SYNS_EDuplicateShortcut,	"Shortcut already exists"
-	SynEditStrConst_SYNS_FilterSQL,	"SQL Files (*.sql)|*.sql"
-	SynEditStrConst_SYNS_LangSQL,	"SQL"
-	SynEditTextBuffer_SListIndexOutOfBounds,	"Invalid stringlist index %d"
-	SqlConst_SDRIVERRESTRICTED,	"dbExpress Error: Application is not licensed to use this feature"
-	SqlConst_SLOCALTRANSACTIVE,	"dbExpress Error: Local Transaction already active"
-	SqlConst_SMULTIPLETRANSNOTENABLED,	"dbExpress Error: Multiple Transactions not Enabled"
+	SqlConst_SINVALIDTXNID,	"[0x0010]: Invalid Transaction ID"
+	SqlConst_SDUPLICATETXNID,	"[0x0011]: Duplicate Transaction ID"
+	SqlConst_SDRIVERRESTRICTED,	"[0x0012]: Application is not licensed to use this feature"
+	SqlConst_SLOCALTRANSACTIVE,	"[0x0013]: Local Transaction already active"
+	SqlConst_SMULTIPLETRANSNOTENABLED,	"[0x0014]: Multiple Transactions not Enabled"
+	SqlConst_SCONNECTIONFAILED,	"[0x0015]: Connection failed"
+	SqlConst_SDRIVERINITFAILED,	"[0x0016]: Driver initialization failed"
+	SqlConst_SOPTLOCKFAILED,	"[0x0017]: Optimistic Locking failed"
+	SqlConst_SINVALIDREF,	"[0x0018]: Invalid REF"
+	SqlConst_SNOTABLE,	"[0x0019]: No table found"
 	VirtualTrees_SEditLinkIsNil,	"Edit link must not be nil."
 	VirtualTrees_SWrongMoveError,	"Target node cannot be a child node of the node to be moved."
 	VirtualTrees_SWrongStreamFormat,	"Unable to load tree structure, the format is wrong."
 	VirtualTrees_SWrongStreamVersion,	"Unable to load tree structure, the version is unknown."
 	VirtualTrees_SStreamTooSmall,	"Unable to load tree structure, not enough data available."
 	VirtualTrees_SCorruptStream1,	"Stream data corrupt. A node's anchor chunk is missing."
-	VirtualTrees_SCorruptStream2,	"Stream data corrupt. Unexpected data after node's end position."
-	VirtualTrees_SClipboardFailed,	"Clipboard operation failed."
-	SynEditStrConst_SYNS_AttrComment,	"Comment"
-	SynEditStrConst_SYNS_AttrDataType,	"Data Type"
-	SynEditStrConst_SYNS_AttrDefaultPackage,	"Default Packages"
-	SynEditStrConst_SYNS_AttrException,	"Exception"
-	SynEditStrConst_SYNS_AttrFunction,	"Function"
-	SqlConst_SNOMEMORY,	"dbExpress Error: Insufficient Memory for Operation"
-	SqlConst_SINVALIDFLDTYPE,	"dbExpress Error: Invalid Field Type"
-	SqlConst_SINVALIDHNDL,	"dbExpress Error: Invalid Handle"
-	SqlConst_SINVALIDTIME,	"dbExpress Error: Invalid Time"
-	SqlConst_SNOTSUPPORTED,	"dbExpress Error: Operation Not Supported"
-	SqlConst_SINVALIDXLATION,	"dbExpress Error: Invalid Data Translation"
-	SqlConst_SINVALIDPARAM,	"dbExpress Error: Invalid Parameter"
-	SqlConst_SOUTOFRANGE,	"dbExpress Error: Parameter/Column out of Range"
-	SqlConst_SSQLPARAMNOTSET,	"dbExpress Error: Parameter Not Set"
-	SqlConst_SEOF,	"dbExpress Error: Result set at EOF"
-	SqlConst_SINVALIDUSRPASS,	"dbExpress Error: Invalid Username/Password"
-	SqlConst_SINVALIDPRECISION,	"dbExpress Error: Invalid Precision"
-	SqlConst_SINVALIDLEN,	"dbExpress Error: Invalid Length"
-	SqlConst_SINVALIDXISOLEVEL,	"dbExpress Error: Invalid Transaction Isolation Level"
-	SqlConst_SINVALIDTXNID,	"dbExpress Error: Invalid Transaction ID"
-	SqlConst_SDUPLICATETXNID,	"dbExpress Error: Duplicate Transaction ID"
+	SqlConst_SNOERROR,	""
+	SqlConst_SWARNING,	"[0x0001]: Warning"
+	SqlConst_SNOMEMORY,	"[0x0002]: Insufficient Memory for Operation"
+	SqlConst_SINVALIDFLDTYPE,	"[0x0003]: Invalid Field Type"
+	SqlConst_SINVALIDHNDL,	"[0x0004]: Invalid Handle"
+	SqlConst_SNOTSUPPORTED,	"[0x0005]: Operation Not Supported"
+	SqlConst_SINVALIDTIME,	"[0x0006]: Invalid Time"
+	SqlConst_SINVALIDXLATION,	"[0x0007]: Invalid Data Translation"
+	SqlConst_SOUTOFRANGE,	"[0x0008]: Parameter/Column out of Range"
+	SqlConst_SINVALIDPARAM,	"[0x0009]: Invalid Parameter"
+	SqlConst_SEOF,	"[0x000A]: Result set at EOF"
+	SqlConst_SSQLPARAMNOTSET,	"dbExpress Error [0x000B]: Parameter Not Set"
+	SqlConst_SINVALIDUSRPASS,	"[0x000C] Invalid Username/Password"
+	SqlConst_SINVALIDPRECISION,	"[0x000D]: Invalid Precision"
+	SqlConst_SINVALIDLEN,	"[0x000E]: Invalid Length"
+	SqlConst_SINVALIDXISOLEVEL,	"[0x000F]: Invalid Transaction Isolation Level"
 	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
 	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
 	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"

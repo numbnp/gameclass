@@ -180,7 +180,6 @@ begin
       and cbAccountPrivileged.Checked;
   cbTarifsLimit.Enabled := bManagerPermission;
   lblUserLevel.Enabled := bManagerPermission;
-  cbUserLevel.Enabled := bManagerPermission;
   editAccountZeroBalance.Enabled := bManagerPermission;
   butAccountAdd.Visible := bCreateRigth;
   butAccountSave.Visible := bCreateRigth;
@@ -203,7 +202,7 @@ begin
   cbxPeriodOfValidity.Enabled := bEditPermission;
   butClearPass.Visible := (isManager
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
-  cbUserLevel.Enabled:=cbTarifsLimit.Checked;
+  cbUserLevel.Enabled:=cbTarifsLimit.Checked and bManagerPermission;
   UpdateDiscount;
   DoDesignExpirationDate;
 end;
