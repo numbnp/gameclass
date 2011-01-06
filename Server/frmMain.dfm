@@ -3939,7 +3939,7 @@ object formMain: TformMain
     Top = 200
   end
   object timerGSessionsLoad: TTimer
-    Enabled = False
+    Enabled = True
     Interval = 17000
     OnTimer = timerGSessionsLoadTimer
     Left = 408

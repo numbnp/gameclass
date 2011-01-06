@@ -639,7 +639,7 @@ begin
   if (GSessions <> Nil) then // Обновление информации о сессия
   begin
     GSessions.Check;
-    GSessions.Load;
+//    GSessions.Load;
   end;
 
   if GRegistry.Options.ReserveAutoActivate then     // Автоактивация брони
