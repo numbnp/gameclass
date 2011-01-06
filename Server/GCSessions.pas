@@ -1325,7 +1325,7 @@ begin
         tarif := tarifs[FnTarifIndex];
         if(GRegistry.Modules.Internet.SummaryAccounting) then begin
           if (tarif.internet = 1) then begin
-            UpdateTraffic(FProxy.IPTrafficGetTraffic(computer.ipaddr)+128*1024);
+            UpdateTraffic(FProxy.IPTrafficGetTraffic(computer.ipaddr));
             //Вообще этому тут не место TODO
             UDPSend(computer.ipaddr, STR_CMD_CLIENT_INFO_SET + '='
                 + 'InternetAvailableInKB'
