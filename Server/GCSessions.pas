@@ -402,6 +402,9 @@ begin
   FfCurrentTraffic := FfCurrentTraffic + AfTrafficDiff;
   FnAdditionalMinutes := FnAdditionalMinutes + AnAdditionalMinutesDiff;
 
+  FfSummarySeparateTrafficCost := FfSummarySeparateTrafficCost + AfSeparateTrafficCostDiff;
+  FfSummaryTraffic := FfSummaryTraffic + AfTrafficDiff;
+
   if (isManager) then exit;
   if (IdTarif = ID_TARIF_REMONT) then exit;
 
@@ -1084,6 +1087,7 @@ begin
   if not ComputersCheckIndex(AnIdComp) then
     exit;
   session := TGCSession(inherited Add);
+
   with session do begin
     FnIdSessions := AnIdSessions;
     FnIdSessionsAdd := AnIdSessionsAdd;
@@ -1321,7 +1325,7 @@ begin
         tarif := tarifs[FnTarifIndex];
         if(GRegistry.Modules.Internet.SummaryAccounting) then begin
           if (tarif.internet = 1) then begin
-            UpdateTraffic(FProxy.IPTrafficGetTraffic(computer.ipaddr));
+            UpdateTraffic(FProxy.IPTrafficGetTraffic(computer.ipaddr)+128*1024);
             //Вообще этому тут не место TODO
             UDPSend(computer.ipaddr, STR_CMD_CLIENT_INFO_SET + '='
                 + 'InternetAvailableInKB'
@@ -1582,17 +1586,17 @@ end;
 procedure TGCSession.UpdateTraffic(AnTrafficDiff: Longword);
 begin
   if (AnTrafficDiff > 0) then begin
-    FfCurrentTraffic := FfCurrentTraffic + AnTrafficDiff;
+   // FfCurrentTraffic := FfCurrentTraffic + AnTrafficDiff;
     if IsTrafficSeparatePayment then begin
       // т.к. FreeTraffic может увеличиться пересчитываем каждый раз Diff
       UpdateOnDB(0, 0, 0, CalculatedCurrentSeparateTrafficCost
           - FfCurrentSeparateTrafficCost, 0, 0, AnTrafficDiff, 0);
-      FfCurrentTrafficCost := CalculatedCurrentSeparateTrafficCost;
-      FfSummaryTraffic := FfCurrentTraffic;
+      //FfCurrentTrafficCost := CalculatedCurrentSeparateTrafficCost;
+      FfCurrentSeparateTrafficCost := FfSummarySeparateTrafficCost;
     end else begin
       UpdateOnDB(0, 0, RoundMoney(AnTrafficDiff * ByteTrafficCost)
-          - FfCurrentTrafficCost, 0, 0, 0, AnTrafficDiff, 0);
-      FfCurrentTrafficCost := RoundMoney(AnTrafficDiff * ByteTrafficCost);
+         , 0, 0, 0, AnTrafficDiff, 0);
+      FfCurrentTrafficCost := RoundMoney(FfCurrentTraffic * ByteTrafficCost);
     end;
   end;
 end;
@@ -1661,8 +1665,8 @@ begin
     lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_MIXEDTRAFFIC,
         [GetShortSizeString(AfTraffic), AfTrafficCost, AfSeparateTrafficCost])
   else if bCost then
-   lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_TRAFFIC,
-        [GetShortSizeString(AfTraffic), RoundMoney(AfTraffic * ByteTrafficCost) ])
+    lstInfo.Text := lstInfo.Text + strIndention + Format(INFO_TRAFFIC,
+        [GetShortSizeString(AfTraffic), AfTrafficCost])
   else if bSeparateCost then
     lstInfo.Text := lstInfo.Text + Format(strIndention + INFO_SEPARATETRAFFIC,
         [GetShortSizeString(AfTraffic), AfSeparateTrafficCost]);
