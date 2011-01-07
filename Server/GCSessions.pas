@@ -1594,7 +1594,7 @@ begin
       //FfCurrentTrafficCost := CalculatedCurrentSeparateTrafficCost;
       FfCurrentSeparateTrafficCost := FfSummarySeparateTrafficCost;
     end else begin
-      UpdateOnDB(0, 0, RoundMoney(AnTrafficDiff * ByteTrafficCost)
+      UpdateOnDB(0, 0, (AnTrafficDiff * ByteTrafficCost)
          , 0, 0, 0, AnTrafficDiff, 0);
       FfCurrentTrafficCost := RoundMoney(FfCurrentTraffic * ByteTrafficCost);
     end;
