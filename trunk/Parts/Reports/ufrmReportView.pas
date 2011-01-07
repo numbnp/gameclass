@@ -147,6 +147,7 @@ begin
     dsrcReport.DataSet := nil;
     grdReport.DataSource := nil;
   end;
+
   _TuneReportGrid();
   _BuildPopupMenu();
 end; // TfrmReportView.SetReport
@@ -373,6 +374,11 @@ begin
       end;
     end;
     Column.Visible := FReport.ReportColumns[i].Visible;
+  end;
+
+  for i := 0 to grdReport.Columns.Count - 1 do begin
+
+    grdReport.Columns.Items[i].Title.TitleButton := TRUE;
   end;
 
   if grdReport.FooterRowCount > 0 then begin
