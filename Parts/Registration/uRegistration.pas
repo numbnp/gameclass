@@ -121,8 +121,8 @@ initialization
     Viewer := True;
     Sync := True;
     UserName := 'Free user';
-    CompsRegs := 200;
-    LinuxClientCount := 200;
+    CompsRegs := 300;
+    LinuxClientCount := 300;
   end;
 
 end.

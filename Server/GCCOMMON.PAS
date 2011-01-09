@@ -231,8 +231,18 @@ begin
       CompsCount := Registration.CompsRegs;
       bLimit := True;
     end;
+    if (CompsCount>MAX_COMPUTERS) then
+    begin
+      //info проверка максимально возможное кол-во компов
+      str := translate('WarningLimitComps3')+IntToStr(MAX_COMPUTERS);
+      Console.AddEvent(EVENT_ICON_WARNING, LEVEL_0, str);
+      CompsCount := MAX_COMPUTERS;
+      bLimit := True;
+    end;
     i := 0;
-    while (CompsCount > 0) and (not dts.Recordset.EOF) and (i<Registration.CompsRegs) do
+    while (CompsCount > 0) and (not dts.Recordset.EOF)
+      and (i<Registration.CompsRegs)
+      and (i<MAX_COMPUTERS) do
     begin
       Comps[i] := TComputer.Create;
       Comps[i].id := dts.Recordset.Fields.Item['id'].Value;

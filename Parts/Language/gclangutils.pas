@@ -209,7 +209,6 @@ end;
 procedure GCLanguageLoadDefault;
 var
   f:integer;
-  n: integer;
 begin
   // lng file
   f := FileOpen(LANGUAGE_FILENAME, fmOpenRead or fmShareDenyNone);

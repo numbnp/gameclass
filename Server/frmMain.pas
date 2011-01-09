@@ -287,7 +287,6 @@ type
     procedure mnuTrafiicAddClick(Sender: TObject);
     procedure mnuRunPadShellClick(Sender: TObject);
     procedure frameMessagesbtnSendClick(Sender: TObject);
-    procedure Edit1Change(Sender: TObject);
     procedure Edit1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure PageControlChange(Sender: TObject);
@@ -2014,12 +2013,6 @@ begin
   frameMessages.edtMessage.Text := '';
 end;
 
-procedure TformMain.Edit1Change(Sender: TObject);
-var i:integer;
-begin
-  i := 0;
-end;
-
 procedure TformMain.Edit1KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var i:integer;
@@ -2305,17 +2298,17 @@ begin
     tmp_value := '';
   end;
   if tmp_value = 'Blocked' then
-    AFont.Assign( GRegistry.UserInterface.BlockedFont);
+    AFont.Assign( OperatorProfile.ComputerListBlockedFont);
   if tmp_value = 'notBusy' then
-    AFont.Assign( GRegistry.UserInterface.NotBusyFont);
+    AFont.Assign( OperatorProfile.ComputerListNotBusyFont);
   if tmp_value = 'Authenticated' then
-    AFont.Assign( GRegistry.UserInterface.AuthenticatedFont);
+    AFont.Assign( OperatorProfile.ComputerListAuthenticatedFont);
   if tmp_value = 'Reserve' then
-    AFont.Assign( GRegistry.UserInterface.ReserveFont);
+    AFont.Assign( OperatorProfile.ComputerListReserveFont);
   if tmp_value = 'Accupied' then
-    AFont.Assign( GRegistry.UserInterface.AccupiedFont);
+    AFont.Assign( OperatorProfile.ComputerListAccupiedFont);
   if tmp_value = 'Prevented'then
-    AFont.Assign( GRegistry.UserInterface.PreventedFont);
+    AFont.Assign( OperatorProfile.ComputerListPreventedFont);
 
 end;
 
@@ -2323,6 +2316,7 @@ procedure TformMain.mnuTableOptClick(Sender: TObject);
 begin
   Application.CreateForm(TfrmOperatorOpt, frmOperatorOpt);
   frmOperatorOpt.ShowModal;
+  OperatorProfile.Load;  
   frmOperatorOpt.Destroy;
 end;
 
