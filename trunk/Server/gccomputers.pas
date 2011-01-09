@@ -11,7 +11,7 @@ uses
   Dialogs, ComCtrls, DateUtils, frmGCMessageBox, Proxy,
   SysUtils, DB, ADODB, StrUtils, IdSocketHandle,
   IdUDPServer, IdUDPClient, IdICMPClient,
-  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2;{,
+  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2, Graphics;{,
   IdBaseComponent,IdComponent,IdUDPBase,IdGlobal;}
 
 
@@ -227,6 +227,12 @@ type
     procedure DoInterface;
   public
     bShowTechCompsInfo: boolean; // показывать техническую информацию?
+    ComputerListBlockedFont: TFont;
+    ComputerListNotBusyFont: TFont;
+    ComputerListAuthenticatedFont: TFont;
+    ComputerListReserveFont: TFont;
+    ComputerListAccupiedFont: TFont;
+    ComputerListPreventedFont: TFont;
   end;
 
 
@@ -301,7 +307,7 @@ uses
   Windows,
   GCFunctions,
   uAccountSystem,
-  Graphics,
+//  Graphics,
   Math,
   uClientOptions,
   uY2KCommon,
@@ -397,6 +403,13 @@ begin
 //  formMain.gridComps.Columns.Items[11].AutoFitColWidth := True;
   SetBackColor(clWindow);
   SetTableFont(formMain.Font);
+  ComputerListBlockedFont := formMain.Font;
+  ComputerListNotBusyFont := formMain.Font;
+  ComputerListAuthenticatedFont := formMain.Font;
+  ComputerListReserveFont := formMain.Font;
+  ComputerListAccupiedFont := formMain.Font;
+  ComputerListPreventedFont := formMain.Font;
+
 end;
 
 // загружаем опции оператора из базы
@@ -405,6 +418,12 @@ var
    i: Integer;
 begin
   bShowTechCompsInfo := GRegistry.UserInterface.ShowCopmTechInfo;
+  ComputerListBlockedFont := GRegistry.UserInterface.BlockedFont;
+  ComputerListNotBusyFont := GRegistry.UserInterface.NotBusyFont;
+  ComputerListAuthenticatedFont := GRegistry.UserInterface.AuthenticatedFont;
+  ComputerListReserveFont := GRegistry.UserInterface.ReserveFont;
+  ComputerListAccupiedFont := GRegistry.UserInterface.AccupiedFont;
+  ComputerListPreventedFont := GRegistry.UserInterface.PreventedFont;
   for i:=0 to formMain.gridComps.Columns.Count-1 do
     formMain.gridComps.Columns.Items[i].Width :=
         GRegistry.UserInterface.ColumnWidth[i];

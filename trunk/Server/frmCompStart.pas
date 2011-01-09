@@ -390,6 +390,7 @@ begin
     exit;
   end;
   timerFrmCompStart.Enabled := false; //TODO kill
+  formMain.timerCompsList.Enabled := false;
   for i:=GSessions.Count-1 downto 0 do
     with GSessions.Items[i] do
       if (Status = ssDesigned) then begin
@@ -420,7 +421,7 @@ begin
                 TimeStop := TimeStart
                     + Tarifs[TarifsGetIndex(IdTarif)].CalculateTimeLength(
                     TimeStart,
-                    CommonPay, Comps[ComputersGetIndex(IdComp)].IdGroup,
+                    CommonPay, Comps[ComputersGetIndex(GSessions.Items[i].IdComp)].IdGroup,
                     GAccountSystem.Accounts[IdClient].Discount);
               end;
               Status := ssActive;
@@ -440,6 +441,7 @@ begin
           end;
         end;
       end;
+  formMain.timerCompsList.Enabled := true;
   ModalResult := mrOk;
 end;
 
