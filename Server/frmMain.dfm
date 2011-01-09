@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 218
-  Top = 322
+  Left = 262
+  Top = 118
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -3939,7 +3939,6 @@ object formMain: TformMain
     Top = 200
   end
   object timerGSessionsLoad: TTimer
-    Enabled = True
     Interval = 17000
     OnTimer = timerGSessionsLoadTimer
     Left = 408

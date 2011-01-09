@@ -12,7 +12,7 @@ uses QGraphics;
 const
   // misc2
   BASE_VERSION = '3.85.2';
-  APP_VERSION = '3.85.2 Beta 3 Free';
+  APP_VERSION = '3.85.2 Beta 4 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -170,7 +170,7 @@ const
   DS_PROCESS_ADD = 'ProcessAdd';
 
 // Computers
-  MAX_COMPUTERS = 100; // максимум компьютеров  
+  MAX_COMPUTERS = 300; // максимум компьютеров
   MAX_GROUPS  = 50; //макс групп 
   MAX_TARIFS = 50;
   MAX_TARIFS_VARIANTS = 50;

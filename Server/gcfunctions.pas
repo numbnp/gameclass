@@ -982,6 +982,7 @@ begin
   end;
   if (formCompStart.ShowModal = mrOK) then
   begin
+
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
     DoInterfaceComps;
