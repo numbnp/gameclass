@@ -894,6 +894,9 @@ begin
    str := Comps[ComputersGetIndex(FnIdComp)].GetStrNumber
       + ' >> ' + DateTimeToSql(GetVirtualTime) + ' ';
    str := str + ' / ' + GetStrTarif + ' / ' + GetStrClient + ' / ';
+   str := str + FloatToStr(GetCostTotal) + GRegistry.Options.Currency + ' / ';
+   str := str + GetStrTraffic + ' / ';
+
    if PostPay then
       tempMoney := - GetCostTotal
    else
