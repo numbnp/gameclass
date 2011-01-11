@@ -200,6 +200,10 @@ type
     cmnWakeFree: TMenuItem;
     cmnWakeupNoFree: TMenuItem;
     mnuTableOpt: TMenuItem;
+    mnuLogoff: TMenuItem;
+    PopupMenuLogoff: TPopupMenu;
+    cmnLogoffAll: TMenuItem;
+    cmnLogoffFree: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -321,6 +325,10 @@ type
     procedure gridCompsGetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure mnuTableOptClick(Sender: TObject);
+    procedure tbCompLogoffClick(Sender: TObject);
+    procedure mnuLogoffClick(Sender: TObject);
+    procedure cmnLogoffAllClick(Sender: TObject);
+    procedure cmnLogoffFreeClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -564,6 +572,7 @@ begin
   MenuRecursive(nil);
   MenuRecursive(PopupMenuShutdown.Items);
   MenuRecursive(PopupMenuReset.Items);
+  MenuRecursive(PopupMenuLogoff.Items);
   MenuRecursive(PopupMenuWakeup.Items);
   RedrawListCompsLanguage;
   RedrawListConsoleLanguage;
@@ -573,6 +582,7 @@ begin
   tbCompMove.Caption := translate('tbMove');
   tbSideline.Caption := translate('Sideline');
   tbCompReset.Caption := translate('mnuRestart');
+  tbCompLogoff.Caption := translate('mnuLogoff');
   tbCompShutdown.Caption := translate('mnuShutdown');
   tbCompWakeUp.Caption := translate('mnuWakeUp');
 //  tbCurrentReport.Caption := translate('tbCurrent');
@@ -2221,10 +2231,13 @@ end;
 procedure TformMain.cmnShutdownAllClick(Sender: TObject);
 var
   index : integer;
+
 begin
+  if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnShutdownAll'))
+    ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
+
   for index := 0 to CompsCount-1 do
     UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
-
 end;
 
 procedure TformMain.cmnShutdownFreeClick(Sender: TObject);
@@ -2245,6 +2258,8 @@ procedure TformMain.cmnResetAllClick(Sender: TObject);
 var
   index : integer;
 begin
+  if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnResetAll'))
+    ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
   for index := 0 to CompsCount-1 do
     UDPSend(Comps[index].ipaddr,STR_CMD_RESTART);
 end;
@@ -2318,6 +2333,54 @@ begin
   frmOperatorOpt.ShowModal;
   OperatorProfile.Load;  
   frmOperatorOpt.Destroy;
+end;
+
+procedure TformMain.tbCompLogoffClick(Sender: TObject);
+begin
+  mnuLogoffClick(nil);
+end;
+
+procedure TformMain.mnuLogoffClick(Sender: TObject);
+var
+  index: integer;
+  bookmark: TBookmarkStr;
+begin
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+           + '=' + BoolToStr(False));
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
+end;
+
+procedure TformMain.cmnLogoffAllClick(Sender: TObject);
+var
+  index : integer;
+begin
+  if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnLogoffAll'))
+    ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
+  for index := 0 to CompsCount-1 do
+    UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+           + '=' + BoolToStr(False));
+end;
+
+procedure TformMain.cmnLogoffFreeClick(Sender: TObject);
+var
+  index : integer;
+begin
+  for index := 0 to CompsCount-1 do
+    if Comps[index].IsFree then
+      UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+           + '=' + BoolToStr(False));
 end;
 
 end.
