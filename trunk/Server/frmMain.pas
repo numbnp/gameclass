@@ -1678,6 +1678,7 @@ begin
        Comps[index].a.nFailedAuthentication := 0;
        SendAuthGoState1(index,True);
      end;
+     WakeUPComputer(Comps[index].macaddr)
   end;
 end;
 
