@@ -123,6 +123,7 @@ initialization
     UserName := 'Free user';
     CompsRegs := 300;
     LinuxClientCount := 300;
+    HardwareID := 'Free';
   end;
 
 end.
