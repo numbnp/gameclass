@@ -1,12 +1,12 @@
 object formMain: TformMain
   Left = 262
-  Top = 118
+  Top = 119
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 'GameClass3 Server'
-  ClientHeight = 571
+  ClientHeight = 570
   ClientWidth = 919
   Color = clBtnFace
   Constraints.MinHeight = 360
@@ -89,8 +89,17 @@ object formMain: TformMain
         ImageIndex = 6
         Style = tbsSeparator
       end
-      object tbCompReset: TToolButton
+      object tbCompLogoff: TToolButton
         Left = 228
+        Top = 0
+        Caption = 'Logoff'
+        DropdownMenu = PopupMenuLogoff
+        ImageIndex = 10
+        Style = tbsDropDown
+        OnClick = tbCompLogoffClick
+      end
+      object tbCompReset: TToolButton
+        Left = 296
         Top = 0
         Caption = 'Reset'
         DropdownMenu = PopupMenuReset
@@ -99,7 +108,7 @@ object formMain: TformMain
         OnClick = tbCompResetClick
       end
       object tbCompShutdown: TToolButton
-        Left = 296
+        Left = 364
         Top = 0
         Caption = 'Shutdown'
         DropdownMenu = PopupMenuShutdown
@@ -108,7 +117,7 @@ object formMain: TformMain
         OnClick = tbCompShutdownClick
       end
       object tbCompWakeUp: TToolButton
-        Left = 364
+        Left = 432
         Top = 0
         Caption = 'Wakeup'
         DropdownMenu = PopupMenuWakeup
@@ -117,7 +126,7 @@ object formMain: TformMain
         OnClick = tbCompWakeUpClick
       end
       object ToolButton9: TToolButton
-        Left = 432
+        Left = 500
         Top = 0
         Width = 8
         Caption = 'ToolButton9'
@@ -125,26 +134,19 @@ object formMain: TformMain
         Style = tbsSeparator
       end
       object tbSideline: TToolButton
-        Left = 440
+        Left = 508
         Top = 0
         Caption = #1059#1089#1083#1091#1075#1080
         ImageIndex = 6
         OnClick = tbSidelineClick
       end
       object ToolButton1: TToolButton
-        Left = 495
+        Left = 563
         Top = 0
         Width = 8
         Caption = 'ToolButton1'
         ImageIndex = 5
         Style = tbsSeparator
-      end
-      object tbCompLogoff: TToolButton
-        Left = 503
-        Top = 0
-        Caption = 'Logoff'
-        ImageIndex = 10
-        Visible = False
       end
     end
     object pnlTimer: TPanel
@@ -223,7 +225,7 @@ object formMain: TformMain
     Left = 0
     Top = 57
     Width = 919
-    Height = 514
+    Height = 513
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -232,7 +234,7 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 354
+        Top = 353
         Width = 911
         Height = 6
         Cursor = crVSplit
@@ -242,7 +244,7 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 911
-        Height = 354
+        Height = 353
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -399,7 +401,7 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 360
+        Top = 359
         Width = 911
         Height = 126
         Align = alBottom
@@ -462,11 +464,11 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 911
-        Height = 486
+        Height = 485
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 445
+          Top = 444
           Width = 911
           DesignSize = (
             911
@@ -481,16 +483,16 @@ object formMain: TformMain
         end
         inherited Panel2: TPanel
           Width = 911
-          Height = 445
+          Height = 444
           inherited memMessages: TMemo
             Width = 749
-            Height = 443
+            Height = 442
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 443
+            Height = 442
             inherited lvUsers: TListView
-              Height = 441
+              Height = 440
             end
           end
         end
@@ -666,6 +668,10 @@ object formMain: TformMain
         object N5: TMenuItem
           Caption = '-'
         end
+        object mnuLogoff: TMenuItem
+          Caption = #1042#1099#1081#1090#1080' '#1080#1079' '#1089#1080#1089#1090#1077#1084#1099
+          OnClick = mnuLogoffClick
+        end
         object mnuRestart: TMenuItem
           Caption = #1055#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1072
           OnClick = mnuRestartClick
@@ -835,6 +841,7 @@ object formMain: TformMain
       end
       object mnuRestrictions: TMenuItem
         Caption = #1054#1075#1088#1072#1085#1080#1095#1077#1085#1080#1103' '#1085#1077#1079#1072#1088#1077#1075#1080#1089#1090#1088#1080#1088#1086#1074#1072#1085#1085#1086#1081' '#1074#1077#1088#1089#1080#1080
+        Visible = False
         OnClick = mnuRestrictionsClick
       end
       object mnuAbout: TMenuItem
@@ -3996,6 +4003,18 @@ object formMain: TformMain
     object cmnWakeupNoFree: TMenuItem
       Caption = #1042#1082#1083#1102#1095#1080#1090#1100' '#1079#1072#1085#1103#1090#1099#1077
       OnClick = cmnWakeupNoFreeClick
+    end
+  end
+  object PopupMenuLogoff: TPopupMenu
+    Left = 284
+    Top = 198
+    object cmnLogoffAll: TMenuItem
+      Caption = #1051#1086#1075#1086#1092#1092' '#1076#1083#1103' '#1074#1089#1077#1093
+      OnClick = cmnLogoffAllClick
+    end
+    object cmnLogoffFree: TMenuItem
+      Caption = #1051#1086#1075#1086#1092#1092' '#1076#1083#1103' '#1089#1074#1086#1073#1086#1076#1085#1099#1093
+      OnClick = cmnLogoffFreeClick
     end
   end
 end

@@ -373,7 +373,8 @@ begin
   formMain.mnuWakeUp.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.mnuRestart.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompReset.Enabled := formMain.mnuRestart.Enabled;
-
+  formMain.mnuLogoff.Enabled := (CompsSelCount>0) and (Not isManager);
+  formMain.tbCompLogoff.Enabled := formMain.mnuLogoff.Enabled;
   result := FunctionAmIRight(FN_VOLUME) and (Not isManager);
   formMain.mnuVolumes.Enabled := result;
   formMain.mnuCompVolume.Enabled := result;
@@ -821,6 +822,7 @@ begin
  MenuRecursive(nil);
  MenuRecursive(formMain.PopupMenuShutdown.Items);
  MenuRecursive(formMain.PopupMenuReset.Items);
+ MenuRecursive(formMain.PopupMenuLogoff.Items);
  MenuRecursive(formMain.PopupMenuWakeup.Items);
  formMain.RedrawLanguage;
 end;
@@ -833,6 +835,7 @@ begin
  MenuRecursive(nil);
  MenuRecursive(formMain.PopupMenuShutdown.Items);
  MenuRecursive(formMain.PopupMenuReset.Items);
+ MenuRecursive(formMain.PopupMenuLogoff.Items);
  MenuRecursive(formMain.PopupMenuWakeup.Items);
  formMain.RedrawLanguage;
 end;
