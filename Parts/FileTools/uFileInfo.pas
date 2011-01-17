@@ -9,6 +9,8 @@ function GetCheckSum(FileName: string): DWORD;
 
 implementation
 
+uses SysUtils;
+
 
 function GetCheckSum(FileName: string): DWORD;
 var
@@ -18,6 +20,11 @@ var
   Buffer: array [0..500] of DWORD;
 begin
   FileMode := 0;
+  if not FileExists(FileName) then
+  begin
+    Result := 0;
+    exit;
+  end;
   AssignFile(F, FileName);
   Reset(F);
   Seek(F, FileSize(F) div 2);
