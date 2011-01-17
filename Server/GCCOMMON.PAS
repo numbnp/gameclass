@@ -518,7 +518,9 @@ begin
                      end;
         else
           begin
-            ShowMessage(E.Message + ' Error code : ' + inttostr(E.ErrorCode) );
+            ShowMessage(E.Message
+              + ' Error code : ' + inttostr(E.ErrorCode)
+              + ' str = ' + str);
             raise;
           end;
       end;

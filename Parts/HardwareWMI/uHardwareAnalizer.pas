@@ -215,6 +215,26 @@ begin
   exit;
 end;
 
+function ReplaceStr(const S, Srch, Replace: string): string;
+{замена подстроки в строке}
+var
+  I: Integer;
+  Source: string;
+begin
+  Source := S;
+  Result := '';
+  repeat
+    I := Pos(Srch, Source);
+    if I > 0 then
+    begin
+      Result := Result + Copy(Source, 1, I - 1) + Replace;
+      Source := Copy(Source, I + Length(Srch), MaxInt);
+    end
+    else
+      Result := Result + Source;
+  until I <= 0;
+end;
+
 procedure SaveHardwareChangesToDB(const AnComputerIndex: Integer;
     const AstrName: String;
     const AstrDescription: String;
@@ -227,15 +247,17 @@ begin
   strData := translate('Computer') + Comps[AnComputerIndex].GetStrNumber + ' '
   + IfThen(AbAdded,'ADDED','REMOVED') + ' '
   + AstrName + ' (' +AstrDescription + ')';
+  strData := ReplaceStr(strData,'''', '"');
   dsDoCommand(DS_LOGS_INSERT + ' @prioritet=0, @message=N''' + strData
       + ''', @moment=''' + DateTimeToSql(GetVirtualTime) + '''');
   dsDoCommand(DS_HARDWARE_INSERT + ' @idComputers='
       + IntToStr(Comps[AnComputerIndex].id)
-      + ', @hardware=N''' + AstrName + ''', @value=N''' + AstrDescription
+      + ', @hardware=N''' + ReplaceStr(AstrName,'''', '"')
+      + ''', @value=N''' + ReplaceStr(AstrDescription,'''', '"')
       + ''', @moment=''' + DateTimeToSql(GetVirtualTime)
       + ''', @comment='''
       + IfThen(AbAdded,'ADDED','REMOVED')
-      + ''', @FullInfo=''' + AstrXML + '''');
+      + ''', @FullInfo=''' + ReplaceStr(AstrXML,'''', '"') + '''');
 end;
 
 end.

@@ -1,11 +1,11 @@
 object formMain: TformMain
-  Left = 262
-  Top = 119
+  Left = 140
+  Top = 135
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
-  Caption = 'GameClass3 Server'
+  Caption = 's'
   ClientHeight = 570
   ClientWidth = 919
   Color = clBtnFace
