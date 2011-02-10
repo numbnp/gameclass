@@ -48,6 +48,9 @@ type
     function LocateSoundGuestSession: Boolean;
     function GetSoundGuestSession: Boolean;
     procedure SetSoundGuestSession(AValue: Boolean);
+    function LocateSoundEndSession: Boolean;
+    function GetSoundEndSession: Boolean;
+    procedure SetSoundEndSession(AValue: Boolean);
     function LocateTableFont: Boolean;
     function GetTableFont: TFont;
     procedure SetTableFont(AValue: TFont);
@@ -99,6 +102,8 @@ type
         write SetHideSessionChartWithoutReserve;
     property SoundGuestSession: Boolean
         read GetSoundGuestSession write SetSoundGuestSession;
+    property SoundEndSession: Boolean
+        read GetSoundEndSession write SetSoundEndSession;
     property TableFont: TFont
         read GetTableFont write SetTableFont;
     property BlockedFont: TFont
@@ -463,5 +468,24 @@ begin
   LocateSoundGuestSession;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
+
+function TRegistryInterface.LocateSoundEndSession: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('SoundEndSession', '0');
+end;
+
+function TRegistryInterface.GetSoundEndSession: Boolean;
+begin
+  LocateSoundEndSession;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryInterface.SetSoundEndSession(AValue: Boolean);
+begin
+  LocateSoundEndSession;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+
 
 end.

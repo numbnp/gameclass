@@ -21,8 +21,8 @@ uses
   uErrors;
 
 const
-  MRU_SERVERS_MAX = 3;
-  MRU_USERS_MAX = 5;
+  MRU_SERVERS_MAX = 5;
+  MRU_USERS_MAX = 10;
   DEF_DBNAME = 'GameClass';
 
 type
