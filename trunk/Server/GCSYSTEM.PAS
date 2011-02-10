@@ -6,7 +6,7 @@ Uses Classes;
 
 Type
   TNotifySet = set of (NotifyStopSessionNegativeBalance, NotifyLostLink
-      ,NotifyGuestSession);
+      ,NotifyGuestSession,NotifyStopSession );
   TMegaThread = class(TThread)
   private
     // Private declarations
@@ -39,6 +39,23 @@ begin
     f := 1700;
     l := 30;
     p := 50;
+    Windows.Beep(f,l);
+    sleep(p);
+    Windows.Beep(f,l);
+    sleep(p);
+    Windows.Beep(f,l);
+    sleep(200);
+    Windows.Beep(f,l);
+    sleep(p);
+    Windows.Beep(f,l);
+    sleep(p);
+    Windows.Beep(f,l);
+    exit;
+  end;
+  if (typeDo = [NotifyStopSession]) then begin
+    f := 2000;
+    l := 100;
+    p := 30;
     Windows.Beep(f,l);
     sleep(p);
     Windows.Beep(f,l);
