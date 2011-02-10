@@ -14,10 +14,12 @@ type
     gbAction: TGroupBox;
     cbSwitchToGC3Win: TCheckBox;
     cbxSoundGuestSession: TCheckBox;
+    cbSoundEndSession: TCheckBox;
     procedure cbSoundNegativeBalanceClick(Sender: TObject);
     procedure cbSoundLostLinkClick(Sender: TObject);
     procedure cbSwitchToGC3WinClick(Sender: TObject);
     procedure cbxSoundGuestSessionClick(Sender: TObject);
+    procedure cbSoundEndSessionClick(Sender: TObject);
   private
     { Private declarations }
     procedure ResetFrame;
@@ -46,10 +48,12 @@ procedure TframeSound.ResetFrame;
 begin
   gbSounds.Caption := translate('sound_lbl1');
   cbSoundNegativeBalance.Caption := translate('sound_cbSoundNegativeBalance');
+  cbSoundEndSession.Caption := translate('sound_cbSoundEndBalance');
   cbSoundLostLink.Caption := translate('sound_cbControlOff');
   gbAction.Caption := translate('gbAction');
   cbSwitchToGC3Win.Caption := translate('cbActivateWin');
   cbSoundNegativeBalance.Checked := GRegistry.UserInterface.SoundNegativeBalance;
+  cbSoundEndSession.Checked := GRegistry.UserInterface.SoundEndSession; 
   cbSoundLostLink.Checked := GRegistry.UserInterface.SoundLostLink;
   cbSwitchToGC3Win.Checked := GRegistry.UserInterface.SwitchToGC3Win;
 end;
@@ -80,6 +84,11 @@ end;
 procedure TframeSound.cbxSoundGuestSessionClick(Sender: TObject);
 begin
   GRegistry.UserInterface.SoundGuestSession := cbxSoundGuestSession.Checked;
+end;
+
+procedure TframeSound.cbSoundEndSessionClick(Sender: TObject);
+begin
+  GRegistry.UserInterface.SoundEndSession := cbSoundEndSession.Checked;
 end;
 
 end.

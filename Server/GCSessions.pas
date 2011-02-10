@@ -525,6 +525,8 @@ begin
 // стоп для ссессии
   StopOnDB(AbAuto);
   Status := ssFinished;
+  if GRegistry.UserInterface.SoundEndSession then
+    DoSound([NotifyStopSession]);
   if Credit and GRegistry.UserInterface.SoundNegativeBalance then
     DoSound([NotifyStopSessionNegativeBalance]);
 {  if (FnIdClient <> 0) then
