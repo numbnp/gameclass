@@ -12,7 +12,7 @@ uses QGraphics;
 const
   // misc2
   BASE_VERSION = '3.85.2';
-  APP_VERSION = '3.85.2 Beta 7 Free';
+  APP_VERSION = '3.85.2 Beta 8 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';

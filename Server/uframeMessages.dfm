@@ -1,24 +1,24 @@
 object frameMessages: TframeMessages
   Left = 0
   Top = 0
-  Width = 1142
-  Height = 807
+  Width = 790
+  Height = 534
   TabOrder = 0
   object Panel1: TPanel
     Left = 0
-    Top = 766
-    Width = 1142
+    Top = 493
+    Width = 790
     Height = 41
     Align = alBottom
     Caption = 'Panel1'
     TabOrder = 0
     DesignSize = (
-      1142
+      790
       41)
     object edtMessage: TEdit
       Left = 8
       Top = 8
-      Width = 1036
+      Width = 684
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       MaxLength = 255
@@ -26,7 +26,7 @@ object frameMessages: TframeMessages
       OnKeyUp = edtMessageKeyUp
     end
     object btnSend: TButton
-      Left = 1056
+      Left = 704
       Top = 8
       Width = 75
       Height = 25
@@ -39,16 +39,16 @@ object frameMessages: TframeMessages
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 1142
-    Height = 766
+    Width = 790
+    Height = 493
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 1
     object memMessages: TMemo
       Left = 161
       Top = 1
-      Width = 980
-      Height = 764
+      Width = 628
+      Height = 491
       Align = alClient
       Lines.Strings = (
         'memMessages')
@@ -59,7 +59,7 @@ object frameMessages: TframeMessages
       Left = 1
       Top = 1
       Width = 160
-      Height = 764
+      Height = 491
       Align = alLeft
       Caption = 'Panel3'
       TabOrder = 1
@@ -67,7 +67,7 @@ object frameMessages: TframeMessages
         Left = 1
         Top = 1
         Width = 158
-        Height = 762
+        Height = 489
         Align = alClient
         Columns = <
           item

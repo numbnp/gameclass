@@ -75,6 +75,18 @@ type
     cbxFreePacket: TCheckBox;
     lblUserLevel: TLabel;
     cbUserLevel: TComboBox;
+    gbSum: TGroupBox;
+    lblStartMoneyMin: TLabel;
+    lblStartMoneyMax: TLabel;
+    lblAddMoneyMin: TLabel;
+    lblAddMoneyMax: TLabel;
+    lblMaximumTrust: TLabel;
+    edtStartMoneyMin: TEdit;
+    edtStartMoneyMax: TEdit;
+    edtAddMoneyMin: TEdit;
+    edtAddMoneyMax: TEdit;
+    edtMaximumTrust: TEdit;
+    cbSumm: TCheckBox;
     procedure lvTarifsClick(Sender: TObject);
     procedure butMoveUpClick(Sender: TObject);
     procedure butTarifAddClick(Sender: TObject);
@@ -102,6 +114,12 @@ type
     procedure editBytesInMBExit(Sender: TObject);
     procedure cbxFreePacketClick(Sender: TObject);
     procedure cbUserLevelChange(Sender: TObject);
+    procedure cbSummClick(Sender: TObject);
+    procedure edtStartMoneyMinKeyPress(Sender: TObject; var Key: Char);
+    procedure edtAddMoneyMinKeyPress(Sender: TObject; var Key: Char);
+    procedure edtMaximumTrustKeyPress(Sender: TObject; var Key: Char);
+    procedure edtStartMoneyMaxKeyPress(Sender: TObject; var Key: Char);
+    procedure edtAddMoneyMaxKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     lockwhole: boolean;
@@ -142,7 +160,7 @@ var
   TarifVariants: TTarifVariants;
   Tarif: TTarif;
   dts: TADODataSet;
-  li: TListItem;  
+  li: TListItem;
   str: string;
   i: integer;
 begin
@@ -171,7 +189,7 @@ begin
   cbxFreePacket.Enabled := false;
   checkCondition.Checked := false;
   checkPacketClick(nil);
-  
+
   butVariantsAdd.Enabled := false;
   butVariantsUpdate.Enabled := false;
   butVariantsDelete.Enabled := false;
@@ -277,6 +295,13 @@ begin
       Tarif.PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
       Tarif.userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
 
+      Tarif.useseparatesumm  := dts.Recordset.Fields.Item['useseparatesumm'].Value;
+      Tarif.startmoneymin := dts.Recordset.Fields.Item['startmoneymin'].Value;
+      Tarif.startmoneymax := dts.Recordset.Fields.Item['startmoneymax'].Value;
+      Tarif.addmoneymin := dts.Recordset.Fields.Item['addmoneymin'].Value;
+      Tarif.addmoneymax := dts.Recordset.Fields.Item['addmoneymax'].Value;
+      Tarif.maximumtrust := dts.Recordset.Fields.Item['maximumtrust'].Value;
+
       li := lvTarifs.Items.Add;
       li.Caption := Tarif.name;
       li.Data := Tarif;
@@ -297,7 +322,17 @@ begin
     editPluginGroup.Text := '';
     cbInternet.Checked := false;
     cbCalcTraffic.Checked := false;
-    cbUserLevel.Text := '';  
+    cbUserLevel.Text := '';
+
+    cbSumm.Checked := false; 
+    edtStartMoneyMax.Text := '';
+    edtStartMoneyMin.Text := '';
+    edtAddMoneyMax.Text := '';
+    edtAddMoneyMin.Text := '';
+    edtMaximumTrust.Text := '';
+
+
+
   end;
 
   pgctrlDetails.ActivePage := tabNoTarif;
@@ -465,6 +500,13 @@ begin
    cbTrafficSeparatePayment.Enabled := cbInternet.Checked;
    cbUserLevel.Text := IntToStr(Tarif.userlevel); 
 
+   cbSumm.Checked := (Tarif.useseparatesumm = 1);
+   edtStartMoneyMin.Text := IntToStr(Tarif.startmoneymin);
+   edtStartMoneyMax.Text := IntToStr(Tarif.startmoneymax);
+   edtAddMoneyMin.Text := IntToStr(Tarif.addmoneymin);
+   edtAddMoneyMax.Text := IntToStr(Tarif.addmoneymax);
+   edtMaximumTrust.Text := IntToStr(Tarif.maximumtrust);
+
    UpdateVariantsList;
    locktarif := false;
    pgctrlDetails.ActivePage := tabTarifSelected;
@@ -531,6 +573,7 @@ end;
 procedure TframTarifs.butTarifUpdateClick(Sender: TObject);
 var
   internet: string;
+  separatesumm: string;
   calctraffic: string;
   Tarif: TTarif;
 begin
@@ -538,16 +581,27 @@ begin
   if (lvTarifs.ItemIndex <> -1) then
   begin
     if (cbInternet.Checked) then internet := '1' else internet := '0';
-    if (cbCalcTraffic.Checked) then calctraffic := '1' else calctraffic := '0';  
+    if (cbSumm.Checked) then separatesumm := '1' else separatesumm := '0';
+    if (cbCalcTraffic.Checked) then calctraffic := '1' else calctraffic := '0';
     Tarif := lvTarifs.Items[lvTarifs.ItemIndex].Data;
-    dsDoCommand(DS_TARIFS_UPDATE + ' @idTarif='+ IntToStr(Tarif.id) + ', @name='''+
-      editTarifName.Text+''', @internet='+internet + ', @calctraffic='+calctraffic +
-      ', @roundtime='+editRoundTime.Text+', @roundmoney='+AnsiReplaceStr(editRoundMoney.Text,',','.')+
-      ', @idGroup='+ IntToStr(TComputerGroup(cbComputerGroup.Items.Objects[cbComputerGroup.ItemIndex]).Id)+
-      ', @BytesInMB='+editBytesInMB.Text
+    dsDoCommand(DS_TARIFS_UPDATE + ' @idTarif='+ IntToStr(Tarif.id)
+      + ', @name=''' + editTarifName.Text
+      + ''', @internet=' + internet
+      + ', @calctraffic=' + calctraffic
+      + ', @roundtime=' + editRoundTime.Text
+      + ', @roundmoney=' + AnsiReplaceStr(editRoundMoney.Text,',','.')
+      + ', @idGroup=' + IntToStr(TComputerGroup(cbComputerGroup.Items.Objects[cbComputerGroup.ItemIndex]).Id)
+      + ', @BytesInMB='+editBytesInMB.Text
       + ', @SpeedLimitInKB='+ editSpeedLimitInKB.Text
       + ', @PluginGroupName=''' + editPluginGroup.Text
-      + ''', @userlevel=' + cbUserLevel.Text);
+      + ''', @userlevel=' + cbUserLevel.Text
+      + ', @useseparatesumm=' + separatesumm
+      + ', @startmoneymin=' + edtStartMoneyMin.Text
+      + ', @startmoneymax=' + edtStartMoneyMax.Text
+      + ', @addmoneymin=' + edtAddMoneyMin.Text
+      + ', @addmoneymax=' + edtAddMoneyMax.Text
+      + ', @maximumtrust=' + edtMaximumTrust.Text
+      );
     UpdateTarifsList;
   end;
 end;
@@ -702,8 +756,14 @@ begin
    if (lvTarifs.Items[i].Caption = editTarifName.Text) then
      equal := true;
 
-  butTarifAdd.Enabled := ((editTarifName.Text<>'') and      (editRoundMoney.Text<>'') and (editRoundTime.Text<>'') and (not equal));
+  butTarifAdd.Enabled := ((editTarifName.Text<>'') and (editRoundMoney.Text<>'') and (editRoundTime.Text<>'') and (not equal));
   butTarifUpdate.Enabled := true;
+
+  edtStartMoneyMax.Enabled := cbSumm.Checked;
+  edtStartMoneyMin.Enabled := cbSumm.Checked;
+  edtAddMoneyMax.Enabled := cbSumm.Checked;
+  edtAddMoneyMin.Enabled := cbSumm.Checked;
+  edtMaximumTrust.Enabled := cbSumm.Checked;
 end;
 
 procedure TframTarifs.editTarifNameChange(Sender: TObject);
@@ -919,6 +979,41 @@ end;
 procedure TframTarifs.cbUserLevelChange(Sender: TObject);
 begin
   UpdateTarifsInterface
+end;
+
+procedure TframTarifs.cbSummClick(Sender: TObject);
+begin
+  UpdateTarifsInterface;
+end;
+
+procedure TframTarifs.edtStartMoneyMinKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  UpdateTarifsInterface;
+end;
+
+procedure TframTarifs.edtAddMoneyMinKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  UpdateTarifsInterface;
+end;
+
+procedure TframTarifs.edtMaximumTrustKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  UpdateTarifsInterface;
+end;
+
+procedure TframTarifs.edtStartMoneyMaxKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  UpdateTarifsInterface;
+end;
+
+procedure TframTarifs.edtAddMoneyMaxKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  UpdateTarifsInterface;
 end;
 
 end.

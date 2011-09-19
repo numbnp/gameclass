@@ -504,14 +504,17 @@ procedure TfrmMain.DoDesign;
 begin
 try
   Debug.Trace5('DoDesign 1');
-  if frmSmallInfo.Visible
+  if (frmSmallInfo.Visible
       and (GClientInfo.ClientState <> ClientState_Session)
-      and (GClientInfo.ClientState <> ClientState_OperatorSession) then begin
+      and (GClientInfo.ClientState <> ClientState_OperatorSession))
+      or not(GClientOptions.ShowSmallInfo) then begin
     frmSmallInfo.Hide;
   end else if not(frmSmallInfo.Visible)
       and ((GClientInfo.ClientState = ClientState_Session)
-      or (GClientInfo.ClientState = ClientState_OperatorSession)) then begin
+      or (GClientInfo.ClientState = ClientState_OperatorSession))
+      and GClientOptions.ShowSmallInfo then begin
     frmSmallInfo.Show;
+//    frmSmallInfo.Hide;
   end;
   Debug.Trace5('DoDesign 2');
   Debug.Trace5('DoDesign State' + IntToStr(Integer(GClientInfo.ClientState)));

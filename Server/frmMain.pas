@@ -398,7 +398,7 @@ uses
   gcsystem,
   uY2KString,
   uRegistration,
-  uKKMTools;
+  uKKMTools, Variants;
 
 {$R *.dfm}
 
@@ -2308,11 +2308,11 @@ var
 begin
   if (not dsConnected) then exit; // Если еще не подключились то и нечего отображать
 
-  try
-    tmp_value := cdsComps.FieldByName('SysState').Value;
-  except
+  if cdsComps.FieldByName('SysState').Value <> Null then
+    tmp_value := cdsComps.FieldByName('SysState').Value
+  else
     tmp_value := '';
-  end;
+
   if tmp_value = 'Blocked' then
     AFont.Assign( OperatorProfile.ComputerListBlockedFont);
   if tmp_value = 'notBusy' then
