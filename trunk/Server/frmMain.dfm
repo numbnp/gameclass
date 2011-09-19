@@ -1,13 +1,13 @@
 object formMain: TformMain
-  Left = 232
-  Top = 241
+  Left = 161
+  Top = 342
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 570
-  ClientWidth = 919
+  ClientHeight = 504
+  ClientWidth = 780
   Color = clBtnFace
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 919
+    Width = 780
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 797
+      Width = 658
       Height = 57
       Align = alClient
       ButtonHeight = 51
@@ -150,7 +150,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 797
+      Left = 658
       Top = 0
       Width = 122
       Height = 57
@@ -224,8 +224,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 919
-    Height = 513
+    Width = 780
+    Height = 447
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -234,8 +234,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 353
-        Width = 911
+        Top = 287
+        Width = 772
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -243,8 +243,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 911
-        Height = 353
+        Width = 772
+        Height = 287
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -401,8 +401,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 359
-        Width = 911
+        Top = 293
+        Width = 772
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -410,7 +410,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 911
+          Width = 772
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -431,7 +431,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 911
+          Left = 772
           Top = 0
           Width = 0
           Height = 126
@@ -463,36 +463,36 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 911
-        Height = 485
+        Width = 772
+        Height = 419
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 444
-          Width = 911
+          Top = 378
+          Width = 772
           DesignSize = (
-            911
+            772
             41)
           inherited edtMessage: TEdit
-            Width = 800
+            Width = 661
           end
           inherited btnSend: TButton
-            Left = 822
+            Left = 683
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 911
-          Height = 444
+          Width = 772
+          Height = 378
           inherited memMessages: TMemo
-            Width = 749
-            Height = 442
+            Width = 610
+            Height = 376
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 442
+            Height = 376
             inherited lvUsers: TListView
-              Height = 440
+              Height = 374
             end
           end
         end

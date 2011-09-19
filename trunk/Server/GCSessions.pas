@@ -58,7 +58,7 @@ type
     procedure UpdateTraffic(AnTrafficDiff: Longword);
     procedure UpdatePrinted(const AfPrintedCostDiff: Double);
 
-    procedure ChangeTariff(const AnNewTariffId: Longword;
+    procedure ChangeTariff(const AnNewTariff: TTarif;
         const AdtCurrentTime: TDateTime; const AdtNewStopTime: TDateTime);
     // Получение данных о сессии
     // для консоли
@@ -784,7 +784,7 @@ begin
   end;
   if tarif.GetWholeTrafficSeparatePayment(Whole) then begin
     fUsedFreeTrafic := FfCurrentTraffic - CurrentAdditionalSeparateTraffic;
-    fTrafficLimit := tarif.GetWholeTrafficLimit(Whole, TimeStart,
+    fTrafficLimit := tarif.GetWholeTrafficLimit(Whole, TimeStart  ,
         dtCurrentWithPenalty);
     if CompareValue(fUsedFreeTrafic, fTrafficLimit)
         = GreaterThanValue	then begin
@@ -944,11 +944,13 @@ begin
   Credit := (tempMoney<0);
 end;
 
-procedure TGCSession.ChangeTariff(const AnNewTariffId: Longword;
+procedure TGCSession.ChangeTariff(const AnNewTariff: TTarif;
   const AdtCurrentTime: TDateTime; const AdtNewStopTime: TDateTime);
 var
   dts: TADODataSet;
   query: String;
+  computer: Tcomputer;
+  tarif: TTarif;
 begin
   if (isManager) then exit;
   if (FnIdClient <> 0) then exit;
@@ -958,7 +960,7 @@ begin
   // Отметить текущее время останова (stop)
   // Вызываем SessionsChange
     query := DS_SESSIONS_CHANGE_TARIFF+ ' @idSessionsAdd='+IntToStr(FnIdSessionsAdd) +
-           ', @idTarif=' + IntToStr(AnNewTariffId) +
+           ', @idTarif=' + IntToStr(AnNewTariff.id) +
            ', @CurrentTime=''' + DateTimeToSql(AdtCurrentTime) + '''' +
            ', @NewTariffStop=''' + DateTimeToSql(AdtNewStopTime) + '''' +
            ', @MoneyLeft=' + FloatToStrGC(GetMoneyLeft)
@@ -969,6 +971,18 @@ begin
       FnIdSessionsAdd := StrToInt64(dts.Recordset.Fields.Item['idSessionsAdd'].Value);
     dts.Close;
     dts.Destroy;
+
+
+    // Переподключаем интернет
+    if (GRegistry.Modules.Internet.LinuxFree) or
+       (GRegistry.Modules.Internet.LinuxPro)then begin
+      if (AnNewTariff.internet = 1) then
+      begin
+        computer := Comps[ComputersGetIndex(FnIdComp)];
+        FProxy.IPDisable(computer.ipaddr);
+        FProxy.IPEnable(computer.ipaddr, AnNewTariff.name);
+      end;
+    end;
   end;
   DoInterfaceComps;
   dmActions.actRedrawComps.Execute;

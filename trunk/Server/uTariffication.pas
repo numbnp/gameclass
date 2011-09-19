@@ -119,6 +119,12 @@ type
     variantscount: integer;
     idGroup: Integer;
     userlevel: Integer; // требуемый уровень доступа пользователя
+    useseparatesumm: integer; // Использовать отдельную настройку сумм
+    startmoneymin: integer;   // минимальная стартовая сумма тарифа
+    startmoneymax: integer;   // максимальная стартовая сумма тарифа
+    addmoneymin: integer;     // минимальная сумма доплаты тарифа
+    addmoneymax: integer;     // максимальная мальная сумма доплаты тарифа
+    maximumtrust: integer;    // сумма доверия
 
     tarifvariants: array[0..(MAX_TARIFS_VARIANTS-1)] of TTarifVariants;
     property BytesInMB: Integer read FnBytesInMB write FnBytesInMB;
@@ -416,10 +422,22 @@ begin
     exit;
   end;
  // применить минимальную оплату
- if (money < GRegistry.Options.StartMoneyMinimum) then begin
-   CalculateTimeLength := 0;
-   exit;
- end;
+ if useseparatesumm > 0 then
+   begin
+     if (money < startmoneymin) then
+       begin
+       CalculateTimeLength := 0;
+       exit;
+     end;
+   end
+ else
+   begin
+     if (money < GRegistry.Options.StartMoneyMinimum) then
+       begin
+         CalculateTimeLength := 0;
+         exit;
+       end;
+   end;
 
  // vip в обратную сторону, типа VIP - плати больше :)
 //TODOVIP if (vip) then money := money / (1 + Options.VIPk/100);
@@ -475,8 +493,20 @@ begin
 // summa := fnRoundMoney(summa, roundmoney, 1);
  summa := fnRoundMoney(summa, roundmoney, 1);
  // а теперь применить минимальную оплату
-  if (summa < GRegistry.Options.StartMoneyMinimum) then
+{  if (summa < GRegistry.Options.StartMoneyMinimum) then
     summa := GRegistry.Options.StartMoneyMinimum;
+}
+  if useseparatesumm > 0 then
+    begin
+      if (summa < startmoneymin) then
+      summa := startmoneymin;
+    end
+  else
+    begin
+      if (summa < GRegistry.Options.StartMoneyMinimum) then
+        summa := GRegistry.Options.StartMoneyMinimum;
+    end;
+
  if (discount = 100) then
   summa := 0;
  CalculateCost := summa;

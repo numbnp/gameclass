@@ -162,7 +162,7 @@ uses
   gcconst,
   uVCLTools,
   uTariffication,
-  uKKMTools;
+  uKKMTools, uRegistryOptions;
 
 {$R *.dfm}
 
@@ -232,18 +232,30 @@ var
   session: TGCSession;
   i, nCompIndex: Integer;
   bActionCanceled: Boolean;
+  summmax: Real;
+  summmin: Real;
 begin
   // проверка, что введена сумма не меньше минимальной
   if (CompsSelCount > 1) then
     fAddSumma := edtTotalCost.Value
   else
     fAddSumma := edtMoney.Value;
-  if (fAddSumma < GRegistry.Options.AddMoneyMinimum)
-      or (fAddSumma > GRegistry.Options.AddMoneyMaximum) then begin
+  if Comps[ComputersGetIndex(CompsSel[0])].session.Tariff.useseparatesumm >0 then
+  begin
+    summmin := Comps[ComputersGetIndex(CompsSel[0])].session.Tariff.addmoneymin;
+    summmax := Comps[ComputersGetIndex(CompsSel[0])].session.Tariff.addmoneymax;
+  end else
+  begin
+    summmin := GRegistry.Options.AddMoneyMinimum;
+    summmax := GRegistry.Options.AddMoneyMaximum;
+  end;
+
+  if (fAddSumma < summmin)
+      or (fAddSumma > summmax) then begin
     formGCMessageBox.memoInfo.Text := translate('ErrorCompAdd1') + ' '
-        + FloatToStr(GRegistry.Options.AddMoneyMinimum) + ' ' +
+        + FloatToStr(summmin) + ' ' +
     translate('ErrorCompAdd2') + ' '
-        + FloatToStr(GRegistry.Options.AddMoneyMaximum);
+        + FloatToStr(summmax);
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
     exit;
@@ -522,7 +534,7 @@ begin
   bMulti := (CompsSelCount > 1);
   if bMulti then begin
     nHeight := 285 + CompsSelCount * 17;
-    if nHeight > 455 then
+    if nHeight > 455 then                                  //to do сделать параметр регулируемым
       nHeight := 455;
     Width := 454;
   end else begin

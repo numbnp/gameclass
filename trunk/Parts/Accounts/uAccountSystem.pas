@@ -28,6 +28,8 @@ uses
     procedure SetDiscountAfterLimitDisabled(AValue: Boolean);
     function GetDiscountForPacketsEnabled: Boolean;
     procedure SetDiscountForPacketsEnabled(AValue: Boolean);
+    function GetRefersSystemEnabled: Boolean;
+    procedure SetRefersSystemEnabled(AValue: Boolean);
     function GetUseCheckAccounts: Boolean;
     procedure SetUseCheckAccounts(AValue: Boolean);
     function GetUsePeriodOfValidity: Boolean;
@@ -59,6 +61,8 @@ uses
         read GetDiscountAfterLimitDisabled write SetDiscountAfterLimitDisabled;
     property DiscountForPacketsEnabled: Boolean
         read GetDiscountForPacketsEnabled write SetDiscountForPacketsEnabled;
+    property RefersSystemEnabled: Boolean
+        read GetRefersSystemEnabled write SetRefersSystemEnabled;
     property UseCheckAccounts: Boolean
         read GetUseCheckAccounts write SetUseCheckAccounts;
     property UsePeriodOfValidity: Boolean
@@ -174,6 +178,16 @@ end;
 procedure TAccountSystem.SetDiscountForPacketsEnabled(AValue: Boolean);
 begin
   GRegistry.AccountSystem.DiscountForPacketsEnabled := AValue;
+end;
+
+function TAccountSystem.GetRefersSystemEnabled: Boolean;
+begin
+  Result := GRegistry.AccountSystem.RefersSystemEnabled;
+end;
+
+procedure TAccountSystem.SetRefersSystemEnabled(AValue: Boolean);
+begin
+  GRegistry.AccountSystem.RefersSystemEnabled := AValue;
 end;
 
 function TAccountSystem.GetUseCheckAccounts: Boolean;

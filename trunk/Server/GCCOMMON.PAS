@@ -370,6 +370,13 @@ begin
       Tarifs[i].SpeedLimitInKB := dts.Recordset.Fields.Item['SpeedLimitInKB'].Value;
       Tarifs[i].PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
       Tarifs[i].userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
+      Tarifs[i].useseparatesumm  := dts.Recordset.Fields.Item['useseparatesumm'].Value;
+      Tarifs[i].startmoneymin := dts.Recordset.Fields.Item['startmoneymin'].Value;
+      Tarifs[i].startmoneymax := dts.Recordset.Fields.Item['startmoneymax'].Value;
+      Tarifs[i].addmoneymin := dts.Recordset.Fields.Item['addmoneymin'].Value;
+      Tarifs[i].addmoneymax := dts.Recordset.Fields.Item['addmoneymax'].Value;
+      Tarifs[i].maximumtrust := dts.Recordset.Fields.Item['maximumtrust'].Value;
+
       // подгрузим цельные интервалы TarifsWhole
       Tarifs[i].variantscount := 0;
       dts2 := TADODataSet.Create(nil);

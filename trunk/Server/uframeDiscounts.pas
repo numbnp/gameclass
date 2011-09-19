@@ -5,7 +5,7 @@ interface
 uses  
   GCConst, GCLangUtils, GCComputers, ADODB, GCCommon,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, DBGridEh, DB;
+  ExtCtrls, Grids, DBGridEh, DB, ValEdit;
 
 type
   TframeDiscounts = class(TFrame)
@@ -27,6 +27,9 @@ type
     dtpStart: TDateTimePicker;
     Button1: TButton;
     Label1: TLabel;
+    gbRefers: TGroupBox;
+    vleBonus: TValueListEditor;
+    cbxUseRefers: TCheckBox;
     procedure editSummaChange(Sender: TObject);
     procedure editDiscountChange(Sender: TObject);
     procedure butDiscountAddClick(Sender: TObject);
@@ -37,6 +40,7 @@ type
     procedure cbxDiscountAfterLimitDisabledClick(Sender: TObject);
     procedure cbxDiscountForPacketsEnabledClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure cbxUseRefersClick(Sender: TObject);
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
@@ -83,6 +87,7 @@ begin
       GAccountSystem.DiscountAfterLimitDisabled;
   cbxDiscountForPacketsEnabled.Checked :=
       GAccountSystem.DiscountForPacketsEnabled;
+  cbxUseRefers.Checked := GAccountSystem.RefersSystemEnabled;
   dsrcDiscounts.DataSet := GAccountSystem.AccountsDiscounts;
   grdDiscountsCellClick(Nil);
   dtpStart.DateTime := DateOf(IncMonth(Now, -1));
@@ -123,6 +128,7 @@ begin
       and bEnabled;
   butDiscountUpdate.Enabled := (butDiscountDel.Enabled and FbEdited)
       and bEnabled;
+  editSumma.Text := Format('%.*d', ['1456dad']);
 end;
 
 procedure TframeDiscounts.editSummaChange(Sender: TObject);
@@ -265,6 +271,15 @@ begin
   else
     Application.MessageBox('При выполнении переасчета возникла ошибка!',
         'Ошибка', MB_OK or MB_ICONERROR);
+end;
+
+procedure TframeDiscounts.cbxUseRefersClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  GAccountSystem.RefersSystemEnabled  :=
+      cbxUseRefers.Checked;
+  EnableControls;
 end;
 
 end.

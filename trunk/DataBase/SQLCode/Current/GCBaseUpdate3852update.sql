@@ -85,6 +85,80 @@ SET @Rest = ISNULL(@Rest, 0.0)
 GO
 
 /* -----------------------------------------------------------------------------
+  Колонки для отдельно настраиваемых ограничений по суммам внутри тарифа
+----------------------------------------------------------------------------- */
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'useseparatesumm' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [useseparatesumm] [int] NOT NULL DEFAULT (0)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'startmoneymin' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [startmoneymin] [int] NOT NULL DEFAULT (1)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'startmoneymax' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [startmoneymax] [int] NOT NULL DEFAULT (100)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'addmoneymin' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [addmoneymin] [int] NOT NULL DEFAULT (1)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'addmoneymax' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [addmoneymax] [int] NOT NULL DEFAULT (100)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'maximumtrust' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [maximumtrust] [int] NOT NULL DEFAULT (200)
+GO
+
+ALTER PROCEDURE TarifsUpdate
+@idTarif int,
+@name nvarchar(100),
+@internet int,
+@calctraffic int,
+@roundtime int,
+@roundmoney money,
+@idGroup int,
+@BytesInMB int,
+@SpeedLimitInKB int,
+@PluginGroupName nvarchar(50),
+@userlevel int,
+@useseparatesumm int,
+@startmoneymin int,
+@startmoneymax int,
+@addmoneymin int,
+@addmoneymax int,
+@maximumtrust int
+/*WITH ENCRYPTION*/  
+AS 
+
+set nocount on
+
+if (exists(select * from Tarifs where ([name]=@name) and [id]<>@idTarif and [isdelete]=0))
+begin
+  raiserror 50000 'Tarif with these name already exist!'
+  return 50000
+end
+
+update Tarifs set [name]=@name ,[internet]=@internet ,[calctraffic]=@calctraffic ,[roundtime]=@roundtime ,
+         [roundmoney]=@roundmoney, [idGroup]=@idGroup, [BytesInMB]=@BytesInMB,
+    [SpeedLimitInKB]=@SpeedLimitInKB, [PluginGroupName]=@PluginGroupName, [userlevel]=@userlevel,
+	[useseparatesumm]=@useseparatesumm,
+	[startmoneymin]=@startmoneymin,
+	[startmoneymax]=@startmoneymax,
+	[addmoneymin]=@addmoneymin,
+	[addmoneymax]=@addmoneymax,
+	[maximumtrust]=@maximumtrust
+    where [id]=@idTarif
+GO
+
+/* -----------------------------------------------------------------------------
                                UPDATE Version
 ----------------------------------------------------------------------------- */
 UPDATE Registry SET [value]='3.85.2' WHERE [key]='BaseVersion'

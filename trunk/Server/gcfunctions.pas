@@ -436,15 +436,15 @@ begin
       and firstComputer.session.IsGuest
       and firstComputer.session.IsTrafficSeparatePayment
       and not firstComputer.session.PostPay);
-  FunctionEnable(FN_COMP_MOVE, (bOneSelected and firstComputer.Busy
-      and firstComputer.session.IsGuest)
+  FunctionEnable(FN_COMP_MOVE, (bOneSelected and firstComputer.Busy)
+//      and firstComputer.session.IsGuest)
       or (bTwoSelected and (firstComputer.Busy
       or Comps[ComputersGetIndex(CompsSel[1])].Busy)
       and (firstComputer.IdGroup
       = Comps[ComputersGetIndex(CompsSel[1])].IdGroup)
-      and not (firstComputer.a.state = ClientState_Session)
+{      and not (firstComputer.a.state = ClientState_Session)
       and not (Comps[ComputersGetIndex(CompsSel[1])].a.state
-      = ClientState_Session)));
+      = ClientState_Session)}));
   FunctionEnable(FN_COMP_START, bOneOrMoreSelected
       and CompsSelIsLikely(caReserve));
   FunctionEnable(FN_COMP_STOP, bOneOrMoreSelected
@@ -1611,7 +1611,7 @@ begin
   index := ComputersGetIndex(CompsSel[0]);
   if (formCompChangeTarif.ShowModal = mrOK) and
      (formCompChangeTarif.SelectedTarifIndex <> -1) then begin
-    Comps[index].session.ChangeTariff(Tarifs[formCompChangeTarif.SelectedTarifIndex].id,
+    Comps[index].session.ChangeTariff(Tarifs[formCompChangeTarif.SelectedTarifIndex],
       formCompChangeTarif.dtpNewStart.DateTime,
       formCompChangeTarif.dtpNewStop.DateTime);
     dmActions.actLoadSessions.Execute;
