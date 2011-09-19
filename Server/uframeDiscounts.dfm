@@ -8,7 +8,7 @@ object frameDiscounts: TframeDiscounts
     Left = 0
     Top = 0
     Width = 449
-    Height = 57
+    Height = 73
     Align = alTop
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
     TabOrder = 0
@@ -39,33 +39,42 @@ object frameDiscounts: TframeDiscounts
       TabOrder = 2
       OnClick = cbxDiscountForPacketsEnabledClick
     end
+    object cbxUseRefers: TCheckBox
+      Left = 9
+      Top = 50
+      Width = 297
+      Height = 17
+      Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1088#1077#1092#1077#1088#1089#1082#1091#1102' '#1089#1080#1089#1090#1077#1084#1091
+      TabOrder = 3
+      OnClick = cbxUseRefersClick
+    end
   end
   object pnlDiscountsTable: TGroupBox
     Left = 0
-    Top = 57
+    Top = 73
     Width = 449
-    Height = 209
+    Height = 152
     Align = alTop
     Caption = #1058#1072#1073#1083#1080#1094#1072' '#1089#1082#1080#1076#1086#1082
     TabOrder = 1
     object lblDiscount: TLabel
-      Left = 289
-      Top = 66
+      Left = 246
+      Top = 72
       Width = 54
       Height = 13
       Caption = #1057#1082#1080#1076#1082#1072' (%)'
     end
     object lblSumma: TLabel
-      Left = 289
-      Top = 20
+      Left = 247
+      Top = 24
       Width = 49
       Height = 13
       Caption = #1057#1091#1084#1084#1072' ($)'
     end
     object editDiscount: TEdit
-      Left = 289
-      Top = 82
-      Width = 96
+      Left = 245
+      Top = 91
+      Width = 92
       Height = 21
       TabOrder = 0
       OnChange = editDiscountChange
@@ -73,8 +82,8 @@ object frameDiscounts: TframeDiscounts
     object grdDiscounts: TDBGridEh
       Left = 16
       Top = 23
-      Width = 257
-      Height = 138
+      Width = 217
+      Height = 114
       AutoFitColWidths = True
       DataSource = dsrcDiscounts
       FooterColor = clWindow
@@ -105,27 +114,27 @@ object frameDiscounts: TframeDiscounts
           FieldName = 'summary'
           Footers = <>
           Title.Caption = #1053#1072#1088#1072#1073#1086#1090#1072#1085#1086' ($)'
-          Width = 125
+          Width = 106
         end
         item
           EditButtons = <>
           FieldName = 'discount'
           Footers = <>
           Title.Caption = #1057#1082#1080#1076#1082#1072' %'
-          Width = 125
+          Width = 105
         end>
     end
     object editSumma: TEdit
-      Left = 289
-      Top = 36
-      Width = 96
+      Left = 245
+      Top = 43
+      Width = 92
       Height = 21
       TabOrder = 2
       OnChange = editSummaChange
     end
     object butDiscountAdd: TButton
-      Left = 190
-      Top = 173
+      Left = 358
+      Top = 29
       Width = 75
       Height = 25
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
@@ -133,8 +142,8 @@ object frameDiscounts: TframeDiscounts
       OnClick = butDiscountAddClick
     end
     object butDiscountUpdate: TButton
-      Left = 270
-      Top = 173
+      Left = 358
+      Top = 93
       Width = 75
       Height = 25
       Caption = #1054#1073#1085#1086#1074#1080#1090#1100
@@ -142,8 +151,8 @@ object frameDiscounts: TframeDiscounts
       OnClick = butDiscountUpdateClick
     end
     object butDiscountDel: TButton
-      Left = 350
-      Top = 173
+      Left = 358
+      Top = 61
       Width = 75
       Height = 25
       Caption = #1059#1076#1072#1083#1080#1090#1100
@@ -153,7 +162,7 @@ object frameDiscounts: TframeDiscounts
   end
   object pnlDiscountsRecalc: TGroupBox
     Left = 0
-    Top = 266
+    Top = 225
     Width = 449
     Height = 47
     Align = alTop
@@ -167,7 +176,7 @@ object frameDiscounts: TframeDiscounts
       Caption = #1059#1095#1080#1090#1099#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1076#1077#1085#1100#1075#1080', '#1087#1086#1090#1088#1072#1095#1077#1085#1085#1099#1077' '#1087#1086#1089#1083#1077
     end
     object dtpStart: TDateTimePicker
-      Left = 256
+      Left = 264
       Top = 16
       Width = 81
       Height = 21
@@ -176,13 +185,41 @@ object frameDiscounts: TframeDiscounts
       TabOrder = 0
     end
     object Button1: TButton
-      Left = 352
+      Left = 360
       Top = 14
       Width = 75
       Height = 25
       Caption = #1042#1099#1087#1086#1083#1085#1080#1090#1100
       TabOrder = 1
       OnClick = Button1Click
+    end
+  end
+  object gbRefers: TGroupBox
+    Left = 0
+    Top = 272
+    Width = 449
+    Height = 137
+    Align = alClient
+    Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1088#1077#1092#1077#1088#1089#1082#1086#1081' '#1089#1080#1089#1090#1077#1084#1099
+    TabOrder = 3
+    object vleBonus: TValueListEditor
+      Left = 16
+      Top = 24
+      Width = 217
+      Height = 105
+      Strings.Strings = (
+        '1=0'
+        '2=0'
+        '3=0'
+        '4=0'
+        '5=0')
+      TabOrder = 0
+      TitleCaptions.Strings = (
+        #1059#1088#1086#1074#1077#1085#1100
+        #1041#1086#1085#1091#1089' %')
+      ColWidths = (
+        61
+        133)
     end
   end
   object dsrcDiscounts: TDataSource

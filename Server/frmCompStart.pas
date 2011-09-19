@@ -223,7 +223,7 @@ uses
   uServerScripting,
   uTariffication,
   uKKMTools,
-  uProtocol;
+  uProtocol, uRegistryOptions;
 
 constructor TformCompStart.Create(AOwner: TComponent);
 begin
@@ -366,29 +366,44 @@ var
   StartSumma: double;
   i: Integer;
   bActionCanceled: Boolean;
+  summmax : Real;
+  summmin : Real;
+  index: integer;
 begin
   timerFrmCompStartTimer(nil);
+  Index := TarifsGetIndex(FDesignedSession.IdTarif);
 
   // проверка, что введена сумма не меньше минимальной
   StartSumma := StrToFloatGC(formCompStart.editMoney.Text);
-  if (StartSumma < GRegistry.Options.StartMoneyMinimum) then
+  if Tarifs[Index].useseparatesumm > 0 then
+  begin
+    summmax := Tarifs[Index].startmoneymax;
+    summmin := Tarifs[Index].startmoneymin;
+  end else
+  begin
+    summmax := GRegistry.Options.StartMoneyMaximum;
+    summmin := GRegistry.Options.StartMoneyMinimum;
+  end;
+
+  if (StartSumma < summmin) then
   begin
     formGCMessageBox.memoInfo.Text := translate('ErrorCompStart1') + ' '
-        + FloatToStr(GRegistry.Options.StartMoneyMinimum) + ' '
+        + FloatToStr(summmin) + ' '
         + GRegistry.Options.Currency;
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
     exit;
   end;
-  if (StartSumma > GRegistry.Options.StartMoneyMaximum) then
+  if (StartSumma > summmax) then
   begin
     formGCMessageBox.memoInfo.Text := translate('ErrorCompStart2') + ' '
-        + FloatToStr(GRegistry.Options.StartMoneyMaximum) + ' '
+        + FloatToStr(summmax) + ' '
         + GRegistry.Options.Currency;
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
     exit;
   end;
+
   timerFrmCompStart.Enabled := false; //TODO kill
   formMain.timerCompsList.Enabled := false;
   for i:=GSessions.Count-1 downto 0 do
@@ -488,6 +503,7 @@ var
   tm: TDateTime;
   dtMaxStop: TDateTime;
   d1,d2,d3,d4: Integer;
+  maxtrust: Real;
 begin
   if not dsConnected then
     exit;
@@ -546,9 +562,16 @@ begin
   end
   else if (PostPay in FState) then begin
     FDesignedSession.PostPay := True;
-    FDesignedSession.CommonPay := GRegistry.Options.MaximumTrustPostPay;
+    if Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].useseparatesumm >0 then
+    begin
+      maxtrust := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].maximumtrust
+    end else
+      maxtrust := GRegistry.Options.MaximumTrustPostPay;
+    begin
+    end;
+    FDesignedSession.CommonPay := maxtrust;
     tm := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].CalculateTimeLength(
-        FDesignedSession.TimeStart, GRegistry.Options.MaximumTrustPostPay,
+        FDesignedSession.TimeStart, maxtrust,
         Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0);
     FDesignedSession.TimeStop := FDesignedSession.TimeStart + tm;
     dtMaxStop := GSessions.GetDesignedMaxStopTime;

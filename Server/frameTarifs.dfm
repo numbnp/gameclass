@@ -2,7 +2,7 @@ object framTarifs: TframTarifs
   Left = 0
   Top = 0
   Width = 576
-  Height = 498
+  Height = 538
   TabOrder = 0
   object lblComputerGroup: TLabel
     Left = 8
@@ -25,7 +25,7 @@ object framTarifs: TframTarifs
     Left = 8
     Top = 48
     Width = 129
-    Height = 141
+    Height = 233
     Columns = <
       item
         Caption = 'Tarif'
@@ -50,9 +50,9 @@ object framTarifs: TframTarifs
   end
   object pgctrlDetails: TPageControl
     Left = 0
-    Top = 184
+    Top = 288
     Width = 453
-    Height = 229
+    Height = 241
     ActivePage = tabTarifSelected
     Style = tsFlatButtons
     TabOrder = 3
@@ -63,7 +63,7 @@ object framTarifs: TframTarifs
         Left = 0
         Top = 0
         Width = 445
-        Height = 247
+        Height = 231
         Align = alClient
         Caption = '.......'
         TabOrder = 0
@@ -77,7 +77,7 @@ object framTarifs: TframTarifs
         Left = 0
         Top = 0
         Width = 445
-        Height = 219
+        Height = 231
         Align = alClient
         Caption = #1058#1072#1088#1080#1092#1085#1072#1103' '#1089#1077#1090#1082#1072' '#1087#1086' '#1074#1099#1073#1088#1072#1085#1085#1086#1084#1091' '#1090#1072#1088#1080#1092#1091
         TabOrder = 0
@@ -414,7 +414,7 @@ object framTarifs: TframTarifs
     Left = 144
     Top = 6
     Width = 305
-    Height = 185
+    Height = 283
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1090#1072#1088#1080#1092#1072
     TabOrder = 4
     object lblTarifName: TLabel
@@ -447,7 +447,7 @@ object framTarifs: TframTarifs
     end
     object butMoveUp: TButton
       Left = 4
-      Top = 152
+      Top = 249
       Width = 70
       Height = 25
       Caption = 'Move up'
@@ -457,7 +457,7 @@ object framTarifs: TframTarifs
     end
     object butTarifUpdate: TButton
       Left = 155
-      Top = 152
+      Top = 249
       Width = 70
       Height = 25
       Caption = 'update'
@@ -467,7 +467,7 @@ object framTarifs: TframTarifs
     end
     object butTarifDelete: TButton
       Left = 230
-      Top = 152
+      Top = 249
       Width = 70
       Height = 25
       Caption = 'delete'
@@ -476,7 +476,7 @@ object framTarifs: TframTarifs
     end
     object butTarifAdd: TButton
       Left = 79
-      Top = 152
+      Top = 249
       Width = 70
       Height = 25
       Caption = 'add'
@@ -486,7 +486,7 @@ object framTarifs: TframTarifs
     end
     object gbInternet: TGroupBox
       Left = 8
-      Top = 78
+      Top = 178
       Width = 289
       Height = 67
       Caption = '   '
@@ -574,7 +574,7 @@ object framTarifs: TframTarifs
     end
     object cbInternet: TCheckBox
       Left = 18
-      Top = 78
+      Top = 175
       Width = 77
       Height = 17
       Caption = 'Internet'
@@ -601,6 +601,102 @@ object framTarifs: TframTarifs
         '8'
         '9'
         '10')
+    end
+    object gbSum: TGroupBox
+      Left = 8
+      Top = 79
+      Width = 289
+      Height = 98
+      TabOrder = 10
+      object lblStartMoneyMin: TLabel
+        Left = 8
+        Top = 26
+        Width = 64
+        Height = 13
+        Caption = #1052#1080#1085'. '#1086#1087#1083#1072#1090#1099
+      end
+      object lblStartMoneyMax: TLabel
+        Left = 149
+        Top = 26
+        Width = 70
+        Height = 13
+        Caption = #1052#1072#1082#1089'. '#1086#1087#1083#1072#1090#1099
+      end
+      object lblAddMoneyMin: TLabel
+        Left = 8
+        Top = 50
+        Width = 73
+        Height = 13
+        Caption = #1052#1080#1085'. '#1076#1086#1087#1083#1072#1090#1099' '
+      end
+      object lblAddMoneyMax: TLabel
+        Left = 149
+        Top = 50
+        Width = 76
+        Height = 13
+        Caption = #1052#1072#1082#1089'. '#1076#1086#1087#1083#1072#1090#1099
+      end
+      object lblMaximumTrust: TLabel
+        Left = 8
+        Top = 74
+        Width = 75
+        Height = 13
+        Caption = #1052#1072#1082#1089'. '#1076#1086#1074#1077#1088#1080#1103
+      end
+      object edtStartMoneyMin: TEdit
+        Left = 88
+        Top = 23
+        Width = 49
+        Height = 21
+        TabOrder = 0
+        Text = '1'
+        OnKeyPress = edtStartMoneyMinKeyPress
+      end
+      object edtStartMoneyMax: TEdit
+        Left = 229
+        Top = 23
+        Width = 49
+        Height = 21
+        TabOrder = 1
+        Text = '100'
+        OnKeyPress = edtStartMoneyMaxKeyPress
+      end
+      object edtAddMoneyMin: TEdit
+        Left = 88
+        Top = 47
+        Width = 49
+        Height = 21
+        TabOrder = 2
+        Text = '1'
+        OnKeyPress = edtAddMoneyMinKeyPress
+      end
+      object edtAddMoneyMax: TEdit
+        Left = 229
+        Top = 47
+        Width = 49
+        Height = 21
+        TabOrder = 3
+        Text = '100'
+        OnKeyPress = edtAddMoneyMaxKeyPress
+      end
+      object edtMaximumTrust: TEdit
+        Left = 88
+        Top = 71
+        Width = 49
+        Height = 21
+        TabOrder = 4
+        Text = '200'
+        OnKeyPress = edtMaximumTrustKeyPress
+      end
+    end
+    object cbSumm: TCheckBox
+      Left = 18
+      Top = 74
+      Width = 238
+      Height = 17
+      Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1086#1090#1076#1077#1083#1100#1085#1091#1102' '#1085#1072#1089#1090#1088#1086#1081#1082#1091' '#1089#1091#1084#1084
+      TabOrder = 11
+      OnClick = cbSummClick
     end
   end
 end

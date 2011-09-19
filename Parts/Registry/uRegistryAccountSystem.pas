@@ -36,6 +36,9 @@ type
     function LocateDiscountForPacketsEnabled: Boolean;
     function GetDiscountForPacketsEnabled: Boolean;
     procedure SetDiscountForPacketsEnabled(AValue: Boolean);
+    function LocateRefersSystemEnabled: Boolean;
+    function GetRefersSystemEnabled: Boolean;
+    procedure SetRefersSystemEnabled(AValue: Boolean);
     function LocateUseCheckAccounts: Boolean;
     function GetUseCheckAccounts: Boolean;
     procedure SetUseCheckAccounts(AValue: Boolean);
@@ -66,6 +69,8 @@ type
       read GetDiscountAfterLimitDisabled write SetDiscountAfterLimitDisabled;
     property DiscountForPacketsEnabled: Boolean
       read GetDiscountForPacketsEnabled write SetDiscountForPacketsEnabled;
+    property RefersSystemEnabled: Boolean
+      read GetRefersSystemEnabled write SetRefersSystemEnabled;
     property UseCheckAccounts: Boolean
       read GetUseCheckAccounts write SetUseCheckAccounts;
     property UsePeriodOfValidity: Boolean
@@ -240,6 +245,24 @@ end;
 procedure TRegistryAccountSystem.SetDiscountForPacketsEnabled(AValue: Boolean);
 begin
   LocateDiscountForPacketsEnabled;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryAccountSystem.LocateRefersSystemEnabled: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey(
+      'AccountSystem\RefersSystemEnabled', '0');
+end;
+
+function TRegistryAccountSystem.GetRefersSystemEnabled: Boolean;
+begin
+  LocateRefersSystemEnabled;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryAccountSystem.SetRefersSystemEnabled(AValue: Boolean);
+begin
+  LocateRefersSystemEnabled;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 

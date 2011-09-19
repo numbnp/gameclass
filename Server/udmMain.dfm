@@ -1,8 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 88
-  Top = 210
-  Height = 716
+  Left = 90
+  Height = 570
   Width = 637
   object bsPolyglotManager: TbsPolyglotManager
     LangsDir = '.\Language\'
