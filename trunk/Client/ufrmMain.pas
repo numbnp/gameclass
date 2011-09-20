@@ -642,10 +642,10 @@ begin
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
 {$ENDIF}
-{$IFDEF LINUX}
-  if YearOf(Now) > 2009 then
-    Application.Terminate;
-{$ENDIF}
+//{$IFDEF LINUX}                    Убираем всякие триалы
+//  if YearOf(Now) > 2009 then      Из-за этого я ломал голову 2 дня
+//    Application.Terminate;
+//{$ENDIF}
   TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
 {$IFDEF MSWINDOWS}
   TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
