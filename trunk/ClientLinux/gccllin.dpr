@@ -32,6 +32,7 @@ uses
   uCrossPlatformBlocking in '../Parts/CrossPlatform/uCrossPlatformBlocking.pas',
   uCrossPlatformFunctions in '../Parts/CrossPlatform/uCrossPlatformFunctions.pas',
   uCrossPlatformWindow in '../Parts/CrossPlatform/uCrossPlatformWindow.pas',
+  uCrossPlatformVKCodes in '../Parts/CrossPlatform/uCrossPlatformVKCodes.pas',
   uDebugLog in '../Parts/Debug/uDebugLog.pas',
   udmMain in '../Client/udmMain.pas' {dmMain: TDataModule},
   uFileReceiver in '../Parts/FileSend/uFileReceiver.pas',
@@ -77,8 +78,8 @@ uses
 var
   FhCheckingThread: THandle;
   nThreadId: cardinal;
-  bUnblockPassword: Boolean;
-  bUnblockedByPassword: Boolean;
+//  bUnblockPassword: Boolean;
+//  bUnblockedByPassword: Boolean;
 //  dpy: PDisplay;
 //  event: XEvent;
 
@@ -119,12 +120,13 @@ end; // CheckHotKey
 begin
   Application.Initialize;
 //  Debug.Level := 9;
-  Debug.Level := 0;
+  Debug.Level := 9;
   Debug.Trace0('gccllin started');
 try
-  if CompareDate(Now, EncodeDate(2010, 1, 1)) = GreaterThanValue then begin
-    Application.MessageBox('Trial period has expired');
-  end else begin
+//  if CompareDate(Now, EncodeDate(2010, 1, 1)) = GreaterThanValue then begin
+//    Application.MessageBox('Trial period has expired');
+//  end else begin
+  begin
     FhCheckingThread := BeginThread(nil, @CheckHotKey, Nil, nThreadId);
     Debug.Trace5('After CheckHotKey');
     GClientOptions.Load;

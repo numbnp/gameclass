@@ -44,7 +44,8 @@ uses
   uCurrencyEdit,
   QComCtrls,
   uWebBrowser,
-uCrossPlatformBlocking,  
+uCrossPlatformBlocking,
+uCrossPlatformVKCodes,  
 {$ENDIF}
   uSafeStorage,
   SysUtils,
