@@ -123,6 +123,7 @@ begin
   Debug.Level := 9;
   Debug.Trace0('gccllin started');
 try
+//  Убираем всякие триалы
 //  if CompareDate(Now, EncodeDate(2010, 1, 1)) = GreaterThanValue then begin
 //    Application.MessageBox('Trial period has expired');
 //  end else begin
