@@ -66,6 +66,7 @@ uses
   uSetTimeRemoteCommand in '../Parts/RemoteCommands/uSetTimeRemoteCommand.pas',
   uSetVolumeRemoteCommand in '../Parts/RemoteCommands/uSetVolumeRemoteCommand.pas',
   uShutdownRemoteCommand in '../Parts/RemoteCommands/uShutdownRemoteCommand.pas',
+  uExecuteCommandRemoteCommand in '../Parts/RemoteCommands/uExecuteCommandRemoteCommand.pas',
   uTaskKillConst in '../Parts/TaskKill/uTaskKillConst.pas',
   uTaskKill in '../Parts/TaskKill/uTaskKill.pas',
   usrvGCCL in 'usrvGCCL.pas',

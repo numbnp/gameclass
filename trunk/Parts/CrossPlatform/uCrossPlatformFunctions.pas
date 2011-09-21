@@ -70,6 +70,9 @@ procedure SystemShutdown;
 // завершить сеанс
 procedure SystemLogoff;
 
+// выполнить произвольную команду
+procedure ExecuteCommandLine (eCommandLine: string);
+
 function ExecAndWait(const FileName, Params: ShortString;
     const WinState: Word): boolean; export;
 
@@ -210,7 +213,10 @@ begin
   ExitWindows(EWX_LOGOFF or EWX_FORCE);
 end;
 
-
+// выполнить произвольную команду
+procedure ExecuteCommandLine (eCommandLine: string);
+begin
+end;
 
 function EnablePrivilege(const AstrEnabledPrivilege: string;
     const AbEnable: boolean = TRUE): boolean;
@@ -380,14 +386,14 @@ end; // IsWinNT
 // перегрузить систему
 procedure SystemRestart;
 begin
-  Libc.system('shutdown -rf 0');
+  Libc.system('scripts/gcreboot');
 //  ExitWindows(EWX_REBOOT or EWX_FORCE);
 end;
 
 // выключить систему
 procedure SystemShutdown;
 begin
-  Libc.system('shutdown -P 0');
+  Libc.system('scripts/gcpoweroff');
 //  ExitWindows(EWX_SHUTDOWN or EWX_FORCE);
 end;
 
@@ -401,9 +407,18 @@ begin
         + GClientOptions.KDEUser
         + ' ksmserver ksmserver logout 0 0 0';
 }
-    strCommand := 'killall Xorg';
+    strCommand := 'scripts/gclogoff';
     Libc.system(PChar(strCommand));
   end;
+end;
+
+// выполнить произвольную команду
+procedure ExecuteCommandLine (eCommandLine: string);
+//var
+//  strCommand: String;
+begin
+//  strCommand := eCommandLine;
+  Libc.system(PChar(eCommandLine));
 end;
 
 function ExecAndWait(const FileName, Params: ShortString;
