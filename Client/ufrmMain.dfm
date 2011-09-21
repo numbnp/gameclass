@@ -1,11 +1,11 @@
 object frmMain: TfrmMain
-  Left = 392
-  Top = 481
+  Left = 2
+  Top = 2
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'GameClass3 Client'
-  ClientHeight = 452
-  ClientWidth = 637
+  ClientHeight = 414
+  ClientWidth = 630
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
