@@ -121,7 +121,7 @@ end; // CheckHotKey
 begin
   Application.Initialize;
 //  Debug.Level := 9;
-  Debug.Level := 9;
+  Debug.Level := 1;
   Debug.Trace0('gccllin started');
 try
 //  Убираем всякие триалы

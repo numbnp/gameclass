@@ -74,9 +74,6 @@ begin
     GClientInfo.Blocked := False;
 end; // TBlockRemoteCommand.Execute
 
-
-end. ////////////////////////// end of file //////////////////////////////////
-
 {
    end else if CompareText(FstrOptionName,'DefaultBlock') = 0 then begin
     GClientOptions.BlockKeyboard := (Pos('k',FstrOptionValue) <> 0);
@@ -96,3 +93,6 @@ end. ////////////////////////// end of file //////////////////////////////////
       strDefaultBlock := strDefaultBlock + 'd';
 
 }
+
+end. ////////////////////////// end of file //////////////////////////////////
+

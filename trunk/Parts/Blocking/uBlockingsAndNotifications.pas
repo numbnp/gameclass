@@ -330,7 +330,7 @@ begin
               'Через 5 минут Ваше время истекает!');
   {$ENDIF}
   {$IFDEF LINUX}
-    cmd := TExecuteCommandRemoteCommand.Create('scripts/warn5');
+    cmd := TExecuteCommandRemoteCommand.Create('./scripts/warn5');
     cmd.Execute;
     cmd.Free;
   {$ENDIF}

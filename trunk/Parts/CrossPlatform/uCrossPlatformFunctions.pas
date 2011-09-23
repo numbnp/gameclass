@@ -94,7 +94,8 @@ uses
   StrUtils,
   SysUtils,
   uY2KCommon,
-  uY2KString;
+  uY2KString,
+  uDebugLog;
 
 
 {$IFDEF MSWINDOWS}
@@ -385,15 +386,21 @@ end; // IsWinNT
 
 // перегрузить систему
 procedure SystemRestart;
+var
+  strCommand: String;
 begin
-  Libc.system('scripts/gcreboot');
+  strCommand := './scripts/gcreboot';
+  ExecuteCommandLine(strCommand);
 //  ExitWindows(EWX_REBOOT or EWX_FORCE);
 end;
 
 // выключить систему
 procedure SystemShutdown;
+var
+  strCommand: String;
 begin
-  Libc.system('scripts/gcpoweroff');
+  strCommand := './scripts/gcpoweroff';
+  ExecuteCommandLine(strCommand);
 //  ExitWindows(EWX_SHUTDOWN or EWX_FORCE);
 end;
 
@@ -402,14 +409,16 @@ procedure SystemLogoff;
 var
   strCommand: String;
 begin
-  if Length(GClientOptions.KDEUser) > 0 then begin
-{    strCommand := ' dcop --all-sessions --user '
+{  if Length(GClientOptions.KDEUser) > 0 then begin
+    strCommand := ' dcop --all-sessions --user '
         + GClientOptions.KDEUser
         + ' ksmserver ksmserver logout 0 0 0';
-}
-    strCommand := 'scripts/gclogoff';
+    strCommand := './scripts/gclogoff';
     Libc.system(PChar(strCommand));
   end;
+}
+  strCommand := './scripts/gclogoff';
+  ExecuteCommandLine(strCommand);
 end;
 
 // выполнить произвольную команду
@@ -418,6 +427,7 @@ procedure ExecuteCommandLine (eCommandLine: string);
 //  strCommand: String;
 begin
 //  strCommand := eCommandLine;
+  Debug.Trace0('Command_execute:' + eCommandLine);
   Libc.system(PChar(eCommandLine));
 end;
 
@@ -451,6 +461,7 @@ begin
     CloseHandle(ProcInfo.hThread);
   end;
 }
+  Result := False;
 end; //ExecAndWait
 
 function EnablePrivilege(const AstrEnabledPrivilege: string;
