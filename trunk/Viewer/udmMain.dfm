@@ -1,9 +1,9 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 717
+  Left = 631
   Top = 162
   Height = 673
-  Width = 447
+  Width = 533
   object cnnMain: TADOConnection
     ConnectionString = 
       'Provider=SQLOLEDB.1;Password="";Persist Security Info=True;User ' +
@@ -238,20 +238,23 @@ object dmMain: TdmMain
         DataType = ftInteger
         Direction = pdReturnValue
         Precision = 10
+        Value = Null
       end
       item
         Name = '@id'
         Attributes = [paNullable]
         DataType = ftInteger
         Precision = 10
+        Value = Null
       end
       item
         Name = '@dt'
         Attributes = [paNullable]
         DataType = ftDateTime
+        Value = Null
       end>
     Left = 48
-    Top = 168
+    Top = 176
   end
   object dstBaseVersionSelect: TADOQuery
     Connection = cnnMain

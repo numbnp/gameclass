@@ -40,9 +40,10 @@ var
 implementation
 
 uses
-  uY2KString;
+  uY2KString,
+  uSQLTools;
 {$R *.dfm}
-
+{
 function TdmMain.GetClubName: String;
 begin
   Result := '';
@@ -52,7 +53,40 @@ begin
       Result := dstClubName.FieldValues['Value'];
     except
     end;
+end;}
+
+function TdmMain.GetClubName: String;
+var
+  strSQLQuery: String;
+  dsResult: TADODataSet;
+begin
+  if Assigned(cnnMain) and cnnMain.Connected then
+  begin
+    strSQLQuery := 'exec RegistrySelectByKey ''ClubName''';
+    dsResult := TADODataSet.Create(Nil);
+    try
+      uSQLTools.dsDoQuery(dmMain.cnnMain, dsResult, strSQLQuery);
+      if (dsResult.RecordCount > 0) then
+        Result := dsResult.FieldValues['value'];
+    except
+    end;
+    dsResult.Free;
+  end;
+{  if Length(strBaseVersion) = 0 then begin
+    strSQLQuery := 'exec RegistrySelect ''BaseVersion''';
+    dsResult := TADODataSet.Create(Nil);
+    try
+      uSQLTools.dsDoQuery(dmMain.cnnMain, dsResult, strSQLQuery);
+      if (dsResult.RecordCount > 0) then
+        strBaseVersion := dsResult.FieldValues['value'];
+    except
+    end;
+    dsResult.Free;
+  end;
+  dsGetBaseVersion := strBaseVersion;}
 end;
+
+
 
 function TdmMain.IsManager(AcnnServer: TADOConnection): Boolean;
 begin
@@ -84,11 +118,11 @@ procedure TdmMain.SetSessionsSelect(AcnnServer: TADOConnection);
 var
   fVersion: Double;
 begin
-  fVersion := StrToFloatDefWithReplace(GetBaseVersion(AcnnServer), 0);
-  if fVersion >= 3.85 then begin
-    dstSessionsSelect := dstSessionsSelect85;
-  end else begin
+  fVersion := Pos('3.84',GetBaseVersion(AcnnServer));
+  if fVersion>0 then begin
     dstSessionsSelect := dstSessionsSelect84;
+  end else begin
+    dstSessionsSelect := dstSessionsSelect85;
   end;
 end;
 

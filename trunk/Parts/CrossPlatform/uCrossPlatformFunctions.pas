@@ -94,8 +94,8 @@ uses
   StrUtils,
   SysUtils,
   uY2KCommon,
-  uY2KString,
-  uDebugLog;
+  uDebugLog,
+  uY2KString;
 
 
 {$IFDEF MSWINDOWS}
