@@ -28,7 +28,8 @@ uses
   uReportColumn in '..\..\Parts\Reports\uReportColumn.pas',
   uReportColumnsDataSet in '..\..\Parts\Reports\uReportColumnsDataSet.pas',
   uReportCommon in '..\..\Parts\Reports\uReportCommon.pas',
-  uReportResultsDataSet in '..\..\Parts\Reports\uReportResultsDataSet.pas';
+  uReportResultsDataSet in '..\..\Parts\Reports\uReportResultsDataSet.pas',
+  uDebugLog in '..\..\Parts\Debug\uDebugLog.pas';
 
 {$R *.res}
 

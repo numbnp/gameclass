@@ -69,6 +69,7 @@ uses
   uSetVolumeRemoteCommand in '..\parts\RemoteCommands\uSetVolumeRemoteCommand.pas',
   uShowTextInAllVideoModes in '..\Parts\Direct3D\uShowTextInAllVideoModes.pas',
   uShutdownRemoteCommand in '..\parts\RemoteCommands\uShutdownRemoteCommand.pas',
+  uExecuteCommandRemoteCommand in '..\parts\RemoteCommands\uExecuteCommandRemoteCommand.pas', 
   usrvGCCL in 'usrvGCCL.pas' {srvGCCL: TService},
   uUninstallRemoteCommand in '..\parts\RemoteCommands\uUninstallRemoteCommand.pas',
   uWinhkg in '..\Parts\Winhkg\uwinhkg.pas',
