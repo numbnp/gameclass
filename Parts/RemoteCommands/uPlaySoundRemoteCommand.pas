@@ -45,7 +45,7 @@ uses
 
 
 const
-  SUBDIRECTORY_GCCL_SOUNDS = 'GC3Client';
+  SUBDIRECTORY_GCCL_SOUNDS = 'Sounds';
 
 
 //////////////////////////////////////////////////////////////////////////////
