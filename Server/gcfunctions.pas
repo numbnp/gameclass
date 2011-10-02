@@ -590,8 +590,8 @@ begin
     GSessions := TGCSessions.Create;
     GSessions.Load;
     Application.ProcessMessages;
-    if not isManager then
-      dsSendOptionsToClients;
+{    if not isManager then
+      dsSendOptionsToClients;}
     Application.ProcessMessages;
     if (not FunctionAmIRight(FN_REMOTE_CONTROL)) then
       dsControlClubStart
@@ -650,6 +650,12 @@ begin
       GnClientInstallFileCheckSum := GetCheckSum(GRegistry.Options.InstallPath);
     end;
     GnServerFileCheckSum := GetCheckSum(ParamStr(0){'GCServer.exe'});
+
+    //Устраняем "Мелькание" клиентов при запуске оператора
+    GSessions.Load;
+    GSessions.Check;
+    Application.ProcessMessages;
+
     if (CompsCount > 0) then begin
       formMain.tmrCyclicCompAction.Interval := Round
           (GRegistry.Options.ClientQueryTime * 1000 / CompsCount);
