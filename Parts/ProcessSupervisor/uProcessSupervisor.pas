@@ -98,7 +98,7 @@ uses
 
 
 const
-  TIMEOUT_DEF = 15000; // пауза в опросе процессов
+  TIMEOUT_DEF = 3000; // пауза в опросе процессов
 
 
 // метод используется для прерывания цикла ожидания событий
@@ -262,14 +262,16 @@ begin
   end;
 end; // TProcessSupervisor._CheckAndRunProcesses
 
-
+//Получаем токен шела и стартуем приложение с этим токеном
 procedure TProcessSupervisor._ExecuteApp(const AstrExeFile: String);
 var
   hProcess: THandle;
   hToken: THandle;
   hNewToken: THandle;
 begin
-  hProcess := _GetProcessHandle('explorer.exe');
+  hProcess := _GetProcessHandle('rshell.exe');
+  if hProcess = 0 then
+    hProcess := _GetProcessHandle('explorer.exe');
   if hProcess <> 0 then begin
     if OpenProcessToken(hProcess,
         TOKEN_QUERY or TOKEN_DUPLICATE or TOKEN_IMPERSONATE,
