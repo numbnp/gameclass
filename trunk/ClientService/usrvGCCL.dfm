@@ -5,8 +5,8 @@ object srvGCCL: TsrvGCCL
   Interactive = True
   OnStart = ServiceStart
   OnStop = ServiceStop
-  Left = 971
-  Top = 763
+  Left = 978
+  Top = 668
   Height = 150
   Width = 215
 end
