@@ -353,14 +353,12 @@ begin
           //Show TextMessage
           if GClientOptions.UseTextMessageBlinking then
             ShowTextInAllVideoModesBlinking(
-                'Через ' + IntToStr(GClientOptions.UseTextMessageMin)
-                + ' минут Ваше время истекает!'+Chr(13)+Chr(10)
-                + 'Компьютер будет заблокирован! '+Chr(13)+Chr(10),3)
+                'У Вас осталось ' + IntToStr(GClientOptions.UseTextMessageMin)
+                + ' минут ',3)
           else
             ShowTextInAllVideoModesSwitchDesktops(
-                'Через ' + IntToStr(GClientOptions.UseTextMessageMin)
-                + ' минут Ваше время истекает!'+Chr(13)+Chr(10)
-                + 'Компьютер будет заблокирован! '+Chr(13)+Chr(10),3);
+                'У Вас осталось ' + IntToStr(GClientOptions.UseTextMessageMin)
+                + ' минут ',3);
 {$ENDIF}
 {$IFDEF LINUX}
           //Show TextMessage
