@@ -10,7 +10,9 @@ interface
 
   procedure ShowTextInAllVideoModesSwitchDesktops(AstrMessage : String; AnSec : Integer);
   procedure ShowTextInAllVideoModesBlinking(AstrMessage : String; AnSec : Integer);
-  procedure ShowText(AstrMessage : String);
+
+
+//  procedure ShowText(AstrMessage : String);
 
 implementation
 
@@ -35,7 +37,7 @@ uses
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-procedure ShowText(AstrMessage : String);
+{procedure ShowText(AstrMessage : String);
 var
   hwndWindow:HWND;
   dcWindow:HDC;
@@ -78,9 +80,9 @@ begin
   rectText.Right := rectWindow.Right - nWidtch;
   rectText.Bottom := rectWindow.Bottom - nHeigth;
   DrawText(dcWindow,PChar(AstrMessage),Length(AstrMessage),rectText,DT_CENTER);
-end;
+end;}
 
-procedure ShowTextInAllVideoModesSwitchDesktops(AstrMessage : String;
+{procedure ShowTextInAllVideoModesSwitchDesktops(AstrMessage : String;
     AnSec : Integer);
 var
   input, desk: HDESK;
@@ -94,9 +96,9 @@ begin
   SwitchDesktop(input);
   CloseDesktop(desk);
   CloseDesktop(input);
-end;
+end;}
 
-procedure ShowTextInAllVideoModesBlinking(AstrMessage : String; AnSec : Integer);
+{procedure ShowTextInAllVideoModesBlinking(AstrMessage : String; AnSec : Integer);
 var
   i: Integer;
   hwndWindow:HWND;
@@ -111,6 +113,38 @@ begin
   rectWorkArea := Rect(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
   RedrawWindow(0, @rectWorkArea, 0,
       RDW_FRAME + RDW_INVALIDATE + RDW_ALLCHILDREN + RDW_NOINTERNALPAINT);
+end;}
+
+procedure WriteDC(s: string);
+var
+  c: TCanvas;
+begin
+  c := TCanvas.Create;
+  c.Brush.Color := clBlue;
+  c.Font.color := clYellow;
+  c.Font.name := 'Arial';
+  c.Font.Size := 32;
+  c.Handle := GetDC(0);
+  c.TextOut(round((screen.Width - c.TextWidth(s))/2), round((screen.Height - c.TextHeight(s))/2), s);
+  c.free;
 end;
+
+procedure ShowTextInAllVideoModesSwitchDesktops(AstrMessage : String;
+    AnSec : Integer);
+begin
+  ShowTextInAllVideoModesBlinking(AstrMessage, AnSec);
+end;
+
+procedure ShowTextInAllVideoModesBlinking(AstrMessage : String; AnSec : Integer);
+var
+  i: Integer;
+begin
+  for i := 0 to AnSec*50 do begin
+    WriteDC(AstrMessage);
+    Sleep(20);
+  end;
+end;
+
+
 
 end.
