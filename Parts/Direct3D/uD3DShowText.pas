@@ -8,72 +8,76 @@ unit uD3DShowText;
 
 interface
 
-procedure UAPIMessageBoxOut;
-procedure UAPIMessageBox(mess:string;Left,Top,FrameCount:integer);
+procedure UAPIMessageBox(mess:string;FrameCount:integer);
+procedure WriteDC(s: string);
+
+var
+  Flag:Boolean;
 
 implementation
   uses
     // system units
     Controls,
-    Windows,ExtCtrls;
+    Windows,
+    ExtCtrls,
+    Graphics,
+    Forms;
 
 var
-  GV_UAPIMRegion: TRect;
-  GV_UAPIMRegionS: TRect;
-  GV_UAPIMBrush: HBRUSH;
-  GV_UAPIMFont: HFONT;
   GV_UAPIMMessage: String = 'Test';
   Timer_UAPIMess: TTimer = Nil;
-   GV_UAPIMCount: Integer;
-procedure Timer_UAPIMessTimer(Sender: TObject);
+  GV_UAPIMCount: Integer;
+
+  BlikTimer: THandle;  //Таймер отрисовки
+  MainTimer: THandle;  //Таймер слежения
+
+  TextCanvas: TCanvas;
+
+
+procedure MainTimer_UAPIMessTimer;
 begin
   dec(GV_UAPIMCount);
-  Timer_UAPIMess.Enabled := (GV_UAPIMCount>0);
-  UAPIMessageBoxOut;
+  if GV_UAPIMCount<1 then
+  begin
+    KillTimer(0,BlikTimer);
+    TextCanvas.free;
+    KillTimer(0,MainTimer);
+    Flag:= True;
+  end;
 end;
 
-
-procedure UAPIMessageBoxOut;
-var
-  HForegW:HWND;
-  HForegDC:HDC;
+procedure Timer_UAPIMessTimer;
 begin
-  GV_UAPIMRegion.Left := 0;
-  GV_UAPIMRegion.Top := 0;
-  GV_UAPIMRegion.Bottom := 200;
-  GV_UAPIMRegion.Right := 600;
-  GV_UAPIMRegionS.Left := 0;
-  GV_UAPIMRegionS.Top := 0;
-  GV_UAPIMRegionS.Bottom := 200;
-  GV_UAPIMRegionS.Right := 600;
-  HForegW := GetForegroundWindow;
-  HForegW := GetDesktopWindow;
-  HForegDC := GetWindowDC(HForegW);
-  GetClipBox(HForegDC,GV_UAPIMRegion);
-  GetClipBox(HForegDC,GV_UAPIMRegions);
-  FillRect(HForegDC,GV_UAPIMRegion,0);
-
-  FrameRect(HForegDC,GV_UAPIMRegion,GV_UAPIMBrush);
-  FrameRect(HForegDC,GV_UAPIMRegionS,GV_UAPIMBrush);
-  SelectObject(HForegDC,GV_UAPIMFont);
-  DrawText(HForegDC,PChar(GV_UAPIMMessage),Length(GV_UAPIMMessage),GV_UAPIMRegionS,DT_CENTER+DT_VCENTER+DT_SINGLELINE);
+  WriteDC(GV_UAPIMMessage);
 end;
 
-procedure UAPIMessageBox(mess:string;Left,Top,FrameCount:integer);
+procedure WriteDC(s: string);
 begin
- { if Timer_UAPIMess = Nil then begin
-    Timer_UAPIMess := TTimer.Create(Nil);
-    Timer_UAPIMess.OnTimer := Timer_UAPIMessTimer;
-  end;}
-  GV_UAPIMBrush := CreateSolidBrush(RGB(255,0,0));
+  // Выводим текст
+  //  c.TextOut(round((screen.Width - TextCanvas.TextWidth(s))/2), round((screen.Height - TextCanvas.TextHeight(s))/2), s);
+  TextCanvas.TextOut(round((screen.Width - TextCanvas.TextWidth(s))/2), 2, s);
+end;
+
+procedure UAPIMessageBox(mess:string;FrameCount:integer);
+begin
+  //Подготавливаем надпись
+  TextCanvas := TCanvas.Create;
+  TextCanvas.Brush.Color := clBlue;
+  TextCanvas.Font.color := clYellow;
+  TextCanvas.Font.name := 'Arial';
+  TextCanvas.Font.Size := 32;
+  TextCanvas.Handle := GetDC(GetParent(GetDesktopWindow));
+
   GV_UAPIMCount := FrameCount;
   GV_UAPIMMessage := mess;
-//  Timer_UAPIMess.Enabled := (GV_UAPIMMessage<>'');
+
+  Flag := False;
+
+  //Запускаем таймеры
+  BlikTimer := SetTimer(0,0,1,@Timer_UAPIMessTimer);
+  MainTimer := SetTimer(0,0,1000,@MainTimer_UAPIMessTimer);
 end;
-
-
-
-
 
 
 end.
+
