@@ -350,15 +350,23 @@ begin
         if (Now < GClientInfo.Stop) and not FbIsTextMessageUsed then begin
           FbIsTextMessageUsed := True;
 {$IFDEF MSWINDOWS}
-          //Show TextMessage
+          cmd := TExecuteCommandRemoteCommand.Create(
+            '"c:\Program Files\GameClass3\Client\Tools\ShowTopText.exe" '
+            + '"У Вас осталось ' +IntToStr(GClientOptions.UseTextMessageMin)
+            + ' минут"');
+          cmd.Execute;
+          cmd.Free;
+          {//Show TextMessage
           if GClientOptions.UseTextMessageBlinking then
             ShowTextInAllVideoModesBlinking(
-                'У Вас осталось ' + IntToStr(GClientOptions.UseTextMessageMin)
-                + ' минут ',3)
+                'Через ' + IntToStr(GClientOptions.UseTextMessageMin)
+                + ' минут Ваше время истекает!'+Chr(13)+Chr(10)
+                + 'Компьютер будет заблокирован! '+Chr(13)+Chr(10),3)
           else
             ShowTextInAllVideoModesSwitchDesktops(
-                'У Вас осталось ' + IntToStr(GClientOptions.UseTextMessageMin)
-                + ' минут ',3);
+                'Через ' + IntToStr(GClientOptions.UseTextMessageMin)
+                + ' минут Ваше время истекает!'+Chr(13)+Chr(10)
+                + 'Компьютер будет заблокирован! '+Chr(13)+Chr(10),3);}
 {$ENDIF}
 {$IFDEF LINUX}
           //Show TextMessage
