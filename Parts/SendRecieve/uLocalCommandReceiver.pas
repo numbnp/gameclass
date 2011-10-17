@@ -134,16 +134,24 @@ end; // TLocalCommandReceiver.StopReceiveProcess
 
 procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
 var
+  strTest: string;
   strLine: string;
   nLength: integer;
 begin
   try
     with AThread.Connection do
       try
-        nLength := ReadInteger();
-        strLine := ReadString(nLength);
-      finally
+//        strTest := ReadString(4);
+//        if strTest = 'sYNc' then
+        begin
+          nLength := ReadInteger();
+          strLine := ReadString(nLength);
+          strTest := ReadString(2);
+        end
+      except
         Disconnect();
+//      finally
+//        Disconnect();
       end;
 
     _SendDataReceiveEvent(strLine);
