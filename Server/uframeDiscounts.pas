@@ -128,7 +128,7 @@ begin
       and bEnabled;
   butDiscountUpdate.Enabled := (butDiscountDel.Enabled and FbEdited)
       and bEnabled;
-  editSumma.Text := Format('%.*d', ['1456dad']);
+//  editSumma.Text := Format('%.*d', ['1.5']);
 end;
 
 procedure TframeDiscounts.editSummaChange(Sender: TObject);

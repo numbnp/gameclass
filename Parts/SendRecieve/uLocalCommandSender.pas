@@ -1,3 +1,56 @@
+{$A8,B-,C+,D+,E-,F-,G+,H+,I+,J-,K-,L+,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+{$MINSTACKSIZE $00004000}
+{$MAXSTACKSIZE $00100000}
+{$IMAGEBASE $00400000}
+{$APPTYPE GUI}
+{$WARN SYMBOL_DEPRECATED ON}
+{$WARN SYMBOL_LIBRARY ON}
+{$WARN SYMBOL_PLATFORM ON}
+{$WARN UNIT_LIBRARY ON}
+{$WARN UNIT_PLATFORM ON}
+{$WARN UNIT_DEPRECATED ON}
+{$WARN HRESULT_COMPAT ON}
+{$WARN HIDING_MEMBER ON}
+{$WARN HIDDEN_VIRTUAL ON}
+{$WARN GARBAGE ON}
+{$WARN BOUNDS_ERROR ON}
+{$WARN ZERO_NIL_COMPAT ON}
+{$WARN STRING_CONST_TRUNCED ON}
+{$WARN FOR_LOOP_VAR_VARPAR ON}
+{$WARN TYPED_CONST_VARPAR ON}
+{$WARN ASG_TO_TYPED_CONST ON}
+{$WARN CASE_LABEL_RANGE ON}
+{$WARN FOR_VARIABLE ON}
+{$WARN CONSTRUCTING_ABSTRACT ON}
+{$WARN COMPARISON_FALSE ON}
+{$WARN COMPARISON_TRUE ON}
+{$WARN COMPARING_SIGNED_UNSIGNED ON}
+{$WARN COMBINING_SIGNED_UNSIGNED ON}
+{$WARN UNSUPPORTED_CONSTRUCT ON}
+{$WARN FILE_OPEN ON}
+{$WARN FILE_OPEN_UNITSRC ON}
+{$WARN BAD_GLOBAL_SYMBOL ON}
+{$WARN DUPLICATE_CTOR_DTOR ON}
+{$WARN INVALID_DIRECTIVE ON}
+{$WARN PACKAGE_NO_LINK ON}
+{$WARN PACKAGED_THREADVAR ON}
+{$WARN IMPLICIT_IMPORT ON}
+{$WARN HPPEMIT_IGNORED ON}
+{$WARN NO_RETVAL ON}
+{$WARN USE_BEFORE_DEF ON}
+{$WARN FOR_LOOP_VAR_UNDEF ON}
+{$WARN UNIT_NAME_MISMATCH ON}
+{$WARN NO_CFG_FILE_FOUND ON}
+{$WARN MESSAGE_DIRECTIVE ON}
+{$WARN IMPLICIT_VARIANTS ON}
+{$WARN UNICODE_TO_LOCALE ON}
+{$WARN LOCALE_TO_UNICODE ON}
+{$WARN IMAGEBASE_MULTIPLE ON}
+{$WARN SUSPICIOUS_TYPECAST ON}
+{$WARN PRIVATE_PROPACCESSOR ON}
+{$WARN UNSAFE_TYPE ON}
+{$WARN UNSAFE_CODE ON}
+{$WARN UNSAFE_CAST ON}
 //////////////////////////////////////////////////////////////////////////////
 //
 // TLocalCommandSender - класс посылающий команды приложению,
@@ -8,6 +61,8 @@
 unit uLocalCommandSender;
 
 interface
+
+uses   IdTCPClient;
 
 type
 
@@ -20,6 +75,7 @@ type
     // fields
     FstrHost: String;
     FnPort: Integer;
+    tcpClient: TIdTCPClient;
 
   protected
     // properties methods
@@ -53,7 +109,6 @@ implementation
 uses
   // system units
   SysUtils,
-  IdTCPClient,
 //  Dialogs,
   // project units
   uY2KCommon,
@@ -64,23 +119,23 @@ uses
 {$ENDIF}
   uLocalCommandReceiver;
 
-
+var
+  CommandSender: TLocalCommandSender;
 
 
 function LocalSendDataTo(const AstrData: String; AbToClient: Boolean = True): Boolean;
-var
-  CommandSender: TLocalCommandSender;
 begin
 {$IFDEF MSWINDOWS}
   Result := TRUE;
-  try
-    CommandSender := TLocalCommandSender.Create();
+   try
+    if CommandSender = nil then
+      CommandSender := TLocalCommandSender.Create();
     if Not AbToClient then
       CommandSender.Port := DEF_PORT_FOR_TCPSERVER;
     try
       CommandSender.SendCommand(AstrData);
     finally
-      FreeAndNilWithAssert(CommandSender);
+//      FreeAndNilWithAssert(CommandSender);
     end;
   except
     on e: Exception do begin
@@ -128,28 +183,29 @@ end; // TLocalCommandSender.Destroy
 // Result: TRUE  - send commsnd success
 //         FALSE - send command error
 function TLocalCommandSender.SendCommand(const AstrData: String): boolean;
-var
-  tcpClient: TIdTCPClient;
 begin
   Result := TRUE;
-
-  tcpClient := TIdTCPClient.Create(nil);
+  if tcpClient = nil then
+    tcpClient := TIdTCPClient.Create(nil);
   try
     try
-      with tcpClient do begin
-        Host := Self.FstrHost;
-        Port := Self.Port;
-        Connect();
-        if Connected then begin
-          WriteInteger(length(AstrData));
-          WriteLn(AstrData);
-          Disconnect();
+      begin
+        if not tcpClient.Connected then
+        begin
+          tcpClient.Host := Self.FstrHost;
+          tcpClient.Port := Self.Port;
+          tcpClient.Connect();
+        end;
+        if tcpClient.Connected then begin
+          tcpClient.WriteInteger(length(AstrData));
+          tcpClient.WriteLn(AstrData);
+//          tcpClient.Disconnect();
         end else begin
           Result := FALSE;
         end;
       end;
     finally
-      FreeAndNilWithAssert(tcpClient);
+//      FreeAndNilWithAssert(tcpClient);
     end;
 
   except
@@ -177,6 +233,13 @@ end; // TLocalCommandSender.GetPort
 
 procedure TLocalCommandSender.SetPort(const AnPort: Integer);
 begin
+  if tcpClient <> nil then
+    if tcpClient.Port <> AnPort then
+    begin
+      if tcpClient.Connected then
+        tcpClient.Disconnect;
+      FreeAndNilWithAssert(tcpClient);
+    end;
   FnPort := AnPort;
 end; // TLocalCommandSender.SetPort
 
