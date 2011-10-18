@@ -42,7 +42,8 @@ type
     FStopTime: TDateTime;
     FT :TNotifyEvent;
     FnState: TfrmSessionsChartState;
-    FfMinCompIndex: Double; //Нужно когда компов >20
+    FfShowCompCount: Integer; // Колво компов отображаемое без прокрутки
+    FfMinCompIndex: Double; //Нужно когда компов >FfShowCompCount
     FbScrolling : Boolean;
     FSessionEvent: TGCSessionEvent;
     FChangeEvent: TNotifyEvent;
@@ -58,6 +59,9 @@ type
     procedure SeriesOnGetMarkText( Sender : TChartSeries ;  ValueIndex : Longint ;  Var MarkText : String );
 //    property IsDesigned: Boolean read FbIsDesigned write FbIsDesigned;
 //    property OnTimer: TNotifyEvent read FT write FT;
+
+    property ShowCompCount: integer
+        read FfShowCompCount write FfShowCompCount;
     property OnSession: TGCSessionEvent
         read FSessionEvent write FSessionEvent;
     property OnChange: TNotifyEvent
@@ -94,6 +98,7 @@ begin
   FCurrentSeries := Nil;
   FnState := View;
   FfMinCompIndex := -0.5;
+  FfShowCompCount := 20;
   FbScrolling := False;
   FStartTime := GetVirtualTime;
   FStopTime := IncHour(FStartTime,12);
@@ -187,9 +192,11 @@ begin
 //'  chartComps.LeftAxis.Minimum := -1;
 //'  chartComps.LeftAxis.Maximum := CompsCount;
   chartComps.LeftAxis.Increment := 1;
-  chartComps.LeftAxis.SetMinMax(FfMinCompIndex,IfThen(CompsCount<=20,CompsCount-0.5,FfMinCompIndex+20));
+  chartComps.LeftAxis.SetMinMax(FfMinCompIndex,
+    IfThen(CompsCount<=FfShowCompCount,
+    CompsCount-0.5,FfMinCompIndex+FfShowCompCount));
 //  sbarVertical.SetParams(Round(FfMinCompIndex*10),0,CompsCount*10-210);
-  if CompsCount>20 then
+  if CompsCount>FfShowCompCount then
     sbarVertical.Position := Round(FfMinCompIndex*10);
   chartComps.LeftAxis.LabelsOnAxis := False;
   chartComps.LeftAxis.DrawAxisLabel(0,1,180,'9');
@@ -310,7 +317,7 @@ var
 begin
   DoDesign;
   UpdateData;
-  if CompsCount>20 then begin
+  if CompsCount>FfShowCompCount then begin
     sbarVertical.Visible := True;
     sbarVertical.SetParams(-5,-5,CompsCount*10-205);
   end
@@ -391,7 +398,7 @@ end;
 
 procedure TfrmSessionsChart.sbarVerticalChange(Sender: TObject);
 begin
-  if CompsCount>20 then begin
+  if CompsCount>FfShowCompCount then begin
     FfMinCompIndex := sbarVertical.Position/10;
     DoDesign;
   end;
