@@ -637,7 +637,10 @@ begin
         CommonPay * IfThen((CompsSelCount < 1), 1, CompsSelCount));
   end;
 
-  butOk.Enabled := (( HourOf(dtpTimeLength.Time)<>0 ) or ( MinuteOf(dtpTimeLength.Time) <> 0 )) and not GSessions.IsBadDesignedSessions;
+  butOk.Enabled := (( HourOf(dtpTimeLength.Time)<>0 )
+    or ( MinuteOf(dtpTimeLength.Time) <> 0 ))
+    and not GSessions.IsBadDesignedSessions
+    and (FDesignedSession.TimeStop>GetVirtualTime) ;
   /////////////////////
   d1 := HourOf(dtpTimeLength.Time);
   d2 := MinuteOf(dtpTimeLength.Time);
