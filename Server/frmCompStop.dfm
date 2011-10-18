@@ -1,6 +1,6 @@
 object formCompStop: TformCompStop
-  Left = 341
-  Top = 221
+  Left = 568
+  Top = 131
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 10
