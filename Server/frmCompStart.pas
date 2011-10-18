@@ -235,6 +235,7 @@ begin
   FfrmSessionsChart := TfrmSessionsChart.Create(pnlTop);
   FfrmSessionsChart.Parent := pnlTop;
   FfrmSessionsChart.Align := alClient;
+  FfrmSessionsChart.ShowCompCount := 50;
   FfrmSessionsChart.Show;
   FfrmSessionsChart.OnSession := _OnSessionsChartSession;
   FfrmSessionsChart.OnChange := _OnSessionsChartChange;
@@ -357,7 +358,7 @@ begin
     pnlTop.Visible := True;
     pnlScale.Visible := True;
     Width := 660;
-    Height := 495;
+    Height := round(Screen.Height*0.9); //90% от высоты экрана
   end;
 end;
 
