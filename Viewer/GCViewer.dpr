@@ -29,7 +29,8 @@ uses
   uCoder in '..\Parts\Security\uCoder.pas',
   ufrmUnblockPassword in 'ufrmUnblockPassword.pas' {frmUnblockPassword},
   ufrmAbout in 'ufrmAbout.pas' {frmAbout},
-  uCommon in '..\Parts\Common\uCommon.pas';
+  uCommon in '..\Parts\Common\uCommon.pas',
+  framCompStatesList in 'framCompStatesList.pas' {CompStatesList: TFrame};
 
 resourcestring
   MSG_VIEWER_CONNECTED =
