@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, ComCtrls, Grids, DBGridEh, StdCtrls, udmMain, ADODB, DB,
-  Menus, ActnList, ToolWin, ImgList;
+  Menus, ActnList, ToolWin, ImgList,framCompStatesList;
 
 const
   WM_USER_UNBLOCK_PASSWORD = WM_USER+11;
@@ -24,17 +24,12 @@ type
     pnlMain: TPanel;
     pnlLeft: TPanel;
     pnlMiddle: TPanel;
-    pnlRight: TPanel;
     pnlTimeBottom: TPanel;
     pnlTime: TPanel;
-    grdCompStatesFirst: TDBGridEh;
-    grdRelease: TDBGridEh;
     lblTime: TLabel;
     tmrMain: TTimer;
     pnlTimeCaption: TPanel;
     pnlTimeRight: TPanel;
-    pnlReleaseCaption: TPanel;
-    pnlRelease: TPanel;
     grdCompStatesSecond: TDBGridEh;
     MainMenu1: TMainMenu;
     mnuSettings: TMenuItem;
@@ -57,8 +52,8 @@ type
     imglstToolBar: TImageList;
     imglstCompState: TImageList;
     imglstComps: TImageList;
-    pnlReleaseBottom: TPanel;
     lblSize: TLabel;
+
     procedure tmrMainTimer(Sender: TObject);
     procedure grdCompStatesFirstDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh;
@@ -83,6 +78,10 @@ type
     FnBusyLimitMin: Integer;
     FnSecondPos: Integer;
     FCompStates: array of Integer;
+
+    CompStatesList: TCompStatesList;
+    grdCompStatesFirst: TDBGridEh;
+
 
     function _GetGridCellRow(const AGrid: TDBGridEh;
         const Rect: TRect): Integer;
@@ -370,12 +369,29 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  k: TPanel;
 begin
   FnSpaceLimitMin := 10;
   FnBusyLimitMin := 10;
   FnSecondPos := 0;
   pnlTime.Color := TColor($F0CAA6);
   pnlTimeCaption.Color := TColor($F6CF6D);
+
+  CompStatesList:= TCompStatesList.Create(self);
+  CompStatesList.Parent := pnlLeft;
+  CompStatesList.Align := alClient;
+
+  grdCompStatesFirst := CompStatesList.grdCompStatesFirst;
+
+  k:= tpanel.Create(self);
+  k.Parent := frmMain;
+
+  k.Width := 100;
+  k.Top :=10;
+  k.left :=200;
+  k.Align := alLeft;
+
 end;
 
 procedure TfrmMain.ApplySettings;
@@ -384,22 +400,6 @@ begin
     _SetTableFont(StrToFont(Font.Value));
     FnSpaceLimitMin := SpaceLimitMin.Value;
     FnBusyLimitMin := SpaceLimitMin.Value;
-    with grdRelease do begin
-      Columns[1].Visible := OnlyOneTimeColumnVisible and Time.Value;
-      Columns[2].Visible := Time05.Value;
-      Columns[3].Visible := Time1.Value;
-      Columns[4].Visible := Time15.Value;
-      Columns[5].Visible := Time2.Value;
-      Columns[6].Visible := Time3.Value;
-      Columns[7].Visible := Time4.Value;
-    end;
-    if OnlyOneTimeColumnVisible then begin
-      if CustomFirstColumnTitle.Value then
-        grdRelease.Columns[1].Title.Caption := FirstColumnTitle.Value;
-      if CustomSecondColumnTitle.Value then
-        grdRelease.Columns[SingleTimeColumnIndex].Title.Caption :=
-            SecondColumnTitle.Value;
-    end;
     if UseLargeIcons.Value then begin
       grdCompStatesFirst.RowHeight := 48;
       grdCompStatesFirst.Columns[1].Visible := True;
@@ -637,7 +637,6 @@ begin
       grdCompStatesFirst.Columns[1].Width + 1, 0)
       + lblSize.Width + 16;
   pnlMiddle.Width := pnlLeft.Width;
-  grdRelease.Font.Assign(AFont);
 end;
 
 procedure TfrmMain.HotKey(var Message: TMessage);

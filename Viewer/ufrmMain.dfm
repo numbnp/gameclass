@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 242
-  Top = 198
+  Left = 411
+  Top = 206
   Width = 800
-  Height = 600
+  Height = 723
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -31,7 +31,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 792
-    Height = 554
+    Height = 669
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -40,81 +40,16 @@ object frmMain: TfrmMain
       Left = 8
       Top = 50
       Width = 158
-      Height = 496
+      Height = 611
       Align = alLeft
       BorderWidth = 8
       TabOrder = 0
-      object grdCompStatesFirst: TDBGridEh
-        Left = 9
-        Top = 9
-        Width = 140
-        Height = 478
-        Align = alClient
-        AllowedOperations = []
-        AllowedSelections = []
-        AutoFitColWidths = True
-        Color = clBtnFace
-        DataSource = dmMain.dsrcCompStates
-        Enabled = False
-        Flat = True
-        FooterColor = clWindow
-        FooterFont.Charset = DEFAULT_CHARSET
-        FooterFont.Color = clWindowText
-        FooterFont.Height = -11
-        FooterFont.Name = 'MS Sans Serif'
-        FooterFont.Style = []
-        Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-        OptionsEh = [dghFixed3D, dghClearSelection, dghDialogFind]
-        ReadOnly = True
-        TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = []
-        UseMultiTitle = True
-        VertScrollBar.VisibleMode = sbNeverShowEh
-        FilterStringColor = clWindow
-        OnDrawColumnCell = grdCompStatesFirstDrawColumnCell
-        Columns = <
-          item
-            AutoFitColWidth = False
-            EditButtons = <>
-            FieldName = 'number'
-            Footer.FieldName = 'number'
-            Footers = <
-              item
-              end>
-            Title.Caption = #1050#1086#1084#1087
-            Width = 36
-          end
-          item
-            AutoFitColWidth = False
-            BiDiMode = bdRightToLeftReadingOnly
-            EditButtons = <>
-            FieldName = 'state'
-            Footers = <>
-            ImageList = imglstComps
-            MinWidth = 10
-            Title.Caption = '  '
-            Title.TitleButton = True
-            Visible = False
-            Width = 48
-          end
-          item
-            EditButtons = <>
-            FieldName = 'description'
-            Footers = <>
-            Title.Caption = #1057#1086#1089#1090#1086#1103#1085#1080#1077
-            Width = 102
-          end>
-      end
     end
     object pnlMiddle: TPanel
       Left = 166
       Top = 50
       Width = 158
-      Height = 496
+      Height = 611
       Align = alLeft
       BorderWidth = 8
       TabOrder = 1
@@ -122,7 +57,7 @@ object frmMain: TfrmMain
         Left = 9
         Top = 9
         Width = 140
-        Height = 478
+        Height = 593
         Align = alClient
         AllowedOperations = []
         AllowedSelections = []
@@ -182,176 +117,6 @@ object frmMain: TfrmMain
           end>
       end
     end
-    object pnlRight: TPanel
-      Left = 324
-      Top = 50
-      Width = 460
-      Height = 496
-      Align = alClient
-      BorderWidth = 8
-      TabOrder = 2
-      object pnlTimeBottom: TPanel
-        Left = 9
-        Top = 347
-        Width = 442
-        Height = 140
-        Align = alBottom
-        BevelOuter = bvNone
-        TabOrder = 0
-        object pnlTimeRight: TPanel
-          Left = 172
-          Top = 0
-          Width = 270
-          Height = 140
-          Align = alRight
-          BevelOuter = bvNone
-          Caption = 'pnlTimeRight'
-          TabOrder = 0
-          object pnlTime: TPanel
-            Left = 0
-            Top = 18
-            Width = 270
-            Height = 122
-            Align = alClient
-            BorderWidth = 8
-            Color = clGradientActiveCaption
-            TabOrder = 0
-            object lblTime: TLabel
-              Left = 15
-              Top = 7
-              Width = 239
-              Height = 107
-              Caption = '00:00'
-              Font.Charset = ANSI_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -96
-              Font.Name = 'Arial'
-              Font.Style = []
-              ParentFont = False
-            end
-          end
-          object pnlTimeCaption: TPanel
-            Left = 0
-            Top = 0
-            Width = 270
-            Height = 18
-            Align = alTop
-            Caption = #1058#1077#1082#1091#1097#1077#1077' '#1074#1088#1077#1084#1103
-            Color = clGradientActiveCaption
-            TabOrder = 1
-          end
-        end
-      end
-      object pnlRelease: TPanel
-        Left = 9
-        Top = 9
-        Width = 442
-        Height = 338
-        Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 1
-        object pnlReleaseCaption: TPanel
-          Left = 0
-          Top = 0
-          Width = 442
-          Height = 18
-          Align = alTop
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          Caption = #1054#1089#1074#1086#1073#1086#1078#1076#1077#1085#1080#1077' '#1082#1086#1084#1087#1100#1102#1090#1077#1088#1086#1074' '#1085#1072' '#1085#1091#1078#1085#1086#1077' '#1074#1088#1077#1084#1103
-          TabOrder = 0
-        end
-        object grdRelease: TDBGridEh
-          Left = 0
-          Top = 18
-          Width = 442
-          Height = 302
-          Align = alClient
-          AllowedOperations = []
-          AllowedSelections = []
-          AutoFitColWidths = True
-          Color = clBtnFace
-          DataSource = dmMain.dsrcCompRelease
-          Enabled = False
-          Flat = True
-          FooterColor = clWindow
-          FooterFont.Charset = DEFAULT_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -11
-          FooterFont.Name = 'MS Sans Serif'
-          FooterFont.Style = []
-          Options = [dgTitles, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghClearSelection, dghDialogFind]
-          TabOrder = 1
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
-          VertScrollBar.VisibleMode = sbNeverShowEh
-          FilterStringColor = clWindow
-          OnDrawColumnCell = grdReleaseDrawColumnCell
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'count'
-              Footers = <>
-              Title.Caption = #160
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time'
-              Footers = <>
-              Title.Caption = #1074#1088#1077#1084#1103
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time0.5'
-              Footers = <>
-              Title.Caption = #1085#1072' 30 '#1084#1080#1085
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time1'
-              Footers = <>
-              Title.Caption = #1085#1072' 1 '#1095#1072#1089
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time1.5'
-              Footers = <>
-              Title.Caption = #1085#1072' 1.5 '#1095#1072#1089#1072
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time2'
-              Footers = <>
-              Title.Caption = #1085#1072' 2 '#1095#1072#1089#1072
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time3'
-              Footers = <>
-              Title.Caption = #1085#1072' 3 '#1095#1072#1089#1072
-            end
-            item
-              EditButtons = <>
-              FieldName = 'time4'
-              Footers = <>
-              Title.Caption = #1085#1072' 4 '#1095#1072#1089#1072
-            end>
-        end
-        object pnlReleaseBottom: TPanel
-          Left = 0
-          Top = 320
-          Width = 442
-          Height = 18
-          Align = alBottom
-          BevelOuter = bvNone
-          TabOrder = 2
-        end
-      end
-    end
     object ToolBar1: TToolBar
       Left = 8
       Top = 8
@@ -364,7 +129,8 @@ object frmMain: TfrmMain
       EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
       Flat = True
       Images = imglstToolBar
-      TabOrder = 3
+      TabOrder = 2
+      Visible = False
       object ToolButton1: TToolButton
         Left = 0
         Top = 0
@@ -387,6 +153,57 @@ object frmMain: TfrmMain
         Left = 86
         Top = 0
         Action = actSettings
+      end
+    end
+    object pnlTimeBottom: TPanel
+      Left = 426
+      Top = 297
+      Width = 267
+      Height = 121
+      BevelOuter = bvNone
+      TabOrder = 3
+      object pnlTimeRight: TPanel
+        Left = -3
+        Top = 0
+        Width = 270
+        Height = 121
+        Align = alRight
+        BevelOuter = bvNone
+        Caption = 'pnlTimeRight'
+        TabOrder = 0
+        object pnlTime: TPanel
+          Left = 0
+          Top = 18
+          Width = 270
+          Height = 103
+          Align = alClient
+          BorderWidth = 8
+          Color = clGradientActiveCaption
+          TabOrder = 0
+          object lblTime: TLabel
+            Left = 15
+            Top = 3
+            Width = 239
+            Height = 102
+            Caption = '00:00'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -96
+            Font.Name = 'Arial'
+            Font.Style = []
+            ParentFont = False
+          end
+        end
+        object pnlTimeCaption: TPanel
+          Left = 0
+          Top = 0
+          Width = 270
+          Height = 18
+          Align = alTop
+          Caption = #1058#1077#1082#1091#1097#1077#1077' '#1074#1088#1077#1084#1103
+          Color = clGradientActiveCaption
+          TabOrder = 1
+        end
       end
     end
   end

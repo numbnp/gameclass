@@ -12,11 +12,9 @@ type
     dsrcFreeComps: TDataSource;
     dstClubName: TADOQuery;
     dstClubNameValue: TStringField;
-    dsrcCompStates: TDataSource;
     dstCompStateGroups: TADOQuery;
     dstSessionsSelect84: TADOStoredProc;
     dstCompsSelect: TADOStoredProc;
-    dstCompStates: TADODataSet;
     dstCompRelease: TADODataSet;
     dsrcCompRelease: TDataSource;
     dstTimes: TADODataSet;
@@ -25,6 +23,8 @@ type
     dstIsManager: TADOQuery;
     dstSessionsSelect85: TADOStoredProc;
     dstBaseVersionSelect: TADOQuery;
+    dsrcCompStates: TDataSource;
+    dstCompStates: TADODataSet;
   public
     dstSessionsSelect: TADOStoredProc;
     function GetClubName: String;

@@ -1,7 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 631
-  Top = 162
+  Left = 652
+  Top = 193
   Height = 673
   Width = 533
   object cnnMain: TADOConnection
@@ -33,11 +33,6 @@ object dmMain: TdmMain
       FieldName = 'Value'
       Size = 7000
     end
-  end
-  object dsrcCompStates: TDataSource
-    DataSet = dstCompStates
-    Left = 352
-    Top = 72
   end
   object dstCompStateGroups: TADOQuery
     Connection = cnnMain
@@ -87,38 +82,6 @@ object dmMain: TdmMain
       end>
     Left = 48
     Top = 224
-  end
-  object dstCompStates: TADODataSet
-    FieldDefs = <
-      item
-        Name = 'id'
-        DataType = ftInteger
-      end
-      item
-        Name = 'idComp'
-        DataType = ftInteger
-      end
-      item
-        Name = 'number'
-        DataType = ftInteger
-      end
-      item
-        Name = 'state'
-        DataType = ftInteger
-      end
-      item
-        Name = 'description'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'icon'
-        DataType = ftInteger
-      end>
-    Parameters = <>
-    StoreDefs = True
-    Left = 216
-    Top = 72
   end
   object dstCompRelease: TADODataSet
     FieldDefs = <
@@ -264,5 +227,42 @@ object dmMain: TdmMain
       'exec RegistrySelectByKey '#39'BaseVersion'#39)
     Left = 296
     Top = 8
+  end
+  object dsrcCompStates: TDataSource
+    DataSet = dstCompStates
+    Left = 360
+    Top = 80
+  end
+  object dstCompStates: TADODataSet
+    FieldDefs = <
+      item
+        Name = 'id'
+        DataType = ftInteger
+      end
+      item
+        Name = 'idComp'
+        DataType = ftInteger
+      end
+      item
+        Name = 'number'
+        DataType = ftInteger
+      end
+      item
+        Name = 'state'
+        DataType = ftInteger
+      end
+      item
+        Name = 'description'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'icon'
+        DataType = ftInteger
+      end>
+    Parameters = <>
+    StoreDefs = True
+    Left = 216
+    Top = 80
   end
 end
