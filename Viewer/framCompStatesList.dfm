@@ -22,7 +22,7 @@ object CompStatesList: TCompStatesList
       AllowedSelections = []
       AutoFitColWidths = True
       Color = clBtnFace
-      DataSource = dmMain.dsrcCompStates
+      DataSource = dsrcLocalCompStates
       Enabled = False
       Flat = True
       FooterColor = clWindow
@@ -3654,12 +3654,12 @@ object CompStatesList: TCompStatesList
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
   end
-  object dsrcCompStates: TDataSource
-    DataSet = dstCompStates
+  object dsrcLocalCompStates: TDataSource
+    DataSet = dstLocalCompStates
     Left = 48
     Top = 80
   end
-  object dstCompStates: TADODataSet
+  object dstLocalCompStates: TADODataSet
     FieldDefs = <
       item
         Name = 'id'
