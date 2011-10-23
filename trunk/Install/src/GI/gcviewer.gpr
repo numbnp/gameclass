@@ -79,7 +79,7 @@
 		<var name="AppID" value="{AB164D55-33F9-4417-A7C4-B07698C7EDE7}"/>
 		<var name="AppName" value="GameClass3 Viewer"/>
 		<var name="ConfigName" value="Просмотр сосотояния клуба"/>
-		<var name="AppVersion" value="1.0.7"/>
+		<var name="AppVersion" value="1.0.8"/>
 		<var name="AdminRights" value="1"/>
 		<var name="OutputPath" value="..\..\..\Output\Setup"/>
 		<var name="Password"/>

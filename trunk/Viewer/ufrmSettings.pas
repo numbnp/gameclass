@@ -62,6 +62,8 @@ type
     edtSecondColumnTitle: TEdit;
     pnlOnlyOneTimeColumnVisible: TGroupBox;
     pnlReleaseColumns: TGroupBox;
+    pnlOther: TGroupBox;
+    cbxShowTime: TCheckBox;
     procedure btnFontChangeClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -185,6 +187,8 @@ begin
     Options.General.SortByNumber.Value := True;
   end else if ASender = rbtnSortByState then begin
     Options.General.SortByNumber.Value := False;
+  end else if ASender = cbxShowTime then begin
+    Options.General.ShowTime.Value := cbxShowTime.Checked;
   end else begin
     ASSERT(FALSE,
         'TfrmMain.ControlValueChange error! Unknown sender!');
@@ -254,6 +258,7 @@ begin
     edtSecondColumnTitle.Text := SecondColumnTitle.Value;
     rbtnSortByNumber.Checked := SortByNumber.Value;
     rbtnSortByState.Checked := not SortByNumber.Value;
+    cbxShowTime.Checked := ShowTime.Value;  
   end;
   DoDesign;
   btnOk.Enabled := False;

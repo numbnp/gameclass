@@ -11,7 +11,7 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set APP_VERSION=1.0.7
+set APP_VERSION=1.0.8
 Install\src\Batch\gcviewer_replace_versions.vbs "%APP_VERSION%"
 echo Собирается версия %APP_VERSION%
 

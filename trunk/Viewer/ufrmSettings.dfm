@@ -3,7 +3,7 @@ object frmSettings: TfrmSettings
   Top = 286
   BorderStyle = bsDialog
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 374
+  ClientHeight = 437
   ClientWidth = 563
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object frmSettings: TfrmSettings
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
-    Top = 333
+    Top = 396
     Width = 563
     Height = 41
     Align = alBottom
@@ -65,7 +65,7 @@ object frmSettings: TfrmSettings
     Left = 0
     Top = 0
     Width = 563
-    Height = 274
+    Height = 337
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -73,7 +73,7 @@ object frmSettings: TfrmSettings
       Left = 312
       Top = 0
       Width = 251
-      Height = 274
+      Height = 337
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 0
@@ -81,7 +81,7 @@ object frmSettings: TfrmSettings
         Left = 0
         Top = 0
         Width = 251
-        Height = 274
+        Height = 337
         Align = alClient
         Caption = #1058#1072#1073#1083#1080#1094#1072' "'#1054#1089#1074#1086#1073#1086#1078#1076#1077#1085#1080#1077'"'
         TabOrder = 0
@@ -89,7 +89,7 @@ object frmSettings: TfrmSettings
           Left = 2
           Top = 104
           Width = 247
-          Height = 168
+          Height = 231
           Align = alClient
           Caption = #1055#1088#1080' '#1086#1076#1085#1086#1081' '#1074#1099#1073#1088#1072#1085#1085#1086#1081' '#1082#1086#1083#1086#1085#1082#1077
           TabOrder = 0
@@ -206,7 +206,7 @@ object frmSettings: TfrmSettings
       Left = 0
       Top = 0
       Width = 312
-      Height = 274
+      Height = 337
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -214,7 +214,7 @@ object frmSettings: TfrmSettings
         Left = 0
         Top = 121
         Width = 312
-        Height = 153
+        Height = 159
         Align = alClient
         Caption = #1058#1072#1073#1083#1080#1094#1072' "'#1050#1086#1084#1087#1100#1102#1090#1077#1088#1099'"'
         TabOrder = 0
@@ -367,11 +367,29 @@ object frmSettings: TfrmSettings
           OnChange = _ControlValueChange
         end
       end
+      object pnlOther: TGroupBox
+        Left = 0
+        Top = 280
+        Width = 312
+        Height = 57
+        Align = alBottom
+        Caption = #1056#1072#1079#1085#1086#1077
+        TabOrder = 3
+        object cbxShowTime: TCheckBox
+          Left = 16
+          Top = 24
+          Width = 201
+          Height = 17
+          Caption = #1055#1086#1082#1072#1079#1099#1074#1072#1090#1100' '#1074#1088#1077#1084#1103
+          TabOrder = 0
+          OnClick = _ControlValueChange
+        end
+      end
     end
   end
   object pnlMiddle: TPanel
     Left = 0
-    Top = 274
+    Top = 337
     Width = 563
     Height = 59
     Align = alBottom

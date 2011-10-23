@@ -18,13 +18,9 @@ type
     dstCompRelease: TADODataSet;
     dsrcCompRelease: TDataSource;
     dstTimes: TADODataSet;
-    dsrcCompStatesSecond: TDataSource;
-    dstCompStatesSecond: TADODataSet;
     dstIsManager: TADOQuery;
     dstSessionsSelect85: TADOStoredProc;
     dstBaseVersionSelect: TADOQuery;
-    dsrcCompStates: TDataSource;
-    dstCompStates: TADODataSet;
   public
     dstSessionsSelect: TADOStoredProc;
     function GetClubName: String;
