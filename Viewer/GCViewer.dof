@@ -124,8 +124,15 @@ DLL=0
 Locale=1049
 CodePage=1251
 [Version Info Keys]
+CompanyName=numb
+FileDescription=
 FileVersion=1.0.8.0
-ProductVersion=1.0.7
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.8
 [HistoryLists\hlConditionals]
 Count=1
 Item0=ASPROTECT

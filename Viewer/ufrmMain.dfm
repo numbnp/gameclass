@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 411
-  Top = 206
+  Left = 274
+  Top = 121
   Width = 800
   Height = 723
   Caption = 'frmMain'
@@ -31,92 +31,11 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 792
-    Height = 669
+    Height = 552
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
     TabOrder = 0
-    object pnlLeft: TPanel
-      Left = 8
-      Top = 50
-      Width = 158
-      Height = 611
-      Align = alLeft
-      BorderWidth = 8
-      TabOrder = 0
-    end
-    object pnlMiddle: TPanel
-      Left = 166
-      Top = 50
-      Width = 158
-      Height = 611
-      Align = alLeft
-      BorderWidth = 8
-      TabOrder = 1
-      object grdCompStatesSecond: TDBGridEh
-        Left = 9
-        Top = 9
-        Width = 140
-        Height = 593
-        Align = alClient
-        AllowedOperations = []
-        AllowedSelections = []
-        AutoFitColWidths = True
-        Color = clBtnFace
-        DataSource = dmMain.dsrcCompStatesSecond
-        Enabled = False
-        Flat = True
-        FooterColor = clWindow
-        FooterFont.Charset = DEFAULT_CHARSET
-        FooterFont.Color = clWindowText
-        FooterFont.Height = -11
-        FooterFont.Name = 'MS Sans Serif'
-        FooterFont.Style = []
-        Options = [dgTitles, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-        OptionsEh = [dghFixed3D, dghClearSelection, dghDialogFind]
-        ReadOnly = True
-        TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = []
-        UseMultiTitle = True
-        VertScrollBar.VisibleMode = sbNeverShowEh
-        FilterStringColor = clWindow
-        OnDrawColumnCell = grdCompStatesFirstDrawColumnCell
-        Columns = <
-          item
-            AutoFitColWidth = False
-            EditButtons = <>
-            FieldName = 'number'
-            Footer.FieldName = 'number'
-            Footers = <
-              item
-              end>
-            Title.Caption = #1050#1086#1084#1087
-            Width = 36
-          end
-          item
-            AutoFitColWidth = False
-            EditButtons = <>
-            FieldName = 'state'
-            Footers = <>
-            ImageList = imglstComps
-            Title.Caption = #160
-            Title.TitleButton = True
-            Visible = False
-            Width = 48
-          end
-          item
-            EditButtons = <>
-            FieldName = 'description'
-            Footers = <>
-            Title.Caption = #1057#1086#1089#1090#1086#1103#1085#1080#1077
-            Width = 102
-          end>
-      end
-    end
     object ToolBar1: TToolBar
       Left = 8
       Top = 8
@@ -129,7 +48,7 @@ object frmMain: TfrmMain
       EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
       Flat = True
       Images = imglstToolBar
-      TabOrder = 2
+      TabOrder = 0
       Visible = False
       object ToolButton1: TToolButton
         Left = 0
@@ -155,18 +74,27 @@ object frmMain: TfrmMain
         Action = actSettings
       end
     end
+  end
+  object pnlBottom: TPanel
+    Left = 0
+    Top = 552
+    Width = 792
+    Height = 117
+    Align = alBottom
+    TabOrder = 1
     object pnlTimeBottom: TPanel
-      Left = 426
-      Top = 297
+      Left = 524
+      Top = 1
       Width = 267
-      Height = 121
+      Height = 115
+      Align = alRight
       BevelOuter = bvNone
-      TabOrder = 3
+      TabOrder = 0
       object pnlTimeRight: TPanel
         Left = -3
         Top = 0
         Width = 270
-        Height = 121
+        Height = 115
         Align = alRight
         BevelOuter = bvNone
         Caption = 'pnlTimeRight'
@@ -175,7 +103,7 @@ object frmMain: TfrmMain
           Left = 0
           Top = 18
           Width = 270
-          Height = 103
+          Height = 97
           Align = alClient
           BorderWidth = 8
           Color = clGradientActiveCaption
@@ -184,7 +112,7 @@ object frmMain: TfrmMain
             Left = 15
             Top = 3
             Width = 239
-            Height = 102
+            Height = 107
             Caption = '00:00'
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText

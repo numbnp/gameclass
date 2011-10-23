@@ -43,6 +43,7 @@ type
     FstrFirstColumnTitle: TStringOption;
     FstrSecondColumnTitle: TStringOption;
     FbSortByNumber: TBooleanOption;
+    FbShowTime: TBooleanOption;
 
   public
     // constructor / destructor
@@ -73,6 +74,7 @@ type
     property FirstColumnTitle: TStringOption read FstrFirstColumnTitle;
     property SecondColumnTitle: TStringOption read FstrSecondColumnTitle;
     property SortByNumber: TBooleanOption read FbSortByNumber;
+    property ShowTime: TBooleanOption read FbShowTime;
 
   end; // TGeneralOptionsFolder
 
@@ -167,6 +169,7 @@ begin
   FstrFirstColumnTitle := CreateAndAddStringOption('FirstColumnTitle', '');
   FstrSecondColumnTitle := CreateAndAddStringOption('SecondColumnTitle', '');
   FbSortByNumber := CreateAndAddBooleanOption('SortByNumber', False);
+  FbShowTime := CreateAndAddBooleanOption('ShowTime', True);
 
 end; // TGeneralOptionsFolder.Create
 

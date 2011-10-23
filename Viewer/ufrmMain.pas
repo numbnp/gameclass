@@ -20,17 +20,16 @@ resourcestring
 
 type
   TCompState = (csFree = 0, csFreeLimited = 1, csBusyLimited = 2, csBusy = 3);
+ 
+
   TfrmMain = class(TForm)
     pnlMain: TPanel;
-    pnlLeft: TPanel;
-    pnlMiddle: TPanel;
     pnlTimeBottom: TPanel;
     pnlTime: TPanel;
     lblTime: TLabel;
     tmrMain: TTimer;
     pnlTimeCaption: TPanel;
     pnlTimeRight: TPanel;
-    grdCompStatesSecond: TDBGridEh;
     MainMenu1: TMainMenu;
     mnuSettings: TMenuItem;
     mnuActions: TMenuItem;
@@ -53,6 +52,7 @@ type
     imglstCompState: TImageList;
     imglstComps: TImageList;
     lblSize: TLabel;
+    pnlBottom: TPanel;
 
     procedure tmrMainTimer(Sender: TObject);
     procedure grdCompStatesFirstDrawColumnCell(Sender: TObject;
@@ -79,9 +79,8 @@ type
     FnSecondPos: Integer;
     FCompStates: array of Integer;
 
-    CompStatesList: TCompStatesList;
-    grdCompStatesFirst: TDBGridEh;
-
+    pnlLists: array [0..10] of TMyPanel;
+    pnlListsCount: Integer;
 
     function _GetGridCellRow(const AGrid: TDBGridEh;
         const Rect: TRect): Integer;
@@ -131,7 +130,7 @@ var
 begin
   if (SecondOf(Now) mod 5 = 0) then begin
     _RefreshCompStates;
-    _RefreshCompRelease;
+//    _RefreshCompRelease;
   end;
   if (SecondOf(Now) mod 2 = 0) then
     DateTimeToString(strTime, 'HH:mm', Now)
@@ -161,8 +160,8 @@ begin
   Result := False;
   for i := 0 to AGrid.Columns.Count - 1 do
     for j := 0 to AGrid.RowCount - 1 do
-      if (Rect.Top = grdCompStatesFirst.CellRect(i, j).Top) and
-        (Rect.Left = grdCompStatesFirst.CellRect(i, j).Left) then begin
+      if (Rect.Top = pnlLists[0].CompStatesList.grdCompStatesFirst.CellRect(i, j).Top) and
+        (Rect.Left = pnlLists[0].CompStatesList.grdCompStatesFirst.CellRect(i, j).Left) then begin
         AnCol := i;
         AnRow := j;
         Result := True;
@@ -176,15 +175,16 @@ var
   dtLimit: TDateTime;
   cs: TCompState;
   nCompState: Integer;
+  i: integer;
 begin
   with dmMain do begin
-    dstCompStates.DisableControls;
-    dstCompStates.Close;
-    dstCompStates.CreateDataSet;
+    pnlLists[0].CompStatesList.dstLocalCompStates.DisableControls;
+    pnlLists[0].CompStatesList.dstLocalCompStates.Close;
+    pnlLists[0].CompStatesList.dstLocalCompStates.CreateDataSet;
     if Options.General.SortByNumber.Value then begin
-      dstCompStates.Sort := 'number ASC';
+      pnlLists[0].CompStatesList.dstLocalCompStates.Sort := 'number ASC';
     end else begin
-      dstCompStates.Sort := 'state ASC, number ASC';
+      pnlLists[0].CompStatesList.dstLocalCompStates.Sort := 'state ASC, number ASC';
     end;
     if cnnMain.Connected then begin
       dstCompsSelect.Close;
@@ -203,13 +203,13 @@ begin
       FnBusy := 0;
       dstCompsSelect.First;
       while not dstCompsSelect.Eof do begin
-        dstCompStates.Append;
+        pnlLists[0].CompStatesList.dstLocalCompStates.Append;
         Inc(nComps);
-        dstCompStates.FieldValues['icon'] := 0;
-        dstCompStates.FieldValues['id'] := nComps;
-        dstCompStates.FieldValues['idComp'] :=
+        pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['icon'] := 0;
+        pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['id'] := nComps;
+        pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['idComp'] :=
             dstCompsSelect.FieldValues['id'];
-        dstCompStates.FieldValues['number'] :=
+        pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['number'] :=
             dstCompsSelect.FieldValues['number'];
         cs := _GetCompState(dstCompsSelect.FieldValues['id'],
             dstSessionsSelect, dtLimit);
@@ -220,68 +220,93 @@ begin
         if not Options.General.MarkFreeLimited.Value
             and (cs = csFreeLimited) then
           nCompState := Integer(csFree);
-        dstCompStates.FieldValues['state'] := nCompState;
+        pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['state'] := nCompState;
         if cs <> csFree then
           DateTimeToString(strTime , 'HH:mm', dtLimit);
         case cs of
           csFree: begin
             Inc(FnFree);
-            dstCompStates.FieldValues['description'] := 'Свободен';
+            pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Свободен';
           end;
           csFreeLimited: begin
             Inc(FnFreeLimited);
-            dstCompStates.FieldValues['description'] := 'Свободен до ' + strTime;
+            pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Свободен до ' + strTime;
           end;
           csBusyLimited: begin
             Inc(FnBusyLimited);
-            dstCompStates.FieldValues['description'] := 'Свободен с ' + strTime;
+            pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Свободен с ' + strTime;
           end;
           csBusy: begin
             Inc(FnBusy);
-            dstCompStates.FieldValues['description'] := 'Занят до ' + strTime;
+            pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Занят до ' + strTime;
           end;
         end;
-        dstCompStates.Post;
+        pnlLists[0].CompStatesList.dstLocalCompStates.Post;
         dstCompsSelect.Next;
       end;
       nComps := 0;
-      dstCompStates.First;
-      while not dstCompStates.Eof do begin
-        FCompStates[nComps] := dstCompStates.FieldValues['state'];
-        dstCompStates.Next;
+      pnlLists[0].CompStatesList.dstLocalCompStates.First;
+      while not pnlLists[0].CompStatesList.dstLocalCompStates.Eof do begin
+        FCompStates[nComps] := pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['state'];
+        pnlLists[0].CompStatesList.dstLocalCompStates.Next;
         Inc(nComps);
       end;
     end;
-    dstCompStatesSecond.Close;
-    dstCompStatesSecond.CreateDataSet;
-    if Options.General.SortByNumber.Value then begin
-      dstCompStatesSecond.Sort := 'number ASC';
-    end else begin
-      dstCompStatesSecond.Sort := 'state ASC, number ASC';
-    end;
-    FnSecondPos := _GetVisibleRowCount(grdCompStatesFirst);
-    nComps := 0;
-    if FnSecondPos < dstCompStates.RecordCount then begin
-      pnlMiddle.Visible := True;
-      dstCompStates.First;
-      dstCompStates.MoveBy(FnSecondPos);
-      while not (dstCompStates.Eof or (nComps > FnSecondPos)) do begin
-        with dstCompStates do
-          dstCompStatesSecond.AppendRecord([FieldValues['id'],
+
+    FnSecondPos := _GetVisibleRowCount(pnlLists[0].CompStatesList.grdCompStatesFirst);
+
+    pnlListsCount := IfThen(Frac(pnlLists[0].CompStatesList.dstLocalCompStates.RecordCount/FnSecondPos)>0,
+                      Trunc(pnlLists[0].CompStatesList.dstLocalCompStates.RecordCount/FnSecondPos)+1,
+                      Trunc(pnlLists[0].CompStatesList.dstLocalCompStates.RecordCount/FnSecondPos));
+    if pnlListsCount>10 then pnlListsCount:=10;
+
+    if pnlListsCount>1 then
+      for i:= 1 to pnlListsCount -1 do
+      begin
+        if pnlLists[i] = nil then
+        begin
+          pnlLists[i]:= TMyPanel.Create(self);
+          pnlLists[i].Parent := pnlMain;
+          pnlLists[i].Align := alLeft;
+        end;
+       // pnlLists[i].top :=0;
+        pnlLists[i].Left := pnlLists[i-1].Left + pnlLists[i-1].Width;
+        pnlLists[i].Width := pnlLists[i-1].Width;
+
+
+        pnlLists[i].CompStatesList.grdCompStatesFirst.Font.Assign(pnlLists[i-1].CompStatesList.grdCompStatesFirst.Font);
+        pnlLists[i].CompStatesList.grdCompStatesFirst.RowHeight := pnlLists[i-1].CompStatesList.grdCompStatesFirst.RowHeight;
+        pnlLists[i].CompStatesList.grdCompStatesFirst.Columns[1].Visible := pnlLists[i-1].CompStatesList.grdCompStatesFirst.Columns[1].Visible;
+
+        pnlLists[i].CompStatesList.dstLocalCompStates.Close;
+        pnlLists[i].CompStatesList.dstLocalCompStates.CreateDataSet;
+        if Options.General.SortByNumber.Value then begin
+          pnlLists[i].CompStatesList.dstLocalCompStates.Sort := 'number ASC';
+        end else begin
+          pnlLists[i].CompStatesList.dstLocalCompStates.Sort := 'state ASC, number ASC';
+        end;
+        nComps := 0;
+        pnlLists[0].CompStatesList.dstLocalCompStates.First;
+        pnlLists[0].CompStatesList.dstLocalCompStates.MoveBy(FnSecondPos*i);
+        while not (pnlLists[0].CompStatesList.dstLocalCompStates.Eof or (nComps > FnSecondPos-1)) do begin
+          with pnlLists[0].CompStatesList.dstLocalCompStates do
+            pnlLists[i].CompStatesList.dstLocalCompStates.AppendRecord([FieldValues['id'],
               FieldValues['idComp'],
               FieldValues['number'],
               FieldValues['state'],
               FieldValues['description'],
               FieldValues['icon']]);
-        Inc(nComps);
-        dstCompStates.Next;
+            Inc(nComps);
+            pnlLists[0].CompStatesList.dstLocalCompStates.Next;
+          end;
+          pnlLists[i].CompStatesList.dstLocalCompStates.First;
+        end;
       end;
-    end else
-      pnlMiddle.Visible := False;
-    dstCompStatesSecond.First;
-    dstCompStates.First;
-    dstCompStates.EnableControls;
-  end;
+    for i:= pnlListsCount to 10 do
+      if pnlLists[i] <> nil then
+        FreeAndNilWithAssert(pnlLists[i]);
+    pnlLists[0].CompStatesList.dstLocalCompStates.First;
+    pnlLists[0].CompStatesList.dstLocalCompStates.EnableControls;
 end;
 
 function TfrmMain._GetCompState(const AnCompId: Integer;
@@ -343,8 +368,6 @@ begin
   _GridCellRectToColRow(TDBGridEh(Sender), Rect, nCol, nRow);
   if nCol <> 1 then begin
     if not Options.General.UseLargeIcons.Value then begin
-      if TDBGridEh(Sender) = grdCompStatesSecond then
-        nRow := nRow + FnSecondPos;
       case TCompState(FCompStates[nRow - 1]) of
         csFree:
           TDBGridEh(Sender).Canvas.Brush.Color := TColor($00FF00);
@@ -369,8 +392,6 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
-var
-  k: TPanel;
 begin
   FnSpaceLimitMin := 10;
   FnBusyLimitMin := 10;
@@ -378,19 +399,13 @@ begin
   pnlTime.Color := TColor($F0CAA6);
   pnlTimeCaption.Color := TColor($F6CF6D);
 
-  CompStatesList:= TCompStatesList.Create(self);
-  CompStatesList.Parent := pnlLeft;
-  CompStatesList.Align := alClient;
+  pnlLists[0]:= TMyPanel.Create(self);
+  pnlLists[0].Parent := pnlMain;
+  pnlLists[0].Left := 0;
+  pnlLists[0].Width := 158;
+  pnlLists[0].Align := alLeft;
 
-  grdCompStatesFirst := CompStatesList.grdCompStatesFirst;
-
-  k:= tpanel.Create(self);
-  k.Parent := frmMain;
-
-  k.Width := 100;
-  k.Top :=10;
-  k.left :=200;
-  k.Align := alLeft;
+  pnlListsCount:=1;
 
 end;
 
@@ -401,17 +416,17 @@ begin
     FnSpaceLimitMin := SpaceLimitMin.Value;
     FnBusyLimitMin := SpaceLimitMin.Value;
     if UseLargeIcons.Value then begin
-      grdCompStatesFirst.RowHeight := 48;
-      grdCompStatesFirst.Columns[1].Visible := True;
-      grdCompStatesSecond.RowHeight := 48;
-      grdCompStatesSecond.Columns[1].Visible := True;
+      pnlLists[0].CompStatesList.grdCompStatesFirst.RowHeight := 48;
+      pnlLists[0].CompStatesList.grdCompStatesFirst.Columns[1].Visible := True;
     end else begin
-      grdCompStatesFirst.RowHeight := 0;
-      grdCompStatesFirst.Columns[1].Visible := False;
-      grdCompStatesSecond.RowHeight := 0;
-      grdCompStatesSecond.Columns[1].Visible := False;
+      pnlLists[0].CompStatesList.grdCompStatesFirst.RowHeight := 0;
+      pnlLists[0].CompStatesList.grdCompStatesFirst.Columns[1].Visible := False;
     end;
+    pnlBottom.Visible := ShowTime.Value;
   end;
+
+  _RefreshCompStates;
+
 end;
 
 procedure TfrmMain._RefreshCompRelease;
@@ -629,14 +644,13 @@ end;
 procedure TfrmMain._SetTableFont(const AFont: TFont);
 begin
   lblSize.Font.Assign(AFont);
-  grdCompStatesFirst.Font.Assign(AFont);
-  grdCompStatesSecond.Font.Assign(AFont);
-  pnlLeft.Width := pnlLeft.BorderWidth * 2
-      + grdCompStatesFirst.Columns[0].Width
+  pnlLists[0].CompStatesList.grdCompStatesFirst.Font.Assign(AFont);
+  pnlLists[0].CompStatesList.grdCompStatesFirst.Font.Assign(AFont);
+  pnlLists[0].Width := pnlLists[0].BorderWidth * 2
+      + pnlLists[0].CompStatesList.grdCompStatesFirst.Columns[0].Width
       + IfThen(Options.General.UseLargeIcons.Value,
-      grdCompStatesFirst.Columns[1].Width + 1, 0)
+      pnlLists[0].CompStatesList.grdCompStatesFirst.Columns[1].Width + 1, 0)
       + lblSize.Width + 16;
-  pnlMiddle.Width := pnlLeft.Width;
 end;
 
 procedure TfrmMain.HotKey(var Message: TMessage);
