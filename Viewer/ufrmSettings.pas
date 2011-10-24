@@ -64,6 +64,7 @@ type
     pnlReleaseColumns: TGroupBox;
     pnlOther: TGroupBox;
     cbxShowTime: TCheckBox;
+    cbxShowToolBar: TCheckBox;
     procedure btnFontChangeClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -189,6 +190,8 @@ begin
     Options.General.SortByNumber.Value := False;
   end else if ASender = cbxShowTime then begin
     Options.General.ShowTime.Value := cbxShowTime.Checked;
+  end else if ASender = cbxShowToolBar then begin
+    Options.General.ShowToolBar.Value := cbxShowToolBar.Checked;
   end else begin
     ASSERT(FALSE,
         'TfrmMain.ControlValueChange error! Unknown sender!');
@@ -258,7 +261,8 @@ begin
     edtSecondColumnTitle.Text := SecondColumnTitle.Value;
     rbtnSortByNumber.Checked := SortByNumber.Value;
     rbtnSortByState.Checked := not SortByNumber.Value;
-    cbxShowTime.Checked := ShowTime.Value;  
+    cbxShowTime.Checked := ShowTime.Value;
+    cbxShowToolBar.Checked := ShowToolBar.Value;
   end;
   DoDesign;
   btnOk.Enabled := False;

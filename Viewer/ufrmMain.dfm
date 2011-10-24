@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
   Left = 274
-  Top = 121
+  Top = 107
   Width = 800
   Height = 723
   Caption = 'frmMain'
@@ -29,51 +29,13 @@ object frmMain: TfrmMain
   end
   object pnlMain: TPanel
     Left = 0
-    Top = 0
+    Top = 42
     Width = 792
-    Height = 552
+    Height = 510
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
     TabOrder = 0
-    object ToolBar1: TToolBar
-      Left = 8
-      Top = 8
-      Width = 776
-      Height = 42
-      AutoSize = True
-      ButtonHeight = 38
-      ButtonWidth = 39
-      Caption = 'ToolBar1'
-      EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-      Flat = True
-      Images = imglstToolBar
-      TabOrder = 0
-      Visible = False
-      object ToolButton1: TToolButton
-        Left = 0
-        Top = 0
-        Action = actLock
-      end
-      object ToolButton2: TToolButton
-        Left = 39
-        Top = 0
-        Action = actUnlock
-      end
-      object ToolButton3: TToolButton
-        Left = 78
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton3'
-        ImageIndex = 2
-        Style = tbsSeparator
-      end
-      object ToolButton4: TToolButton
-        Left = 86
-        Top = 0
-        Action = actSettings
-      end
-    end
   end
   object pnlBottom: TPanel
     Left = 0
@@ -133,6 +95,44 @@ object frmMain: TfrmMain
           TabOrder = 1
         end
       end
+    end
+  end
+  object ToolBar1: TToolBar
+    Left = 0
+    Top = 0
+    Width = 792
+    Height = 42
+    AutoSize = True
+    ButtonHeight = 38
+    ButtonWidth = 39
+    Caption = 'ToolBar1'
+    EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
+    Flat = True
+    Images = imglstToolBar
+    TabOrder = 2
+    Visible = False
+    object ToolButton1: TToolButton
+      Left = 0
+      Top = 0
+      Action = actLock
+    end
+    object ToolButton2: TToolButton
+      Left = 39
+      Top = 0
+      Action = actUnlock
+    end
+    object ToolButton3: TToolButton
+      Left = 78
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton3'
+      ImageIndex = 2
+      Style = tbsSeparator
+    end
+    object ToolButton4: TToolButton
+      Left = 86
+      Top = 0
+      Action = actSettings
     end
   end
   object tmrMain: TTimer
