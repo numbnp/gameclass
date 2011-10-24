@@ -423,6 +423,7 @@ begin
       pnlLists[0].CompStatesList.grdCompStatesFirst.Columns[1].Visible := False;
     end;
     pnlBottom.Visible := ShowTime.Value;
+    ToolBar1.Visible := ShowToolBar.Value;   
   end;
 
   _RefreshCompStates;
