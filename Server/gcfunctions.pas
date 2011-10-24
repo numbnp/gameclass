@@ -665,7 +665,7 @@ begin
       formMain.tmrFileSynchronization.Enabled := True;
     end;
     Application.ProcessMessages;
-    //Запсываем инфу
+    //Записываем инфу
     if isManager then begin
       GRegistry.Info.AppVersion := APP_VERSION;
       GRegistry.Info.UserName := Registration.UserName;
