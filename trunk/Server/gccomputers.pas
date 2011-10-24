@@ -325,7 +325,7 @@ uses
   uProtocol,
   uTariffication,
   uRegistration,
-  uKKMTools;
+  uKKMTools, DBGridEh;
 
 const
   UNREGISTERED_LINUX_CLIENTS_1 =
@@ -416,6 +416,7 @@ end;
 procedure TOperatorProfile.Load;
 var
    i: Integer;
+   ColumnId: Integer;
 begin
   bShowTechCompsInfo := GRegistry.UserInterface.ShowCopmTechInfo;
   ComputerListBlockedFont := GRegistry.UserInterface.BlockedFont;
@@ -424,12 +425,20 @@ begin
   ComputerListReserveFont := GRegistry.UserInterface.ReserveFont;
   ComputerListAccupiedFont := GRegistry.UserInterface.AccupiedFont;
   ComputerListPreventedFont := GRegistry.UserInterface.PreventedFont;
+
+// Загружаем из реестра ГК настройки колонок gridComps, колонки ищутся не по индексу а по содержимому FieldName
   for i:=0 to formMain.gridComps.Columns.Count-1 do
-    formMain.gridComps.Columns.Items[i].Width :=
+  begin
+    ColumnId := GetIdColumnByFieldName(
+                  formMain.gridComps,GRegistry.UserInterface.ColumnFieldName[i]);
+    if ColumnId > -1 then
+    begin
+      formMain.gridComps.Columns.Items[ColumnId].Width :=
         GRegistry.UserInterface.ColumnWidth[i];
-//   for i:=0 to formMain.gridComps.Columns.Count-1 do
-//      formMain.gridComps.Columns.Items[i].Width := StrToInt(dsRegistryLoad(CurOperatorName+'\column'+IntToStr(i),
-//      IntToStr(formMain.gridComps.Columns.Items[i].Width)));
+      formMain.gridComps.Columns.Items[ColumnId].Index := i;
+    end;
+  end;
+  
   SetBackColor(GRegistry.UserInterface.BackColor);
   SetTableFont(GRegistry.UserInterface.TableFont);
   DoInterface; // TOperatorProfile.
@@ -443,8 +452,12 @@ var
 begin
   GRegistry.UserInterface.ShowCopmTechInfo := bShowTechCompsInfo;
   for i:=0 to formMain.gridComps.Columns.Count-1 do
+  begin
     GRegistry.UserInterface.ColumnWidth[i] :=
         formMain.gridComps.Columns.Items[i].Width;
+    GRegistry.UserInterface.ColumnFieldName[i] :=
+        formMain.gridComps.Columns.Items[i].FieldName;
+  end;
 end;
 
 procedure TOperatorProfile.DoInterface;
