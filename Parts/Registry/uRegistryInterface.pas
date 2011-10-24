@@ -39,6 +39,11 @@ type
     function LocateColumnWidth(AnColumnNumber: Integer): Boolean;
     function GetColumnWidth(AnColumnNumber: Integer): Integer;
     procedure SetColumnWidth(AnColumnNumber: Integer; AValue: Integer);
+
+    function LocateColumnFieldName(AnColumnNumber: Integer): Boolean;
+    function GetColumnFieldName(AnColumnNumber: Integer): String;
+    procedure SetColumnFieldName(AnColumnNumber: Integer; AValue: String);
+
     function LocateMultiActionsFullControl: Boolean;
     function GetMultiActionsFullControl: Boolean;
     procedure SetMultiActionsFullControl(AValue: Boolean);
@@ -95,6 +100,10 @@ type
         read GetShowCopmTechInfo write SetShowCopmTechInfo;
     property ColumnWidth[AnColumnNumber: Integer]: Integer
         read GetColumnWidth write SetColumnWidth;
+
+    property ColumnFieldName[AnColumnNumber: Integer]: String
+        read GetColumnFieldName write SetColumnFieldName;
+
     property MultiActionsFullControl: Boolean
         read GetMultiActionsFullControl write SetMultiActionsFullControl;
     property HideSessionChartWithoutReserve: Boolean
@@ -290,6 +299,25 @@ procedure TRegistryInterface.SetColumnWidth(AnColumnNumber: Integer;
 begin
   LocateColumnWidth(AnColumnNumber);
   FRegistryRecord.ValueAsInteger := AValue;
+end;
+
+function TRegistryInterface.LocateColumnFieldName(AnColumnNumber: Integer): Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKeyWithUserName('columnfieldname'
+      + IntToStr(AnColumnNumber) , '' );
+end;
+
+function TRegistryInterface.GetColumnFieldName(AnColumnNumber: Integer): String;
+begin
+  LocateColumnFieldName(AnColumnNumber);
+  Result := FRegistryRecord.Value;
+end;
+
+procedure TRegistryInterface.SetColumnFieldName(AnColumnNumber: Integer;
+    AValue: String);
+begin
+  LocateColumnFieldName(AnColumnNumber);
+  FRegistryRecord.Value := AValue;
 end;
 
 function TRegistryInterface.LocateTableFont: Boolean;

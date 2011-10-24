@@ -363,6 +363,8 @@ procedure SortDataSet(bMakeSorting: boolean);
 procedure ResetDataSetBookmark;
 procedure IcmpPing;
 
+function GetIdColumnByFieldName(Grid:TDBGridEh; FieldName: String):integer;
+
 var
   formMain: TformMain;
 
@@ -2384,6 +2386,22 @@ begin
     if Comps[index].IsFree then
       UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
            + '=' + BoolToStr(False));
+end;
+
+function GetIdColumnByFieldName(Grid:TDBGridEh; FieldName: String):integer;
+var
+  i: integer;
+  IdColumn: integer;
+begin
+  IdColumn := -1;
+  for i:=0 to Grid.Columns.Count - 1 do
+    if Grid.Columns[i].FieldName = FieldName Then
+    begin
+      IdColumn := i;
+      Break;
+    end;
+
+  Result := IdColumn;
 end;
 
 end.
