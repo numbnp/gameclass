@@ -1,13 +1,13 @@
 object frameOptions: TframeOptions
   Left = 0
   Top = 0
-  Width = 451
-  Height = 410
+  Width = 447
+  Height = 499
   TabOrder = 0
   object gbPayment: TGroupBox
     Left = 0
     Top = 0
-    Width = 451
+    Width = 447
     Height = 225
     Align = alTop
     Caption = #1054#1087#1083#1072#1090#1072
@@ -15,7 +15,7 @@ object frameOptions: TframeOptions
     object pnlTopLeft: TPanel
       Left = 2
       Top = 15
-      Width = 224
+      Width = 220
       Height = 208
       Align = alClient
       BevelOuter = bvNone
@@ -23,7 +23,7 @@ object frameOptions: TframeOptions
       object gbChange: TGroupBox
         Left = 0
         Top = 121
-        Width = 224
+        Width = 220
         Height = 87
         Align = alClient
         Caption = #1057#1076#1072#1095#1072
@@ -68,7 +68,7 @@ object frameOptions: TframeOptions
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 224
+        Width = 220
         Height = 121
         Align = alTop
         BevelOuter = bvNone
@@ -140,7 +140,7 @@ object frameOptions: TframeOptions
         object pnlOperatingTime: TGroupBox
           Left = 145
           Top = 0
-          Width = 79
+          Width = 75
           Height = 121
           Align = alClient
           Caption = '          '
@@ -196,7 +196,7 @@ object frameOptions: TframeOptions
       end
     end
     object pnlTopRight: TPanel
-      Left = 226
+      Left = 222
       Top = 15
       Width = 223
       Height = 208
@@ -322,7 +322,7 @@ object frameOptions: TframeOptions
   object gbOthers: TGroupBox
     Left = 0
     Top = 225
-    Width = 451
+    Width = 447
     Height = 64
     Align = alTop
     Caption = #1044#1088#1091#1075#1086#1077
@@ -356,7 +356,7 @@ object frameOptions: TframeOptions
   object gbOperator: TGroupBox
     Left = 0
     Top = 351
-    Width = 451
+    Width = 447
     Height = 58
     Align = alTop
     Caption = #1052#1072#1096#1080#1085#1072' '#1086#1087#1077#1088#1072#1090#1086#1088#1072
@@ -399,7 +399,7 @@ object frameOptions: TframeOptions
   object Panel1: TPanel
     Left = 0
     Top = 289
-    Width = 451
+    Width = 447
     Height = 62
     Align = alTop
     BevelOuter = bvNone
@@ -448,7 +448,7 @@ object frameOptions: TframeOptions
     object gbGuest: TGroupBox
       Left = 228
       Top = 0
-      Width = 223
+      Width = 219
       Height = 62
       Align = alClient
       Caption = #1057#1077#1072#1085#1089' "'#1043#1086#1089#1090#1100'"'
@@ -479,6 +479,42 @@ object frameOptions: TframeOptions
         TabOrder = 1
         OnChange = cboGuestSessionTarifChange
       end
+    end
+  end
+  object gbOptimize: TGroupBox
+    Left = 0
+    Top = 409
+    Width = 447
+    Height = 80
+    Align = alTop
+    Caption = #1054#1087#1090#1080#1084#1080#1079#1072#1094#1080#1103' '#1088#1072#1073#1086#1090#1099' '#1089' '#1041#1044
+    TabOrder = 4
+    object cbxWriteProcessList: TCheckBox
+      Left = 8
+      Top = 18
+      Width = 217
+      Height = 17
+      Caption = #1047#1072#1087#1080#1089#1099#1074#1072#1090#1100' '#1087#1088#1086#1094#1077#1089#1089#1099' '#1082#1083#1080#1077#1085#1090#1086#1074' '#1074' '#1041#1044
+      TabOrder = 0
+      OnClick = cbxWriteProcessListClick
+    end
+    object cbxWriteUnControlComp: TCheckBox
+      Left = 8
+      Top = 53
+      Width = 305
+      Height = 17
+      Caption = #1047#1072#1087#1080#1089#1099#1074#1072#1090#1100' '#1074#1088#1077#1084#1103' '#1086#1090#1089#1091#1090#1089#1090#1074#1080#1103' '#1082#1086#1085#1090#1088#1086#1083#1103' '#1085#1072#1076' '#1082#1083#1080#1077#1085#1090#1086#1084
+      TabOrder = 1
+      OnClick = cbxWriteUnControlCompClick
+    end
+    object cbxWriteUnControlClub: TCheckBox
+      Left = 8
+      Top = 36
+      Width = 305
+      Height = 17
+      Caption = #1047#1072#1087#1080#1089#1099#1074#1072#1090#1100' '#1074#1088#1077#1084#1103' '#1086#1090#1089#1091#1090#1089#1090#1074#1080#1103' '#1082#1086#1085#1090#1088#1086#1083#1103' '#1085#1072#1076' '#1082#1083#1091#1073#1086#1084
+      TabOrder = 2
+      OnClick = cbxWriteUnControlClubClick
     end
   end
 end

@@ -676,24 +676,28 @@ end;
 procedure dsControlClubStart;
 begin
   if (isManager) then exit;
+  if not GRegistry.Options.WriteUnControlClub then exit;  
   dsDoCommand(DS_CONTROLCLUB_START + ' @now='''+DateTimeToSql(GetVirtualTime) + '''');
 end;
 
 procedure dsControlClubTimer;
 begin
   if (isManager) then exit;
+  if not GRegistry.Options.WriteUnControlClub then exit;
   dsDoCommand(DS_CONTROLCLUB_TIMER + ' @now='''+DateTimeToSql(GetVirtualTime) + '''');
 end;
 
 procedure dsControlCompStart(idComp: integer);
 begin
   if (isManager) then exit;
+  if not GRegistry.Options.WriteUnControlComp then exit;
   dsDoCommand(DS_CONTROLCOMP_START + ' @idComp=' + IntToStr(idComp) + ', @now='''+DateTimeToSql(GetVirtualTime) + '''');
 end;
 
 procedure dsControlCompTimer(idComp: integer);
 begin
   if (isManager) then exit;
+  if not GRegistry.Options.WriteUnControlComp then exit;
   dsDoCommand(DS_CONTROLCOMP_TIMER + ' @idComp=' + IntToStr(idComp) + ', @now='''+DateTimeToSql(GetVirtualTime) + '''');
 end;
 
