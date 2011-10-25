@@ -1584,7 +1584,8 @@ begin
 
       //Отключили слежение за процессами, высокая нагрузка на базу
 
-{      if (cmd = STR_CMD_RET_PROCESSLIST) then begin
+      if (cmd = STR_CMD_RET_PROCESSLIST) and
+         GRegistry.Options.WriteProcessList then begin
         //bCalcBySum := StrToBool(GetParamFromString(param,0));
         // Bool говорит что забили на старые процессы, пока не нужен
         lstStringList := TStringList.Create;
@@ -1597,7 +1598,7 @@ begin
         for i:=0 to lstStringList.Count-1 do
           dsProcessAdd(False, Comps[index].id, lstStringList.Strings[i]);
         lstStringList.Free;
-      end; //STR_CMD_SENDMESSAGE}
+      end; //STR_CMD_SENDMESSAGE
 
       if (cmd = STR_CMD_GUESTSESSION) and GRegistry.Client.GuestSession
           and (Comps[index].a.state = ClientState_Authentication) then begin

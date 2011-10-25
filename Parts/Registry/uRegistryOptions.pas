@@ -121,9 +121,23 @@ type
     function LocateDebugLog: Boolean;
     function GetDebugLog: Boolean;
     procedure SetDebugLog(AValue: Boolean);
+
+    //by numb
     function LocateAutoSelectDefaultTarif: Boolean;
     function GetAutoSelectDefaultTarif: Boolean;
     procedure SetAutoSelectDefaultTarif(AValue: Boolean);
+
+    function LocateWriteProcessList: Boolean;
+    function GetWriteProcessList: Boolean;
+    procedure SetWriteProcessList(AValue: Boolean);
+
+    function LocateWriteUnControlComp: Boolean;
+    function GetWriteUnControlComp: Boolean;
+    procedure SetWriteUnControlComp(AValue: Boolean);
+
+    function LocateWriteUnControlClub: Boolean;
+    function GetWriteUnControlClub: Boolean;
+    procedure SetWriteUnControlClub(AValue: Boolean);
 
 
   public
@@ -205,8 +219,15 @@ type
         read GetOperatingTimeEnd write SetOperatingTimeEnd;
     property DebugLog : Boolean
         read GetDebugLog write SetDebugLog;
+// By numb
     property AutoSelectDefaultTarif : Boolean
         read GetAutoSelectDefaultTarif write SetAutoSelectDefaultTarif;
+    property WriteProcessList : Boolean
+        read GetWriteProcessList write SetWriteProcessList;
+    property WriteUnControlComp : Boolean
+        read GetWriteUnControlComp write SetWriteUnControlComp;
+    property WriteUnControlClub : Boolean
+        read GetWriteUnControlClub write SetWriteUnControlClub;
   end;
 
 implementation
@@ -862,6 +883,57 @@ end;
 procedure TRegistryOptions.SetAutoSelectDefaultTarif(AValue: Boolean);
 begin
   LocateAutoSelectDefaultTarif;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryOptions.LocateWriteProcessList: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('WriteProcessList', '1');
+end;
+
+function TRegistryOptions.GetWriteProcessList: Boolean;
+begin
+  LocateWriteProcessList;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetWriteProcessList(AValue: Boolean);
+begin
+  LocateWriteProcessList;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryOptions.LocateWriteUnControlComp: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('WriteUnControlComp', '1');
+end;
+
+function TRegistryOptions.GetWriteUnControlComp: Boolean;
+begin
+  LocateWriteUnControlComp;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetWriteUnControlComp(AValue: Boolean);
+begin
+  LocateWriteUnControlComp;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryOptions.LocateWriteUnControlClub: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('WriteUnControlClub', '1');
+end;
+
+function TRegistryOptions.GetWriteUnControlClub: Boolean;
+begin
+  LocateWriteUnControlClub;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryOptions.SetWriteUnControlClub(AValue: Boolean);
+begin
+  LocateWriteUnControlClub;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 

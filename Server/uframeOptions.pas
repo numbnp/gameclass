@@ -72,6 +72,10 @@ type
     cbxEnableChangeForSeparateTraffic: TCheckBox;
     cbxDebugLog: TCheckBox;
     cbxReserveAutoActivate: TCheckBox;
+    gbOptimize: TGroupBox;
+    cbxWriteProcessList: TCheckBox;
+    cbxWriteUnControlComp: TCheckBox;
+    cbxWriteUnControlClub: TCheckBox;
     procedure cbxPrepayOnlyClick(Sender: TObject);
     procedure rbtnPrepayClick(Sender: TObject);
     procedure rbtnPostpayClick(Sender: TObject);
@@ -99,6 +103,9 @@ type
     procedure cbxEnableChangeForSeparateTrafficClick(Sender: TObject);
     procedure cbxDebugLogClick(Sender: TObject);
     procedure cbxReserveAutoActivateClick(Sender: TObject);
+    procedure cbxWriteProcessListClick(Sender: TObject);
+    procedure cbxWriteUnControlCompClick(Sender: TObject);
+    procedure cbxWriteUnControlClubClick(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     { Private declarations }
@@ -187,6 +194,9 @@ begin
   dtpOperatingTimeBegin.Time := GRegistry.Options.OperatingTimeBegin;
   dtpOperatingTimeEnd.Time := GRegistry.Options.OperatingTimeEnd;
   cbxDebugLog.Checked := GRegistry.Options.DebugLog;
+  cbxWriteProcessList.Checked := GRegistry.Options.WriteProcessList;
+  cbxWriteUnControlComp.Checked := GRegistry.Options.WriteUnControlComp;
+  cbxWriteUnControlClub.Checked := GRegistry.Options.WriteUnControlClub;
   FbControlsEnabled := True;
 end;
 
@@ -422,6 +432,24 @@ procedure TframeOptions.cbxReserveAutoActivateClick(Sender: TObject);
 begin
   if not ControlsEnabled then exit;
   GRegistry.Options.ReserveAutoActivate := cbxReserveAutoActivate.Checked;
+end;
+
+procedure TframeOptions.cbxWriteProcessListClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.Options.WriteProcessList := cbxWriteProcessList.Checked;
+end;
+
+procedure TframeOptions.cbxWriteUnControlCompClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.Options.WriteUnControlComp := cbxWriteUnControlComp.Checked;
+end;
+
+procedure TframeOptions.cbxWriteUnControlClubClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.Options.WriteUnControlClub := cbxWriteUnControlClub.Checked;
 end;
 
 end.
