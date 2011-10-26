@@ -61,6 +61,7 @@ type
     FfSum: Double;
     FdtStart: TDateTime;
     FdtStop: TDateTime;
+    FdtNowTime: TDateTime;
     FstrTarifName: String;
     FbTrafficSeparatePayment: Boolean;
     FnSecCode: Integer;
@@ -105,6 +106,7 @@ type
     procedure SetSum(const AfSum: Double);
     procedure SetStart(const AdtStart: TDateTime);
     procedure SetStop(const AdtStop: TDateTime);
+    procedure SetNowTime(const AdtStart: TDateTime);
     procedure SetTarifName(const AstrTarifName: String);
     procedure SetTrafficSeparatePayment(
         const AbTrafficSeparatePayment: Boolean);
@@ -193,6 +195,9 @@ type
     // время окончания сессии
     property Stop: TDateTime
         read FdtStop write SetStop;
+    // текущее время сервера
+    property NowTime: TDateTime
+        read FdtNowTime write SetNowTime;
     // имя тарифа
     property TarifName: String
         read FstrTarifName write SetTarifName;
@@ -575,6 +580,15 @@ begin
 {$ENDIF}
   end;
 end;
+
+procedure TClientInfo.SetNowTime(const AdtStart: TDateTime);
+begin
+  if FdtStart <> AdtStart then begin
+    FbDirty := True;
+    FdtNowTime := AdtStart;
+  end;
+end;
+
 
 procedure TClientInfo.SetSum(const AfSum: Double);
 begin

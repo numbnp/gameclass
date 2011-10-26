@@ -106,6 +106,10 @@ const
 
   // звуковые команды
   STR_CMD_PLAY_SOUND = 'play_sound';
+
+  // звуковые команды
+  STR_CMD_SHOW_WARNING_TEXT = 'show_warning_text';
+
   STR_CMD_RET_PROCESSLIST = 'inet_ret_process_list';
 
   WAVFILE_5MINSLEFT_RU        = 'gccl_5minsleft_ru.wav';
