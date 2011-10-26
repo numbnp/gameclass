@@ -56,7 +56,8 @@ uses
   uClientInfoConst in '..\Parts\Options\uClientInfoConst.pas',
   uClientInfoConstrainedCommand in '..\Parts\RemoteCommands\uClientInfoConstrainedCommand.pas',
   uClientInfoSetRemoteCommand in '..\Parts\RemoteCommands\uClientInfoSetRemoteCommand.pas',
-  uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas';
+  uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
+  frmTopMessage in 'frmTopMessage.pas' {frmMessage};
 
 {$R *.res}
 const
@@ -88,6 +89,7 @@ begin
   BlockingsAndNotifications.StartChecking();
   Application.Title := 'GCCL';
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmMessage, frmMessage);
   GWinhkg.SetClientHandle(frmMain.Handle);
   Application.CreateForm(TdmMain, dmMain);
   Application.CreateForm(TfrmSmallInfo, frmSmallInfo);

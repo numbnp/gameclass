@@ -89,6 +89,7 @@ uses
     Messages,
     uWinhkg,
     RS_APILib_TLB,
+    frmTopMessage,
   {$ENDIF}
   {$IFDEF LINUX}
     QForms,
@@ -228,17 +229,17 @@ begin
         and not GClientInfo.IsFirstRun then begin
       case GClientOptions.OfflineBlockType of
         OfflineBlockType_Immediately :begin
-          GClientInfo.Blocked := (Now >= IncMinute(GClientInfo.LastPingTime,
+          GClientInfo.Blocked := (GClientInfo.NowTime >= IncMinute(GClientInfo.LastPingTime,
               GClientOptions.OfflineBlockTypeImmediatelyMin));
         end;
 
         OfflineBlockType_AfterSessionStop :begin
           GClientInfo.Blocked := (not GClientInfo.IsSession)
-              or (Now >= GClientInfo.Stop);
+              or (GClientInfo.NowTime >= GClientInfo.Stop);
         end;
       end;
 
-      if (not GClientInfo.IsSession) or (Now >= GClientInfo.Stop) then begin
+      if (not GClientInfo.IsSession) or (GClientInfo.NowTime >= GClientInfo.Stop) then begin
         if (GClientInfo.ClientState <> ClientState_Blocked) then begin
           dt := GClientInfo.Stop;
           bAfterStopActionneededSave := GClientInfo.AfterStopActionNeeded;
@@ -257,7 +258,7 @@ begin
 
     if GClientOptions.AfterStop
         and GClientInfo.AfterStopActionNeeded then begin
-      if (Now >= IncSecond(GClientInfo.Stop, GClientOptions.AfterStopSec))
+      if (GClientInfo.NowTime >= IncSecond(GClientInfo.Stop, GClientOptions.AfterStopSec))
           then begin
         GClientInfo.Stop := DEF_STOP;
         case GClientOptions.AfterStopType of
@@ -284,9 +285,9 @@ begin
       if (GClientOptions.StartBlockSec = 0) then
 //        GClientInfo.Blocked := True
         GClientInfo.Blocked := not GClientOptions.RestoreClientInfo
-            or (GClientInfo.Stop < Now)
+            or (GClientInfo.Stop < GClientInfo.NowTime)
       else
-        GClientInfo.Blocked := (Now <= IncSecond(GClientInfo.LastPingTime,
+        GClientInfo.Blocked := (GClientInfo.NowTime <= IncSecond(GClientInfo.LastPingTime,
               GClientOptions.StartBlockSec));
     end;
 {$ENDIF}
@@ -303,9 +304,9 @@ begin
         and ((GClientInfo.ClientState = ClientState_Session)
           or (GClientInfo.ClientState = ClientState_OperatorSession))
         and (MinutesBetween(GClientInfo.Start,GClientInfo.Stop) > 5) then begin
-      if (Now >= IncMinute(GClientInfo.Stop,-5{GClientOptions.UseTextMessageMin}))
+      if (GClientInfo.NowTime >= IncMinute(GClientInfo.Stop,-5{GClientOptions.UseTextMessageMin}))
           then begin
-        if (Now < GClientInfo.Stop) and not FbIsSoundUsed then begin
+        if (GClientInfo.NowTime < GClientInfo.Stop) and not FbIsSoundUsed then begin
           FbIsSoundUsed := True;
           //Play Sound
           //Пока ничего не проигрываем - сервер играет в принудиловку
@@ -320,9 +321,9 @@ begin
           or (GClientInfo.ClientState = ClientState_OperatorSession))
         and (MinutesBetween(GClientInfo.Start,IncSecond(GClientInfo.Stop))
         > GClientOptions.UseTextMessageMin) then begin
-      if (Now >= IncMinute(GClientInfo.Stop,-5{GClientOptions.UseTextMessageMin}))
+      if (GClientInfo.NowTime >= IncMinute(GClientInfo.Stop,-5{GClientOptions.UseTextMessageMin}))
           then begin
-        if (Now < GClientInfo.Stop) and not FbIsBaloonsUsed then begin
+        if (GClientInfo.NowTime < GClientInfo.Stop) and not FbIsBaloonsUsed then begin
           FbIsBaloonsUsed := True;
           //Show Baloons
   {$IFDEF MSWINDOWS}
@@ -338,6 +339,24 @@ begin
       end else
         FbIsBaloonsUsed := False;
     end;
+    if GClientOptions.UseTextMessage
+        and ((GClientInfo.ClientState = ClientState_Session)
+          or (GClientInfo.ClientState = ClientState_OperatorSession)) then begin
+      if ( MinuteOf(GClientInfo.Stop-GClientInfo.NowTime)<GClientOptions.UseTextMessageMin) then
+      begin
+        if (not FbIsTextMessageUsed) then begin
+          FbIsTextMessageUsed := True;
+{$IFDEF MSWINDOWS}
+          ShowTopMessage('У Вас осталось 5 минут.',5);
+{$ENDIF}
+{$IFDEF LINUX}
+          //Show TextMessage
+{$ENDIF}
+        end;
+      end else
+        FbIsTextMessageUsed := False;
+    end;
+
 {$ENDIF}
 {$IFDEF GCCLSRV}
     if GClientOptions.UseTextMessage
@@ -345,17 +364,11 @@ begin
           or (GClientInfo.ClientState = ClientState_OperatorSession))
         and (MinutesBetween(GClientInfo.Start,IncSecond(GClientInfo.Stop))
         > GClientOptions.UseTextMessageMin) then begin
-      if (Now >= IncMinute(GClientInfo.Stop,-GClientOptions.UseTextMessageMin))
+      if (GClientInfo.NowTime >= IncMinute(GClientInfo.Stop,-GClientOptions.UseTextMessageMin))
           then begin
-        if (Now < GClientInfo.Stop) and not FbIsTextMessageUsed then begin
+        if (GClientInfo.NowTime < GClientInfo.Stop) and not FbIsTextMessageUsed then begin
           FbIsTextMessageUsed := True;
 {$IFDEF MSWINDOWS}
-          cmd := TExecuteCommandRemoteCommand.Create(
-            '"c:\Program Files\GameClass3\Client\Tools\ShowTopText.exe" '
-            + '"У Вас осталось ' +IntToStr(GClientOptions.UseTextMessageMin)
-            + ' минут"');
-          cmd.Execute;
-          cmd.Free;
           {//Show TextMessage
           if GClientOptions.UseTextMessageBlinking then
             ShowTextInAllVideoModesBlinking(
@@ -380,9 +393,9 @@ begin
         or (GClientInfo.ClientState = ClientState_OperatorSession))
         and (MinutesBetween(GClientInfo.Start,IncSecond(GClientInfo.Stop))
         > GClientOptions.UseTextMessageMin) then begin
-      if (Now >= IncMinute(GClientInfo.Stop,-GClientOptions.UseTextMessageMin))
+      if (GClientInfo.NowTime >= IncMinute(GClientInfo.Stop,-GClientOptions.UseTextMessageMin))
           then begin
-        if (Now < GClientInfo.Stop)
+        if (GClientInfo.NowTime < GClientInfo.Stop)
             and not FbIsNMinutesLeftRunScriptUsed then begin
           FbIsNMinutesLeftRunScriptUsed := True;
           RunClientScript(caNMinutesLeft);
