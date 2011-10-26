@@ -107,6 +107,10 @@ try
   end else if CompareText(FstrOptionName,'Start') = 0 then begin
     GClientInfo.Start:= StrToDateTimeDefWithReplace(FstrOptionValue);
 
+  end else if CompareText(FstrOptionName,'Now') = 0 then begin
+    GClientInfo.NowTime:= StrToDateTimeDefWithReplace(FstrOptionValue);
+
+
   end else if CompareText(FstrOptionName,'Stop') = 0 then begin
     GClientInfo.Stop:= StrToDateTimeDefWithReplace(FstrOptionValue);
 

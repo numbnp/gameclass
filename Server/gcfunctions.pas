@@ -1404,7 +1404,14 @@ begin
     if (Comps[i].busy) then
       begin
         diff := Comps[i].session.TimeStop-GetVirtualTime;
-        if ((HourOf(diff) = 0) and (MinuteOf(diff)=4) and (SecondOf(diff)<59) and (SecondOf(diff)>=55)) then begin
+        if (HourOf(diff)>0) or (MinuteOf(diff)>4) then
+          Comps[i].WarnedTime := False;
+
+        if ((HourOf(diff) = 0) and (MinuteOf(diff)<5) and (not Comps[i].WarnedTime)) then begin
+          Comps[i].WarnedTime := True;
+          UDPSend(Comps[i].ipaddr,STR_CMD_SHOW_WARNING_TEXT
+                  + '='
+                  + 'У Вас осталось 5 минут');
           if GClientOptions.UseSounds then begin
           // russian
             if (GClientOptions.Language = 2) then

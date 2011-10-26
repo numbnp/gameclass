@@ -107,6 +107,7 @@ type
     FnIdGroup: Integer;
     FstrGroupName: String;
     FbPingable: Boolean;  //пингуется ICMP
+    FbWarnedTime: Boolean;    //предупрежден об окончании времени
     FnIcmpPings: integer;     // quantity of unsuccessfull ICMP pings
     FnScriptCheckSumm: Int64;  //контрольная сумма скрипт-файла
     FnInstallCheckSumm: Int64;  //контрольная сумма инсталляхи клиента
@@ -148,6 +149,7 @@ type
     property GroupName: String read FstrGroupName write FstrGroupName;
     property Pingable: Boolean read FbPingable write FbPingable;
     // Пингуется действительно, а не значение true при старте
+    property WarnedTime: Boolean read FbWarnedTime write FbWarnedTime;
     property RealyPingable: Boolean read GetRealyPingable;
     property IcmpPings: Integer read FnIcmpPings write FnIcmpPings;
     property Busy: Boolean read GetBusy;
@@ -481,6 +483,7 @@ begin
   st.Text := '';
   session := nil;
   FbPingable := true; // по умолчанию комп контролируется :)
+  FbWarnedTime := false; 
   FnIcmpPings := 0;      // по умолчанию пингуется в норме!
 
   strInfoWinver := '...'; // версия виндовс на машине
@@ -896,6 +899,9 @@ begin
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'Stop'
           + '/' + DateTimeToStr(session.TimeStop));
+      UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
+          + 'Now'
+          + '/' + DateTimeToStr(GetVirtualTime));
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'TarifName'
           + '/' + session.GetStrTarif);
