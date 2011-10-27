@@ -922,8 +922,10 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-           + '=' + BoolToStr(True));
+{         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+           + '=' + BoolToStr(True));}
+         UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
+           + '=' + 'shutdown -f -r -t 0');
       end;
       cdsComps.Next;
    end;
@@ -945,7 +947,9 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+//         UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+         UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
+           + '=' + 'shutdown -f -s -t 0');
       end;
       cdsComps.Next;
    end;
@@ -2359,8 +2363,12 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-           + '=' + BoolToStr(False));
+         if Comps[index].LinuxClient then
+           UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
+             + '=' + BoolToStr(False))
+         else
+           UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
+             + '=' + 'shutdown -f -t 0');
       end;
       cdsComps.Next;
    end;

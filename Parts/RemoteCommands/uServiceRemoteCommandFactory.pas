@@ -78,6 +78,7 @@ uses
   uLogoffRemoteCommand,
   uPingRemoteCommand,
   uGetExtendedInfoRemoteCommand,
+  uExecuteCommandRemoteCommand,
 {$IFDEF LINUX}
   udmMain,
 {$ENDIF}
@@ -223,6 +224,9 @@ begin
 
   end else if CompareText(strCommand, STR_CMD_CLOSECLIENT) = 0 then begin
     Result := TCloseClientRemoteCommand.Create()
+  // Запускаем процесс указанный сервером
+  end else if CompareText(strCommand, STR_CMD_EXECUTE_COMMAND_SRV) = 0 then begin
+    Result := TExecuteCommandRemoteCommand.Create(strParameters)
 
   end else if CompareText(strCommand, STR_CMD_RESTART) = 0 then begin
     GClientInfo.AfterStopActionNeeded := False;

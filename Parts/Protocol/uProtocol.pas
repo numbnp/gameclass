@@ -104,6 +104,9 @@ const
 
   STR_CMD_SESSIONINFO = 'sessioninfo';   // команда не используется
 
+  // Запускаем процесс на клиенте (запускается службой)
+  STR_CMD_EXECUTE_COMMAND_SRV = 'execute_cmd_srv';
+
   // звуковые команды
   STR_CMD_PLAY_SOUND = 'play_sound';
 
