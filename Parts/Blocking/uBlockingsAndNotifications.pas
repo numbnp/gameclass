@@ -342,12 +342,15 @@ begin
     if GClientOptions.UseTextMessage
         and ((GClientInfo.ClientState = ClientState_Session)
           or (GClientInfo.ClientState = ClientState_OperatorSession)) then begin
-      if ( MinuteOf(GClientInfo.Stop-GClientInfo.NowTime)<GClientOptions.UseTextMessageMin) then
+      if  (HourOf(GClientInfo.Stop-GClientInfo.NowTime) = 0) and
+        (MinuteOf(GClientInfo.Stop-GClientInfo.NowTime)<GClientOptions.UseTextMessageMin) then
       begin
         if (not FbIsTextMessageUsed) then begin
           FbIsTextMessageUsed := True;
 {$IFDEF MSWINDOWS}
-          ShowTopMessage('У Вас осталось 5 минут.',5);
+          ShowTopMessage('У Вас осталось '
+            + IntToStr(GClientOptions.UseTextMessageMin)
+            + ' минут.',5);
 {$ENDIF}
 {$IFDEF LINUX}
           //Show TextMessage
