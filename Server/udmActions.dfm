@@ -1,7 +1,7 @@
 object dmActions: TdmActions
   OldCreateOrder = False
-  Left = 350
-  Top = 218
+  Left = 354
+  Top = 226
   Height = 109
   Width = 147
   object ActionManager: TActionManager

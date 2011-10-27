@@ -314,6 +314,7 @@ begin
   FstrFullInfo := DEF_INFO_FULL;
   FdtStart := DEF_START;
   FdtStop := DEF_STOP;
+  FdtNowTime := Now;
   FstrTarifName := DEF_TARIF_NAME;
   FbTrafficSeparatePayment := DEF_TRAFIIC_SEPARATE_PAYMENT;
   FnSecCode := DEF_SEC_CODE;
