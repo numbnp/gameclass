@@ -63,6 +63,9 @@ type
   end; // TBlockingsAndNotifications
 var
    BlockingsAndNotifications: TBlockingsAndNotifications;
+{$IFDEF MSWINDOWS}
+   SysTimer:THandle;
+{$ENDIF}
 
 implementation
 
@@ -115,7 +118,12 @@ uses
   DateUtils,
   uCompositeRemoteCommand;
 
-
+{$IFDEF MSWINDOWS}
+procedure Timer_SysTimer;
+begin
+  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
+end;
+{$ENDIF}
 
 // метод используется для прерывания цикла ожидания событий
 // см. описание API-функции QueueUserAPC
@@ -129,12 +137,12 @@ end; // ExitThreadAPC
 // метод класса в отдельном потоке приложение подвисает
 // в варианте с глобальной функцией все работате нормально
 function DoChecking(Ap: TBlockingsAndNotifications): DWORD;
+var
+  SysTimer:THandle;
 begin
   Ap._DoChecking();
   Result := 0;
 end; // DoPrintersNotifies
-
-
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -174,6 +182,7 @@ var
   nThreadId: cardinal;
 begin
 {$IFDEF MSWINDOWS}
+  SysTimer := SetTimer(0,0,1000, @Timer_SysTimer);
   FhCheckingThread := BeginThread(
       nil, 0, @DoChecking, Pointer(Self), 0, nThreadId);
   ASSERT(FhCheckingThread <> INVALID_HANDLE_VALUE);
@@ -190,6 +199,7 @@ end; // TBlockingsAndNotifications.StartThreads
 procedure TBlockingsAndNotifications.StopChecking();
 begin
 {$IFDEF MSWINDOWS}
+  KillTimer(0,SysTimer);
   if (FhCheckingThread <> INVALID_HANDLE_VALUE)
       and (FhCheckingThread <> 0) then begin
     QueueUserAPC(@ExitThreadAPC, FhCheckingThread, 0);

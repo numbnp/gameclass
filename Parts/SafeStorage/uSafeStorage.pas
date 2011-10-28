@@ -496,7 +496,7 @@ begin
       case AOperation.FormAction of
         FormAction_Show: begin
           with GClientInfo do
-            frmSmallInfo.UpdateInfo(Start, Stop, Internet,
+            frmSmallInfo.UpdateInfo(Start, Stop, NowTime, Internet,
                 InternetAvailableInKB, InternetUsedInKB);
           if not frmSmallInfo.Visible then
             frmSmallInfo.Show;
@@ -507,7 +507,7 @@ begin
         end;
         FormAction_Update:
           with GClientInfo do
-            frmSmallInfo.UpdateInfo(Start, Stop, Internet,
+            frmSmallInfo.UpdateInfo(Start, Stop, NowTime, Internet,
                 InternetAvailableInKB, InternetUsedInKB);
       end;
     ThreadSafeOperation_WrongPasswordMessage: begin
