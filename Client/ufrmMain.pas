@@ -868,6 +868,7 @@ end;
 procedure TfrmMain.tmrClockTimer(Sender: TObject);
 begin
   pnlClock.Caption := TimeToStr(Time);
+//  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
   if (SecondOf(Time) mod 10) = 0 then
     GClientInfo.SaveIfNeeded;
 end;

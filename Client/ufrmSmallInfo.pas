@@ -64,6 +64,7 @@ type
     FbBeforeFirstFormShow: Boolean;
     FdtStart: TDateTime;
     FdtStop: TDateTime;
+    FdtNowTime: TDateTime;
     FbUseTraffic: Boolean;
     FnTrafficInKBAvailable: Integer;
     FnTrafficInKBUsed: Integer;
@@ -82,6 +83,7 @@ type
     procedure Show;
     procedure UpdateInfo(
         const AdtStart: TDateTime; const AdtStop: TDateTime;
+        const AdtNowTime: TDateTime;
         const AbUseTraffic: Boolean; const AnTrafficInKBAvailable: Integer;
         const AnTrafficInKBUsed: Integer);
     procedure Clear;
@@ -210,12 +212,14 @@ end; // TfrmSmallInfo.FormCreate
 
 procedure TfrmSmallInfo.UpdateInfo(
     const AdtStart: TDateTime; const AdtStop: TDateTime;
+    const AdtNowTime: TDateTime;
     const AbUseTraffic: Boolean; const AnTrafficInKBAvailable: Integer;
     const AnTrafficInKBUsed: Integer);
 begin
 
   FdtStart := AdtStart;
   FdtStop := AdtStop;
+  FdtNowTime := AdtNowTime;
   FbUseTraffic := AbUseTraffic;
   FnTrafficInKBAvailable := AnTrafficInKBAvailable;
   FnTrafficInKBUsed := AnTrafficInKBUsed;
@@ -283,13 +287,13 @@ begin
   if (FdtStart = 0) then
     fUsedTimePercent := 1
   else begin
-    if (Now > FdtStop) or (Now < FdtStart) then begin
-      if (Now > FdtStop) then
+    if (FdtNowTime > FdtStop) or (FdtNowTime < FdtStart) then begin
+      if (FdtNowTime > FdtStop) then
         fUsedTimePercent := 1
       else
         fUsedTimePercent := 0;
     end else
-      fUsedTimePercent := (Now-FdtStart)/(FdtStop - FdtStart);
+      fUsedTimePercent := (FdtNowTime-FdtStart)/(FdtStop - FdtStart);
   end;
   if (FnTrafficInKBAvailable > 0) then
     fUsedTrafficPercent := FnTrafficInKBUsed/FnTrafficInKBAvailable
@@ -331,7 +335,7 @@ begin
     if (FdtStart = 0) then
       AstrInfo := ''
     else begin
-      DateTimeToString(AstrInfo,'hh:mm',(Now-FdtStart));
+      DateTimeToString(AstrInfo,'hh:mm',(FdtNowTime-FdtStart));
       DateTimeToString(AstrTime,'hh:mm',(FdtStop-FdtStart));
       AstrInfo := AstrInfo + ' / ' + AstrTime;
     end;
