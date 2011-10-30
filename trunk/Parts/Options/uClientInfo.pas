@@ -588,10 +588,10 @@ begin
     FbDirty := True;
     FdtNowTime := AdtStart;
   {$IFDEF GCCL}
+{    TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateControlFromClientInfo,
+        Integer(UpdatedControl_edtStop)); 
     TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateControlFromClientInfo,
-        Integer(UpdatedControl_edtStop));
-    TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateControlFromClientInfo,
-        Integer(UpdatedControl_dtpTime));
+        Integer(UpdatedControl_dtpTime));}
     if GClientOptions.ShowSmallInfo then
       TSafeStorage.Instance().Push(ThreadSafeOperation_SmallInfoFormAction,
           Integer(FormAction_Update));
