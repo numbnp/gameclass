@@ -333,8 +333,14 @@ begin
   FfCurrentTrafficCost := 0;
   FfPrintCost := 0;
   FfServiceCost := 0;
-  FnState := ClientState_Blocked;
   FnStatus := ssDesigned;
+  FnState := ClientState_Authentication;
+
+  if GAccountSystem.Enabled and
+     GAccountSystem.AlwaysAllowAuthentication then
+     FnState := ClientState_Authentication
+  else
+     FnState := ClientState_Blocked;
 
 //  FfCurrentTimeCost := 0;
   FbReloaded := False;
