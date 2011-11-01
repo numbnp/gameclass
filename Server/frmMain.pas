@@ -354,7 +354,7 @@ type
     property Starting: Boolean read FbStarting write FbStarting;
   end;
 
-procedure UDPSend(const AstrIP: string; const AstrData: string);
+//procedure UDPSend(const AstrIP: string; const AstrData: string);
 procedure ShowFormKillTasks(listtasks: string; compindex: integer);
 procedure QueryAuthGoState1(AnCompIndex: Integer);
 procedure SendAuthGoState1(nCompIndex:Integer; bNewSecCode:Boolean);
@@ -717,7 +717,7 @@ begin
   DoEvent(FN_CURRENT_REPORT);
 end;
 
-// посылаем UDP пакет с данными data на адрес ip
+{// посылаем UDP пакет с данными data на адрес ip
 procedure UDPSend(const AstrIP: string; const AstrData: string);
 var
   vport: integer;
@@ -741,7 +741,7 @@ begin
       udpClient.Send(AstrIP,vport,strData)
   except
   end;
-end;
+end;}
 
 procedure TformMain.mnuSessionLastClick(Sender: TObject);
 begin
@@ -922,10 +922,7 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-{         UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-           + '=' + BoolToStr(True));}
-         UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
-           + '=' + 'shutdown -f -r -t 0');
+         Comps[index].Reboot; 
       end;
       cdsComps.Next;
    end;
@@ -947,9 +944,7 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-//         UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
-         UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
-           + '=' + 'shutdown -f -s -t 0');
+         Comps[index].PowerOff;
       end;
       cdsComps.Next;
    end;
@@ -2218,7 +2213,7 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
         index := ComputersGetIndex(cdsComps.FieldValues['id']);
-        WakeUPComputer(Comps[index].macaddr);
+        Comps[index].PowerOn;
       end;
       cdsComps.Next;
    end;
@@ -2245,9 +2240,8 @@ var
 begin
   if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnShutdownAll'))
     ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
-
   for index := 0 to CompsCount-1 do
-    UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+    Comps[index].PowerOff;
 end;
 
 procedure TformMain.cmnShutdownFreeClick(Sender: TObject);
@@ -2256,7 +2250,7 @@ var
 begin
   for index := 0 to CompsCount-1 do
     if Comps[index].IsFree then
-      UDPSend(Comps[index].ipaddr,STR_CMD_SHUTDOWN);
+      Comps[index].PowerOff;
 end;
 
 procedure TformMain.tbCompWakeUpClick(Sender: TObject);
@@ -2271,7 +2265,7 @@ begin
   if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnResetAll'))
     ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
   for index := 0 to CompsCount-1 do
-    UDPSend(Comps[index].ipaddr,STR_CMD_RESTART);
+    Comps[index].Reboot;
 end;
 
 procedure TformMain.cmnResetFreeClick(Sender: TObject);
@@ -2280,7 +2274,7 @@ var
 begin
   for index := 0 to CompsCount-1 do
     if Comps[index].IsFree then
-      UDPSend(Comps[index].ipaddr,STR_CMD_RESTART);
+      Comps[index].Reboot;
 end;
 
 procedure TformMain.cmnWakeupAllClick(Sender: TObject);
@@ -2288,7 +2282,7 @@ var
   index : integer;
 begin
   for index := 0 to CompsCount-1 do
-    WakeUPComputer(Comps[index].macaddr);
+    Comps[index].PowerOn;
 end;
 
 procedure TformMain.cmnWakeFreeClick(Sender: TObject);
@@ -2297,7 +2291,7 @@ var
 begin
   for index := 0 to CompsCount-1 do
     if Comps[index].IsFree then
-      WakeUPComputer(Comps[index].macaddr);
+      Comps[index].PowerOn;
 end;
 
 procedure TformMain.cmnWakeupNoFreeClick(Sender: TObject);
@@ -2363,12 +2357,7 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         if Comps[index].LinuxClient then
-           UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-             + '=' + BoolToStr(False))
-         else
-           UDPSend(Comps[index].ipaddr,STR_CMD_EXECUTE_COMMAND_SRV
-             + '=' + 'shutdown -f -t 0');
+         Comps[index].Logoff; 
       end;
       cdsComps.Next;
    end;
@@ -2383,8 +2372,7 @@ begin
   if (MessageBox(HWND_TOP, PChar(translate('AreYouSureOnLogoffAll'))
     ,FORM_MAIN_CAPTION,MB_YESNO or MB_ICONQUESTION) <> IDYES) then exit;
   for index := 0 to CompsCount-1 do
-    UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-           + '=' + BoolToStr(False));
+    Comps[index].Logoff
 end;
 
 procedure TformMain.cmnLogoffFreeClick(Sender: TObject);
@@ -2393,8 +2381,7 @@ var
 begin
   for index := 0 to CompsCount-1 do
     if Comps[index].IsFree then
-      UDPSend(Comps[index].ipaddr,STR_CMD_RESTART
-           + '=' + BoolToStr(False));
+      Comps[index].Logoff
 end;
 
 function GetIdColumnByFieldName(Grid:TDBGridEh; FieldName: String):integer;

@@ -43,9 +43,11 @@ function GetClientState(AnComputerIndex: Integer): Integer;
 
 // ѕолучение Mac адреса по свойсву ip
 function GetMacFromIP(IPAddr:PAnsichar):string;
-
 // ѕроцедура дл€ посылки WOL пакета
 procedure WakeUPComputer(aMacAddress: string);
+
+// посылаем UDP пакет с данными data на адрес ip
+procedure UDPSend(const AstrIP: string; const AstrData: string);
 
 
 const
@@ -163,6 +165,12 @@ type
         read FbLinuxClient write FbLinuxClient;
     function Licensed: Boolean;
     function Agreement: Boolean;
+
+    function PowerOff: Boolean;
+    function PowerOn: Boolean;
+    function Reboot: Boolean;
+    function Logoff: Boolean;
+
   end;
 
   TComputerGroup = class
@@ -327,7 +335,8 @@ uses
   uProtocol,
   uTariffication,
   uRegistration,
-  uKKMTools, DBGridEh;
+  uKKMTools, DBGridEh,
+  uDebugLog;
 
 const
   UNREGISTERED_LINUX_CLIENTS_1 =
@@ -1316,6 +1325,7 @@ begin
     Result := GAccountSystem.Accounts[AAuthorization.number].LimitBalance;
   end;
 end;
+
 procedure CompsSelDeselect(const AAction: TComputerAction);
 var
   i,j: Integer;
@@ -1386,6 +1396,72 @@ begin
     Result := True;
 end; //function TComputer.Agreement: Boolean;
 
+function TComputer.PowerOff: Boolean;
+var
+  Result_loc: Boolean;
+begin
+  Result_loc := False;
+  try
+    if LinuxClient then
+      UDPSend(ipaddr,STR_CMD_SHUTDOWN)
+    else
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -s -f -t 0');
+    Result_loc := true;
+  except
+    Debug.Trace1('Shutdown error :' + ipaddr);
+  end;
+  Result := result_loc;
+end;
+
+function TComputer.PowerOn: Boolean;
+var
+  Result_loc: Boolean;
+begin
+  Result_loc := False;
+  try
+    WakeUPComputer(macaddr);
+    Result_loc := true;
+  except
+    Debug.Trace1('WakeOnLan error :' + ipaddr + ' ' + macaddr);
+  end;
+  Result := result_loc;
+end;
+
+function TComputer.Reboot: Boolean;
+var
+  Result_loc: Boolean;
+begin
+  Result_loc := False;
+  try
+    if LinuxClient then
+      UDPSend(ipaddr,STR_CMD_RESTART + '=' + BoolToStr(True))
+    else
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -r -f -t 0');
+    Result_loc := true;
+  except
+    Debug.Trace1('Reboot error :' + ipaddr);
+  end;
+  Result := result_loc;
+end;
+
+function TComputer.LogOff: Boolean;
+var
+  Result_loc: Boolean;
+begin
+  Result_loc := False;
+  try
+    if LinuxClient then
+      UDPSend(ipaddr,STR_CMD_RESTART + '=' + BoolToStr(False))
+    else
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -f -t 0');
+    Result_loc := true;
+  except
+    Debug.Trace1('LogOff error :' + ipaddr);
+  end;
+  Result := result_loc;
+end;
+
+
 function GetMAC(Value: TMacAddress; Length: integer): String;
 var
   I: Integer;
@@ -1430,7 +1506,7 @@ var i : integer;
 begin
   // Convert MAC string into MAC array
   fillchar(MacAddress,SizeOf(TMacAddress),0); 
-  sData := trim(AMacAddress); 
+  sData := trim(AMacAddress);
 
   if length(sData) = 17 then begin 
     for i := 1 to 6 do begin 
@@ -1454,6 +1530,32 @@ begin
   end;
     UDP.BroadcastEnabled := false;
     UDP.Free;
+end;
+
+// посылаем UDP пакет с данными data на адрес ip
+procedure UDPSend(const AstrIP: string; const AstrData: string);
+var
+  vport: integer;
+  strData: String;
+begin
+  if (isManager) then exit;
+  if AstrIP = '' then exit;
+  try
+    Debug.Trace1(AstrIP + ' : ' + AstrData);
+    strData := AstrData;
+    vport := SENDPORT;
+    if (AstrIP = GRegistry.Options.UnixServerIP) then
+      vport := SENDPORT_UNIXSERVER;
+    if ((Pos(STR_CMD_INETBLOCK, strData)=0)
+        and (Pos(STR_CMD_INETUNBLOCK, strData) = 0)
+        and (Pos(STR_CMD_INETSETSPEEDFORIP, strData)=0)
+        and (Pos(STR_CMD_GETTRAFFICVALUE, strData) = 0)
+        and (Pos(STR_CMD_INETSETSPEEDFORIP, strData) = 0)
+        and (Pos(STR_CMD_INETSETGROUP, strData) = 0))
+        then strData := WrapProtocol(strData);
+      udpClient.Send(AstrIP,vport,strData)
+  except
+  end;
 end;
 
 initialization
