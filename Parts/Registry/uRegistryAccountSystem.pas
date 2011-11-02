@@ -24,6 +24,11 @@ type
     function LocateAlwaysAllowAuthentication: Boolean;
     function GetAlwaysAllowAuthentication: Boolean;
     procedure SetAlwaysAllowAuthentication(AValue: Boolean);
+    //by numb
+    function LocateAuthenticationIfReserved: Boolean;
+    function GetAuthenticationIfReserved: Boolean;
+    procedure SetAuthenticationIfReserved(AValue: Boolean);
+
     function LocateMinAddedSumma: Boolean;
     function GetMinAddedSumma: Double;
     procedure SetMinAddedSumma(AValue: Double);
@@ -61,6 +66,10 @@ type
       read GetBlockIfLogonFailed3Times write SetBlockIfLogonFailed3Times;
     property AlwaysAllowAuthentication: Boolean
       read GetAlwaysAllowAuthentication write SetAlwaysAllowAuthentication;
+
+    property AuthenticationIfReserved: Boolean
+      read GetAuthenticationIfReserved write SetAuthenticationIfReserved;
+
     property MinAddedSumma: Double
       read GetMinAddedSumma write SetMinAddedSumma;
     property WarningAddedSumma: Double
@@ -173,6 +182,24 @@ end;
 procedure TRegistryAccountSystem.SetAlwaysAllowAuthentication(AValue: Boolean);
 begin
   LocateAlwaysAllowAuthentication;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryAccountSystem.LocateAuthenticationIfReserved: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey(
+      'AccountSystem\bAuthenticationIfReserved', '1');
+end;
+
+function TRegistryAccountSystem.GetAuthenticationIfReserved: Boolean;
+begin
+  LocateAuthenticationIfReserved;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryAccountSystem.SetAuthenticationIfReserved(AValue: Boolean);
+begin
+  LocateAuthenticationIfReserved;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 

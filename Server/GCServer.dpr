@@ -180,7 +180,8 @@ uses
   uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
   SynHighlighterSQL in '..\Parts\Reports\SynHighlighterSQL.pas',
   Grids,
-  ufrmOperatorOpt in 'ufrmOperatorOpt.pas' {frmOperatorOpt};
+  ufrmOperatorOpt in 'ufrmOperatorOpt.pas' {frmOperatorOpt},
+  uRegistryControlCommands in '..\Parts\Registry\uRegistryControlCommands.pas';
 
 {$R *.res}
 

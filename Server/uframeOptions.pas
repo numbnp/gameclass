@@ -76,6 +76,13 @@ type
     cbxWriteProcessList: TCheckBox;
     cbxWriteUnControlComp: TCheckBox;
     cbxWriteUnControlClub: TCheckBox;
+    gbCommandControl: TGroupBox;
+    lblShutdown: TLabel;
+    edtShutdown: TEdit;
+    edtReboot: TEdit;
+    lblReboot: TLabel;
+    edtLogoff: TEdit;
+    lblLogoff: TLabel;
     procedure cbxPrepayOnlyClick(Sender: TObject);
     procedure rbtnPrepayClick(Sender: TObject);
     procedure rbtnPostpayClick(Sender: TObject);
@@ -106,6 +113,9 @@ type
     procedure cbxWriteProcessListClick(Sender: TObject);
     procedure cbxWriteUnControlCompClick(Sender: TObject);
     procedure cbxWriteUnControlClubClick(Sender: TObject);
+    procedure edtShutdownChange(Sender: TObject);
+    procedure edtRebootChange(Sender: TObject);
+    procedure edtLogoffChange(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     { Private declarations }
@@ -134,7 +144,7 @@ uses
   uRegistryOptions,
   uRegistryInterface,
   uY2KString, uRegistryModules, uRegistryInternet,
-  uTariffication;
+  uTariffication, uRegistryControlCommands;
 
 procedure TframeOptions.Save;
 begin
@@ -197,6 +207,11 @@ begin
   cbxWriteProcessList.Checked := GRegistry.Options.WriteProcessList;
   cbxWriteUnControlComp.Checked := GRegistry.Options.WriteUnControlComp;
   cbxWriteUnControlClub.Checked := GRegistry.Options.WriteUnControlClub;
+
+  edtShutdown.Text := GRegistry.ControlCommands.WindowsShutdownCommand;
+  edtReboot.Text := GRegistry.ControlCommands.WindowsRebootCommand;
+  edtLogoff.Text := GRegistry.ControlCommands.WindowsLogoffCommand;
+
   FbControlsEnabled := True;
 end;
 
@@ -450,6 +465,24 @@ procedure TframeOptions.cbxWriteUnControlClubClick(Sender: TObject);
 begin
   if not ControlsEnabled then exit;
   GRegistry.Options.WriteUnControlClub := cbxWriteUnControlClub.Checked;
+end;
+
+procedure TframeOptions.edtShutdownChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.ControlCommands.WindowsShutdownCommand := edtShutdown.Text;
+end;
+
+procedure TframeOptions.edtRebootChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.ControlCommands.WindowsRebootCommand := edtReboot.Text;
+end;
+
+procedure TframeOptions.edtLogoffChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.ControlCommands.WindowsLogoffCommand := edtLogoff.Text;
 end;
 
 end.

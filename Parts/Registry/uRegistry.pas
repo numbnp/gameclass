@@ -15,7 +15,8 @@ uses
   uRegistryTaskKill,
   uRegistryClient,
   uRegistryInfo,
-  uRegistryReportStrings;
+  uRegistryReportStrings,
+  uRegistryControlCommands;
 
 type
   TRegistry = class(TRegistryDataSet)
@@ -31,6 +32,7 @@ type
     FRegistryClient: TRegistryClient;
     FRegistryInfo: TRegistryInfo;
     FRegistryReportStrings: TRegistryReportStrings;
+    FRegistryControlCommands: TRegistryControlCommands;
 
     function GetBaseVersion: String;
     function GetItem(AstrValue: String): TRegistryRecord;
@@ -70,6 +72,8 @@ type
        read GetLastLogin write SetLastLogin;
     property ReportStrings: TRegistryReportStrings
         read FRegistryReportStrings;
+    property ControlCommands: TRegistryControlCommands
+        read FRegistryControlCommands;
   end;
 
 var
@@ -98,7 +102,8 @@ begin
   FRegistryInfo := TRegistryInfo.Create(Self, FRegistryRecord);
   FRegistryReportStrings := TRegistryReportStrings.Create(Self,
       FRegistryRecord);
-
+  FRegistryControlCommands := TRegistryControlCommands.Create(Self,
+      FRegistryRecord);
 end;
 
 destructor TRegistry.Destroy;
@@ -114,6 +119,7 @@ begin
   FreeAndNil(FRegistryClient);
   FreeAndNil(FRegistryInfo);
   FreeAndNil(FRegistryReportStrings);
+  FreeAndNil(FRegistryControlCommands);
   inherited Destroy;
 end;
 

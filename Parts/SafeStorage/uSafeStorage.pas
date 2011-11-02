@@ -449,6 +449,7 @@ begin
       frmMain.edtStop.Text := str;
       if Not frmMain.DtpTimeFocused then
         frmMain.dtpTime.Time := TimeOf(dtStop - dtStart);
+
       if StrToBool(GetParamFromString(AOperation.Parameters, 3)) then begin
         frmMain.edtSum.Enabled := False;
         frmMain.dtpTime.Enabled := False;

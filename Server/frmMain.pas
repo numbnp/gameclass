@@ -1442,8 +1442,9 @@ begin
             Comps[index].a.state := ClientState_Agreement
           else
             Comps[index].a.state := ClientState_Session;
+          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, TimeToStr(session.TimeStop ));
           session.Save;
-
+          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, TimeToStr(session.TimeStop ));
           UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_GOSTATE_3
                   + '=' + Comps[index].session.GetStrTarif + '/'
                   + DateTimeToStr(Comps[index].session.TimeStart) + '/'
