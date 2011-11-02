@@ -20,6 +20,8 @@ uses
     procedure SetBlockIfLogonFailed3Times(AValue: Boolean);
     function GetAlwaysAllowAuthentication: Boolean;
     procedure SetAlwaysAllowAuthentication(AValue: Boolean);
+    function GetAuthenticationIfReserved: Boolean;
+    procedure SetAuthenticationIfReserved(AValue: Boolean);
     function GetMinAddedSumma: Double;
     procedure SetMinAddedSumma(AValue: Double);
     function GetWarningAddedSumma: Double;
@@ -53,6 +55,8 @@ uses
         read GetBlockIfLogonFailed3Times write SetBlockIfLogonFailed3Times;
     property AlwaysAllowAuthentication: Boolean
         read GetAlwaysAllowAuthentication write SetAlwaysAllowAuthentication;
+    property AuthenticationIfReserved: Boolean
+        read GetAuthenticationIfReserved write SetAuthenticationIfReserved;
     property MinAddedSumma: Double
         read GetMinAddedSumma write SetMinAddedSumma;
     property WarningAddedSumma: Double
@@ -138,6 +142,16 @@ end;
 procedure TAccountSystem.SetAlwaysAllowAuthentication(AValue: Boolean);
 begin
   GRegistry.AccountSystem.AlwaysAllowAuthentication := AValue;
+end;
+
+function TAccountSystem.GetAuthenticationIfReserved: Boolean;
+begin
+  Result := GRegistry.AccountSystem.AuthenticationIfReserved;
+end;
+
+procedure TAccountSystem.SetAuthenticationIfReserved(AValue: Boolean);
+begin
+  GRegistry.AccountSystem.AuthenticationIfReserved := AValue;
 end;
 
 function TAccountSystem.GetMinAddedSumma: Double;

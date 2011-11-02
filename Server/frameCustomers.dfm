@@ -8,7 +8,7 @@ object framCustomers: TframCustomers
     Left = 0
     Top = 4
     Width = 449
-    Height = 221
+    Height = 245
     Align = alTop
     Caption = 
       '                                                                ' +
@@ -16,9 +16,9 @@ object framCustomers: TframCustomers
     TabOrder = 0
     object gbBalanceOptions: TGroupBox
       Left = 2
-      Top = 105
+      Top = 121
       Width = 445
-      Height = 72
+      Height = 71
       Align = alTop
       Caption = #1055#1086#1087#1086#1083#1085#1077#1085#1080#1077' '#1089#1095#1077#1090#1072
       TabOrder = 1
@@ -58,20 +58,20 @@ object framCustomers: TframCustomers
       Left = 2
       Top = 15
       Width = 445
-      Height = 90
+      Height = 106
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
       object lblSec1: TLabel
         Left = 250
-        Top = 52
+        Top = 72
         Width = 18
         Height = 13
         Caption = #1089#1077#1082
       end
       object cbxAutoLogoff: TCheckBox
         Left = 8
-        Top = 51
+        Top = 71
         Width = 209
         Height = 17
         Caption = #1040#1074#1090#1086#1083#1086#1075#1086#1092#1092' '#1087#1088#1080' '#1086#1090#1089#1091#1090#1089#1090#1074#1080#1080' '#1079#1072#1082#1072#1079#1072
@@ -107,7 +107,7 @@ object framCustomers: TframCustomers
       end
       object cbxBlockDisplayByStandby: TCheckBox
         Left = 8
-        Top = 68
+        Top = 88
         Width = 345
         Height = 17
         Caption = #1042#1099#1082#1083#1102#1095#1072#1090#1100' '#1084#1086#1085#1080#1090#1086#1088' '#1074' '#1089#1086#1089#1090#1086#1103#1085#1080#1080' '#1072#1074#1090#1086#1088#1080#1079#1072#1094#1080#1080' '#1087#1088#1080' '#1087#1088#1086#1089#1090#1086#1077
@@ -116,7 +116,7 @@ object framCustomers: TframCustomers
       end
       object edtAutoLogoffSec: TEdit
         Left = 219
-        Top = 48
+        Top = 68
         Width = 26
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -128,6 +128,15 @@ object framCustomers: TframCustomers
         TabOrder = 4
         Text = '10'
         OnChange = edtAutoLogoffSecChange
+      end
+      object cbAuthenticationIfReserved: TCheckBox
+        Left = 8
+        Top = 52
+        Width = 361
+        Height = 17
+        Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1072#1091#1090#1077#1085#1090#1080#1092#1080#1082#1072#1094#1080#1102' '#1076#1083#1103' '#1079#1072#1073#1088#1086#1085#1080#1088#1086#1074#1072#1085#1085#1099#1093' '#1082#1086#1084#1087#1100#1102#1090#1077#1088#1086#1074
+        TabOrder = 6
+        OnClick = cbAuthenticationIfReservedClick
       end
     end
     object cbActive: TCheckBox
@@ -141,9 +150,9 @@ object framCustomers: TframCustomers
     end
     object pnlCheckAccounts: TGroupBox
       Left = 2
-      Top = 177
+      Top = 192
       Width = 445
-      Height = 40
+      Height = 39
       Align = alTop
       Caption = 
         '                                                                ' +
@@ -187,9 +196,9 @@ object framCustomers: TframCustomers
   end
   object pnlButtons: TPanel
     Left = 0
-    Top = 225
+    Top = 249
     Width = 449
-    Height = 184
+    Height = 160
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1

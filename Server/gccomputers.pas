@@ -1405,7 +1405,7 @@ begin
     if LinuxClient then
       UDPSend(ipaddr,STR_CMD_SHUTDOWN)
     else
-      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -s -f -t 0');
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + GRegistry.ControlCommands.WindowsShutdownCommand);
     Result_loc := true;
   except
     Debug.Trace1('Shutdown error :' + ipaddr);
@@ -1436,7 +1436,7 @@ begin
     if LinuxClient then
       UDPSend(ipaddr,STR_CMD_RESTART + '=' + BoolToStr(True))
     else
-      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -r -f -t 0');
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + GRegistry.ControlCommands.WindowsRebootCommand);
     Result_loc := true;
   except
     Debug.Trace1('Reboot error :' + ipaddr);
@@ -1453,7 +1453,7 @@ begin
     if LinuxClient then
       UDPSend(ipaddr,STR_CMD_RESTART + '=' + BoolToStr(False))
     else
-      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + 'shutdown -f -t 0');
+      UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + GRegistry.ControlCommands.WindowsLogoffCommand);
     Result_loc := true;
   except
     Debug.Trace1('LogOff error :' + ipaddr);

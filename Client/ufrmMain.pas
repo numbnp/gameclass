@@ -588,8 +588,9 @@ begin
   DisableOnChange;
   fSum := StrToFloatDefWithReplace(edtSum.Text, 0);
   btnSessionStart.Enabled := (Length(cboTarifs.Text)>0)
-      and (fSum > 0) and (fSum <= GClientInfo.Balance
-      - GClientInfo.BalanceLimit);
+      and (fSum > 0)
+      and (fSum <= GClientInfo.Balance - GClientInfo.BalanceLimit)
+      and (not ((HourOf(frmMain.dtpTime.Time) = 0 ) and (MinuteOf(frmMain.dtpTime.Time)=0)));
 //  edtSum.E
   btnSessionStop.Enabled := False;
   tabAdd.TabVisible := False;
@@ -597,6 +598,7 @@ begin
     edtSum.Enabled := False;
     dtpTime.Enabled := False;
   end;
+
   EnableOnChange;
 end;
 
