@@ -32,6 +32,7 @@ type
     pnlCheckAccounts: TGroupBox;
     edtPeriodOfValidityInDays: TEdit;
     lblDays: TLabel;
+    cbAuthenticationIfReserved: TCheckBox;
     procedure cbActiveClick(Sender: TObject);
     procedure cbAutoBlockCompClick(Sender: TObject);
     procedure cbSecCodesClick(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure cbxUseCheckAccountsClick(Sender: TObject);
     procedure cbxUsePeriodOfValidityClick(Sender: TObject);
     procedure edtPeriodOfValidityInDaysChange(Sender: TObject);
+    procedure cbAuthenticationIfReservedClick(Sender: TObject);
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
@@ -88,6 +90,8 @@ begin
   cbAutoBlockComp.Checked := GAccountSystem.BlockIfLogonFailed3Times;
   cbAlwaysAllowAuthentication.Checked :=
       GAccountSystem.AlwaysAllowAuthentication;
+  cbAuthenticationIfReserved.Checked :=
+      GAccountSystem.AuthenticationIfReserved;
   cbxBlockDisplayByStandby.Checked :=
       GClientOptions.BlockDisplayByStandby;
   editMinAddedSumma.Text := FloatToStr(GAccountSystem.MinAddedSumma);
@@ -265,6 +269,15 @@ begin
   DisableControls;
   GAccountSystem.PeriodOfValidityInDays := StrToIntDef(
       edtPeriodOfValidityInDays.Text, 30);
+  EnableControls;
+end;
+
+procedure TframCustomers.cbAuthenticationIfReservedClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  GAccountSystem.AuthenticationIfReserved :=
+      cbAuthenticationIfReserved.Checked;
   EnableControls;
 end;
 

@@ -1,83 +1,38 @@
 object frameOptions: TframeOptions
   Left = 0
   Top = 0
-  Width = 447
-  Height = 499
+  Width = 700
+  Height = 611
   TabOrder = 0
   object gbPayment: TGroupBox
     Left = 0
     Top = 0
-    Width = 447
-    Height = 225
+    Width = 700
+    Height = 235
     Align = alTop
     Caption = #1054#1087#1083#1072#1090#1072
     TabOrder = 0
     object pnlTopLeft: TPanel
       Left = 2
       Top = 15
-      Width = 220
-      Height = 208
+      Width = 486
+      Height = 218
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      object gbChange: TGroupBox
-        Left = 0
-        Top = 121
-        Width = 220
-        Height = 87
-        Align = alClient
-        Caption = #1057#1076#1072#1095#1072
-        TabOrder = 0
-        object cbxDisableChange: TCheckBox
-          Left = 8
-          Top = 16
-          Width = 97
-          Height = 17
-          Caption = #1047#1072#1087#1088#1077#1090#1080#1090#1100
-          TabOrder = 0
-          OnClick = cbxDisableChangeClick
-        end
-        object cbxEnableChangeForPackets: TCheckBox
-          Left = 8
-          Top = 48
-          Width = 201
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1087#1072#1082#1077#1090#1085#1099#1093' '#1090#1072#1088#1080#1092#1086#1074
-          TabOrder = 2
-          OnClick = cbxEnableChangeForPacketsClick
-        end
-        object cbxEnableChangeForReserveCancel: TCheckBox
-          Left = 8
-          Top = 64
-          Width = 201
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1084#1077#1085#1099' '#1073#1088#1086#1085#1080
-          TabOrder = 3
-          OnClick = cbxEnableChangeForReserveCancelClick
-        end
-        object cbxEnableChangeForSeparateTraffic: TCheckBox
-          Left = 8
-          Top = 32
-          Width = 209
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1076#1077#1083#1100#1085#1086#1075#1086' '#1090#1088#1072#1092#1080#1082#1072
-          TabOrder = 1
-          OnClick = cbxEnableChangeForSeparateTrafficClick
-        end
-      end
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 220
-        Height = 121
+        Width = 486
+        Height = 153
         Align = alTop
         BevelOuter = bvNone
-        TabOrder = 1
+        TabOrder = 0
         object gbPaymentMode: TGroupBox
           Left = 0
           Top = 0
           Width = 145
-          Height = 121
+          Height = 153
           Align = alLeft
           Caption = #1056#1077#1078#1080#1084' '#1088#1072#1073#1086#1090#1099
           TabOrder = 0
@@ -140,9 +95,9 @@ object frameOptions: TframeOptions
         object pnlOperatingTime: TGroupBox
           Left = 145
           Top = 0
-          Width = 75
-          Height = 121
-          Align = alClient
+          Width = 72
+          Height = 153
+          Align = alLeft
           Caption = '          '
           TabOrder = 1
           object lblOperatingTimeBegin: TLabel
@@ -193,20 +148,65 @@ object frameOptions: TframeOptions
             OnClick = cbxOperatingTimeClick
           end
         end
+        object gbChange: TGroupBox
+          Left = 217
+          Top = 0
+          Width = 269
+          Height = 153
+          Align = alClient
+          Caption = #1057#1076#1072#1095#1072
+          TabOrder = 2
+          object cbxDisableChange: TCheckBox
+            Left = 8
+            Top = 16
+            Width = 97
+            Height = 17
+            Caption = #1047#1072#1087#1088#1077#1090#1080#1090#1100
+            TabOrder = 0
+            OnClick = cbxDisableChangeClick
+          end
+          object cbxEnableChangeForPackets: TCheckBox
+            Left = 8
+            Top = 48
+            Width = 201
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1087#1072#1082#1077#1090#1085#1099#1093' '#1090#1072#1088#1080#1092#1086#1074
+            TabOrder = 2
+            OnClick = cbxEnableChangeForPacketsClick
+          end
+          object cbxEnableChangeForReserveCancel: TCheckBox
+            Left = 8
+            Top = 64
+            Width = 201
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1084#1077#1085#1099' '#1073#1088#1086#1085#1080
+            TabOrder = 3
+            OnClick = cbxEnableChangeForReserveCancelClick
+          end
+          object cbxEnableChangeForSeparateTraffic: TCheckBox
+            Left = 8
+            Top = 32
+            Width = 209
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1076#1077#1083#1100#1085#1086#1075#1086' '#1090#1088#1072#1092#1080#1082#1072
+            TabOrder = 1
+            OnClick = cbxEnableChangeForSeparateTrafficClick
+          end
+        end
       end
     end
     object pnlTopRight: TPanel
-      Left = 222
+      Left = 488
       Top = 15
-      Width = 223
-      Height = 208
+      Width = 210
+      Height = 218
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
       object gbSum: TGroupBox
         Left = 0
         Top = 0
-        Width = 223
+        Width = 210
         Height = 153
         Align = alTop
         Caption = #1057#1091#1084#1084#1099
@@ -247,7 +247,7 @@ object frameOptions: TframeOptions
           Caption = #1052#1072#1082#1089#1080#1084#1091#1084' '#1076#1086#1074#1077#1088#1080#1103
         end
         object edtStartMoneyMin: TEdit
-          Left = 136
+          Left = 153
           Top = 13
           Width = 49
           Height = 21
@@ -256,7 +256,7 @@ object frameOptions: TframeOptions
           OnChange = edtStartMoneyMinChange
         end
         object edtStartMoneyMax: TEdit
-          Left = 136
+          Left = 153
           Top = 37
           Width = 49
           Height = 21
@@ -265,7 +265,7 @@ object frameOptions: TframeOptions
           OnChange = edtStartMoneyMaxChange
         end
         object edtAddMoneyMin: TEdit
-          Left = 136
+          Left = 153
           Top = 61
           Width = 49
           Height = 21
@@ -274,7 +274,7 @@ object frameOptions: TframeOptions
           OnChange = edtAddMoneyMinChange
         end
         object edtAddMoneyMax: TEdit
-          Left = 136
+          Left = 153
           Top = 85
           Width = 49
           Height = 21
@@ -283,7 +283,7 @@ object frameOptions: TframeOptions
           OnChange = edtAddMoneyMaxChange
         end
         object edtMaximumTrust: TEdit
-          Left = 136
+          Left = 153
           Top = 109
           Width = 49
           Height = 21
@@ -295,8 +295,8 @@ object frameOptions: TframeOptions
       object gbCurrency: TGroupBox
         Left = 0
         Top = 153
-        Width = 223
-        Height = 55
+        Width = 210
+        Height = 65
         Align = alClient
         Caption = #1042#1072#1083#1102#1090#1072
         TabOrder = 1
@@ -318,96 +318,52 @@ object frameOptions: TframeOptions
         end
       end
     end
-  end
-  object gbOthers: TGroupBox
-    Left = 0
-    Top = 225
-    Width = 447
-    Height = 64
-    Align = alTop
-    Caption = #1044#1088#1091#1075#1086#1077
-    TabOrder = 1
-    object lblClubName: TLabel
-      Left = 8
-      Top = 16
-      Width = 82
-      Height = 13
-      Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1082#1083#1091#1073#1072
-    end
-    object edtClubName: TEdit
-      Left = 104
-      Top = 13
-      Width = 337
-      Height = 21
-      TabOrder = 0
-      Text = 'My Club'
-      OnChange = edtClubNameChange
-    end
-    object cbxDebugLog: TCheckBox
-      Left = 8
-      Top = 40
-      Width = 161
-      Height = 17
-      Caption = #1042#1077#1089#1090#1080' '#1078#1091#1088#1085#1072#1083#1099' '#1086#1090#1083#1072#1076#1082#1080
-      TabOrder = 1
-      OnClick = cbxDebugLogClick
-    end
-  end
-  object gbOperator: TGroupBox
-    Left = 0
-    Top = 351
-    Width = 447
-    Height = 58
-    Align = alTop
-    Caption = #1052#1072#1096#1080#1085#1072' '#1086#1087#1077#1088#1072#1090#1086#1088#1072
-    TabOrder = 2
-    object lblIPAddress: TLabel
-      Left = 8
-      Top = 19
-      Width = 43
-      Height = 13
-      Caption = 'IP-'#1072#1076#1088#1077#1089
-    end
-    object edtOperatorIP: TEdit
-      Left = 56
-      Top = 16
-      Width = 89
-      Height = 21
-      TabOrder = 0
-      Text = '288.288.288.288'
-      OnChange = edtOperatorIPChange
-    end
-    object cbxPrinterControl: TCheckBox
-      Left = 160
-      Top = 16
-      Width = 169
-      Height = 17
-      Caption = #1091#1095#1080#1090#1099#1074#1072#1090#1100' '#1087#1077#1095#1072#1090#1100' '#1082#1072#1082' '#1091#1089#1083#1091#1075#1091
-      TabOrder = 1
-      OnClick = cbxPrinterControlClick
-    end
-    object cbxInternetControl: TCheckBox
-      Left = 160
-      Top = 32
-      Width = 121
-      Height = 17
-      Caption = #1089#1095#1080#1090#1072#1090#1100' '#1090#1088#1072#1092#1092#1080#1082
+    object gbOthers: TGroupBox
+      Left = 2
+      Top = 168
+      Width = 486
+      Height = 65
+      Caption = #1044#1088#1091#1075#1086#1077
       TabOrder = 2
-      OnClick = cbxInternetControlClick
+      object lblClubName: TLabel
+        Left = 8
+        Top = 16
+        Width = 82
+        Height = 13
+        Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1082#1083#1091#1073#1072
+      end
+      object edtClubName: TEdit
+        Left = 104
+        Top = 13
+        Width = 337
+        Height = 21
+        TabOrder = 0
+        Text = 'My Club'
+        OnChange = edtClubNameChange
+      end
+      object cbxDebugLog: TCheckBox
+        Left = 8
+        Top = 40
+        Width = 161
+        Height = 17
+        Caption = #1042#1077#1089#1090#1080' '#1078#1091#1088#1085#1072#1083#1099' '#1086#1090#1083#1072#1076#1082#1080
+        TabOrder = 1
+        OnClick = cbxDebugLogClick
+      end
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 289
-    Width = 447
+    Top = 235
+    Width = 700
     Height = 62
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 1
     object gbRepair: TGroupBox
       Left = 0
       Top = 0
-      Width = 228
+      Width = 177
       Height = 62
       Align = alLeft
       Caption = #1056#1077#1084#1086#1085#1090
@@ -446,9 +402,9 @@ object frameOptions: TframeOptions
       end
     end
     object gbGuest: TGroupBox
-      Left = 228
+      Left = 177
       Top = 0
-      Width = 219
+      Width = 199
       Height = 62
       Align = alClient
       Caption = #1057#1077#1072#1085#1089' "'#1043#1086#1089#1090#1100'"'
@@ -462,9 +418,9 @@ object frameOptions: TframeOptions
       end
       object cbxGuestSession: TCheckBox
         Left = 8
-        Top = 16
-        Width = 201
-        Height = 17
+        Top = 11
+        Width = 193
+        Height = 25
         Caption = #1042#1082#1083#1102#1095#1077#1085#1080#1077' '#1089' '#1082#1083#1080#1077#1085#1090#1089#1082#1086#1075#1086' '#1084#1077#1089#1090#1072
         TabOrder = 0
         OnClick = cbxGuestSessionClick
@@ -472,7 +428,7 @@ object frameOptions: TframeOptions
       object cboGuestSessionTarif: TComboBox
         Left = 51
         Top = 32
-        Width = 166
+        Width = 142
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -480,15 +436,58 @@ object frameOptions: TframeOptions
         OnChange = cboGuestSessionTarifChange
       end
     end
+    object gbOperator: TGroupBox
+      Left = 376
+      Top = 0
+      Width = 324
+      Height = 62
+      Align = alRight
+      Caption = #1052#1072#1096#1080#1085#1072' '#1086#1087#1077#1088#1072#1090#1086#1088#1072
+      TabOrder = 2
+      object lblIPAddress: TLabel
+        Left = 8
+        Top = 19
+        Width = 43
+        Height = 13
+        Caption = 'IP-'#1072#1076#1088#1077#1089
+      end
+      object edtOperatorIP: TEdit
+        Left = 56
+        Top = 16
+        Width = 89
+        Height = 21
+        TabOrder = 0
+        Text = '288.288.288.288'
+        OnChange = edtOperatorIPChange
+      end
+      object cbxPrinterControl: TCheckBox
+        Left = 152
+        Top = 16
+        Width = 169
+        Height = 17
+        Caption = #1091#1095#1080#1090#1099#1074#1072#1090#1100' '#1087#1077#1095#1072#1090#1100' '#1082#1072#1082' '#1091#1089#1083#1091#1075#1091
+        TabOrder = 1
+        OnClick = cbxPrinterControlClick
+      end
+      object cbxInternetControl: TCheckBox
+        Left = 152
+        Top = 32
+        Width = 121
+        Height = 17
+        Caption = #1089#1095#1080#1090#1072#1090#1100' '#1090#1088#1072#1092#1092#1080#1082
+        TabOrder = 2
+        OnClick = cbxInternetControlClick
+      end
+    end
   end
   object gbOptimize: TGroupBox
     Left = 0
-    Top = 409
-    Width = 447
+    Top = 297
+    Width = 700
     Height = 80
     Align = alTop
     Caption = #1054#1087#1090#1080#1084#1080#1079#1072#1094#1080#1103' '#1088#1072#1073#1086#1090#1099' '#1089' '#1041#1044
-    TabOrder = 4
+    TabOrder = 2
     object cbxWriteProcessList: TCheckBox
       Left = 8
       Top = 18
@@ -515,6 +514,60 @@ object frameOptions: TframeOptions
       Caption = #1047#1072#1087#1080#1089#1099#1074#1072#1090#1100' '#1074#1088#1077#1084#1103' '#1086#1090#1089#1091#1090#1089#1090#1074#1080#1103' '#1082#1086#1085#1090#1088#1086#1083#1103' '#1085#1072#1076' '#1082#1083#1091#1073#1086#1084
       TabOrder = 2
       OnClick = cbxWriteUnControlClubClick
+    end
+  end
+  object gbCommandControl: TGroupBox
+    Left = 0
+    Top = 377
+    Width = 700
+    Height = 234
+    Align = alClient
+    Caption = #1050#1086#1084#1072#1085#1076#1099' '#1091#1087#1088#1072#1074#1083#1077#1085#1080#1103' '#1082#1083#1080#1077#1085#1090#1072#1084#1080
+    TabOrder = 3
+    object lblShutdown: TLabel
+      Left = 8
+      Top = 24
+      Width = 67
+      Height = 13
+      Caption = #1042#1099#1082#1083#1102#1095#1077#1085#1080#1077':'
+    end
+    object lblReboot: TLabel
+      Left = 8
+      Top = 48
+      Width = 75
+      Height = 13
+      Caption = #1055#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1072':'
+    end
+    object lblLogoff: TLabel
+      Left = 8
+      Top = 72
+      Width = 36
+      Height = 13
+      Caption = #1051#1086#1075#1086#1092':'
+    end
+    object edtShutdown: TEdit
+      Left = 88
+      Top = 20
+      Width = 193
+      Height = 21
+      TabOrder = 0
+      OnChange = edtShutdownChange
+    end
+    object edtReboot: TEdit
+      Left = 88
+      Top = 44
+      Width = 193
+      Height = 21
+      TabOrder = 1
+      OnChange = edtRebootChange
+    end
+    object edtLogoff: TEdit
+      Left = 88
+      Top = 68
+      Width = 193
+      Height = 21
+      TabOrder = 2
+      OnChange = edtLogoffChange
     end
   end
 end

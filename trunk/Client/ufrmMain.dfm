@@ -34,7 +34,7 @@ object frmMain: TfrmMain
       Top = 91
       Width = 637
       Height = 361
-      ActivePage = tabScreenLogin
+      ActivePage = tabScreenClientInfo
       Style = tsFlatButtons
       TabOrder = 0
       object tabScreenAgreement: TTabSheet
