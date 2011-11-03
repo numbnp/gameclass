@@ -103,7 +103,7 @@ end;
 
 function TRegistryControlCommands.LocateWindowsLogoffCommand: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('ControlCommands\Windows\Logoff', 'shutdown -f -t 0');
+  Result := FRegistryDataSet.LocateByKey('ControlCommands\Windows\Logoff', 'Logoff');
 end;
 
 function TRegistryControlCommands.GetWindowsLogoffCommand: String;

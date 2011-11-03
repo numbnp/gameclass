@@ -17,7 +17,6 @@ uses
 
 type
   TframeOptions = class(TFrame)
-    gbPayment: TGroupBox;
     gbChange: TGroupBox;
     cbxDisableChange: TCheckBox;
     cbxEnableChangeForPackets: TCheckBox;
@@ -41,7 +40,6 @@ type
     lblMinutsForLongRepair: TLabel;
     edtMinutsForLongRepair: TEdit;
     pnlTopLeft: TPanel;
-    pnlTopRight: TPanel;
     gbOperator: TGroupBox;
     edtOperatorIP: TEdit;
     gbRepair: TGroupBox;
@@ -83,6 +81,8 @@ type
     lblReboot: TLabel;
     edtLogoff: TEdit;
     lblLogoff: TLabel;
+    Panel3: TPanel;
+    Label1: TLabel;
     procedure cbxPrepayOnlyClick(Sender: TObject);
     procedure rbtnPrepayClick(Sender: TObject);
     procedure rbtnPostpayClick(Sender: TObject);
