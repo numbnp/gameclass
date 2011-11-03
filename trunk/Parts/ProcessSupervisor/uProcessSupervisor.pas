@@ -98,7 +98,7 @@ uses
 
 
 const
-  TIMEOUT_DEF = 10000; // пауза в опросе процессов
+  TIMEOUT_DEF = 60000; // пауза в опросе процессов
 
 
 // метод используется для прерывания цикла ожидания событий
@@ -269,9 +269,10 @@ var
   hToken: THandle;
   hNewToken: THandle;
 begin
-  hProcess := _GetProcessHandle('rshell.exe');
+  hProcess := _GetProcessHandle('explorer.exe');
   if hProcess = 0 then
-    hProcess := _GetProcessHandle('explorer.exe');
+    hProcess := _GetProcessHandle('rshell.exe');
+  if hProcess = 0 then exit;
   if hProcess <> 0 then begin
     if OpenProcessToken(hProcess,
         TOKEN_QUERY or TOKEN_DUPLICATE or TOKEN_IMPERSONATE,
