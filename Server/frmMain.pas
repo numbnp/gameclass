@@ -1297,10 +1297,6 @@ begin
         UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_RETTARIFS_2+ '='+rettarifs);
       end; // STR_CMD_AUTH_QUERYTARIFS_2
 
-
-
-
-
       if (cmd = STR_CMD_AUTH_QUERYCOSTTIME_2) then begin
         strTarifName := GetParamFromString(param,0);
         strParam := GetParamFromString(param,1);

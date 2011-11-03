@@ -1,6 +1,6 @@
 object formBossOptions: TformBossOptions
-  Left = 381
-  Top = 219
+  Left = 260
+  Top = 268
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 5
@@ -332,25 +332,6 @@ object formBossOptions: TformBossOptions
       Height = 650
       Align = alClient
       TabOrder = 14
-      inherited gbPayment: TGroupBox
-        Width = 701
-        inherited pnlTopLeft: TPanel
-          Width = 697
-          inherited Panel2: TPanel
-            Width = 697
-            inherited pnlOperatingTime: TGroupBox
-              Width = 329
-            end
-            inherited gbChange: TGroupBox
-              Left = 474
-              Width = 223
-            end
-          end
-        end
-        inherited pnlTopRight: TPanel
-          Left = 489
-        end
-      end
       inherited Panel1: TPanel
         Width = 701
         inherited gbGuest: TGroupBox
@@ -366,6 +347,27 @@ object formBossOptions: TformBossOptions
       inherited gbCommandControl: TGroupBox
         Width = 701
         Height = 273
+      end
+      inherited pnlTopLeft: TPanel
+        Width = 701
+        inherited Panel2: TPanel
+          Width = 701
+          inherited gbChange: TGroupBox
+            Width = 268
+          end
+          inherited gbSum: TGroupBox
+            Left = 485
+          end
+        end
+        inherited Panel3: TPanel
+          Width = 701
+          inherited gbCurrency: TGroupBox
+            Left = 485
+          end
+          inherited gbOthers: TGroupBox
+            Width = 485
+          end
+        end
       end
     end
     inline framCustomers1: TframCustomers
