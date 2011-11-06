@@ -253,7 +253,7 @@ var
 begin
   for i := 0 to FProcessesDescriptions.Count - 1 do begin
     bIsProcessFound := _IsProcessFound(FProcessesDescriptions[i].Name);
-    GClientInfo.GCCLNotStarted := not bIsProcessFound;
+//    GClientInfo.GCCLNotStarted := not bIsProcessFound;                // Распологать тут проверку бред!!!
     if not bIsProcessFound then begin
       if FileExists(FProcessesDescriptions[i].ExeFile) then begin
         _ExecuteApp(FProcessesDescriptions[i].ExeFile);

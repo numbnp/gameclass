@@ -334,7 +334,6 @@ begin
   FfPrintCost := 0;
   FfServiceCost := 0;
   FnStatus := ssDesigned;
-  FnState := ClientState_Authentication;
 
   if GAccountSystem.Enabled and
      GAccountSystem.AlwaysAllowAuthentication and
