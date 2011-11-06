@@ -163,7 +163,7 @@ type
     function IsFree: Boolean;
     property LinuxClient: Boolean
         read FbLinuxClient write FbLinuxClient;
-    function Licensed: Boolean;
+
     function Agreement: Boolean;
 
     function PowerOff: Boolean;
@@ -483,7 +483,7 @@ end;
 
 constructor TComputer.Create;
 begin
-  control := true; // по умолчанию комп контролируется :)
+  control := false; // по умолчанию комп контролируется :)
 //  busy := false;   // по умолчанию комп свободен :)
   bStopSession := false;
   pings := 0;      // по умолчанию пингуется в норме!
@@ -1361,32 +1361,6 @@ begin
     SetLength(Result, Length(Result)-2);
 end; // SelCompsAsText
 
-function TComputer.Licensed: Boolean;
-var
-  i, nLinuxClinetCount: Integer;
-begin
-  Result := not LinuxClient;
-  if LinuxClient then begin
-    nLinuxClinetCount := 0;
-    for i := 0 to CompsCount - 1 do begin
-      if Comps[i].LinuxClient then
-        Inc(nLinuxClinetCount);
-      if (Comps[i].number = number) then begin
-        if nLinuxClinetCount <= Registration.LinuxClientCount then
-          Result := True
-        else if not GbUnregisteredLinuxClinentMessageShowed then begin
-          GbUnregisteredLinuxClinentMessageShowed := True;
-          Application.MessageBox(PChar(UNREGISTERED_LINUX_CLIENTS_1
-              + IntToStr(Registration.LinuxClientCount)
-              + UNREGISTERED_LINUX_CLIENTS_2),
-              PChar(translate('Warning')),MB_OK or MB_ICONWARNING);
-        end;
-        Break;
-      end;
-    end;
-  end;
-end; //function TComputer.Licensed: Boolean;
-
 function TComputer.Agreement: Boolean;
 begin
   Result := False;
@@ -1562,7 +1536,7 @@ begin
         and (Pos(STR_CMD_INETSETSPEEDFORIP, strData) = 0)
         and (Pos(STR_CMD_INETSETGROUP, strData) = 0))
         then strData := WrapProtocol(strData);
-      udpClient.Send(AstrIP,vport,strData)
+    udpClient.Send(AstrIP,vport,strData)
   except
   end;
 end;

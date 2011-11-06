@@ -1102,8 +1102,7 @@ begin
     else begin
     index := ComputersGetIndexByIp(ABinding.PeerIP);
     // обрабатываем протокол первой версии
-    if (protocol = PROTOCOL_V01) and (index <> -1)
-        and Comps[index].Licensed then begin
+    if (protocol = PROTOCOL_V01) and (index <> -1) then begin
       // -----------------------------
       if (cmd = STR_CMD_RET_PINGANSWER) then begin
         Comps[index].pings := 0; // если пинг вернулся, то сбрасываем в ноль
@@ -1438,9 +1437,7 @@ begin
             Comps[index].a.state := ClientState_Agreement
           else
             Comps[index].a.state := ClientState_Session;
-          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, TimeToStr(session.TimeStop ));
           session.Save;
-          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, TimeToStr(session.TimeStop ));
           UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_GOSTATE_3
                   + '=' + Comps[index].session.GetStrTarif + '/'
                   + DateTimeToStr(Comps[index].session.TimeStart) + '/'
