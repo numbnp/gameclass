@@ -261,14 +261,16 @@ begin
         StrToBool(GetParamFromString(strParameters,0)))
 
   end else if CompareText(strCommand, STR_CMD_PING) = 0 then begin
-    GClientInfo.LastPingTime := Now;
+//    GClientInfo.LastPingTime := Now;
+    GClientInfo.LastPingTime := GClientInfo.NowTime;
     if GClientInfo.IsSession and (Now <= GClientInfo.Stop) then
       GClientInfo.AfterStopActionNeeded := True;
 
     Result := TCompositeRemoteCommand.Create();
     cmd := TPingRemoteCommand.Create(strParameters);
     (Result as TCompositeRemoteCommand).Commands.Add(cmd);
-    if not GClientInfo.GCCLNotStarted then begin
+    if not GClientInfo.GCCLNotStarted then
+    begin
       cmd := TAnswerRemoteCommand.Create(AstrFromHost);
       (cmd as TAnswerRemoteCommand).SendData := STR_CMD_RET_PINGANSWER;
       (Result as TCompositeRemoteCommand).Commands.Add(cmd);
