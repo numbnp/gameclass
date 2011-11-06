@@ -515,7 +515,6 @@ object frameOptions: TframeOptions
       Height = 64
       Align = alBottom
       BevelOuter = bvNone
-      Caption = 'Panel3'
       TabOrder = 1
       object gbCurrency: TGroupBox
         Left = 481
@@ -558,7 +557,7 @@ object frameOptions: TframeOptions
           Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1082#1083#1091#1073#1072
         end
         object edtClubName: TEdit
-          Left = 104
+          Left = 96
           Top = 13
           Width = 337
           Height = 21
