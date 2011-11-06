@@ -13,6 +13,7 @@ rem -------------------- Конец шапки ------------------------------------
 
 set BASE_VERSION=3.85.2
 set APP_VERSION=3.85.2 Alpha 8.4 Free
+set CLIENT_VERSION=3.85.2
 set SQL_SCRIPT_VERSION=3853
 
 rem Install\src\Batch\gc_replace_versions.vbs "%BASE_VERSION%" "%APP_VERSION%"
@@ -32,9 +33,11 @@ call copy_packages_files.bat
 
 rem Кодирование sql-файлов в sqp
 call encode_sql.bat
- 
+
+cd Install\Src\INS
+"c:\Program Files\Inno Setup 5\ISCC.exe" Client.iss
+cd ..\..\..
 
 cd Install\Src\GI
 "C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
 cd ..\..\..
-
