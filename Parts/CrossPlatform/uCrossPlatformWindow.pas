@@ -25,6 +25,7 @@ uses
 {$IFDEF MSWINDOWS}
   Windows,
   Tlhelp32,
+  Messages,
 {$ENDIF}
 {$IFDEF LINUX}
   uSafeStorage,
@@ -123,13 +124,19 @@ var
   strWndName : String;
   nProcHandle: Cardinal;
 begin
-  if (handle = GetDesktopWindow)
+
+  {if (handle = GetDesktopWindow)
       or not isWindow(handle) // и вообще это - окно.
       or not isWindowVisible(handle)  // если окно видимо
       or not ((GetWindowLong(handle,GWL_STYLE) and WS_CHILD) = 0) then begin
+  end; // if}
+
+  if (GetParent(handle) <> 0) or (not IsWindowVisible(handle)) then
+  begin
     _EnumWinProc := TRUE;
     Exit;
-  end; // if
+  end;
+
   GetWindowThreadProcessId(handle, nProcHandle);
   GetWindowText(handle, strBufWndName, MAX_PATH);
   strFileName := _GetProcessFileName(nProcHandle);
@@ -152,11 +159,13 @@ begin
   end;
   if (Param = CMD_MINIMIZE) then begin
     if not isIconic(handle) then
-      ShowWindow(handle, SW_MINIMIZE);
+//      ShowWindow(handle, SW_MINIMIZE);
+        PostMessage(handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
   end;
   if (Param = CMD_RESTORE) then begin
     if isIconic(handle) then
-      ShowWindow(handle, SW_RESTORE);
+//      ShowWindow(handle, SW_RESTORE);
+        PostMessage(handle, WM_SYSCOMMAND, SC_RESTORE, 0);
   end; // if
   _EnumWinProc := TRUE; // продолжаем перебирать все окна системы.
 end; // function
