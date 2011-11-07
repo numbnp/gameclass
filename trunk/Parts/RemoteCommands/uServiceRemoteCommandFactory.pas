@@ -263,7 +263,7 @@ begin
   end else if CompareText(strCommand, STR_CMD_PING) = 0 then begin
 //    GClientInfo.LastPingTime := Now;
     GClientInfo.LastPingTime := GClientInfo.NowTime;
-    if GClientInfo.IsSession and (Now <= GClientInfo.Stop) then
+    if GClientInfo.IsSession and (GClientInfo.NowTime <= GClientInfo.Stop) then
       GClientInfo.AfterStopActionNeeded := True;
 
     Result := TCompositeRemoteCommand.Create();
