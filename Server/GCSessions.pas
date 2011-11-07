@@ -843,8 +843,9 @@ begin
   if (FnWhole = 0) then begin
     dtNewStop := FdtStart + Tarifs[nTarifIndex].CalculateTimeLength(FdtStart,
         fSumma, nIdGroup, GAccountSystem.Accounts[FnIdClient].Discount);
-    if dtNewStop> GSessions.GetMaxStopTime(FnIdComp) then
-       dtNewStop := GSessions.GetMaxStopTime (FnIdComp);
+    if FnStatus <> ssReserve then
+      if dtNewStop> GSessions.GetMaxStopTime(FnIdComp) then
+        dtNewStop := GSessions.GetMaxStopTime (FnIdComp);
   end
   else begin
     dtNewStop := FdtStart;
@@ -1060,7 +1061,8 @@ begin
   // это как 1 рубль. А на самом деле 1 рубль - это 5 минут, так что пересчитываем!
   RecalcStopTime;
   RecalcTimeCost;
-  if not GAccountSystem.AuthenticationIfReserved then
+  if (not GAccountSystem.AuthenticationIfReserved)
+      or (Status <> ssReserve)  then
   begin
     Comps[ComputersGetIndex(FnIdComp)].a.state := AnState;
     Comps[ComputersGetIndex(FnIdComp)].a.number := AnIdClient;
