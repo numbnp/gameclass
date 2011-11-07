@@ -11,8 +11,8 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set BASE_VERSION=3.85.2
-set APP_VERSION=3.85.2 Alpha 8.4 Free
+set BASE_VERSION=3.85.2.9
+set APP_VERSION=3.85.2.9 Free
 set CLIENT_VERSION=3.85.2
 set SQL_SCRIPT_VERSION=3853
 
