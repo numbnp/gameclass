@@ -1752,7 +1752,7 @@ begin
       PingComputer(index);
     end;
   end;
-  formCompStop.Destroy;
+//  formCompStop.Destroy;
 end;
 
 //ehsSessionTrafficPayment
