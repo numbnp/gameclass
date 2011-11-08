@@ -294,11 +294,7 @@ begin
   FDesignedSession := GCSessions.TGCSession.Create;
   FDesignedSession.IdClient :=0;
 
-  DoDesignSessionChart;
   cbReserve.Visible := not GRegistry.Options.ReserveDisable;
-  Left := (GetSystemMetrics(SM_CXFULLSCREEN) - Width) div 2;
-  Top := (GetSystemMetrics(SM_CYFULLSCREEN) - Height) div 2;
-
 
     // Set Computer Number
   dtpTimeLength.DateTime := FIRST_DATE; // 01.01.2000 0:00:00
@@ -331,6 +327,10 @@ begin
     FfrmComputers.Init(caStart);
   end;
   DoDesign(False{True});
+  DoDesignSessionChart;
+  Left := (GetSystemMetrics(SM_CXFULLSCREEN) - Width) div 2;
+  Top := (GetSystemMetrics(SM_CYFULLSCREEN) - Height) div 2;
+  
   FfrmSessionsChart.Activate;
   FfrmSessionsChart.State := DesignStart;
 //  timerFrmCompStartTimer(Sender);
