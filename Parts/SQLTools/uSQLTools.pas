@@ -346,8 +346,13 @@ begin
       until dmo.Status = 	3; {SQLDMOSvc_Stopped}
       dmo.Start(False, AstrServerName);
     end;
-    if dmo.Status <> 1 then
+    while dmo.Status <>1 do
+    begin
+    if (dmo.Status = 0)
+      or (dmo.Status = 2)
+      or (dmo.Status = 3) then
       raise Exception.Create('');
+    end;
   except
      MessageBox(0, 'Невозможно запустить SQL-сервер!' , 'Ошибка',
         MB_ICONERROR + MB_OK);
