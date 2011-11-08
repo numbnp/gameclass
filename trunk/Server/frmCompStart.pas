@@ -1096,7 +1096,11 @@ end;
 procedure TformCompStart.cbReserveCheck;
 begin
   if GRegistry.UserInterface.HideSessionChartWithoutReserve then
+  begin
     DoDesignSessionChart;
+    Left := (GetSystemMetrics(SM_CXFULLSCREEN) - Width) div 2;
+    Top := (GetSystemMetrics(SM_CYFULLSCREEN) - Height) div 2;
+  end;
   if (cbReserve.Checked) then begin
     FState := FState + [Reserve];
     CompsSelDeselect(caReserve);
