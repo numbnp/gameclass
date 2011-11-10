@@ -868,8 +868,15 @@ begin
 end;
 
 procedure TfrmMain.tmrClockTimer(Sender: TObject);
+var
+  s: THandle;
 begin
   pnlClock.Caption := TimeToStr(Time);
+
+  modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
+
+//  modernTrayIcon.Active := false;
+//  modernTrayIcon.Active := true;
 //  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
   if (SecondOf(Time) mod 10) = 0 then
     GClientInfo.SaveIfNeeded;

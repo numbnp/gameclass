@@ -269,7 +269,7 @@ begin
     Result := TCompositeRemoteCommand.Create();
     cmd := TPingRemoteCommand.Create(strParameters);
     (Result as TCompositeRemoteCommand).Commands.Add(cmd);
-//    if not GClientInfo.GCCLNotStarted then
+    if not GClientInfo.GCCLNotStarted then
     begin
       cmd := TAnswerRemoteCommand.Create(AstrFromHost);
       (cmd as TAnswerRemoteCommand).SendData := STR_CMD_RET_PINGANSWER;

@@ -98,7 +98,7 @@ uses
 
 
 const
-  TIMEOUT_DEF = 60000; // пауза в опросе процессов
+  TIMEOUT_DEF = 3000; // пауза в опросе процессов
 
 
 // метод используетс€ дл€ прерывани€ цикла ожидани€ событий
@@ -253,7 +253,7 @@ var
 begin
   for i := 0 to FProcessesDescriptions.Count - 1 do begin
     bIsProcessFound := _IsProcessFound(FProcessesDescriptions[i].Name);
-//    GClientInfo.GCCLNotStarted := not bIsProcessFound;                // –аспологать тут проверку бред!!!
+    GClientInfo.GCCLNotStarted := not bIsProcessFound;                // –аспологать тут проверку бред!!!
     if not bIsProcessFound then begin
       if FileExists(FProcessesDescriptions[i].ExeFile) then begin
         _ExecuteApp(FProcessesDescriptions[i].ExeFile);
