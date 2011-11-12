@@ -57,7 +57,8 @@ uses
   uClientInfoConstrainedCommand in '..\Parts\RemoteCommands\uClientInfoConstrainedCommand.pas',
   uClientInfoSetRemoteCommand in '..\Parts\RemoteCommands\uClientInfoSetRemoteCommand.pas',
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
-  frmTopMessage in 'frmTopMessage.pas' {frmMessage};
+  frmTopMessage in 'frmTopMessage.pas' {frmMessage},
+  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas';
 
 {$R *.res}
 const
