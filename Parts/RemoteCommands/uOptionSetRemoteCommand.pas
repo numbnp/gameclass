@@ -198,6 +198,12 @@ try
   end else if CompareText(FstrOptionName,'RunPadInternetControl') = 0 then begin
     GClientOptions.RunPadInternetControl:= StrToBool(FstrOptionValue);
 
+  end else if CompareText(FstrOptionName,'RunPadShowInfoOnDesktop') = 0 then begin
+    GClientOptions.RunPadShowInfoOnDesktop:= StrToBool(FstrOptionValue);
+
+  end else if CompareText(FstrOptionName,'RunPadShowInfoOnDesktopText') = 0 then begin
+    GClientOptions.RunPadShowInfoOnDesktopText:= FstrOptionValue;
+
   end else if CompareText(FstrOptionName,'ClientScriptFileName') = 0 then begin
     GClientOptions.ClientScriptFileName := FstrOptionValue;
 

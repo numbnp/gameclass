@@ -72,6 +72,13 @@ begin
         except
           Debug.Trace0('RP VIP Logout failed');
         end;
+      RunPadAction_ShowInfoOnDesktop:
+        try
+          rpShell2 := CoRunpadShell2.Create;
+          rpShell2.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002 )
+        except
+          Debug.Trace0('Show info on desktop failed');
+        end;
     end;
   //  rpShell._Release;
 //    sh.RegisterClient('GameClass Client',PChar(ParamStr(0)),0);

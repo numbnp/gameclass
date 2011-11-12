@@ -79,7 +79,8 @@ uses
   WbemScripting_TLB,
   uProcUtils in '..\Parts\ProcessSupervisor\uProcUtils.pas',
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
-  uFileInfo in '..\Parts\FileTools\uFileInfo.pas';
+  uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
+  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas';
 
 {$R *.RES}
 

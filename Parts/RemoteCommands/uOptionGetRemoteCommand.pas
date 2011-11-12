@@ -174,6 +174,12 @@ begin
     AfterStopType_Shutdown: _SendOption('AfterStopType', 'Shutdown');
   end;
 
+  if bAll or (CompareText(FstrOptionName,'RunPadShowInfoOnDesktop') = 0) then
+    _SendOption('RunPadShowInfoOnDesktop', BoolToStr(GClientOptions.RunPadShowInfoOnDesktop));
+
+  if bAll or (CompareText(FstrOptionName,'RunPadShowInfoOnDesktopText') = 0) then
+    _SendOption('RunPadShowInfoOnDesktopText', GClientOptions.RunPadShowInfoOnDesktopText);
+
   if bAll or (CompareText(FstrOptionName,'SyncTime') = 0) then
     _SendOption('SyncTime', BoolToStr(GClientOptions.SyncTime));
 
