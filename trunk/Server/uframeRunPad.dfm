@@ -1,13 +1,13 @@
 object frameRunPad: TframeRunPad
   Left = 0
   Top = 0
-  Width = 449
-  Height = 411
+  Width = 636
+  Height = 608
   TabOrder = 0
   object pnlTop2: TPanel
     Left = 0
     Top = 0
-    Width = 449
+    Width = 636
     Height = 40
     Align = alTop
     BevelOuter = bvNone
@@ -15,7 +15,7 @@ object frameRunPad: TframeRunPad
     object gbSessionStop: TGroupBox
       Left = 0
       Top = 0
-      Width = 261
+      Width = 636
       Height = 40
       Align = alClient
       Caption = #1058#1072#1088#1080#1092' Internet'
@@ -31,29 +31,12 @@ object frameRunPad: TframeRunPad
         OnKeyUp = cbxInternetControlKeyUp
       end
     end
-    object gbOther: TGroupBox
-      Left = 261
-      Top = 0
-      Width = 188
-      Height = 40
-      Align = alRight
-      Caption = #1044#1088#1091#1075#1086#1077
-      TabOrder = 1
-      Visible = False
-      object lblShellCurrent: TLabel
-        Left = 8
-        Top = 16
-        Width = 106
-        Height = 13
-        Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1099#1081' '#1096#1077#1083#1083
-      end
-    end
   end
   object gbTabs: TGroupBox
     Left = 0
     Top = 40
-    Width = 449
-    Height = 371
+    Width = 636
+    Height = 512
     Align = alClient
     Caption = '    '
     TabOrder = 0
@@ -108,14 +91,14 @@ object frameRunPad: TframeRunPad
     end
     object Panel1: TPanel
       Left = 2
-      Top = 336
-      Width = 445
+      Top = 477
+      Width = 632
       Height = 33
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
       object lblTab: TLabel
-        Left = 8
+        Left = 7
         Top = 10
         Width = 49
         Height = 13
@@ -200,6 +183,38 @@ object frameRunPad: TframeRunPad
       TabOrder = 6
       OnClick = lbHidedTabsClick
       OnKeyPress = lbHidedTabsKeyPress
+    end
+  end
+  object gbInfoOnDesktop: TGroupBox
+    Left = 0
+    Top = 552
+    Width = 636
+    Height = 56
+    Align = alBottom
+    TabOrder = 2
+    object lblShablon: TLabel
+      Left = 10
+      Top = 28
+      Width = 42
+      Height = 13
+      Caption = #1064#1072#1073#1083#1086#1085' '
+    end
+    object cbxShowInfo: TCheckBox
+      Left = 8
+      Top = 0
+      Width = 297
+      Height = 17
+      Caption = #1054#1090#1086#1073#1088#1072#1078#1072#1090#1100' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1086' '#1089#1077#1072#1085#1089#1077' '#1085#1072' '#1088#1072#1073#1086#1095#1077#1084' '#1089#1090#1086#1083#1077
+      TabOrder = 0
+      OnClick = cbxShowInfoClick
+    end
+    object edtShablon: TEdit
+      Left = 64
+      Top = 24
+      Width = 377
+      Height = 21
+      TabOrder = 1
+      OnChange = edtShablonChange
     end
   end
 end

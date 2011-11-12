@@ -107,6 +107,8 @@ type
     FstrKDEUser: String;
     FbDebugLog: Boolean;
     FbUseWOL: Boolean;
+    FbRunPadShowInfoOnDesktop: Boolean;
+    FbRunPadShowInfoOnDesktopText: String;
 
     // private helper methods
     function _GetStringOption(const AstrFolder: String;
@@ -150,6 +152,8 @@ type
     procedure SetRunPadHideTabs(const AbRunPadHideTabs: Boolean);
     procedure SetRunPadTabs(const AlstRunPadTabs: TStringList);
     procedure SetRunPadInternetControl(const AbRunPadInternetControl: Boolean);
+    procedure SetRunPadShowInfoOnDesktop(const AbRunPadShowInfoOnDesktop: Boolean);
+    procedure SetRunPadShowInfoOnDesktopText(const AbRunPadShowInfoOnDesktopText: string);
 
     procedure SetTaskList(const AlstTaskList: TStringList);
     procedure SetDebugLog(const AValue: Boolean);
@@ -314,6 +318,13 @@ type
     // Пытаться автоматически включить оплаченый компьютер
     property UseWOL: Boolean
         read FbUseWOL write FbUseWOL;
+    // Выводить текст нарабочем столе RunPad
+    property RunPadShowInfoOnDesktop: Boolean
+        read FbRunPadShowInfoOnDesktop  write SetRunPadShowInfoOnDesktop;
+    // Текст выводимый нарабочем столе RunPad
+    property RunPadShowInfoOnDesktopText: String
+        read FbRunPadShowInfoOnDesktopText write SetRunPadShowInfoOnDesktopText;
+
 
 {    // еще не используется
     property AutoInstall: Boolean
@@ -602,6 +613,14 @@ try
 
   SetRunPadInternetControl(_GetBooleanOption(OPTIONS_GENERAL_FOLDER,
       'RunPadInternetControl', DEF_RUNPADCONTROLINTERNET));
+
+  FbRunPadShowInfoOnDesktop := _GetBooleanOption(
+      OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktop', DEF_RunPadShowInfoOnDesktop);
+
+  FbRunPadShowInfoOnDesktopText := _GetStringOption(
+      OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktopText',
+      DEF_RunPadShowInfoOnDesktopText);
+
 {$ENDIF}
 
   FbRestoreClientInfo := _GetBooleanOption(
@@ -642,7 +661,8 @@ try
       DEF_GUEST_SESSION);
   FbUseWOL := _GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'UseWOL',
-      DEF_GUEST_SESSION);
+      DEF_USE_WOL);
+
   SetDebugLog(_GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'DebugLog',
       DEF_DEBUG));
@@ -716,6 +736,8 @@ try
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadTabs', FlstRunPadTabs.Text);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadInternetControl',
           FbRunPadInternetControl);
+      SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktop', FbRunPadShowInfoOnDesktop);
+      SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktopText', FbRunPadShowInfoOnDesktopText );
 {$ENDIF}
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RestoreClientInfo',
           FbRestoreClientInfo);
@@ -851,6 +873,29 @@ begin
 {$ENDIF}
   end;
 end; // TClientOptions.SetRunPadInternetControl
+
+procedure TClientOptions.SetRunPadShowInfoOnDesktop(
+    const AbRunPadShowInfoOnDesktop: Boolean);
+begin
+  if FbRunPadShowInfoOnDesktop <> AbRunPadShowInfoOnDesktop then begin
+    FbDirty := True;
+    FbRunPadShowInfoOnDesktop := AbRunPadShowInfoOnDesktop;
+{$IFDEF GCCL}
+{$ENDIF}
+  end;
+end; // TClientOptions.SetRunPadShowInfoOnDesktop
+
+procedure TClientOptions.SetRunPadShowInfoOnDesktopText(
+    const AbRunPadShowInfoOnDesktopText: string);
+begin
+  if FbRunPadShowInfoOnDesktopText <> AbRunPadShowInfoOnDesktopText then begin
+    FbDirty := True;
+    FbRunPadShowInfoOnDesktopText := AbRunPadShowInfoOnDesktopText;
+{$IFDEF GCCL}
+{$ENDIF}
+  end;
+end; // TClientOptions.SetRunPadShowInfoOnDesktopText
+
 
 procedure TClientOptions.SetCompNumber(
     const AstrCompNumber: String);

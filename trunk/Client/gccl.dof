@@ -128,11 +128,11 @@ CompanyName=
 FileDescription=
 FileVersion=3.85.2.10
 InternalName=
-LegalCopyright=
+LegalCopyright=2010-2011 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3 Client
-ProductVersion=3.85.2.9 Free
+ProductVersion=3.85.2.10 Free
 [HistoryLists\hlConditionals]
 Count=3
 Item0=ASPROTECT, GCCL

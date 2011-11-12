@@ -163,19 +163,20 @@ object formBossOptions: TformBossOptions
       inherited pnlTop2: TPanel
         Width = 701
         inherited gbSessionStop: TGroupBox
-          Width = 513
-        end
-        inherited gbOther: TGroupBox
-          Left = 513
+          Width = 701
         end
       end
       inherited gbTabs: TGroupBox
         Width = 701
-        Height = 610
+        Height = 554
         inherited Panel1: TPanel
-          Top = 575
+          Top = 519
           Width = 697
         end
+      end
+      inherited gbInfoOnDesktop: TGroupBox
+        Top = 594
+        Width = 701
       end
     end
     inline frameScripts1: TframeScripts

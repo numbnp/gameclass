@@ -99,6 +99,7 @@ uses
   {$ENDIF}
   uClientConst,
   uSafeStorage,
+  uParseAndReplase,
 {$ENDIF}
 {$IFDEF GCCLSRV}
   uKillTaskRemoteCommand,
@@ -122,6 +123,12 @@ uses
 procedure Timer_SysTimer;
 begin
   GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
+{$IFDEF GCCL}
+  if GClientOptions.RunPadShowInfoOnDesktop then
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
+      Integer(RunPadAction_ShowInfoOnDesktop),
+      ParseAndReplase(GClientOptions.RunPadShowInfoOnDesktopText));
+{$ENDIF}
 end;
 {$ENDIF}
 

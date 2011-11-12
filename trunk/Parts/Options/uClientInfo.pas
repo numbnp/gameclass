@@ -62,6 +62,7 @@ type
     FdtStart: TDateTime;
     FdtStop: TDateTime;
     FdtNowTime: TDateTime;
+    FdtTimeLeft: TDateTime;
     FstrTarifName: String;
     FbTrafficSeparatePayment: Boolean;
     FnSecCode: Integer;
@@ -198,6 +199,9 @@ type
     // текущее время сервера
     property NowTime: TDateTime
         read FdtNowTime write SetNowTime;
+    // Осталось до конца сеанса
+    property TimeLeft: TDateTime
+        read FdtTimeLeft write FdtTimeLeft;
     // имя тарифа
     property TarifName: String
         read FstrTarifName write SetTarifName;
@@ -587,6 +591,10 @@ begin
   if FdtStart <> AdtStart then begin
     FbDirty := True;
     FdtNowTime := AdtStart;
+    If FdtNowTime< FdtStop then
+      FdtTimeLeft := FdtStop -FdtNowTime
+    else
+      FdtTimeLeft := FdtStop;
   {$IFDEF GCCL}
 {    TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateControlFromClientInfo,
         Integer(UpdatedControl_edtStop)); 

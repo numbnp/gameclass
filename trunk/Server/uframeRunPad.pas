@@ -18,12 +18,10 @@ uses
 type
   TframeRunPad = class(TFrame)
     cbxHideTabs: TCheckBox;
-    lblShellCurrent: TLabel;
     cbxInternetControl: TCheckBox;
     gbSessionStop: TGroupBox;
     gbTabs: TGroupBox;
     pnlTop2: TPanel;
-    gbOther: TGroupBox;
     butAddTabToHided: TButton;
     butRemoveFromTabToHided: TButton;
     editTab: TEdit;
@@ -38,6 +36,10 @@ type
     lbHidedTabs: TListBox;
     lblTabsAll: TLabel;
     lblTabsCurrent: TLabel;
+    gbInfoOnDesktop: TGroupBox;
+    cbxShowInfo: TCheckBox;
+    lblShablon: TLabel;
+    edtShablon: TEdit;
     procedure lbTarifsClick(Sender: TObject);
     procedure lbTarifsKeyPress(Sender: TObject; var Key: Char);
     procedure lbTabsClick(Sender: TObject);
@@ -56,6 +58,8 @@ type
     procedure cbxHideTabsClick(Sender: TObject);
     procedure cbxHideTabsKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure cbxShowInfoClick(Sender: TObject);
+    procedure edtShablonChange(Sender: TObject);
   private
     FstrCurrentTarif: String;
     FstrCurrentTab: String;
@@ -70,6 +74,7 @@ type
     procedure _TarifsCurrentChange;
     procedure _TabsCurrentChange;
     procedure _HidedTabsCurrentChange;
+    procedure _cbxShowInfoChange;
 
   public
     function GetID: integer;
@@ -134,6 +139,11 @@ begin
   butTabDelete.Enabled := bTabSelected and not bTabNameChanged;
   butTabAdd.Enabled := bTabNameChanged and not bTabNamePresent;
   butTabUpdate.Enabled := bTabSelected and bTabNameChanged and not bTabNamePresent;
+
+  cbxShowInfo.Checked := GClientOptions.RunPadShowInfoOnDesktop;
+  edtShablon.Text := GClientOptions.RunPadShowInfoOnDesktopText;
+  edtShablon.Enabled := cbxShowInfo.Checked;
+
   GbFormGC3ClientLock := False;
 end;
 
@@ -331,6 +341,25 @@ procedure TframeRunPad.cbxHideTabsKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   _cbxHideTabsChange;
+end;
+
+procedure TframeRunPad._cbxShowInfoChange();
+begin
+  if GbFormGC3ClientLock then exit;  GbFormGC3ClientLock := True;
+  GClientOptions.RunPadShowInfoOnDesktop := cbxShowInfo.Checked;
+  edtShablon.Enabled := cbxShowInfo.Checked;
+  _AfterControlDataChange;
+end;
+
+procedure TframeRunPad.cbxShowInfoClick(Sender: TObject);
+begin
+  _cbxShowInfoChange;
+end;
+
+procedure TframeRunPad.edtShablonChange(Sender: TObject);
+begin
+  GClientOptions.RunPadShowInfoOnDesktopText := edtShablon.Text;
+  _AfterControlDataChange;
 end;
 
 end.

@@ -128,11 +128,11 @@ CompanyName=
 FileDescription=
 FileVersion=3.85.2.10
 InternalName=
-LegalCopyright=
+LegalCopyright=2010-2011 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass Client Service
-ProductVersion=3.85.2.9 Free
+ProductVersion=3.85.2.10 Free
 Comments=
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
