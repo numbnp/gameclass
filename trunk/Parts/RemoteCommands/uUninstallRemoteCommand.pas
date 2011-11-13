@@ -51,7 +51,7 @@ uses
   uFilesSynchronizeConst;
 
 const
-  UNINSTALL_FILENAME = 'Uninstall.exe';
+  UNINSTALL_FILENAME = 'unins000.exe';
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ var
   strParameters: String;
 begin
   strCommand := ExtractFilePath(ParamStr(0));
-  strParameters := '-s';
+  strParameters := '/VERYSILENT';
   if Reinstall then begin
     strCommand := strCommand + FILE_RECEIVE_DIR_DEF + '\'
         + FILE_INSTALL_FILENAME_DEF;

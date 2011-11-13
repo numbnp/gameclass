@@ -120,7 +120,7 @@ begin
         if (Comps[j].GetStrNumber = lvClients.Items[i].Caption)
             and (Comps[j].InstallCheckSumm <> 0)
             and (Comps[j].InstallCheckSumm = GnClientInstallFileCheckSum)
-            and (Comps[j].strInfoClientver <> APP_VERSION) then
+            then
            UDPSend(Comps[j].ipaddr, STR_CMD_UNINSTALL
               + '=' + BoolToStr(True));
   UpdateManageList;

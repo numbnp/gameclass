@@ -122,20 +122,19 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=NodaSoft
 FileDescription=GC3Server
-FileVersion=3.85.2.10
+FileVersion=3.85.2.10.1
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft 2010-2011 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3
-ProductVersion=3.85.2.10 Free
+ProductVersion=3.85.2.10.1 Free
 Comments=www.nodasoft.com
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\dclite70.bpl=Borland Integrated Translation Environment
 c:\program files\borland\delphi7\Projects\Bpl\Win2KTray.bpl=(untitled)
 c:\program files\borland\delphi7\Projects\Bpl\dclrxbd7.bpl=RX Library BDE Database Components
 C:\Program Files\Borland\Delphi7\Projects\Bpl\DclRxDb7.bpl=RX Library Database Components
-c:\program files\borland\delphi7\Projects\Bpl\DCLSer70.bpl=EDBImage 1.6 - by SER
 [HistoryLists\hlDebugSourcePath]
 Count=2
 Item0=C:\Program Files\Borland\Delphi6\Source\Indy\;D:\Projects\Distrib\DBImage\
