@@ -213,12 +213,12 @@
 	</packages>
 	<variables>
 		<var name="AppID" value="{AB164D55-33F9-4417-A7C4-B07698C7EDE7}"/>
-		<var name="AppName" value="GameClass3 3.85.2.10 Free"/>
+		<var name="AppName" value="GameClass3 3.85.2.10.1 Free"/>
 		<var name="AppName2" value="GameClass3"/>
 		<var name="BackupAppName" value="Backup and Restore database"/>
 		<var name="TIPluginAppName" value="Traffic Inspector Plug-In Installation"/>
 		<var name="UGPluginAppName" value="UserGate 2.8 Plug-In"/>
-		<var name="AppVersion" value="3.85.2.10.Free"/>
+		<var name="AppVersion" value="3.85.2.10.1.Free"/>
 		<var name="AdminRights" value="1"/>
 		<var name="OutputPath" value="..\..\..\Output\Setup"/>
 		<var name="Password"/>
