@@ -23,6 +23,7 @@ procedure RunPadAction(ARunPadAction: TRunPadAction;
 var
    rpShell : IRunpadShell;
    rpShell2 : IRunpadShell2;
+   rpPro : IRunpadProShell;
    i: Integer;
    cmd: TRemoteCommand;
 begin
@@ -73,11 +74,19 @@ begin
           Debug.Trace0('RP VIP Logout failed');
         end;
       RunPadAction_ShowInfoOnDesktop:
-        try
-          rpShell2 := CoRunpadShell2.Create;
-          rpShell2.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002 )
-        except
-          Debug.Trace0('Show info on desktop failed');
+        begin
+          try
+            rpShell2 := CoRunpadShell2.Create;
+            rpShell2.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002);
+          except
+            Debug.Trace0('Show info on desktop RPS failed');
+          end;
+          try
+            rpPro := CoRunpadProShell.Create;
+            rpPro.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002);
+          except
+            Debug.Trace0('Show info on desktop RPP failed');
+          end;
         end;
     end;
   //  rpShell._Release;
