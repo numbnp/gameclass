@@ -12,19 +12,20 @@ unit RS_APILib_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 23.05.2007 13:31:38 from Type Library described below.
+// File generated on 13.09.2011 10:56:58 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Program Files\Runpad Shell\rs_api.dll (1)
+// Type Lib: rs_api.tlb (1)
 // LIBID: {02988454-DBAC-48B9-A8A2-85AEE4E2486F}
 // LCID: 0
 // Helpfile: 
-// HelpString: RS_API 2.0 Type Library
+// HelpString: RS_API 4.0 Type Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // Errors:
-//   Error creating palette bitmap of (TRunpadShell) : Server C:\Program Files\Runpad Shell\rs_api.dll contains no icons
-//   Error creating palette bitmap of (TRunpadShell2) : Server C:\Program Files\Runpad Shell\rs_api.dll contains no icons
+//   Error creating palette bitmap of (TRunpadShell) : Server F:\runpad_old\test\rs_api.dll contains no icons
+//   Error creating palette bitmap of (TRunpadShell2) : Server F:\runpad_old\test\rs_api.dll contains no icons
+//   Error creating palette bitmap of (TRunpadProShell) : Server F:\runpad_old\test\rs_api.dll contains no icons
 // ************************************************************************ //
 // *************************************************************************//
 // NOTE:                                                                      
@@ -63,6 +64,8 @@ const
   CLASS_RunpadShell: TGUID = '{D7346301-B73F-4A94-ABE6-234A0D49521D}';
   IID_IRunpadShell2: TGUID = '{548856D7-555A-445B-BDEB-EEE491A14C39}';
   CLASS_RunpadShell2: TGUID = '{D163EEE3-540A-48DA-9009-C194588263B9}';
+  IID_IRunpadProShell: TGUID = '{83C12BF7-FF8F-4619-85CD-9DA77C8D7D5F}';
+  CLASS_RunpadProShell: TGUID = '{3D4B9FF0-329A-4ED9-A341-B07AE052B7D6}';
 
 // *********************************************************************//
 // Declaration of Enumerations defined in Type Library                    
@@ -105,6 +108,12 @@ const
   RSA_RUNPROGRAMENABLE = $0000000B;
   RSA_LOGOFF = $0000000C;
   RSA_LOGOFFFORCE = $0000000D;
+  RSA_RUNSCREENSAVER = $0000000E;
+  RSA_LANGSELECTDIALOG = $0000000F;
+  RSA_LANGSELECTRUS = $00000010;
+  RSA_LANGSELECTENG = $00000011;
+  RSA_CLOSEACTIVESHEET = $00000014;
+  RSA_SHOWLA = $00000015;
 
 type
 
@@ -113,6 +122,7 @@ type
 // *********************************************************************//
   IRunpadShell = interface;
   IRunpadShell2 = interface;
+  IRunpadProShell = interface;
 
 // *********************************************************************//
 // Declaration of CoClasses defined in Type Library                       
@@ -120,6 +130,7 @@ type
 // *********************************************************************//
   RunpadShell = IRunpadShell;
   RunpadShell2 = IRunpadShell2;
+  RunpadProShell = IRunpadProShell;
 
 
 // *********************************************************************//
@@ -178,6 +189,27 @@ type
     function IsShellOwnedWindow(var hWnd: _RemotableHandle; out lpbOwned: Integer): HResult; stdcall;
     function GetFolderPath(dwFolderType: RSHELLFOLDER; lpszPath: PChar; cbPathLen: LongWord): HResult; stdcall;
     function GetMachineNumber(out lpdwNum: LongWord): HResult; stdcall;
+    function GetCurrentSheet(lpszName: PChar; cbNameLen: LongWord): HResult; stdcall;
+    function EnableSheets(lpszName: PChar; bEnable: Integer): HResult; stdcall;
+    function RegisterClient(lpszClientName: PChar; lpszClientPath: PChar; dwFlags: LongWord): HResult; stdcall;
+    function ShowInfoMessage(lpszText: PChar; dwFlags: LongWord): HResult; stdcall;
+    function DoSingleAction(dwAction: RSHELLACTION): HResult; stdcall;
+    function VipLogin(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult; stdcall;
+    function VipRegister(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult; stdcall;
+    function VipLogout(bWait: Integer): HResult; stdcall;
+  end;
+
+// *********************************************************************//
+// Interface: IRunpadProShell
+// Flags:     (0)
+// GUID:      {83C12BF7-FF8F-4619-85CD-9DA77C8D7D5F}
+// *********************************************************************//
+  IRunpadProShell = interface(IUnknown)
+    ['{83C12BF7-FF8F-4619-85CD-9DA77C8D7D5F}']
+    function GetShellPid(out lpdwPID: LongWord): HResult; stdcall;
+    function GetShellMode(out lpdwFlags: LongWord): HResult; stdcall;
+    function IsShellOwnedWindow(var hWnd: _RemotableHandle; out lpbOwned: Integer): HResult; stdcall;
+    function GetFolderPath(dwFolderType: RSHELLFOLDER; lpszPath: PChar; cbPathLen: LongWord): HResult; stdcall;
     function GetCurrentSheet(lpszName: PChar; cbNameLen: LongWord): HResult; stdcall;
     function EnableSheets(lpszName: PChar; bEnable: Integer): HResult; stdcall;
     function RegisterClient(lpszClientName: PChar; lpszClientPath: PChar; dwFlags: LongWord): HResult; stdcall;
@@ -351,10 +383,90 @@ type
 {$ENDIF}
 
 
+// *********************************************************************//
+// The Class CoRunpadProShell provides a Create and CreateRemote method to          
+// create instances of the default interface IRunpadProShell exposed by              
+// the CoClass RunpadProShell. The functions are intended to be used by             
+// clients wishing to automate the CoClass objects exposed by the         
+// server of this typelibrary.                                            
+// *********************************************************************//
+  CoRunpadProShell = class
+    class function Create: IRunpadProShell;
+    class function CreateRemote(const MachineName: string): IRunpadProShell;
+  end;
+
+
+// *********************************************************************//
+// OLE Server Proxy class declaration
+// Server Object    : TRunpadProShell
+// Help String      : RunpadProShell Class
+// Default Interface: IRunpadProShell
+// Def. Intf. DISP? : No
+// Event   Interface: 
+// TypeFlags        : (2) CanCreate
+// *********************************************************************//
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  TRunpadProShellProperties= class;
+{$ENDIF}
+  TRunpadProShell = class(TOleServer)
+  private
+    FIntf:        IRunpadProShell;
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    FProps:       TRunpadProShellProperties;
+    function      GetServerProperties: TRunpadProShellProperties;
+{$ENDIF}
+    function      GetDefaultInterface: IRunpadProShell;
+  protected
+    procedure InitServerData; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor  Destroy; override;
+    procedure Connect; override;
+    procedure ConnectTo(svrIntf: IRunpadProShell);
+    procedure Disconnect; override;
+    function GetShellPid(out lpdwPID: LongWord): HResult;
+    function GetShellMode(out lpdwFlags: LongWord): HResult;
+    function IsShellOwnedWindow(var hWnd: _RemotableHandle; out lpbOwned: Integer): HResult;
+    function GetFolderPath(dwFolderType: RSHELLFOLDER; lpszPath: PChar; cbPathLen: LongWord): HResult;
+    function GetCurrentSheet(lpszName: PChar; cbNameLen: LongWord): HResult;
+    function EnableSheets(lpszName: PChar; bEnable: Integer): HResult;
+    function RegisterClient(lpszClientName: PChar; lpszClientPath: PChar; dwFlags: LongWord): HResult;
+    function ShowInfoMessage(lpszText: PChar; dwFlags: LongWord): HResult;
+    function DoSingleAction(dwAction: RSHELLACTION): HResult;
+    function VipLogin(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult;
+    function VipRegister(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult;
+    function VipLogout(bWait: Integer): HResult;
+    property DefaultInterface: IRunpadProShell read GetDefaultInterface;
+  published
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    property Server: TRunpadProShellProperties read GetServerProperties;
+{$ENDIF}
+  end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+// *********************************************************************//
+// OLE Server Properties Proxy Class
+// Server Object    : TRunpadProShell
+// (This object is used by the IDE's Property Inspector to allow editing
+//  of the properties of this server)
+// *********************************************************************//
+ TRunpadProShellProperties = class(TPersistent)
+  private
+    FServer:    TRunpadProShell;
+    function    GetDefaultInterface: IRunpadProShell;
+    constructor Create(AServer: TRunpadProShell);
+  protected
+  public
+    property DefaultInterface: IRunpadProShell read GetDefaultInterface;
+  published
+  end;
+{$ENDIF}
+
+
 procedure Register;
 
 resourcestring
-  dtlServerPage = 'ActiveX';
+  dtlServerPage = 'Servers';
 
   dtlOcxPage = 'ActiveX';
 
@@ -685,9 +797,163 @@ end;
 
 {$ENDIF}
 
+class function CoRunpadProShell.Create: IRunpadProShell;
+begin
+  Result := CreateComObject(CLASS_RunpadProShell) as IRunpadProShell;
+end;
+
+class function CoRunpadProShell.CreateRemote(const MachineName: string): IRunpadProShell;
+begin
+  Result := CreateRemoteComObject(MachineName, CLASS_RunpadProShell) as IRunpadProShell;
+end;
+
+procedure TRunpadProShell.InitServerData;
+const
+  CServerData: TServerData = (
+    ClassID:   '{3D4B9FF0-329A-4ED9-A341-B07AE052B7D6}';
+    IntfIID:   '{83C12BF7-FF8F-4619-85CD-9DA77C8D7D5F}';
+    EventIID:  '';
+    LicenseKey: nil;
+    Version: 500);
+begin
+  ServerData := @CServerData;
+end;
+
+procedure TRunpadProShell.Connect;
+var
+  punk: IUnknown;
+begin
+  if FIntf = nil then
+  begin
+    punk := GetServer;
+    Fintf:= punk as IRunpadProShell;
+  end;
+end;
+
+procedure TRunpadProShell.ConnectTo(svrIntf: IRunpadProShell);
+begin
+  Disconnect;
+  FIntf := svrIntf;
+end;
+
+procedure TRunpadProShell.DisConnect;
+begin
+  if Fintf <> nil then
+  begin
+    FIntf := nil;
+  end;
+end;
+
+function TRunpadProShell.GetDefaultInterface: IRunpadProShell;
+begin
+  if FIntf = nil then
+    Connect;
+  Assert(FIntf <> nil, 'DefaultInterface is NULL. Component is not connected to Server. You must call ''Connect'' or ''ConnectTo'' before this operation');
+  Result := FIntf;
+end;
+
+constructor TRunpadProShell.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps := TRunpadProShellProperties.Create(Self);
+{$ENDIF}
+end;
+
+destructor TRunpadProShell.Destroy;
+begin
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps.Free;
+{$ENDIF}
+  inherited Destroy;
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+function TRunpadProShell.GetServerProperties: TRunpadProShellProperties;
+begin
+  Result := FProps;
+end;
+{$ENDIF}
+
+function TRunpadProShell.GetShellPid(out lpdwPID: LongWord): HResult;
+begin
+  Result := DefaultInterface.GetShellPid(lpdwPID);
+end;
+
+function TRunpadProShell.GetShellMode(out lpdwFlags: LongWord): HResult;
+begin
+  Result := DefaultInterface.GetShellMode(lpdwFlags);
+end;
+
+function TRunpadProShell.IsShellOwnedWindow(var hWnd: _RemotableHandle; out lpbOwned: Integer): HResult;
+begin
+  Result := DefaultInterface.IsShellOwnedWindow(hWnd, lpbOwned);
+end;
+
+function TRunpadProShell.GetFolderPath(dwFolderType: RSHELLFOLDER; lpszPath: PChar; 
+                                       cbPathLen: LongWord): HResult;
+begin
+  Result := DefaultInterface.GetFolderPath(dwFolderType, lpszPath, cbPathLen);
+end;
+
+function TRunpadProShell.GetCurrentSheet(lpszName: PChar; cbNameLen: LongWord): HResult;
+begin
+  Result := DefaultInterface.GetCurrentSheet(lpszName, cbNameLen);
+end;
+
+function TRunpadProShell.EnableSheets(lpszName: PChar; bEnable: Integer): HResult;
+begin
+  Result := DefaultInterface.EnableSheets(lpszName, bEnable);
+end;
+
+function TRunpadProShell.RegisterClient(lpszClientName: PChar; lpszClientPath: PChar; 
+                                        dwFlags: LongWord): HResult;
+begin
+  Result := DefaultInterface.RegisterClient(lpszClientName, lpszClientPath, dwFlags);
+end;
+
+function TRunpadProShell.ShowInfoMessage(lpszText: PChar; dwFlags: LongWord): HResult;
+begin
+  Result := DefaultInterface.ShowInfoMessage(lpszText, dwFlags);
+end;
+
+function TRunpadProShell.DoSingleAction(dwAction: RSHELLACTION): HResult;
+begin
+  Result := DefaultInterface.DoSingleAction(dwAction);
+end;
+
+function TRunpadProShell.VipLogin(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult;
+begin
+  Result := DefaultInterface.VipLogin(lpszLogin, lpszPassword, bWait);
+end;
+
+function TRunpadProShell.VipRegister(lpszLogin: PChar; lpszPassword: PChar; bWait: Integer): HResult;
+begin
+  Result := DefaultInterface.VipRegister(lpszLogin, lpszPassword, bWait);
+end;
+
+function TRunpadProShell.VipLogout(bWait: Integer): HResult;
+begin
+  Result := DefaultInterface.VipLogout(bWait);
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+constructor TRunpadProShellProperties.Create(AServer: TRunpadProShell);
+begin
+  inherited Create;
+  FServer := AServer;
+end;
+
+function TRunpadProShellProperties.GetDefaultInterface: IRunpadProShell;
+begin
+  Result := FServer.DefaultInterface;
+end;
+
+{$ENDIF}
+
 procedure Register;
 begin
-  RegisterComponents(dtlServerPage, [TRunpadShell, TRunpadShell2]);
+  RegisterComponents(dtlServerPage, [TRunpadShell, TRunpadShell2, TRunpadProShell]);
 end;
 
 end.
