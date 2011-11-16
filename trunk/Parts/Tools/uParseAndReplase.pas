@@ -8,7 +8,7 @@ function ParseAndReplase(Str:string):string;
 
 implementation
 
-uses SysUtils,uClientInfo;
+uses SysUtils,uClientInfo, Math;
 
 function ReplaceWordVariable(Variable:string):string;
 var
@@ -52,7 +52,47 @@ begin
   else if Tmp_var = '%TIMELEFTM%' then
       DateTimeToString(result,'mm',(GClientInfo.TimeLeft))
   else if Tmp_var = '%TIMELEFTS%' then
-      DateTimeToString(result,'ss',(GClientInfo.TimeLeft));
+      DateTimeToString(result,'ss',(GClientInfo.TimeLeft))
+
+  // блокировка влючена
+  else if Tmp_var = '%BLOCKED%' then
+      result := IntToStr(IfThen(GClientInfo.Blocked,1,0))
+  // имя клиента
+  else if Tmp_var = '%LOGIN%' then
+      result := GClientInfo.Login
+  // состояние баланса
+  else if Tmp_var = '%BALANCE%' then
+      result := FloatToStr(GClientInfo.Balance)
+  // состояние предела баланса
+  else if Tmp_var = '%BALANCELIMIT%' then
+      result := FloatToStr(GClientInfo.BalanceLimit)
+  // оплаченные деньги сессии
+  else if Tmp_var = '%SUM%' then
+      result := FloatToStr(GClientInfo.Sum)
+  // имя тарифа
+  else if Tmp_var = '%TARIFNAME%' then
+      result := GClientInfo.TarifName
+  // отдельная плата за трафик
+  else if Tmp_var = '%TRAFFICSEPARATEPAYMENT%' then
+      result := IntToStr(IfThen(GClientInfo.TrafficSeparatePayment,1,0))
+  // есть ли вообще интернет
+  else if Tmp_var = '%INTERNET%' then
+      result := IntToStr(IfThen(GClientInfo.Internet,1,0))
+  // трафика доступно в КБ
+  else if Tmp_var = '%INTERNETAVAILABLEINKB%' then
+      result := FloatToStr(GClientInfo.InternetAvailableInKB)
+  // трафика доступно в МБ
+  else if Tmp_var = '%INTERNETAVAILABLEINMB%' then
+      result := FloatToStr(GClientInfo.InternetAvailableInKB/1024)
+  // трафика потрачено в КБ
+  else if Tmp_var = '%INTERNETUSEDINKB%' then
+      result := FloatToStr(GClientInfo.InternetUsedInKB)
+  // трафика потрачено в МБ
+  else if Tmp_var = '%INTERNETUSEDINMB%' then
+      result := FloatToStr(GClientInfo.InternetUsedInKB/1024)
+  // IP-адрес клиентской машины
+  else if Tmp_var = '%IPADDRESS%' then
+      result := GClientInfo.IPAddress;
 end;
 
 function ParseAndReplase(Str:string):string;

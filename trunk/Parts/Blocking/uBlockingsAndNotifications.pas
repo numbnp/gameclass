@@ -144,8 +144,6 @@ end; // ExitThreadAPC
 // метод класса в отдельном потоке приложение подвисает
 // в варианте с глобальной функцией все работате нормально
 function DoChecking(Ap: TBlockingsAndNotifications): DWORD;
-var
-  SysTimer:THandle;
 begin
   Ap._DoChecking();
   Result := 0;
