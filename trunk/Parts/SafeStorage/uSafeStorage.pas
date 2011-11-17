@@ -488,7 +488,9 @@ begin
       case AOperation.FormAction of
         FormAction_Show:
           if not frmMain.Visible then
-            frmMain.Show;
+            frmMain.Show
+          else
+            SetForegroundWindow(frmMain.Handle);
         FormAction_Hide:
           if frmMain.Visible then begin
             frmMain.Hide;
