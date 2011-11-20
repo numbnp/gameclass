@@ -36,6 +36,7 @@ call encode_sql.bat
 
 cd Install\Src\INS
 "c:\Program Files\Inno Setup 5\ISCC.exe" Client.iss
+"c:\Program Files\Inno Setup 5\ISCC.exe" All.iss
 cd ..\..\..
 
 cd Install\Src\GI
