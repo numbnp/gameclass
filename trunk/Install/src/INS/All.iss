@@ -5,7 +5,7 @@
 #define MyAppVersion "3.85.2.10.1"
 #define MyAppPublisher "numb"
 #define MyAppURL "http://forum.nodasoft.com/"
-#define MyAppExeName "gccl.exe"
+#define MyAppExeName "GCServer.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\GameClass3
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-OutputBaseFilename=gc3client.{#MyAppVersion}
+OutputBaseFilename=gc3setup.{#MyAppVersion}
 Compression=lzma/Max
 SolidCompression=true
 ShowLanguageDialog=no
@@ -38,12 +38,17 @@ Name: custom; Description: Выборочно; Flags: iscustom
 
 [Components]
 Name: Client; Description: Клиентская часть; Flags: exclusive
-; Name: Operator; Description: Операторская часть; Flags: exclusive
+Name: Operator; Description: Операторская часть; Flags: exclusive
 
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: C:\Projects\Free\Install\src\Packages\Client\*.*; DestDir: {app}\Client; Flags: ignoreversion recursesubdirs createallsubdirs; Components: Client
-; Source: C:\Projects\Free\Install\src\Packages\Server\*.*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs; Components: Operator
+Source: C:\Projects\Free\Install\src\Packages\Server\*.*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs; Components: Operator
+
+
+
+[Icons]
+Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Components: Operator; 
 
 [Run]
 Filename: {app}\Client\gcclsrv.exe; Parameters: "-install -silent"; Components: Client; 
@@ -58,9 +63,9 @@ Root: HKLM; SubKey: SOFTWARE\GameClass3\Client; ValueType: string; ValueName: Cu
 Root: HKLM; SubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: "GameClass Client"; ValueData: """{app}\gccl.exe"""; Flags: UninsDeleteValue deletekey ; Components: Client 
 Root: HKLM; SubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: gccl; ValueData: gccl.exe; Flags: UninsDeleteValue deletekey ; Components: Client
 
-;Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: Installation; ValueData: -1; Flags: UninsDeleteKey deletekey; Components: Operator
-;Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: InstallDirectory; ValueData: {app}; Flags: UninsDeleteKey deletekey; Components: Operator
-;Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: CurrentVersion; ValueData: {#MyAppVersion}; Flags: UninsDeleteKey deletekey; Components: Operator
+Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: Installation; ValueData: -1; Flags: UninsDeleteKey deletekey; Components: Operator
+Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: InstallDirectory; ValueData: {app}; Flags: UninsDeleteKey deletekey; Components: Operator
+Root: HKLM; SubKey: SOFTWARE\GameClass3\Server; ValueType: string; ValueName: CurrentVersion; ValueData: {#MyAppVersion}; Flags: UninsDeleteKey deletekey; Components: Operator
 
 
 [UninstallRun]
