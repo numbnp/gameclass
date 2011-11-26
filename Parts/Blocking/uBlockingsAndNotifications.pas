@@ -110,6 +110,7 @@ uses
   uClientInfoGetRemoteCommand,
   uRemoteCommand,
   uClientScripting,
+  uProcessSupervisor,
 {$ENDIF}
   uDebugLog,
   uClientOptions,
@@ -123,6 +124,9 @@ uses
 procedure Timer_SysTimer;
 begin
   GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
+{$IFDEF GCCLSRV}
+  GClientInfo.GCCLNotStarted := not CheckExecutedProcess('gccl.exe');
+{$ENDIF}
 {$IFDEF GCCL}
   if GClientOptions.RunPadShowInfoOnDesktop then
     TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
