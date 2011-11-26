@@ -1407,6 +1407,7 @@ begin
           and (Comps[index].a.state <> ClientState_OperatorAgreement)
           and (Comps[index].a.state <> ClientState_OperatorSession
           ) then begin
+        timerGSessionsLoad.Enabled := false;
         // сперва вынимаем что за тариф и сколько платит
         strTarifName := GetParamFromString(param,0);
         fSumma := StrToFloatGC(GetParamFromString(param,1));
@@ -1452,6 +1453,7 @@ begin
 //          asys.accounts[asys.GetIndexByNumber(Comps[index].a.number)].Load;
           SendAllOptionsToClient(index);
         end;
+        timerGSessionsLoad.Enabled := True;
       end; // STR_CMD_AUTH_QUERYSTATE_3
 
       //остановка сесии или логофф при неостановленной сессии
