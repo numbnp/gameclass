@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GameClass3"
-#define MyAppVersion "3.85.2.10.1"
+#define MyAppVersion "3.85.2.10.2"
 #define MyAppPublisher "numb"
 #define MyAppURL "http://forum.nodasoft.com/"
 #define MyAppExeName "gccl.exe"

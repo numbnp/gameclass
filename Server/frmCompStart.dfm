@@ -1,11 +1,11 @@
 object formCompStart: TformCompStart
-  Left = 384
-  Top = 335
+  Left = 134
+  Top = 143
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 10
   Caption = 'formCompStartCaption'
-  ClientHeight = 402
+  ClientHeight = 400
   ClientWidth = 628
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,12 +20,12 @@ object formCompStart: TformCompStart
   OnShow = FormShow
   DesignSize = (
     628
-    402)
+    400)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
-    Top = 180
+    Top = 178
     Width = 628
     Height = 222
     Align = alBottom
@@ -416,7 +416,7 @@ object formCompStart: TformCompStart
     Left = 0
     Top = 0
     Width = 628
-    Height = 180
+    Height = 178
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2

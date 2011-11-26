@@ -75,7 +75,7 @@ type
   // получить список задач, не включа€ задачи из списка AExclusions
   function GetTasksList(const AExclusions: array of string): string; overload;
 
-
+  function CheckExecutedProcess(AstrProcessName:string):boolean;
 
 implementation
 
@@ -98,7 +98,7 @@ uses
 
 
 const
-  TIMEOUT_DEF = 3000; // пауза в опросе процессов
+  TIMEOUT_DEF = 120000; // пауза в опросе процессов
 
 
 // метод используетс€ дл€ прерывани€ цикла ожидани€ событий
@@ -253,7 +253,7 @@ var
 begin
   for i := 0 to FProcessesDescriptions.Count - 1 do begin
     bIsProcessFound := _IsProcessFound(FProcessesDescriptions[i].Name);
-    GClientInfo.GCCLNotStarted := not bIsProcessFound;                // –аспологать тут проверку бред!!!
+//    GClientInfo.GCCLNotStarted := not bIsProcessFound;                // –аспологать тут проверку бред!!!
     if not bIsProcessFound then begin
       if FileExists(FProcessesDescriptions[i].ExeFile) then begin
         _ExecuteApp(FProcessesDescriptions[i].ExeFile);
@@ -269,9 +269,9 @@ var
   hToken: THandle;
   hNewToken: THandle;
 begin
-  hProcess := _GetProcessHandle('explorer.exe');
-  if hProcess = 0 then
-    hProcess := _GetProcessHandle('rshell.exe');
+  hProcess := _GetProcessHandle(IfThen(
+      (GClientOptions.ShellMode = ShellMode_Unknown), 'explorer.exe',
+      'rshell.exe'));
   if hProcess = 0 then exit;
   if hProcess <> 0 then begin
     if OpenProcessToken(hProcess,
@@ -367,13 +367,14 @@ end; // TProcessSupervisor._GetProcessHandle
 
 function TProcessSupervisor._IsProcessFound(
     const AstrProcessName: String): Boolean;
-var
-  strExplorerProcessName: String;
+{var
+  strExplorerProcessName: String;}
 begin
-  strExplorerProcessName := IfThen(
+{  strExplorerProcessName := IfThen(
       (GClientOptions.ShellMode = ShellMode_Unknown), 'explorer.exe',
       'rshell.exe');
-  Result := GProcUtils.IsProcessFound(AstrProcessName, strExplorerProcessName);
+  Result := GProcUtils.IsProcessFound(AstrProcessName, strExplorerProcessName);}
+  Result := CheckExecutedProcess(AstrProcessName);
 end; // TProcessSupervisor._IsProcessFound
 
 procedure TProcessSupervisor._ProcessReport(const AbRescanProcess: Boolean;
@@ -402,5 +403,15 @@ function GetTasksList(const AExclusions: array of string): string;
 begin
   Result := GProcUtils.GetTasksList(AExclusions);
 end; // GetTasksList
+
+function CheckExecutedProcess(AstrProcessName:string):boolean;
+var
+  strExplorerProcessName: String;
+begin
+  strExplorerProcessName := IfThen(
+      (GClientOptions.ShellMode = ShellMode_Unknown), 'explorer.exe',
+      'rshell.exe');
+  Result := GProcUtils.IsProcessFound(AstrProcessName, strExplorerProcessName);
+end;
 
 end.
