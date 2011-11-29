@@ -125,7 +125,13 @@ procedure Timer_SysTimer;
 begin
   GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
 {$IFDEF GCCLSRV}
-  GClientInfo.GCCLNotStarted := not CheckExecutedProcess('gccl.exe');
+  try
+    GClientInfo.GCCLNotStarted := not CheckExecutedProcess('gccl.exe');
+  except
+    on e: Exception do begin
+      Debug.Trace0('Error ' + e.Message);
+    end;
+  end;
 {$ENDIF}
 {$IFDEF GCCL}
   if GClientOptions.RunPadShowInfoOnDesktop then
