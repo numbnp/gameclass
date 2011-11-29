@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=3
 MinorVer=85
 Release=2
-Build=15
+Build=10
 Debug=0
 PreRelease=0
 Special=0
@@ -126,13 +126,13 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.85.2.10.2
+FileVersion=3.85.2.10.3
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2011 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass Client Service
-ProductVersion=3.85.2.10.2 Free
+ProductVersion=3.85.2.10.3 Free
 Comments=(c) 2000-2009 NodaSoft, 2010-2011 numb
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package

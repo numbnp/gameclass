@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GameClass3"
-#define MyAppVersion "3.85.2.10.2"
+#define MyAppVersion "3.85.2.10.3"
 #define MyAppPublisher "numb"
 #define MyAppURL "http://forum.nodasoft.com/"
 #define MyAppExeName "gccl.exe"
@@ -92,15 +92,18 @@ begin
         // Дожидаемся завершения удаления...
         while CheckForMutexes('MyProgramUninstallMutex') do Sleep(100);
       end;
+
+      Exec(ExpandConstant('cmd'), '/c taskkill /IM gcclsrv.exe /F', '', SW_HIDE, ewWaitUntilTerminated, r);
+      Exec(ExpandConstant('cmd'), '/c taskkill /IM gccl.exe /F', '', SW_HIDE, ewWaitUntilTerminated, r);
+
       if CheckOldInstaller then 
       begin
-        Exec(ExpandConstant('cmd'), '/c taskkill /IM gcclsrv.exe /F', '', SW_HIDE, ewWaitUntilTerminated, r);
-        Exec(ExpandConstant('cmd'), '/c taskkill /IM gccl.exe /F', '', SW_HIDE, ewWaitUntilTerminated, r);
         Exec(ExpandConstant('cmd'), '/c "'+ExpandConstant('{app}')+'\Client\gcclsrv.exe" -uninstall -silent', '', SW_HIDE, ewWaitUntilTerminated, r);
 
         Exec(ExpandConstant('cmd'), '/c rmdir /Q /S "'+ExpandConstant('{app}')+'"', '', SW_HIDE, ewWaitUntilTerminated, r);
         RegDeleteKeyIncludingSubkeys(HKLM,'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{AB164D55-33F9-4417-A7C4-B07698C7EDE7}');
       end;
+
     end; 
 end;
  
