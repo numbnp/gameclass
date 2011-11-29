@@ -31,13 +31,18 @@ begin
     rpShell := CoRunpadShell.Create;
     case ARunPadAction of
       RunPadAction_HideTabs:
-        if GClientOptions.RunPadHideTabs then begin
-          for i := 0 to GClientOptions.RunPadTabs.Count-1 do
-            if (GClientInfo.RunPadHidedTabs.IndexOf(
-                GClientOptions.RunPadTabs[i]) <> -1) then
-              rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),0)
-            else
-              rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),1);
+        try
+//          rpShell2 := CoRunpadShell2.Create;
+          if GClientOptions.RunPadHideTabs then begin
+           for i := 0 to GClientOptions.RunPadTabs.Count-1 do
+             if (GClientInfo.RunPadHidedTabs.IndexOf(
+                  GClientOptions.RunPadTabs[i]) <> -1) then
+               rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),0)
+             else
+               rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),1);
+          end;
+        except
+          Debug.Trace0('Hide tabs failed');
         end;
       RunPadAction_RestoreVideoMode:
         rpShell.DoSingleAction(RSA_RESTOREVMODE);
