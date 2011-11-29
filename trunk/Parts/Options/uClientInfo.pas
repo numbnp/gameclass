@@ -708,11 +708,11 @@ begin
   if FlstRunPadHidedTabs.Text <> AlstRunPadHidedTabs.Text then begin
     FbDirty := True;
     FlstRunPadHidedTabs.Text := AlstRunPadHidedTabs.Text;
-{$IFDEF GCCL}
+  end;
+  {$IFDEF GCCL}
     TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
         Integer(RunPadAction_HideTabs));
-{$ENDIF}
-  end;
+  {$ENDIF}
 end; // TClientInfo.SetRunPadHidedTabs
 
 procedure TClientInfo.SetLogin(const AstrLogin: String);
