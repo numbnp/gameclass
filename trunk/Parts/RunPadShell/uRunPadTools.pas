@@ -18,6 +18,9 @@ uses
       const AstrParameters: String = '');
 implementation
 
+var
+  LocalRunPadHideTabs: string;
+
 procedure RunPadAction(ARunPadAction: TRunPadAction;
     const AstrParameters: String = '');
 var
@@ -34,12 +37,15 @@ begin
         try
 //          rpShell2 := CoRunpadShell2.Create;
           if GClientOptions.RunPadHideTabs then begin
-           for i := 0 to GClientOptions.RunPadTabs.Count-1 do
-             if (GClientInfo.RunPadHidedTabs.IndexOf(
-                  GClientOptions.RunPadTabs[i]) <> -1) then
-               rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),0)
-             else
+            if GClientInfo.RunPadHidedTabs.Text <> LocalRunPadHideTabs then begin
+             LocalRunPadHideTabs := GClientInfo.RunPadHidedTabs.Text;
+             for i := 0 to GClientOptions.RunPadTabs.Count-1 do
+               if (GClientInfo.RunPadHidedTabs.IndexOf(
+                    GClientOptions.RunPadTabs[i]) <> -1) then
+                 rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),0)
+               else
                rpShell.EnableSheets(PChar(GClientOptions.RunPadTabs[i]),1);
+            end;
           end;
         except
           Debug.Trace0('Hide tabs failed');
