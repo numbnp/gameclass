@@ -201,6 +201,7 @@ begin
     Debug.Trace1('GCCL service _CommandReceive.'+AstrCommand);
     cmd := FCommandFactory.CreateCommandFromServer(AstrCommand, FstrFromHost);
     try
+      Debug.Trace1('GCCL execute service _CommandReceive.'+AstrCommand);
       cmd.Execute();
     finally
       FreeAndNilWithAssert(cmd);

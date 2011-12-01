@@ -856,6 +856,7 @@ var
   dt: TDateTime;
   sdb, curtime: string;
   cmd: TOptionGetRemoteCommand;
+  strParm: string;
 begin
   if (GClientOptions.SyncTime) then begin
     dt := GetVirtualTime;
@@ -868,12 +869,30 @@ begin
   cmd := TOptionGetRemoteCommand.Create('all',Comps[index].ipaddr);
   cmd.Execute;
   SendAccountAndSessionInfoToClient(index);
+
+
+
 end;
 
 procedure SendAccountAndSessionInfoToClient(AnComputerIndex: Integer);
 var
-  sdb, curtime: string;
+  sdb, curtime, strParm: string;
 begin
+  strParm := '';
+  if GRegistry.Volume[AnComputerIndex + 1].Custom then
+      strParm := strParm +
+                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Main)+'/'+
+                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Wave)+'/'+
+                 IfThen(GRegistry.Volume[AnComputerIndex + 1].Mute,'1','0')
+    else
+      strParm := strParm +
+                 IntToStr(GRegistry.Volume[0].Main)+'/'+
+                 IntToStr(GRegistry.Volume[0].Wave)+'/'+
+                 IfThen(GRegistry.Volume[0].Mute,'1','0');
+    strParm := strParm + '/' + IfThen(GRegistry.Volume.OnlyLimit,'0','1');
+
+  UDPSend(Comps[AnComputerIndex].ipaddr,STR_CMD_SETVOLUME + '=' + strParm);
+
   with Comps[AnComputerIndex] do begin
     UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
         + 'ClientState'

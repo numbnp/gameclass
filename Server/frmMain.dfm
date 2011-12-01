@@ -6,7 +6,7 @@ object formMain: TformMain
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 583
+  ClientHeight = 568
   ClientWidth = 951
   Color = clBtnFace
   Constraints.MinHeight = 360
@@ -225,7 +225,7 @@ object formMain: TformMain
     Left = 0
     Top = 57
     Width = 951
-    Height = 526
+    Height = 511
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -234,7 +234,7 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 366
+        Top = 351
         Width = 943
         Height = 6
         Cursor = crVSplit
@@ -244,7 +244,7 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 943
-        Height = 366
+        Height = 351
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -401,7 +401,7 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 372
+        Top = 357
         Width = 943
         Height = 126
         Align = alBottom
@@ -464,11 +464,11 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 943
-        Height = 498
+        Height = 483
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 457
+          Top = 442
           Width = 943
           DesignSize = (
             943
@@ -483,16 +483,16 @@ object formMain: TformMain
         end
         inherited Panel2: TPanel
           Width = 943
-          Height = 457
+          Height = 442
           inherited memMessages: TMemo
             Width = 781
-            Height = 455
+            Height = 440
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 455
+            Height = 440
             inherited lvUsers: TListView
-              Height = 453
+              Height = 438
             end
           end
         end

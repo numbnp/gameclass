@@ -96,7 +96,7 @@ begin
     try
       cmd.Execute();
     finally
-      FreeAndNilWithAssert(cmd);
+      if cmd <> nil then FreeAndNilWithAssert(cmd);
     end;
   except
     on e: Exception do begin
