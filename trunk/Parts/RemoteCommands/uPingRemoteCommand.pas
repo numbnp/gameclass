@@ -64,8 +64,8 @@ uses
 
 const
   MAIN_DEF = 0;
-  WAVE_DEF = 0;
-  MUTE_DEF = 0;
+  {WAVE_DEF = 0;
+  MUTE_DEF = 0;}
   SET_VOLUME_DEF = 0;
 
 
@@ -83,7 +83,7 @@ begin
       AstrParameters, 0, SET_VOLUME_DEF);
   FbEnableInternet := (nParameter = 0); //если 0 - инет доступен
 
-  nParameter := _GetIntegerParameFromString(AstrParameters, 1, MAIN_DEF);
+  {nParameter := _GetIntegerParameFromString(AstrParameters, 1, MAIN_DEF);
   FnMain := nParameter;
 
   nParameter := _GetIntegerParameFromString(AstrParameters, 2, WAVE_DEF);
@@ -94,7 +94,7 @@ begin
 
   nParameter := _GetIntegerParameFromString(
       AstrParameters, 4, SET_VOLUME_DEF);
-  FbSetVolume := (nParameter = 1);
+  FbSetVolume := (nParameter = 1);}
 
 end; // TPingRemoteCommand.Create
 
@@ -104,10 +104,11 @@ end; // TPingRemoteCommand.Create
 // public methods
 
 procedure TPingRemoteCommand.Execute();
-{$IFDEF MSWINDOWS}
-var
-  ControlVolume: TControlVolume;
-{$ENDIF}
+
+//{$IFDEF MSWINDOWS}
+{var
+  ControlVolume: TControlVolume;}
+//{$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
   if GClientOptions.RunPadInternetControl then
@@ -119,7 +120,7 @@ begin
     except
       ASSERT(FALSE, 'RunPad not found!');
     end;
-  ControlVolume := TControlVolume.Create();
+  {ControlVolume := TControlVolume.Create();
   try
     try
       ControlVolume.SetVolumeLimit(FnMain, FnWave, FbMute, FbSetVolume);
@@ -128,7 +129,7 @@ begin
     end;
   finally
     FreeAndNilWithAssert(ControlVolume);
-  end;
+  end;}
 {$ENDIF}
 {$IFDEF LINUX}
 {  ControlVolume := TControlVolume.Create();

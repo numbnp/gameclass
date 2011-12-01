@@ -62,6 +62,7 @@ uses
 {$IFDEF MSWINDOWS}
   uShellModeRemoteCommand,
 {$ENDIF}
+  uSetVolumeRemoteCommand,
   uNullRemoteCommand,
   uLogoffRemoteCommand,
   uRestartRemoteCommand,
@@ -119,6 +120,10 @@ begin
     Result := TOptionSetRemoteCommand.Create(
         GetParamFromString(strParameters,0),
         GetParamFromString(strParameters,1));
+
+  end else if CompareText(strCommand, STR_CMD_SETVOLUME) = 0 then begin
+    Result := TNullRemoteCommand.Create();
+    TSafeStorage.Instance().Push(ThreadSafeOperation_SetVolume,0,strParameters);
 
   end else if CompareText(strCommand, STR_CMD_CLIENT_INFO_SET) = 0 then begin
     Result := TClientInfoSetRemoteCommand.Create(

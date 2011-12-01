@@ -58,7 +58,12 @@ uses
   uClientInfoSetRemoteCommand in '..\Parts\RemoteCommands\uClientInfoSetRemoteCommand.pas',
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
   frmTopMessage in 'frmTopMessage.pas' {frmMessage},
-  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas';
+  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas',
+  uControlVolume in '..\Parts\ControlVolume\uControlVolume.pas',
+  uGetWinVer in '..\Parts\Tools\uGetWinVer.pas',
+  uSetVolumeRemoteCommand in '..\Parts\RemoteCommands\uSetVolumeRemoteCommand.pas',
+  MMDevApi_tlb in '..\Parts\ControlVolume\MMDevApi_tlb.pas',
+  Mixer in '..\Parts\ControlVolume\Mixer.pas';
 
 {$R *.res}
 const

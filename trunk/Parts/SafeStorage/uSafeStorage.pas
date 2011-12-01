@@ -17,7 +17,9 @@ interface
 uses
   Classes,
   SyncObjs,
-  uY2KCommon;
+  uY2KCommon,
+  uRemoteCommand,
+  uSetVolumeRemoteCommand;
   // project units
 //const
   // значения по умолчанию для опций
@@ -47,7 +49,8 @@ type
       ThreadSafeOperation_CtrAltU = 19,
       ThreadSafeOperation_MinimizeWindows = 20,
       ThreadSafeOperation_OldServerWarning = 21,
-      ThreadSafeOperation_UpdateControlFromClientInfo = 22
+      ThreadSafeOperation_UpdateControlFromClientInfo = 22,
+      ThreadSafeOperation_SetVolume = 23
   );
 
   TFormAction = (
@@ -381,6 +384,7 @@ var
   i: Integer;
   str: String;
   dtStart, dtStop: TDateTime;
+  cmd: TRemoteCommand;
 begin
   Debug.Trace5('SafeStorage.ExecuteOperation'
       + IntToStr(Integer(AOperation.Operation)) + '\'
@@ -609,6 +613,11 @@ begin
           end;
         end;
       end;
+    end;
+    ThreadSafeOperation_SetVolume: begin
+      cmd :=TSetVolumeRemoteCommand.Create(AOperation.Parameters);
+      cmd.Execute;
+      FreeAndNil(cmd);
     end;
   end;
 end;

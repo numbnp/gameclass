@@ -204,8 +204,10 @@ begin
     (Result as TCompositeRemoteCommand).Commands.Add(cmd);
 {$ENDIF}
 
-  end else if CompareText(strCommand, STR_CMD_SETVOLUME) = 0 then begin
-    Result := TSetVolumeRemoteCommand.Create(strParameters)
+// Перенесем регулирование громкости в пользовательскую часть
+
+{  end else if CompareText(strCommand, STR_CMD_SETVOLUME) = 0 then begin
+    Result := TSetVolumeRemoteCommand.Create(strParameters)}
 
   end else if CompareText(strCommand, STR_CMD_SETTIME) = 0 then begin
     Result := TSetTimeRemoteCommand.Create(strParameters)

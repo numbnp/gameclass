@@ -4,7 +4,7 @@
 unit frmMain;
 
 interface
-
+                            
 uses
   GCCommon,
   GCLangUtils,
