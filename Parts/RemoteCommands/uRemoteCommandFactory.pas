@@ -132,7 +132,8 @@ begin
       or (CompareText(AstrCommand, STR_CMD_AUTH_PASSCHANGED) = 0)
       or (CompareText(AstrCommand, STR_CMD_SENDMESSAGE) = 0)
 //      or (CompareText(AstrCommand, STR_CMD_GETHARDWARE) = 0)
-      or (CompareText(AstrCommand, STR_CMD_CLIENT_INFO_SET) =0);
+      or (CompareText(AstrCommand, STR_CMD_CLIENT_INFO_SET) =0)
+      or (CompareText(AstrCommand, STR_CMD_SETVOLUME) =0);
 
 //      or (CompareText(AstrCommand, STR_CMD_RECEIVEMESSAGE) = 0);
 end; // TRemoteCommandFactory._IsResendedCommand

@@ -43,7 +43,7 @@ uses
 
 procedure TNullRemoteCommand.Execute();
 begin
-  Debug.Trace0('TNullRemoteCommand.Execute');
+  Debug.Trace1('TNullRemoteCommand.Execute');
 end; // TNullRemoteCommand.Execute
 
 

@@ -5,6 +5,7 @@ uses
   SysUtils,
   ActiveX,
   ActiveDs_TLB,
+  tlhelp32,
   gcconst in '..\Server\gcconst.pas',
   uAnswerRemoteCommand in '..\parts\RemoteCommands\uAnswerRemoteCommand.pas',
   uBlockingsAndNotifications in '..\Parts\Blocking\uBlockingsAndNotifications.pas',
@@ -24,7 +25,6 @@ uses
   uCommandReceiver in '..\parts\SendRecieve\uCommandReceiver.pas',
   uCommandSender in '..\parts\SendRecieve\uCommandSender.pas',
   uCompositeRemoteCommand in '..\parts\RemoteCommands\uCompositeRemoteCommand.pas',
-  uControlVolume in '..\parts\ControlVolume\uControlVolume.pas',
   uCrossPlatformFunctions in '..\Parts\CrossPlatform\uCrossPlatformFunctions.pas',
   uDebugLog in '..\parts\Debug\uDebugLog.pas',
   uFileReceiver in '..\Parts\FileSend\uFileReceiver.pas',
@@ -80,7 +80,11 @@ uses
   uProcUtils in '..\Parts\ProcessSupervisor\uProcUtils.pas',
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
   uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
-  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas';
+  uParseAndReplase in '..\Parts\Tools\uParseAndReplase.pas',
+  uGetWinVer in '..\Parts\Tools\uGetWinVer.pas',
+  uControlVolume in '..\Parts\ControlVolume\uControlVolume.pas',
+  MMDevApi_tlb in '..\Parts\ControlVolume\MMDevApi_tlb.pas',
+  Mixer in '..\Parts\ControlVolume\Mixer.pas';
 
 {$R *.RES}
 
