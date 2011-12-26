@@ -18,7 +18,7 @@ uses
   Menus,ComCtrls, SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
   DateUtils, ADODB, Shlobj, registry, Proxy,
   IdBaseComponent, IdUDPBase, IdUDPServer, IdSocketHandle,
-  IdUDPClient, IdComponent, StdCtrls, gcsessions;
+  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread;
 
 // proxy
 procedure ProxyInitialize;
@@ -655,6 +655,7 @@ begin
     GSessions.Load;
     GSessions.Check;
     Application.ProcessMessages;
+    StartPingThread;
 
     if (CompsCount > 0) then begin
       formMain.tmrCyclicCompAction.Interval := Round
@@ -696,6 +697,7 @@ end;
 // logout
 procedure ehsLogout;
 begin
+  StopPingThread;
   formMain.tmrCyclicCompAction.Enabled := False;
   formMain.tmrFileSynchronization.Enabled := False;
   formMain.timerCompsList.Enabled := false;
@@ -874,15 +876,19 @@ begin
          formMain.cdsComps.Append;
       formMain.cdsComps.FieldValues['id'] := Comps[i].id;
       if Comps[i].busy then
-        nNumber := 2 //сесси€
+        nNumber := 3 //сесси€
       else begin
         if Comps[i].session = Nil then
           nNumber := 0 //свободен
         else
-          nNumber := 4; //бронь
+          nNumber := 6; //бронь
       end;
       if Not Comps[i].control then
+      begin
         Inc(nNumber); //вместо зеленой иконки - красна€
+        if Comps[i].IcmpPingable  then
+          Inc(nNumber); //вместо красной иконки - желта€
+      end;
       formMain.cdsComps.FieldValues['Ping'] := IntToStr(nNumber);
 
       formMain.cdsComps.FieldValues['Computer'] := Comps[i].number;
@@ -1808,10 +1814,13 @@ begin
   if (isManager) then exit;
   uncontrol_flag := false;
   // считаем количество отправленных пингов
+
+//  Comps[AnComputerIndex].IcmpPingable := PingICMP(Comps[AnComputerIndex].ipaddr);
   Comps[AnComputerIndex].pings := Comps[AnComputerIndex].pings + 1;
   // если уже отправили пакетов больше чем максимум, то считаем что комп
   // Ќ≈  ќЌ“–ќЋ»–”≈“—я
-  if (Comps[AnComputerIndex].pings > MAXIMUM_LOST_PINGS) then
+  if (Comps[AnComputerIndex].pings > MAXIMUM_LOST_PINGS) or
+    (not Comps[AnComputerIndex].IcmpPingable) then
   begin
     // 1) было false - gccommon::dsControlCompTimer
     // 2) было true - gccommon::dsControlCompStart

@@ -76,7 +76,8 @@ end; // TControlVolume.GetMainVolume
 function TControlVolume.SetMainVolume(const AnVolume: Integer): Boolean;
 
 begin
-  FMixer.volume := AnVolume;
+
+  FMixer.Volume  := AnVolume;
 
   Result := TRUE;
 end; // TControlVolume.SetMainVolume
@@ -84,12 +85,13 @@ end; // TControlVolume.SetMainVolume
 
 function TControlVolume.GetWaveVolume(): Integer;
 begin
-  Result := 0;
+  Result := FMixer.WaveVolume;
 end; // TControlVolume.GetWaveVolume
 
 
 function TControlVolume.SetWaveVolume(const AnVolume : Integer): Boolean;
 begin
+  FMixer.WaveVolume := AnVolume;
   Result := TRUE;
 end; // TControlVolume.SetWaveVolume
 

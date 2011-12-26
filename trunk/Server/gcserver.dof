@@ -111,7 +111,7 @@ AutoIncBuild=1
 MajorVer=3
 MinorVer=85
 Release=2
-Build=13
+Build=10
 Debug=0
 PreRelease=0
 Special=0
@@ -122,13 +122,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=NodaSoft
 FileDescription=GC3Server
-FileVersion=3.85.2.13
+FileVersion=3.85.2.10.4
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2011 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3
-ProductVersion=3.85.2.10.3 Free
+ProductVersion=3.85.2.10.4 Free
 Comments=www.nodasoft.com, numb
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\dclite70.bpl=Borland Integrated Translation Environment
