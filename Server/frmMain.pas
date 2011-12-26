@@ -361,7 +361,7 @@ procedure SendAuthGoState1(nCompIndex:Integer; bNewSecCode:Boolean);
 procedure SendAuthGoState2(CompIndex:Integer);
 procedure SortDataSet(bMakeSorting: boolean);
 procedure ResetDataSetBookmark;
-procedure IcmpPing;
+//procedure IcmpPing;
 
 function GetIdColumnByFieldName(Grid:TDBGridEh; FieldName: String):integer;
 
@@ -631,7 +631,7 @@ begin
    // Включаем выключеные компы с оплаченым временем
   if GRegistry.Client.UseWOL then
     for i:=0 to CompsCount-1 do
-      if (not Comps[i].control) and Comps[i].Busy then
+      if (not Comps[i].IcmpPingable) and Comps[i].Busy then
         WakeUPComputer(Comps[i].macaddr);
 
   if not dsConnected then    // Проверяем подключение к базе для
@@ -2057,7 +2057,7 @@ begin
   mnuRestartClick(Sender);
 end;
 
-procedure IcmpPing; //старый код
+{procedure IcmpPing; //старый код
 begin
     Comps[GnCyclicCompActionCounter].IcmpPings := Comps[GnCyclicCompActionCounter].IcmpPings + 1;
     if (Comps[GnCyclicCompActionCounter].IcmpPings > MAXIMUM_LOST_PINGS) then
@@ -2076,7 +2076,7 @@ begin
       end;
 //      tmrIcmpPing.Enabled := False;
     end;
-end;
+end;}
 
 procedure TformMain.mnuServiceClick(Sender: TObject);
 var

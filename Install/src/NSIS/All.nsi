@@ -18,7 +18,8 @@ SetCompressor lzma
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\arrow.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "c:\Projects\Free\Res\Installer.bmp"
+
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 
@@ -43,7 +44,7 @@ SetCompressor lzma
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "setup.exe"
+OutFile "c:\Projects\Free\Output\Setup\gc3setup.${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\GameClass3"
 ShowInstDetails show
 ShowUnInstDetails show

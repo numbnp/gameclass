@@ -75,7 +75,8 @@ type
     used: boolean; //flag
   end;
 
-  TMapping = record
+  TMapping
+   = record
     id: word;
     listenport: word;
     mappedip: string;
@@ -144,6 +145,9 @@ type
     strInfoClientver: string; // версия GC3 клиента на машине
     strInfoFreespaceC: string; // свободно места на диске С
     strInfoFreespaceD: string; // свободно места на диске D
+
+    IcmpPingable: Boolean; 
+
     // authorize
     a: TAuthorization;
     function IsGuestSession: Boolean;
@@ -1199,14 +1203,14 @@ begin
       ComputersGetIndexByIp := i;
       break;
     end;
-  if (res = false) then
+ { if (res = false) then
   begin
     Console.AddEvent(EVENT_ICON_ERROR, LEVEL_ERROR, 'ComputersGetIndexByIp: unknown sender-ip ('+ip+')!');
     //formGCMessageBox.memoInfo.Text := translate('HighCryticalError');
     //formGCMessageBox.SetDontShowAgain(false);
     //formGCMessageBox.ShowModal;
     //DoEvent(FN_EXIT);
-  end;
+  end;}
 end;
 
 function ComputerGroupsGetName(AnId: Integer):String;
@@ -1539,9 +1543,14 @@ procedure UDPSend(const AstrIP: string; const AstrData: string);
 var
   vport: integer;
   strData: String;
+  compIndex: integer;
 begin
   if (isManager) then exit;
   if AstrIP = '' then exit;
+  compIndex := ComputersGetIndexByIp(AstrIP);
+
+  if compIndex > -1 then
+    if not Comps[ComputersGetIndexByIp(AstrIP)].IcmpPingable then exit;
   try
     Debug.Trace1(AstrIP + ' : ' + AstrData);
     strData := AstrData;

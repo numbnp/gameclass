@@ -9,9 +9,12 @@ type
     function getMute: boolean; virtual; abstract;
     function getVolume: integer; virtual; abstract;
     procedure setVolume(Value: integer); virtual; abstract;
+    function getWaveVolume: integer; virtual; abstract;
+    procedure setWaveVolume(Value: integer); virtual; abstract;
     procedure setMute(Value: boolean); virtual; abstract;
   public
-    property volume: integer read getVolume write setVolume;
+    property Volume: integer read getVolume write setVolume;
+    property WaveVolume: integer read getWaveVolume write setWaveVolume;
     property muted: boolean read getMute write setMute;
   end;
 
@@ -35,6 +38,8 @@ type
     function getMute: boolean; override;
     function getVolume: integer; override;
     procedure setVolume(Value: integer); override;
+    function getWaveVolume: integer; override;
+    procedure setWaveVolume(Value: integer); override;
     procedure setMute(Value: boolean); override;
   public
     constructor Create;
@@ -50,6 +55,8 @@ type
     function getMute: boolean; override;
     function getVolume: integer; override;
     procedure setVolume(Value: integer); override;
+    function getWaveVolume: integer; override;
+    procedure setWaveVolume(Value: integer); override;
     procedure setMute(Value: boolean); override;
   public
     constructor Create;
@@ -178,6 +185,48 @@ end;
 
 // ---------------------------------------------------------------------------
 
+function TxpMixer.getWaveVolume: integer;
+var
+  WaveOutCaps: TWaveOutCaps;
+  nLVolume: Integer;
+  nRVolume: Integer;
+  nVolume: Integer;
+begin
+  if WaveOutGetDevCaps(WAVE_MAPPER, @WaveOutCaps, sizeof(WaveOutCaps))
+      = MMSYSERR_NOERROR then begin
+    if WaveOutCaps.dwSupport and WAVECAPS_VOLUME = WAVECAPS_VOLUME then begin
+      WaveOutGetVolume(WAVE_MAPPER, @nVolume);
+      nLVolume := (nVolume shr 16) and $FFFF;
+      nRVolume := nVolume and $FFFF;
+      if nLVolume > nRVolume then
+        Result := nLVolume
+      else
+        Result := nRVolume;
+    end;
+  end;
+end;
+
+// ---------------------------------------------------------------------------
+
+procedure TxpMixer.setWaveVolume(Value: integer);
+var
+  WaveOutCaps: TWaveOutCaps;
+  nVolume: Integer;
+begin
+  nVolume := (Value shl 16) or Value;
+
+  if WaveOutGetDevCaps(WAVE_MAPPER, @WaveOutCaps, sizeof(WaveOutCaps))
+      = MMSYSERR_NOERROR then begin
+
+    if WaveOutCaps.dwSupport and WAVECAPS_VOLUME = WAVECAPS_VOLUME then begin
+      WaveOutSetVolume(WAVE_MAPPER, nVolume);
+    end;
+  end;
+end;
+
+
+// ---------------------------------------------------------------------------
+
 procedure TxpMixer.setMute(Value: boolean);
 var
   Line: TMixerLine;
@@ -217,7 +266,7 @@ end;
 // ---------------------------------------------------------------------------
 
 procedure TxpMixer.setVolume(Value: integer);
-var 
+var
   Line: TMixerLine;
   Controls: TMixerLineControls;
   MasterVolume: TMixerControl;
@@ -259,7 +308,7 @@ end;
 constructor TvistaMixer.Create;
 begin
   CoCreateInstance(CLSID_MMDeviceEnumerator, nil, CLSCTX_ALL, IID_IMMDeviceEnumerator, FmmDevEnum);
-  FmmDevEnum.GetDefaultAudioEndpoint(eRender, eMultimedia, FmmDev);
+  FmmDevEnum.GetDefaultAudioEndpoint(eRender, eConsole, FmmDev);
   FmmDev.Activate(IID_IAudioEndpointVolume, CLSCTX_ALL, nil, FmmEndpoint);
 end;
 
@@ -284,13 +333,25 @@ end;
 
 procedure TvistaMixer.setMute(Value: boolean);
 begin
-  FmmEndpoint.SetMute(Value, nil);
+//  FmmEndpoint.SetMute(Value, nil);
+end;
+
+// ---------------------------------------------------------------------------
+
+function TvistaMixer.getWaveVolume: integer;
+begin
+end;
+
+// ---------------------------------------------------------------------------
+
+procedure TvistaMixer.setWaveVolume(Value: integer);
+begin
 end;
 
 // ---------------------------------------------------------------------------
 
 procedure TvistaMixer.setVolume(Value: integer);
-var 
+var
   fValue: Single;
 begin
   if (value < 0) then
