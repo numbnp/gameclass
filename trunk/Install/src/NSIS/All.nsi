@@ -25,7 +25,7 @@ SetCompressor lzma
 
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
-; Выбор компанентов
+; Г‚Г»ГЎГ®Г° ГЄГ®Г¬ГЇГ Г­ГҐГ­ГІГ®Гў
 !insertmacro MUI_PAGE_COMPONENTS
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
@@ -49,20 +49,21 @@ InstallDir "$PROGRAMFILES\GameClass3"
 ShowInstDetails show
 ShowUnInstDetails show
 
-InstType "Клиентское рабочее место"
-InstType "Рабочее место менеджера"
-InstType "Главный компьютер установка"
-InstType "Главный компьютер обновление"
+InstType "ГЉГ«ГЁГҐГ­ГІГ±ГЄГ®ГҐ Г°Г ГЎГ®Г·ГҐГҐ Г¬ГҐГ±ГІГ®"
+InstType "ГђГ ГЎГ®Г·ГҐГҐ Г¬ГҐГ±ГІГ® Г¬ГҐГ­ГҐГ¤Г¦ГҐГ°Г "
+InstType "ГѓГ«Г ГўГ­Г»Г© ГЄГ®Г¬ГЇГјГѕГІГҐГ° ГіГ±ГІГ Г­Г®ГўГЄГ "
+InstType "ГѓГ«Г ГўГ­Г»Г© ГЄГ®Г¬ГЇГјГѕГІГҐГ° Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ"
 
-Section "Клиентская часть GameClass" SEC01
+Section "ГЉГ«ГЁГҐГ­ГІГ±ГЄГ Гї Г·Г Г±ГІГј GameClass" SEC01
   SectionIn 1
 
-; На случай обновления останавливаем клиент и удаляем службу
+; ГЌГ  Г±Г«ГіГ·Г Г© Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї Г®Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЄГ«ГЁГҐГ­ГІ ГЁ ГіГ¤Г Г«ГїГҐГ¬ Г±Г«ГіГ¦ГЎГі
   ExecWait 'taskkill /IM gccl.exe /F'
+  ExecWait 'tskill gccl /A'
   ExecWait 'net stop srvgccl'
   ExecWait '$INSTDIR\Client\gcclsrv.exe -uninstall -silent'
 
-; Заливаем файлы клиента
+; Г‡Г Г«ГЁГўГ ГҐГ¬ ГґГ Г©Г«Г» ГЄГ«ГЁГҐГ­ГІГ 
   SetOutPath "$INSTDIR\Client"
   SetOverwrite on
   File "c:\Projects\Free\Install\src\Packages\Client\*.*"
@@ -74,24 +75,24 @@ Section "Клиентская часть GameClass" SEC01
   File "c:\Projects\Free\Install\src\Packages\Client\Sounds\*.*"
   SetOutPath "$INSTDIR\Client\Files"
 
-; Делаем нужные записи в реестре
+; Г„ГҐГ«Г ГҐГ¬ Г­ГіГ¦Г­Г»ГҐ Г§Г ГЇГЁГ±ГЁ Гў Г°ГҐГҐГ±ГІГ°ГҐ
   WriteRegStr HKLM "SOFTWARE\GameClass3\Client" "InstallDirectory" "$INSTDIR\Client"
   WriteRegStr HKLM "SOFTWARE\GameClass3\Client" "CurrentVersion" "${PRODUCT_VERSION}"
   
-; Прописываемся в автозагрузку
+; ГЏГ°Г®ГЇГЁГ±Г»ГўГ ГҐГ¬Г±Гї Гў Г ГўГІГ®Г§Г ГЈГ°ГіГ§ГЄГі
   WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "GameClass Client" "$INSTDIR\Client\gccl.exe"
 
-; Прописываемся в фаерволе
+; ГЏГ°Г®ГЇГЁГ±Г»ГўГ ГҐГ¬Г±Гї Гў ГґГ ГҐГ°ГўГ®Г«ГҐ
   ExecWait 'netsh firewall add allowedprogram "$INSTDIR\Client\gccl.exe" GCClient ENABLE'
   ExecWait 'netsh firewall add allowedprogram "$INSTDIR\Client\gcclsrv.exe" GCClientService ENABLE'
   
-; Регистрируем службу и запускаем ее
+; ГђГҐГЈГЁГ±ГІГ°ГЁГ°ГіГҐГ¬ Г±Г«ГіГ¦ГЎГі ГЁ Г§Г ГЇГіГ±ГЄГ ГҐГ¬ ГҐГҐ
   ExecWait '$INSTDIR\Client\gcclsrv.exe -install -silent'
   ExecWait 'net start srvgccl'
   
 SectionEnd
 
-Section "Сервер GameClass" SEC02
+Section "Г‘ГҐГ°ГўГҐГ° GameClass" SEC02
   SectionIn 2 3 4
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
@@ -106,7 +107,7 @@ Section "Сервер GameClass" SEC02
   SetOverwrite ifnewer
   File "C:\Projects\Free\Install\src\Packages\Server\UserGate Plug-In\*.*"
 
-; Делаем нужные записи в реестре
+; Г„ГҐГ«Г ГҐГ¬ Г­ГіГ¦Г­Г»ГҐ Г§Г ГЇГЁГ±ГЁ Гў Г°ГҐГҐГ±ГІГ°ГҐ
   WriteRegStr HKLM "SOFTWARE\GameClass3\Server" "InstallDirectory" "$INSTDIR"
   WriteRegStr HKLM "SOFTWARE\GameClass3\Server" "CurrentVersion" "${PRODUCT_VERSION}"
 
@@ -121,7 +122,7 @@ Section "Сервер GameClass" SEC02
   CreateShortCut "$SMPROGRAMS\GameClass3\UserGate 2.8 Plug-In.lnk" "$INSTDIR\UserGate Plug-In\gcugate.exe"
 SectionEnd
 
-Section "Создание БД" SEC03
+Section "Г‘Г®Г§Г¤Г Г­ГЁГҐ ГЃГ„" SEC03
   SectionIn 3
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
@@ -140,7 +141,7 @@ Section "Создание БД" SEC03
 
 SectionEnd
 
-Section "Обновление БД" SEC04
+Section "ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГЃГ„" SEC04
   SectionIn 4
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
@@ -159,10 +160,10 @@ Section "Обновление БД" SEC04
 
 SectionEnd
 
-LangString DESC_OPERATOR ${LANG_RUSSIAN} "Основная часть комплекса"
-LangString DESC_CLIENT ${LANG_RUSSIAN} "Часть комплекса устанавливаемая на клиентские компьюторы"
-LangString DESC_CREATEDB ${LANG_RUSSIAN} "Создание новой базы данных"
-LangString DESC_UPDATEDB ${LANG_RUSSIAN} "Обновление базы данных"
+LangString DESC_OPERATOR ${LANG_RUSSIAN} "ГЋГ±Г­Г®ГўГ­Г Гї Г·Г Г±ГІГј ГЄГ®Г¬ГЇГ«ГҐГЄГ±Г "
+LangString DESC_CLIENT ${LANG_RUSSIAN} "Г—Г Г±ГІГј ГЄГ®Г¬ГЇГ«ГҐГЄГ±Г  ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬Г Гї Г­Г  ГЄГ«ГЁГҐГ­ГІГ±ГЄГЁГҐ ГЄГ®Г¬ГЇГјГѕГІГ®Г°Г»"
+LangString DESC_CREATEDB ${LANG_RUSSIAN} "Г‘Г®Г§Г¤Г Г­ГЁГҐ Г­Г®ГўГ®Г© ГЎГ Г§Г» Г¤Г Г­Г­Г»Гµ"
+LangString DESC_UPDATEDB ${LANG_RUSSIAN} "ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГЎГ Г§Г» Г¤Г Г­Г­Г»Гµ"
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC02} $(DESC_OPERATOR)
@@ -183,17 +184,18 @@ SectionEnd
 
 ;Function un.onUninstSuccess
 ;  HideWindow
-;  MessageBox MB_ICONINFORMATION|MB_OK "Удаление программы $(^Name) было успешно завершено."
+;  MessageBox MB_ICONINFORMATION|MB_OK "Г“Г¤Г Г«ГҐГ­ГЁГҐ ГЇГ°Г®ГЈГ°Г Г¬Г¬Г» $(^Name) ГЎГ»Г«Г® ГіГ±ГЇГҐГёГ­Г® Г§Г ГўГҐГ°ГёГҐГ­Г®."
 ;FunctionEnd
 
 ;Function un.onInit
-;  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Вы уверены в том, что желаете удалить $(^Name) и все компоненты программы?" IDYES +2
+;  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Г‚Г» ГіГўГҐГ°ГҐГ­Г» Гў ГІГ®Г¬, Г·ГІГ® Г¦ГҐГ«Г ГҐГІГҐ ГіГ¤Г Г«ГЁГІГј $(^Name) ГЁ ГўГ±ГҐ ГЄГ®Г¬ГЇГ®Г­ГҐГ­ГІГ» ГЇГ°Г®ГЈГ°Г Г¬Г¬Г»?" IDYES +2
 ;  Abort
 ;FunctionEnd
 
 Section Uninstall
 
   ExecWait 'taskkill /IM gccl.exe /F'
+  ExecWait 'tskill gccl /A'
   ExecWait 'net stop srvgccl'
   ExecWait '$INSTDIR\Client\gcclsrv.exe -uninstall -silent'
 
