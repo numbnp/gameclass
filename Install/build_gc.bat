@@ -11,9 +11,9 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set BASE_VERSION=3.85.2.10.3
-set APP_VERSION=3.85.2.10.3 Free
-set CLIENT_VERSION=3.85.2.10.3
+set BASE_VERSION=3.85.2.10.4
+set APP_VERSION=3.85.2.10.4 Free
+set CLIENT_VERSION=3.85.2.10.4
 set SQL_SCRIPT_VERSION=3853
 
 rem Install\src\Batch\gc_replace_versions.vbs "%BASE_VERSION%" "%APP_VERSION%"
@@ -34,11 +34,15 @@ call copy_packages_files.bat
 rem Кодирование sql-файлов в sqp
 call encode_sql.bat
 
-cd Install\Src\INS
-"c:\Program Files\Inno Setup 5\ISCC.exe" Client.iss
-"c:\Program Files\Inno Setup 5\ISCC.exe" All.iss
-cd ..\..\..
+rem cd Install\Src\INS
+rem "c:\Program Files\Inno Setup 5\ISCC.exe" Client.iss
+rem "c:\Program Files\Inno Setup 5\ISCC.exe" All.iss
+rem cd ..\..\..
 
-cd Install\Src\GI
-"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
-cd ..\..\..
+rem cd Install\Src\GI
+rem "C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
+rem cd ..\..\..
+
+cd Install\Src\NSIS
+"c:\Program Files\NSIS\makensis.exe" All.nsi
+

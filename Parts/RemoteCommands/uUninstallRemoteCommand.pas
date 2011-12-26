@@ -75,7 +75,7 @@ var
   strParameters: String;
 begin
   strCommand := ExtractFilePath(ParamStr(0));
-  strParameters := '/VERYSILENT';
+  strParameters := '/S';
   if Reinstall then begin
     strCommand := strCommand + FILE_RECEIVE_DIR_DEF + '\'
         + FILE_INSTALL_FILENAME_DEF;
