@@ -491,10 +491,16 @@ begin
     ThreadSafeOperation_MainFormAction:
       case AOperation.FormAction of
         FormAction_Show:
+{$IFDEF MSWINDOWS}
           if not frmMain.Visible then
             frmMain.Show
           else
             SetForegroundWindow(frmMain.Handle);
+{$ENDIF}
+{$IFDEF LINUX}
+          if not frmMain.Visible then
+            frmMain.Show;
+{$ENDIF}
         FormAction_Hide:
           if frmMain.Visible then begin
             frmMain.Hide;

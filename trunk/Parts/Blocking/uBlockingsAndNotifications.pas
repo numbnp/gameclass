@@ -93,13 +93,13 @@ uses
     uWinhkg,
     RS_APILib_TLB,
     frmTopMessage,
+    uParseAndReplase,
   {$ENDIF}
   {$IFDEF LINUX}
     QForms,
   {$ENDIF}
   uClientConst,
   uSafeStorage,
-  uParseAndReplase,
 {$ENDIF}
 {$IFDEF GCCLSRV}
   uKillTaskRemoteCommand,
@@ -110,7 +110,9 @@ uses
   uClientInfoGetRemoteCommand,
   uRemoteCommand,
   uClientScripting,
+{$IFDEF MSWINDOWS}
   uProcessSupervisor,
+{$ENDIF}
 {$ENDIF}
   uDebugLog,
   uClientOptions,
