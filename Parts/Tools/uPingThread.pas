@@ -64,8 +64,11 @@ end;
 
 procedure StopPingThread();
 begin
-  PingThread.Terminate;
-  FreeAndNil(PingThread);
+  if PingThread <> nil then
+  begin
+    PingThread.Terminate;
+    FreeAndNil(PingThread);
+  end;
 end;
 
 

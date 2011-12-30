@@ -872,14 +872,14 @@ var
   s: THandle;
 begin
   pnlClock.Caption := TimeToStr(Time);
-
+{$IFDEF MSWINDOWS}
   modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
-
+{$ENDIF}
 //  modernTrayIcon.Active := false;
 //  modernTrayIcon.Active := true;
 //  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
   if (SecondOf(Time) mod 10) = 0 then
-    GClientInfo.SaveIfNeeded;
+    GClientInfo.SaveIfNeeded;    
 end;
 
 procedure TfrmMain.edtSumEnter(Sender: TObject);
