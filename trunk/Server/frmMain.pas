@@ -204,6 +204,9 @@ type
     PopupMenuLogoff: TPopupMenu;
     cmnLogoffAll: TMenuItem;
     cmnLogoffFree: TMenuItem;
+    tbRunPad: TToolBar;
+    ilRunPad: TImageList;
+    ToolButton3: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
