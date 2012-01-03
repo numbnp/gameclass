@@ -243,7 +243,7 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 943
+        Width = 916
         Height = 351
         Align = alClient
         AutoFitColWidths = True
@@ -439,6 +439,25 @@ object formMain: TformMain
           ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 1
+        end
+      end
+      object tbRunPad: TToolBar
+        Left = 916
+        Top = 0
+        Width = 27
+        Height = 351
+        Align = alRight
+        AutoSize = True
+        Ctl3D = True
+        EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
+        Flat = True
+        TabOrder = 2
+        object ToolButton3: TToolButton
+          Left = 0
+          Top = 0
+          Caption = 'ToolButton3'
+          ImageIndex = 0
+          Wrap = True
         end
       end
     end
@@ -2855,7 +2874,7 @@ object formMain: TformMain
     Left = 472
     Top = 200
     Bitmap = {
-      494C01010C000E00040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C01010C000E00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3387,7 +3406,8 @@ object formMain: TformMain
       E007E007E007E3FFC003C003C003C0FFC003C003C003C03FC003C003C003C00F
       C003C003C003C003C003C003C003C003C003C003C003C003C003C003C003C007
       C003C003C003C00FC003C003C003C03FC003C003C003C0FFE007E007E007E3FF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object timerCompsList: TTimer
     Enabled = False
@@ -4147,5 +4167,9 @@ object formMain: TformMain
       Caption = #1051#1086#1075#1086#1092#1092' '#1076#1083#1103' '#1089#1074#1086#1073#1086#1076#1085#1099#1093
       OnClick = cmnLogoffFreeClick
     end
+  end
+  object ilRunPad: TImageList
+    Left = 356
+    Top = 289
   end
 end

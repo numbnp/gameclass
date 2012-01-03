@@ -1,6 +1,6 @@
 object frmReportEdit: TfrmReportEdit
-  Left = 206
-  Top = 202
+  Left = 817
+  Top = 239
   BorderStyle = bsNone
   Caption = 'frmReportEdit'
   ClientHeight = 508
