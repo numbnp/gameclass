@@ -509,7 +509,7 @@ begin
   if Assigned(ActiveReport) then begin
     _DeleteReportFromTree(ActiveReport.UID);
     FReportManager.DeleteReport(ActiveReport.UID);
-    _ReorderReports();
+//    _ReorderReports();
     _SelectFirstReport();    
   end;
 end; // TfrmReports.actDeleteReportExecute
