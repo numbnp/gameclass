@@ -332,6 +332,7 @@ type
     procedure mnuLogoffClick(Sender: TObject);
     procedure cmnLogoffAllClick(Sender: TObject);
     procedure cmnLogoffFreeClick(Sender: TObject);
+    procedure ToolButton3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -2397,6 +2398,24 @@ begin
     end;
 
   Result := IdColumn;
+end;
+
+procedure TformMain.ToolButton3Click(Sender: TObject);
+var
+  qstr:string;
+  dt:string;
+  ddt: TDateTime;
+begin
+  DateTimeToString(dt,'dd-mmm-yyyy hh:nn:ss',now);
+  dt := '05-jan-2012 09:30:22';
+  dt :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (dt);
+  qstr:=dsGetVarBySqlQuery( dt );
+  Console.AddEvent(EVENT_ICON_EMPTY,LEVEL_2,qstr);
+  ddt := StrToDateTime(qstr);
+  DateTimeToString(dt,'dd.mm.yyyy hh:nn:ss',ddt);
+  dt :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (dt);
+  qstr:=dsGetVarBySqlQuery( dt );
+  Console.AddEvent(EVENT_ICON_EMPTY,LEVEL_2,qstr);
 end;
 
 end.

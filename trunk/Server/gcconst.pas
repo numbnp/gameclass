@@ -12,7 +12,7 @@ uses QGraphics;
 const
   // misc2
   BASE_VERSION = '3.85.2';
-  APP_VERSION = '3.85.2.10.4 Free';
+  APP_VERSION = '3.85.2.11 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -168,6 +168,7 @@ const
   DS_CUSTOMREPORTS_IMPORT = 'CustomReportsImport';
   DS_USAGE_DATE_SELECT = 'UsageDateSelect';
   DS_PROCESS_ADD = 'ProcessAdd';
+  DS_SHIFT_TIME = 'GetShiftPoint'; //  начало смены, параметном указывается текущее время
 
 // Computers
   MAX_COMPUTERS = 300; // максимум компьютеров

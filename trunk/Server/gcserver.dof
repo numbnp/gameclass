@@ -105,13 +105,9 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=..\Output\debug
-[Language]
-ActiveLang=
-ProjectLang=
-RootDir=
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=1
+AutoIncBuild=0
 MajorVer=3
 MinorVer=85
 Release=2
@@ -128,11 +124,11 @@ CompanyName=NodaSoft
 FileDescription=GC3Server
 FileVersion=3.85.2.11
 InternalName=
-LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2011 numb
+LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3
-ProductVersion=3.85.2.10.4 Free
+ProductVersion=3.85.2.11 Free
 Comments=www.nodasoft.com, numb
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\dclite70.bpl=Borland Integrated Translation Environment

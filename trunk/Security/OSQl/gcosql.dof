@@ -113,9 +113,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=3
+MinorVer=4
 Release=0
-Build=15
+Build=1
 Debug=0
 PreRelease=0
 Special=0
@@ -126,13 +126,13 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=2.3.0.15
+FileVersion=2.4.0.1
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=2.3.0.0
+ProductVersion=2.4.0.0
 Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
