@@ -122,6 +122,7 @@ uses
 {$IFDEF GC3SERVER}
   gccomputers,
   uVirtualTime,
+  uTimeShift,
 {$ENDIF}
   DB,
   SysUtils;
@@ -315,14 +316,18 @@ procedure TReport._DefaultReportParameters();
 begin
 {$IFDEF GC3SERVER}
   FReportParameters.dtCurrent := GetVirtualTime;
+  FReportParameters.dtCurrentShiftBegin := GetCurrentShiftBegin(ReportParameters.dtCurrent);
+  FReportParameters.dtPrevShiftBegin := GetCurrentShiftBegin(ReportParameters.dtCurrentShiftBegin);
+  FReportParameters.dtPrevShiftEnd := FReportParameters.dtCurrentShiftBegin;
 {$ELSE}
   FReportParameters.dtCurrent := Now();
-{$ENDIF}
-  FReportParameters.dtBegin := MinDateTime;
-  FReportParameters.dtEnd := MaxDateTime;
   FReportParameters.dtCurrentShiftBegin := Now();
   FReportParameters.dtPrevShiftBegin := Now();
   FReportParameters.dtPrevShiftEnd := Now();
+{$ENDIF}
+  FReportParameters.dtBegin := MinDateTime;
+  FReportParameters.dtEnd := MaxDateTime;
+
 end; // TReport._DefaultReportParameters
 
 

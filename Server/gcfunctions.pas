@@ -493,7 +493,7 @@ var
   mem: TMemoryStream;
 
 begin
-  bNeedShowTrial := False;
+//  bNeedShowTrial := False;
   // если же дни еще есть, то подсчет трафа еще работает
   if ((StrLen(Registration.UserName) = 0)
       and (Registration.TrialDaysLeft<>0) and (Registration.TrialExLeft<>0))
@@ -619,8 +619,8 @@ begin
     formMain.mnuColor.Enabled := True;
     formMain.mnuFont.Enabled := True;
     formMain.mnuTableOpt.Enabled := True;
-    if bNeedShowTrial then
-      ShowTrialWarning;
+{    if bNeedShowTrial then
+      ShowTrialWarning;}
     if (FunctionAmIRight(FN_REMOTE_CONTROL)
         and not GRegistry.UserInterface.DontShow.ManagerFirstLogon) then begin
       formGCMessageBox.memoInfo.Text := translate('EventMonitorModeOn');

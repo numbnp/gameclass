@@ -158,6 +158,28 @@ update Tarifs set [name]=@name ,[internet]=@internet ,[calctraffic]=@calctraffic
     where [id]=@idTarif
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[GetShiftPoint]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[GetShiftPoint]
+GO
+
+CREATE PROCEDURE GetShiftPoint
+@NewShiftPoint datetime
+AS 
+
+set nocount on
+
+-- тут нужно получить момент последнего завершения смены
+if exists (select * from JournalOp)  
+ select top 1 [JournalOp].[moment] as value from JournalOp where ([JournalOp].[moment]<@NewShiftPoint) order by [moment] desc
+else
+ select top 1 SA.[start] as value from SessionsAdd as SA order by SA.[start]
+
+GO
+
+GRANT  EXECUTE  ON [dbo].[GetShiftPoint]  TO [public]
+GO
+
+
 /* -----------------------------------------------------------------------------
                                UPDATE Version
 ----------------------------------------------------------------------------- */

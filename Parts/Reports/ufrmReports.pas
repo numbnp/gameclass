@@ -247,6 +247,7 @@ implementation
 
 uses
   DateUtils,
+  uTimeShift,
   uTimeInterval,
   uReportColumn,
   uVirtualTime,
@@ -1059,9 +1060,9 @@ begin
       DateOf(dtpBeginDate.DateTime) + TimeOf(dtpBeginTime.DateTime);
   ReportParameters.dtEnd :=
       DateOf(dtpEndDate.DateTime) + TimeOf(dtpEndTime.DateTime);
-  ReportParameters.dtCurrentShiftBegin := Now();
-  ReportParameters.dtPrevShiftBegin := Now();
-  ReportParameters.dtPrevShiftEnd := Now();
+  ReportParameters.dtCurrentShiftBegin := GetCurrentShiftBegin(ReportParameters.dtCurrent);
+  ReportParameters.dtPrevShiftBegin := GetCurrentShiftBegin(ReportParameters.dtCurrentShiftBegin);
+  ReportParameters.dtPrevShiftEnd := ReportParameters.dtCurrentShiftBegin;
   Result := ReportParameters;
 end; // TfrmReports._GetReportParameters
 
