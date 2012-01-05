@@ -1,5 +1,5 @@
 program gcosql;
-// Версия 2.2 (pva)
+
 
 uses
   Windows,

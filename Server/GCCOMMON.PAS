@@ -74,13 +74,15 @@ function DateTimeToSql(t: TDateTime):string;
 function dsGet3LastOpReportPoints(Last1,Last2,Last3,Last4:PTDateTime):string;
 function DateTimeToTimeString(AdtTime: TDateTime; AbShowSeconds: Boolean): String;
 
+function dsGetVarBySqlQuery(Query: string):string;
+
 //ф-ии состояния клуба в HTML
 procedure GenerateClubInfoName;
 procedure GenerateClubInfoState;
 
-// работа с триалом
+{// работа с триалом
 function dsCompareTrials:Boolean;
-procedure ShowTrialWarning;
+procedure ShowTrialWarning;}
 
 procedure dsProcessAdd(const AbProcessStarted: Boolean;
     const AnIdComputer: Integer;
@@ -945,6 +947,24 @@ begin
   Reg.Free;
 end;
 
+function dsGetVarBySqlQuery(Query: string):string;
+var
+  dts: TADODataSet;
+  tm: TDateTime;
+begin
+  Result := '';
+  if (dsConnected) then
+  begin
+    dts := TADODataSet.Create(nil);
+    dsDoQuery(Query, @dts);
+    if (not dts.Recordset.EOF) then
+    begin
+      Result := dts.Recordset.Fields.Item['value'].Value;
+    end;
+    dts.Close;
+    dts.Destroy;
+  end;
+end;
 
 procedure GenerateClubInfoName;
 var
@@ -1015,7 +1035,7 @@ begin
     end;
   end;
 end;
-
+{
 // Функция вычисляет триальное время по базе данных и сравнивает с инфой ASPProtecta
 // Корректирует данные TRegistration
 // Вовзвращает True, если триал кончился, а ASP об этом не знает, т.е. чистят реестр
@@ -1103,8 +1123,8 @@ begin
       Result := True;
     Registration.TrialDaysLeft := 0;
   end;
-end;
-
+end;}
+{
 procedure ShowTrialWarning;
 var
   n: integer;
@@ -1131,7 +1151,7 @@ begin
     formTrial.Destroy;
   end;
 end;
-
+}
 procedure dsProcessAdd(const AbProcessStarted: Boolean;
     const AnIdComputer: Integer;
     const AstrExeFile: String);

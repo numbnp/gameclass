@@ -35,6 +35,7 @@ implementation
 uses
 {$IFDEF GC3SERVER}
   gcconst,
+  uTimeShift,
 {$ENDIF}
   SysUtils,
   DateUtils;
@@ -43,7 +44,8 @@ uses
 procedure _SetDTI_All(var ATimeInterval: TTimeInterval);
 begin
 {$IFDEF GC3SERVER}
-  ATimeInterval.dtBegin := FIRST_DATE;
+//  ATimeInterval.dtBegin := FIRST_DATE;
+  ATimeInterval.dtBegin := GetCurrentShiftBegin(now());
   ATimeInterval.dtEnd := LAST_DATE;
 {$ELSE}
   ATimeInterval.dtBegin := 0;

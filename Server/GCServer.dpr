@@ -183,7 +183,8 @@ uses
   ufrmOperatorOpt in 'ufrmOperatorOpt.pas' {frmOperatorOpt},
   uRegistryControlCommands in '..\Parts\Registry\uRegistryControlCommands.pas',
   uPingIcmp in '..\Parts\Tools\uPingIcmp.pas',
-  uPingThread in '..\Parts\Tools\uPingThread.pas';
+  uPingThread in '..\Parts\Tools\uPingThread.pas',
+  uTimeShift in '..\Parts\Reports\uTimeShift.pas';
 
 {$R *.res}
 
