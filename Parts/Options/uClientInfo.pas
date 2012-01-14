@@ -309,7 +309,8 @@ end; // TClientInfo.Create
 procedure TClientInfo.Clear(AbUseSetState: Boolean);
 begin
   TDebugLog.Instance().Trace5('TClientInfo.Clear ' + BoolToStr(AbUseSetState));
-  FbBlocked := DEF_BLOCKED;
+//  FbBlocked := DEF_BLOCKED;
+  SetBlocked(DEF_BLOCKED);
   FstrLogin := DEF_LOGIN;
   FfBalance := DEF_BALANCE;
   FfBalanceLimit := DEF_BALANCE_LIMIT;
@@ -350,11 +351,13 @@ begin
   //при этом должна быть надпись в окне блокировки как в 3.79.
   //"Ќет соединени€ с сервером".
 {$IFDEF GCCLSRV}
-  FbBlocked := not IsFirstRun;
+//  FbBlocked := not IsFirstRun;
+  SetBlocked(not IsFirstRun);
 //  FbBlocked := True;
 {$ENDIF}
 {$IFDEF GCCL}
-  FbBlocked := DEF_BLOCKED;
+//  FbBlocked := DEF_BLOCKED;
+  SetBlocked(DEF_BLOCKED);
 {$ENDIF}
   try
     ipw := TIdIPWatch.Create(Nil);
@@ -531,12 +534,13 @@ begin
     LocalSendDataTo(STR_CMD_CLIENT_INFO_SET+'=Blocked/' + BoolToStr(FbBlocked),
         True);
 {$ENDIF}
-    if bBlockChanged then begin
+//    if bBlockChanged then begin
       if FbBlocked then
         RunClientScript(caBlocking)
       else
         RunClientScript(caUnblocking);
-    end;
+
+//    end;
 {$ENDIF}
   end;
 end; // TClientInfo.SetBlocked
