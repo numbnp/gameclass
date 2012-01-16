@@ -50,7 +50,7 @@ type
   private
     FmmDev: IMMDevice;
     FmmDevEnum: IMMDeviceEnumerator;
-    FmmEndpoint: IMMAudioEndpointVolume;
+    FmmEndpoint: IAudioEndpointVolume;
   protected
     function getMute: boolean; override;
     function getVolume: integer; override;
@@ -71,6 +71,7 @@ function g_mixer: Tmixer;
 var
   VerInfo: TOSVersioninfo;
 begin
+  if (_g_mixer <> nil) then FreeAndNil(_g_mixer);
   if (_g_mixer = nil) then
   begin
     VerInfo.dwOSVersionInfoSize := SizeOf(TOSVersionInfo);
@@ -306,17 +307,22 @@ end;
 { TvistaMixer }
 
 constructor TvistaMixer.Create;
+var
+  ap:tag_inner_PROPVARIANT;
 begin
-  CoCreateInstance(CLSID_MMDeviceEnumerator, nil, CLSCTX_ALL, IID_IMMDeviceEnumerator, FmmDevEnum);
+  CoCreateInstance(CLASS_MMDeviceEnumerator , nil, CLSCTX_INPROC_SERVER, IID_IMMDeviceEnumerator, FmmDevEnum);
   FmmDevEnum.GetDefaultAudioEndpoint(eRender, eConsole, FmmDev);
-  FmmDev.Activate(IID_IAudioEndpointVolume, CLSCTX_ALL, nil, FmmEndpoint);
+  FmmDev.Activate(IID_IAudioEndpointVolume, CLSCTX_INPROC_SERVER, ap, Pointer(FmmEndpoint));
 end;
 
 // ---------------------------------------------------------------------------
 
 function TvistaMixer.getMute: boolean;
+var 
+  locValue: boolean;
 begin
-  FmmEndpoint.GetMute(Result);
+  FmmEndpoint.GetMute(locValue);
+  Result := locValue;
 end;
 
 // ---------------------------------------------------------------------------
@@ -332,8 +338,11 @@ end;
 // ---------------------------------------------------------------------------
 
 procedure TvistaMixer.setMute(Value: boolean);
+var 
+  locValue: boolean;
 begin
-//  FmmEndpoint.SetMute(Value, nil);
+  locValue := Value;
+//  FmmEndpoint.SetMute(locValue, nil);
 end;
 
 // ---------------------------------------------------------------------------
