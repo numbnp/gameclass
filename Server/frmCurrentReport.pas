@@ -84,12 +84,19 @@ begin
         + ' ' + FloatToStr(fRemovedMoney)
         + ' ' + FloatToStr(curMoney - fRemovedMoney));
     ModalResult := mrOk;
-    Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-        translate('CompleteShiftOk') + ' ' + FormatFloat('0.00', curMoney)
-        + ' (' + translate('Computers') + '='
-        +  FormatFloat('0.00', curMoney-totalService) + ' / '
-        + translate('Sideline') + '='
-        +  FormatFloat('0.00', totalService) +')');
+    if FunctionAmIRight(FN_VIEW_FINANCE_ON_SHIFT_REPORT) then
+    begin
+      Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+          translate('CompleteShiftOk') + ', '
+          + translate('summa') + ' ' + FormatFloat('0.00', curMoney)
+          + ' (' + translate('Computers') + '='
+          +  FormatFloat('0.00', curMoney-totalService) + ' / '
+          + translate('Sideline') + '='
+          +  FormatFloat('0.00', totalService) +')');
+    end else begin
+      Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+          translate('CompleteShiftOk'));
+    end;
   end;
 end;
 
