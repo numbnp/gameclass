@@ -207,6 +207,7 @@ type
     tbRunPad: TToolBar;
     ilRunPad: TImageList;
     ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
