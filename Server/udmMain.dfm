@@ -1,7 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
   Left = 175
-  Top = 237
+  Top = 238
   Height = 332
   Width = 637
   object bsPolyglotManager: TbsPolyglotManager

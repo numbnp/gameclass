@@ -77,6 +77,10 @@ type
     function LocatePreventedFont: Boolean;
     function GetPreventedFont: TFont;
     procedure SetPreventedFont(AValue: TFont);
+    function LocateShowRunPadPanel: Boolean;
+    function GetShowRunPadPanel: Boolean;
+    procedure SetShowRunPadPanel(AValue: Boolean);
+
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
         ARegistryRecord: TRegistryRecord);
@@ -127,6 +131,9 @@ type
         read GetAccupiedFont write SetAccupiedFont;
     property PreventedFont: TFont
         read GetPreventedFont write SetPreventedFont;
+    property ShowRunPadPanel: Boolean
+        read GetShowRunPadPanel write SetShowRunPadPanel;
+
   end;
 
 implementation
@@ -514,6 +521,21 @@ begin
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
+function TRegistryInterface.LocateShowRunPadPanel: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('ShowRunPadPanel', '1');
+end;
 
+function TRegistryInterface.GetShowRunPadPanel: Boolean;
+begin
+  LocateShowRunPadPanel;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryInterface.SetShowRunPadPanel(AValue: Boolean);
+begin
+  LocateShowRunPadPanel;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
 
 end.

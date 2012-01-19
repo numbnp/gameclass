@@ -375,6 +375,12 @@ begin
   formMain.tbCompReset.Enabled := formMain.mnuRestart.Enabled;
   formMain.mnuLogoff.Enabled := (CompsSelCount>0) and (Not isManager);
   formMain.tbCompLogoff.Enabled := formMain.mnuLogoff.Enabled;
+
+  formMain.tlbMonOn.Enabled := (CompsSelCount>0) and (Not isManager);
+  formMain.tlbMonOff.Enabled := formMain.tlbMonOn.Enabled;
+  formMain.tlbStationUnlock.Enabled := formMain.tlbMonOn.Enabled;
+  formMain.tlbStationLock.Enabled := formMain.tlbMonOn.Enabled;
+
   result := FunctionAmIRight(FN_VOLUME) and (Not isManager);
   formMain.mnuVolumes.Enabled := result;
   formMain.mnuCompVolume.Enabled := result;
