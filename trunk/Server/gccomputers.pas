@@ -175,6 +175,9 @@ type
     function Reboot: Boolean;
     function Logoff: Boolean;
 
+    procedure RunPadMonitorOff (state:Boolean);
+    procedure RunPadLockStation (state:Boolean);
+
   end;
 
   TComputerGroup = class
@@ -416,6 +419,7 @@ begin
   formMain.gridComps.Columns.Items[11].Width := 75;
   formMain.gridComps.Columns.Items[12].Width := 150;
 //  formMain.gridComps.Columns.Items[11].AutoFitColWidth := True;
+  formMain.mnuPanelRunPad.Checked := False;
   SetBackColor(clWindow);
   SetTableFont(formMain.Font);
   ComputerListBlockedFont := formMain.Font;
@@ -440,6 +444,7 @@ begin
   ComputerListReserveFont := GRegistry.UserInterface.ReserveFont;
   ComputerListAccupiedFont := GRegistry.UserInterface.AccupiedFont;
   ComputerListPreventedFont := GRegistry.UserInterface.PreventedFont;
+  formMain.mnuPanelRunPad.Checked := GRegistry.UserInterface.ShowRunPadPanel;
 
 // Загружаем из реестра ГК настройки колонок gridComps, колонки ищутся не по индексу а по содержимому FieldName
   for i:=0 to formMain.gridComps.Columns.Count-1 do
@@ -453,7 +458,7 @@ begin
       formMain.gridComps.Columns.Items[ColumnId].Index := i;
     end;
   end;
-  
+
   SetBackColor(GRegistry.UserInterface.BackColor);
   SetTableFont(GRegistry.UserInterface.TableFont);
   DoInterface; // TOperatorProfile.
@@ -465,6 +470,7 @@ var
    s: string;
    i: Integer;
 begin
+  GRegistry.UserInterface.ShowRunPadPanel := formMain.mnuPanelRunPad.Checked;
   GRegistry.UserInterface.ShowCopmTechInfo := bShowTechCompsInfo;
   for i:=0 to formMain.gridComps.Columns.Count-1 do
   begin
@@ -483,6 +489,7 @@ begin
   formMain.memoClientInfo.Width := n;
   formMain.mnuClientInfo.Enabled := not isManager;
   formMain.mnuClientInfo.Checked := OperatorProfile.bShowTechCompsInfo;
+  formMain.tbRunPad.Visible := formMain.mnuPanelRunPad.Checked;
 end;
 
 constructor TComputer.Create;
@@ -1467,6 +1474,21 @@ begin
   Result := result_loc;
 end;
 
+procedure TComputer.RunPadMonitorOff (state:Boolean);
+begin
+  if state then
+    UDPSend(ipaddr,STR_CMD_OPTION_SET + '=' + 'RunPadMonitorOff' + '/1')
+  else
+    UDPSend(ipaddr,STR_CMD_OPTION_SET + '=' + 'RunPadMonitorOff' + '/0');
+end;
+
+procedure TComputer.RunPadLockStation (state:Boolean);
+begin
+  if state then
+    UDPSend(ipaddr,STR_CMD_OPTION_SET + '=' + 'RunPadLockStation' + '/1')
+  else
+    UDPSend(ipaddr,STR_CMD_OPTION_SET + '=' + 'RunPadLockStation' + '/0');
+end;
 
 function GetMAC(Value: TMacAddress; Length: integer): String;
 var
