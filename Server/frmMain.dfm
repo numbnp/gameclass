@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 152
-  Top = 201
+  Left = 321
+  Top = 124
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -454,19 +454,45 @@ object formMain: TformMain
         Flat = True
         Images = ilRunPad
         TabOrder = 2
-        object ToolButton3: TToolButton
+        Visible = False
+        object tlbMonOn: TToolButton
           Left = 0
           Top = 0
-          Caption = 'ToolButton3'
+          Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1084#1086#1085#1080#1090#1086#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
           ImageIndex = 0
+          ParentShowHint = False
           Wrap = True
-          OnClick = ToolButton3Click
+          ShowHint = True
+          OnClick = tlbMonOnClick
         end
-        object ToolButton4: TToolButton
+        object tlbMonOff: TToolButton
           Left = 0
           Top = 54
-          Caption = 'ToolButton4'
+          Hint = #1042#1099#1082#1083#1102#1095#1080#1090#1100' '#1084#1086#1085#1080#1090#1086#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
           ImageIndex = 1
+          ParentShowHint = False
+          Wrap = True
+          ShowHint = True
+          OnClick = tlbMonOffClick
+        end
+        object tlbStationUnlock: TToolButton
+          Left = 0
+          Top = 108
+          Hint = #1056#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1082#1086#1084#1087#1100#1102#1090#1077#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080'RunPad'
+          ImageIndex = 2
+          ParentShowHint = False
+          Wrap = True
+          ShowHint = True
+          OnClick = tlbStationUnlockClick
+        end
+        object tlbStationLock: TToolButton
+          Left = 0
+          Top = 162
+          Hint = #1047#1072#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1082#1086#1084#1087#1100#1102#1090#1077#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
+          ImageIndex = 3
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = tlbStationLockClick
         end
       end
     end
@@ -528,6 +554,7 @@ object formMain: TformMain
     end
   end
   object menuMain: TMainMenu
+    Tag = 1
     Left = 440
     Top = 168
     object subSystem: TMenuItem
@@ -562,6 +589,16 @@ object formMain: TformMain
       end
       object mnuExit: TMenuItem
         Action = dmActions.actExit
+      end
+    end
+    object subView: TMenuItem
+      Tag = 1
+      Caption = #1042#1080#1076
+      object mnuPanelRunPad: TMenuItem
+        AutoCheck = True
+        AutoLineReduction = maManual
+        Caption = #1055#1072#1085#1077#1083#1100' RunPad'
+        OnClick = mnuPanelRunPadClick
       end
     end
     object subWork: TMenuItem
@@ -4186,7 +4223,7 @@ object formMain: TformMain
     Left = 356
     Top = 289
     Bitmap = {
-      494C01010200040004001F001F0000000000FF00FFFFFFFFFFFFFFFF424D3600
+      494C01010200040004001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000009C92940073495A009C696B0073495A0073495A007349
@@ -4686,6 +4723,7 @@ object formMain: TformMain
       0000000100000000000000000000000000000002000000040000000000000000
       0000003E0000007C000000000000000000000FFF000003FC0000000000000000
       F8003FFFF8007FFC0000000000000000FFE07FFFFF807FFC0000000000000000
-      FFFFFFFFFFFFFFFC0000000000000000}
+      FFFFFFFFFFFFFFFC000000000000000000000000000000000000000000000000
+      000000000000}
   end
 end

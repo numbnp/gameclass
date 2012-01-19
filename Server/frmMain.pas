@@ -206,8 +206,12 @@ type
     cmnLogoffFree: TMenuItem;
     tbRunPad: TToolBar;
     ilRunPad: TImageList;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
+    tlbMonOn: TToolButton;
+    tlbMonOff: TToolButton;
+    tlbStationUnlock: TToolButton;
+    tlbStationLock: TToolButton;
+    subView: TMenuItem;
+    mnuPanelRunPad: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -333,7 +337,11 @@ type
     procedure mnuLogoffClick(Sender: TObject);
     procedure cmnLogoffAllClick(Sender: TObject);
     procedure cmnLogoffFreeClick(Sender: TObject);
-    procedure ToolButton3Click(Sender: TObject);
+    procedure tlbMonOnClick(Sender: TObject);
+    procedure tlbMonOffClick(Sender: TObject);
+    procedure tlbStationUnlockClick(Sender: TObject);
+    procedure tlbStationLockClick(Sender: TObject);
+    procedure mnuPanelRunPadClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -927,7 +935,7 @@ begin
       if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
       begin
          index := ComputersGetIndex(cdsComps.FieldValues['id']);
-         Comps[index].Reboot; 
+         Comps[index].Reboot;
       end;
       cdsComps.Next;
    end;
@@ -2401,22 +2409,94 @@ begin
   Result := IdColumn;
 end;
 
-procedure TformMain.ToolButton3Click(Sender: TObject);
+procedure TformMain.tlbMonOnClick(Sender: TObject);
 var
-  qstr:string;
-  dt:string;
-  ddt: TDateTime;
+  index: integer;
+  bookmark: TBookmarkStr;
 begin
-  DateTimeToString(dt,'dd-mmm-yyyy hh:nn:ss',now);
-  dt := '05-jan-2012 09:30:22';
-  dt :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (dt);
-  qstr:=dsGetVarBySqlQuery( dt );
-  Console.AddEvent(EVENT_ICON_EMPTY,LEVEL_2,qstr);
-  ddt := StrToDateTime(qstr);
-  DateTimeToString(dt,'dd.mm.yyyy hh:nn:ss',ddt);
-  dt :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (dt);
-  qstr:=dsGetVarBySqlQuery( dt );
-  Console.AddEvent(EVENT_ICON_EMPTY,LEVEL_2,qstr);
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         Comps[index].RunPadMonitorOff (false);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
+end;
+
+procedure TformMain.tlbMonOffClick(Sender: TObject);
+var
+  index: integer;
+  bookmark: TBookmarkStr;
+begin
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         Comps[index].RunPadMonitorOff (True);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
+end;
+
+procedure TformMain.tlbStationUnlockClick(Sender: TObject);
+var
+  index: integer;
+  bookmark: TBookmarkStr;
+begin
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         Comps[index].RunPadLockStation (false);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
+end;
+
+procedure TformMain.tlbStationLockClick(Sender: TObject);
+var
+  index: integer;
+  bookmark: TBookmarkStr;
+begin
+   if (not dsConnected) then exit;
+   cdsComps.DisableControls;
+   bookmark := cdsComps.Bookmark;
+   cdsComps.First;
+   while (not cdsComps.Eof) do begin
+      if (cdsComps.FieldValues['Selection'] <> DS_SELECTION_UNSELECTED) then
+      begin
+         index := ComputersGetIndex(cdsComps.FieldValues['id']);
+         Comps[index].RunPadLockStation (true);
+      end;
+      cdsComps.Next;
+   end;
+   cdsComps.Bookmark := bookmark;
+   cdsComps.EnableControls;
+end;
+
+procedure TformMain.mnuPanelRunPadClick(Sender: TObject);
+begin
+  tbRunPad.Visible := mnuPanelRunPad.Checked;
+  
 end;
 
 end.
