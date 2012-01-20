@@ -54,6 +54,16 @@ begin
         rpShell.DoSingleAction(RSA_RESTOREVMODE);
       RunPadAction_EndVipSession:
         rpShell.DoSingleAction(RSA_ENDVIPSESSION);
+      RunPadAction_MonitorOn:
+        rpShell.DoSingleAction(RSA_TURNMONITORON);
+      RunPadAction_MonitorOff:
+        rpShell.DoSingleAction(RSA_TURNMONITOROFF);
+      RunPadAction_LockStation:
+        rpShell.DoSingleAction(RSA_RUNPROGRAMDISABLE);
+      RunPadAction_UnlockStation:
+        rpShell.DoSingleAction(RSA_RUNPROGRAMENABLE);
+
+
       RunPadAction_KillTasks:
         if rpShell.DoSingleAction(RSA_KILLALLTASKS) <> S_OK then begin
           cmd := TKillTaskRemoteCommand.Create;
