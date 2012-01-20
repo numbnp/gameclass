@@ -64,7 +64,7 @@ begin
 
   Reg := TRegIniFile.Create();
   try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    Reg.RootKey := HKEY_CURRENT_USER;
     Reg.Access := KEY_WRITE;
     if Reg.OpenKey(FstrKey, TRUE) then begin
       Reg.WriteString(AstrFolder, AstrName, AstrValue);
@@ -88,7 +88,7 @@ begin
 
   Reg := TRegIniFile.Create();
   try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    Reg.RootKey := HKEY_CURRENT_USER;
     Reg.Access := KEY_READ;
     if Reg.OpenKey(FstrKey, TRUE) then begin
       AstrValue := Reg.ReadString(AstrFolder, AstrName, NOT_DEFAULT_VALUE);

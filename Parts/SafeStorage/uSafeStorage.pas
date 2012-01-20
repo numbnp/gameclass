@@ -67,7 +67,11 @@ type
       RunPadAction_Logoff,
       RunPadAction_VipLogon,
       RunPadAction_VipLogout,
-      RunPadAction_ShowInfoOnDesktop
+      RunPadAction_ShowInfoOnDesktop,
+      RunPadAction_MonitorOn,
+      RunPadAction_MonitorOff,
+      RunPadAction_LockStation,
+      RunPadAction_UnlockStation
   );
 
   TBlockingAction = (
