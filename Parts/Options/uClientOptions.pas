@@ -109,6 +109,8 @@ type
     FbUseWOL: Boolean;
     FbRunPadShowInfoOnDesktop: Boolean;
     FbRunPadShowInfoOnDesktopText: String;
+    FnRunPadMonitorOff: Boolean;
+    FnRunPadLockStation: Boolean;
 
     // private helper methods
     function _GetStringOption(const AstrFolder: String;
@@ -154,6 +156,9 @@ type
     procedure SetRunPadInternetControl(const AbRunPadInternetControl: Boolean);
     procedure SetRunPadShowInfoOnDesktop(const AbRunPadShowInfoOnDesktop: Boolean);
     procedure SetRunPadShowInfoOnDesktopText(const AbRunPadShowInfoOnDesktopText: string);
+
+    procedure SetRunPadMonitorOff(const AbRunPadMonitorOff: Boolean);
+    procedure SetRunPadLockStation(const AbRunPadLockStation: Boolean);
 
     procedure SetTaskList(const AlstTaskList: TStringList);
     procedure SetDebugLog(const AValue: Boolean);
@@ -324,6 +329,12 @@ type
     // Текст выводимый нарабочем столе RunPad
     property RunPadShowInfoOnDesktopText: String
         read FbRunPadShowInfoOnDesktopText write SetRunPadShowInfoOnDesktopText;
+
+    property RunPadMonitorOff: Boolean
+        read FnRunPadMonitorOff  write SetRunPadMonitorOff;
+    property RunPadLockStation: Boolean
+        read FnRunPadLockStation  write SetRunPadLockStation;
+
 
 
 {    // еще не используется
@@ -896,6 +907,35 @@ begin
   end;
 end; // TClientOptions.SetRunPadShowInfoOnDesktopText
 
+procedure TClientOptions.SetRunPadMonitorOff(
+    const AbRunPadMonitorOff: Boolean);
+begin
+  if FnRunPadMonitorOff <> AbRunPadMonitorOff then begin
+//    FbDirty := True;
+    FnRunPadMonitorOff := AbRunPadMonitorOff;
+{$IFDEF GCCL}
+  if AbRunPadMonitorOff then
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction, Integer(RunPadAction_MonitorOff ),'')
+  else
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction, Integer(RunPadAction_MonitorOn ),'')
+{$ENDIF}
+  end;
+end; // TClientOptions.SetRunPadMonitorOff
+
+procedure TClientOptions.SetRunPadLockStation(
+    const AbRunPadLockStation: Boolean);
+begin
+  if FnRunPadLockStation <> AbRunPadLockStation then begin
+//    FbDirty := True;
+    FnRunPadLockStation := AbRunPadLockStation;
+{$IFDEF GCCL}
+  if AbRunPadLockStation then
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction, Integer(RunPadAction_LockStation ),'')
+  else
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction, Integer(RunPadAction_UnlockStation ),'')
+{$ENDIF}
+  end;
+end; // TClientOptions.SetRunPadMonitorOff
 
 procedure TClientOptions.SetCompNumber(
     const AstrCompNumber: String);
