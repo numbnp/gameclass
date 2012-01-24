@@ -22,6 +22,54 @@ object frmMain: TfrmMain
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
+  object pnlOldServerWarning: TPanel
+    Left = 5
+    Top = 104
+    Width = 627
+    Height = 342
+    BevelInner = bvRaised
+    TabOrder = 3
+    Visible = False
+    object lblWarning: TLabel
+      Left = 144
+      Top = 132
+      Width = 332
+      Height = 16
+      Caption = #1044#1083#1103' '#1082#1086#1088#1088#1077#1082#1090#1085#1086#1081' '#1088#1072#1073#1086#1090#1099' '#1082#1083#1080#1077#1085#1090#1072' '#1085#1072' '#1054#1057' Linux '
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clRed
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 152
+      Top = 156
+      Width = 305
+      Height = 16
+      Caption = #1074#1077#1088#1089#1080#1103' '#1089#1077#1088#1074#1077#1088#1072' GameClass '#1076#1086#1083#1078#1085#1072' '#1073#1099#1090#1100' '
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clRed
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 216
+      Top = 180
+      Width = 177
+      Height = 16
+      Caption = '3.84 Release 5 '#1080#1083#1080' '#1074#1099#1096#1077
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clRed
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+  end
   object pnlMain: TPanel
     Left = 0
     Top = 0
@@ -461,9 +509,9 @@ object frmMain: TfrmMain
             TabOrder = 1
             object memInfo: TMemo
               Left = 0
-              Top = 115
+              Top = 138
               Width = 257
-              Height = 216
+              Height = 193
               Align = alClient
               Color = clBtnFace
               Lines.Strings = (
@@ -486,7 +534,7 @@ object frmMain: TfrmMain
               Left = 0
               Top = 0
               Width = 257
-              Height = 115
+              Height = 138
               Align = alTop
               BevelOuter = bvNone
               TabOrder = 1
@@ -494,7 +542,7 @@ object frmMain: TfrmMain
                 Left = 0
                 Top = 0
                 Width = 257
-                Height = 100
+                Height = 121
                 Align = alTop
                 Caption = ' '#1042#1072#1096' '#1072#1082#1082#1072#1091#1085#1090' '
                 TabOrder = 0
@@ -538,20 +586,40 @@ object frmMain: TfrmMain
                   Height = 13
                   Caption = #1041#1072#1083#1072#1085#1089': '
                 end
+                object Label4: TLabel
+                  Left = 17
+                  Top = 57
+                  Width = 60
+                  Height = 13
+                  Caption = #1055#1086#1090#1088#1072#1095#1077#1085#1086': '
+                end
+                object Label5: TLabel
+                  Left = 79
+                  Top = 57
+                  Width = 50
+                  Height = 13
+                  Caption = '+100500'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -11
+                  Font.Name = 'MS Sans Serif'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
                 object butLogoff: TButton
                   Left = 13
-                  Top = 62
+                  Top = 81
                   Width = 100
-                  Height = 25
+                  Height = 27
                   Caption = #1054#1090#1082#1083#1102#1095#1080#1090#1100#1089#1103
                   TabOrder = 0
                   OnClick = butLogoffClick
                 end
                 object butChangePass: TButton
-                  Left = 133
-                  Top = 61
+                  Left = 136
+                  Top = 80
                   Width = 100
-                  Height = 25
+                  Height = 27
                   Caption = #1057#1084#1077#1085#1080#1090#1100' '#1087#1072#1088#1086#1083#1100
                   TabOrder = 1
                   OnClick = butChangePassClick
@@ -889,8 +957,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlUnblockByPassword: TPanel
-    Left = 128
-    Top = 168
+    Left = 288
+    Top = 328
     Width = 347
     Height = 121
     BevelInner = bvRaised
@@ -961,8 +1029,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlChangePassword: TPanel
-    Left = 152
-    Top = 136
+    Left = 328
+    Top = 32
     Width = 297
     Height = 185
     BevelInner = bvRaised
@@ -1052,54 +1120,6 @@ object frmMain: TfrmMain
       Caption = 'Cancel'
       TabOrder = 4
       OnClick = btnChangePasswordCancelClick
-    end
-  end
-  object pnlOldServerWarning: TPanel
-    Left = 5
-    Top = 104
-    Width = 627
-    Height = 342
-    BevelInner = bvRaised
-    TabOrder = 3
-    Visible = False
-    object lblWarning: TLabel
-      Left = 144
-      Top = 132
-      Width = 332
-      Height = 16
-      Caption = #1044#1083#1103' '#1082#1086#1088#1088#1077#1082#1090#1085#1086#1081' '#1088#1072#1073#1086#1090#1099' '#1082#1083#1080#1077#1085#1090#1072' '#1085#1072' '#1054#1057' Linux '
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clRed
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label2: TLabel
-      Left = 152
-      Top = 156
-      Width = 305
-      Height = 16
-      Caption = #1074#1077#1088#1089#1080#1103' '#1089#1077#1088#1074#1077#1088#1072' GameClass '#1076#1086#1083#1078#1085#1072' '#1073#1099#1090#1100' '
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clRed
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label3: TLabel
-      Left = 216
-      Top = 180
-      Width = 177
-      Height = 16
-      Caption = '3.84 Release 5 '#1080#1083#1080' '#1074#1099#1096#1077
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clRed
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
     end
   end
   object modernTrayIcon: TModernTrayIcon
@@ -1226,21 +1246,21 @@ object frmMain: TfrmMain
     Enabled = False
     Interval = 10000
     OnTimer = tmrUnblockByPasswordHideTimer
-    Left = 20
-    Top = 121
+    Left = 84
+    Top = 57
   end
   object tmrChangePasswordHide: TTimer
     Enabled = False
     Interval = 20000
     OnTimer = tmrChangePasswordHideTimer
-    Left = 52
-    Top = 121
+    Left = 116
+    Top = 57
   end
   object tmrOldServerWarningShow: TTimer
     Enabled = False
     Interval = 10000
     OnTimer = tmrOldServerWarningShowTimer
-    Left = 85
-    Top = 120
+    Left = 149
+    Top = 56
   end
 end
