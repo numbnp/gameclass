@@ -36,7 +36,8 @@ uses
   uClientOptionsConst,
   uClientInfo,
   uDebugLog,
-  uFilesSynchronizeConst;
+  uFilesSynchronizeConst,
+  uCrossPlatformFunctions;
 
 procedure RunClientScript(const AClientAction: TClientAction);
 var
@@ -92,6 +93,8 @@ begin
         PCHar(strParameters),Nil,
         IfThen(GClientOptions.ClientScriptHideWindow,SW_HIDE,SW_NORMAL));
 }
+      ExecuteCommandLine('./' + FILE_RECEIVE_DIR_DEF + '/'
+        + GClientOptions.ClientScriptFileName + ' ' + strParameters);
 {$ENDIF}
   end;
 end;
