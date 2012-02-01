@@ -86,6 +86,10 @@ try
     GClientInfo.Balance:= StrToFloatDefWithReplace(FstrOptionValue,
         FIRST_DATE);
 
+  end else if CompareText(FstrOptionName,'Spent') = 0 then begin
+    GClientInfo.Spent := StrToFloatDefWithReplace(FstrOptionValue,
+        FIRST_DATE);
+
   end else if CompareText(FstrOptionName,'BalanceLimit') = 0 then begin
     GClientInfo.BalanceLimit:= StrToFloatDefWithReplace(FstrOptionValue,
         FIRST_DATE);

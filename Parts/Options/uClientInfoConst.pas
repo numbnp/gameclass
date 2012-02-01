@@ -14,6 +14,7 @@ const
 //  DEF_CLIENT_STATE = ClientState_Blocked;
   DEF_LOGIN = 'Гость';
   DEF_BALANCE = 0;
+  DEF_SPENT = 0;
   DEF_BALANCE_LIMIT = 0;
   DEF_BALANCE_HISTORY = '';
   DEF_INFO = 'Отсутствует подключение к серверу GameClass 3';
