@@ -123,6 +123,8 @@ begin
         GetParamFromString(FstrParameters,1), 0);
     GClientInfo.BalanceLimit := StrToFloatDefWithReplace(
         GetParamFromString(FstrParameters,2), 0);
+    GClientInfo.Spent := StrToFloatDefWithReplace(
+        GetParamFromString(FstrParameters,3), 0);
 {$IFDEF GCCL}
       TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData, 0); //frmMain.UpdateData;
 {$ENDIF}

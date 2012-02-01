@@ -586,14 +586,14 @@ object frmMain: TfrmMain
                   Height = 13
                   Caption = #1041#1072#1083#1072#1085#1089': '
                 end
-                object Label4: TLabel
+                object lblSpentCaption: TLabel
                   Left = 17
                   Top = 57
                   Width = 60
                   Height = 13
                   Caption = #1055#1086#1090#1088#1072#1095#1077#1085#1086': '
                 end
-                object Label5: TLabel
+                object lblSpent: TLabel
                   Left = 79
                   Top = 57
                   Width = 50
@@ -957,8 +957,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlUnblockByPassword: TPanel
-    Left = 288
-    Top = 328
+    Left = 144
+    Top = 192
     Width = 347
     Height = 121
     BevelInner = bvRaised
@@ -1029,8 +1029,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlChangePassword: TPanel
-    Left = 328
-    Top = 32
+    Left = 168
+    Top = 144
     Width = 297
     Height = 185
     BevelInner = bvRaised

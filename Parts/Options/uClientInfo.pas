@@ -55,6 +55,7 @@ type
     FstrLogin: String;
     FfBalance: Double;
     FfBalanceLimit: Double;
+    FfSpent: Double;
     FstrBalanceHistory: String;
     FstrInfo: String;
     FstrFullInfo: String;
@@ -101,6 +102,7 @@ type
     procedure SetLogin(const AstrLogin: String);
     procedure SetBalance(const AfBalance: Double);
     procedure SetBalanceLimit(const AfBalanceLimit: Double);
+    procedure SetSpent(const AfSpent: Double);
     procedure SetBalanceHistory(const AstrBalanceHistory: String);
     procedure SetInfo(const AstrInfo: String);
     procedure SetFullInfo(const AstrFullInfo: String);
@@ -175,6 +177,9 @@ type
     // состояние баланса
     property Balance: Double
         read FfBalance write SetBalance;
+    // Всего потрачено клиентом
+    property Spent: Double
+        read FfSpent write SetSpent;
     // состояние предела баланса
     property BalanceLimit: Double
         read FfBalanceLimit write SetBalanceLimit;
@@ -313,6 +318,7 @@ begin
   SetBlocked(DEF_BLOCKED);
   FstrLogin := DEF_LOGIN;
   FfBalance := DEF_BALANCE;
+  FfSpent := DEF_SPENT;
   FfBalanceLimit := DEF_BALANCE_LIMIT;
   FstrBalanceHistory := DEF_BALANCE_HISTORY;
   FstrInfo := DEF_INFO;
@@ -735,6 +741,14 @@ begin
   end;
 end; // TClientInfo.SetBalance
 
+procedure TClientInfo.SetSpent(const AfSpent: Double);
+begin
+  if FfSpent <> AfSpent then begin
+    FbDirty := True;
+    FfSpent := AfSpent;
+  end;
+end; // TClientInfo.SetSpent
+
 procedure TClientInfo.SetBalanceLimit(const AfBalanceLimit: Double);
 begin
   if FfBalanceLimit <> AfBalanceLimit then begin
@@ -939,6 +953,8 @@ try
       INFO_GENERAL_FOLDER, 'Login', DEF_LOGIN);
     FfBalance := _GetFloatOption(
       INFO_GENERAL_FOLDER, 'Balance', DEF_BALANCE);
+    FfSpent := _GetFloatOption(
+      INFO_GENERAL_FOLDER, 'Spent', DEF_BALANCE);
     FfBalanceLimit := _GetFloatOption(
       INFO_GENERAL_FOLDER, 'BalanceLimit', DEF_BALANCE_LIMIT);
     FstrBalanceHistory := _GetStringOption(
@@ -989,6 +1005,7 @@ try
     SaveOption(INFO_GENERAL_FOLDER, 'ClientState', Integer(FnClientState));
     SaveOption(INFO_GENERAL_FOLDER, 'Login', FstrLogin);
     SaveOption(INFO_GENERAL_FOLDER, 'Balance', FfBalance);
+    SaveOption(INFO_GENERAL_FOLDER, 'Spent', FfSpent);
     SaveOption(INFO_GENERAL_FOLDER, 'BalanceLimit', FfBalanceLimit);
     SaveOption(INFO_GENERAL_FOLDER, 'BalanceHistory', FstrBalanceHistory);
     SaveOption(INFO_GENERAL_FOLDER, 'Info', FstrInfo);

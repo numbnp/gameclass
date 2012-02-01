@@ -121,6 +121,9 @@ begin
   if bAll or (CompareText(FstrClientInfoName,'Balance') = 0) then
     _SendClientInfo('Balance', FloatToStr(GClientInfo.Balance));
 
+  if bAll or (CompareText(FstrClientInfoName,'Spent') = 0) then
+    _SendClientInfo('Spent', FloatToStr(GClientInfo.Spent));
+
   if bAll or (CompareText(FstrClientInfoName,'BalanceLimit') = 0) then
     _SendClientInfo('BalanceLimit', FloatToStr(GClientInfo.BalanceLimit));
 

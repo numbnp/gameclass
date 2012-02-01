@@ -272,6 +272,7 @@ type
 //  function TotalSeconds(length: TDateTime): longword;
   function GetAccountName(const AAuthorization: TAuthorization): String;
   function GetAccountBalance(const AAuthorization: TAuthorization): Double;
+  function GetAccountSummary(const AAuthorization: TAuthorization): Double;
   function GetAccountBalanceLimit(const AAuthorization: TAuthorization): Double;
 
   procedure CompsSelDeselect(const AAction: TComputerAction);
@@ -919,6 +920,9 @@ begin
           + 'Balance'
           + '/' + FloatToStr(GetAccountBalance(a)));
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
+          + 'Spent'
+          + '/' + FloatToStr(GetAccountSummary(a)));
+      UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'BalanceLimit'
           + '/' + FloatToStr(GetAccountBalanceLimit(a)));
     end;
@@ -1345,6 +1349,14 @@ begin
   Result := 0;
   if (AAuthorization.number <> 0) then begin
     Result := GAccountSystem.Accounts[AAuthorization.number].Balance;
+  end;
+end;
+
+function GetAccountSummary(const AAuthorization: TAuthorization): Double;
+begin
+  Result := 0;
+  if (AAuthorization.number <> 0) then begin
+    Result := GAccountSystem.Accounts[AAuthorization.number].Summary ;
   end;
 end;
 
