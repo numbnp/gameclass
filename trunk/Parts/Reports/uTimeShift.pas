@@ -26,7 +26,10 @@ begin
   DateTimeToString(sDate,'dd-mmm-yyyy hh:nn:ss',NowTime,FormatSettings);
   sQuery :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (sDate);
   sResultQuery:=dsGetVarBySqlQuery( sQuery );
-  Result := strtodatetime(sResultQuery);
+  if sResultQuery = '' then 
+    Result := NowTime
+  else
+    Result := strtodatetime(sResultQuery);
 end;
 
 end.
