@@ -1088,7 +1088,7 @@ begin
         dtStop := AdtStart + TimeOf(AdtTime);
         AfSum := Tarifs[nTarifIndex].CalculateCost(
             AdtStart, dtStop, nComputerGroup,
-            AnDiscount, True);
+            AnDiscount, True, True, 0);
         // нужно пересчитать правильный конец сессии
         dtStop := AdtStart
             + Tarifs[nTarifIndex].CalculateTimeLength(AdtStart,
@@ -1098,7 +1098,7 @@ begin
         dtStop := GSessions.GetMaxStopTime(Comps[AnComputerIndex].Id);
         AfSum := Tarifs[nTarifIndex].CalculateCost(
             AdtStart, dtStop, nComputerGroup,
-            AnDiscount, True);
+            AnDiscount, True, True, 0);
       end;
       if (dtStop < AdtStart) then
         dtStop := IncDay(dtStop,1);
