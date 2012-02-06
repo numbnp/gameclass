@@ -4,7 +4,7 @@
 unit frmMain;
 
 interface
-                            
+
 uses
   GCCommon,
   GCLangUtils,
@@ -367,6 +367,9 @@ type
     property Starting: Boolean read FbStarting write FbStarting;
   end;
 
+type
+  TMyDBGrid = class(TDBGridEh);
+
 //procedure UDPSend(const AstrIP: string; const AstrData: string);
 procedure ShowFormKillTasks(listtasks: string; compindex: integer);
 procedure QueryAuthGoState1(AnCompIndex: Integer);
@@ -374,6 +377,8 @@ procedure SendAuthGoState1(nCompIndex:Integer; bNewSecCode:Boolean);
 procedure SendAuthGoState2(CompIndex:Integer);
 procedure SortDataSet(bMakeSorting: boolean);
 procedure ResetDataSetBookmark;
+procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
+
 //procedure IcmpPing;
 
 function GetIdColumnByFieldName(Grid:TDBGridEh; FieldName: String):integer;
@@ -440,6 +445,36 @@ begin
   FfrmReports.Show();
 end; // TformMain.Create
 
+procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
+ var FTitleOffset, SDistance : Integer;
+     NewRect : TRect;
+     RowHeight : Integer;
+     NewRow : Integer;
+begin
+ with TMyDBGrid(Grid) do begin
+   NewRow:= Row;
+   FTitleOffset:= 0;
+//   if dgTitles in Options then
+     inc(FTitleOffset);
+   if ARow = NewRow then Exit;
+   with DataLink, DataSet do
+    try
+      BeginUpdate;
+      Scroll(NewRow - ARow);
+      if (NewRow - ARow) < 0 then ActiveRecord:= 0
+                             else ActiveRecord:= VisibleRowCount - 1;
+      SDistance:= MoveBy(NewRow - ARow);
+      NewRow:= NewRow - SDistance;
+      MoveBy(ARow - ActiveRecord - FTitleOffset);
+      RowHeight:= DefaultRowHeight;
+      NewRect:= BoxRect(0, FTitleOffset, ColCount - 1, 1000);
+      ScrollWindowEx(Handle, 0, - RowHeight * SDistance, @NewRect, @NewRect, 0, nil, SW_Invalidate);
+      MoveColRow(Col, NewRow, False, False);
+    finally
+      EndUpdate;
+    end;
+ end;
+end;
 
 destructor TformMain.Destroy();
 begin
@@ -526,9 +561,11 @@ var
   i,j: integer;
   index: integer;
   bookmark: TBookmarkStr;
+  iOldRow: Integer;
 begin
    if (not dsConnected) then exit;
 
+   iOldRow := TMyDBGrid(gridComps).Row;
    cdsComps.DisableControls;
    bookmark := cdsComps.Bookmark;
    cdsComps.First;
@@ -559,6 +596,7 @@ begin
    cdsComps.Bookmark := bookmark;
    CompsSel[0] := cdsComps.FieldValues['id'];
    cdsComps.EnableControls;
+   ScrollActiveToRow(gridComps,iOldRow);
 
   // считаем количество выделенных строк
   CompsSelCount := j;
@@ -1401,7 +1439,7 @@ begin
                 dtTime := IncHour(IncMinute(0, MinuteOf(dtTime)),
                     HourOf(dtTime)) + session.TimeStop;
                 fSumma := session.Tariff.CalculateCost(
-                  session.TimeStop, dtTime, session.ComputerGroupId, 0, True);
+                  session.TimeStop, dtTime, session.ComputerGroupId, 0, True, True, 0);
               end;
             except
               on e: Exception do begin

@@ -102,7 +102,6 @@ function IsTimeOff: Boolean;
 function SystemErrorMessage: string;
 
 type
-
   TUniEvent = record  // универсальный ив≈нт
     id: string;       // им€ функции
     enabled: boolean; // disable/enable
@@ -199,6 +198,42 @@ uses
   uKKMTools,
   ufrmClearStatistic,
   uFileInfo;
+
+type
+  TMyDBGrid = class(TDBGridEh);
+
+// ‘ункци€ дл€ предотвращени€ "прыгани€" курсора в сетке с компами на средину
+procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
+ var FTitleOffset, SDistance : Integer;
+     NewRect : TRect;
+     RowHeight : Integer;
+     NewRow : Integer;
+begin
+ with TMyDBGrid(Grid) do begin
+   NewRow:= Row;
+   FTitleOffset:= 0;
+//   if dgTitles in Options then
+     inc(FTitleOffset);
+   if ARow = NewRow then Exit;
+   with DataLink, DataSet do
+    try
+      BeginUpdate;
+      Scroll(NewRow - ARow);
+      if (NewRow - ARow) < 0 then ActiveRecord:= 0
+                             else ActiveRecord:= VisibleRowCount - 1;
+      SDistance:= MoveBy(NewRow - ARow);
+      NewRow:= NewRow - SDistance;
+      MoveBy(ARow - ActiveRecord - FTitleOffset);
+      RowHeight:= DefaultRowHeight;
+      NewRect:= BoxRect(0, FTitleOffset, ColCount - 1, 1000);
+      ScrollWindowEx(Handle, 0, - RowHeight * SDistance, @NewRect, @NewRect, 0, nil, SW_Invalidate);
+      MoveColRow(Col, NewRow, False, False);
+    finally
+      EndUpdate;
+    end;
+ end;
+end;
+
 
 // функци€ возвращает tru дл€ запрашиваемой функции,
 // если на нее есть право и она разблокирована
@@ -861,9 +896,13 @@ var
  bUpdate : boolean;
  bookmark : TBookmarkStr;
  nNumber: Integer;
+ iOldRow: Integer;
 begin
-   bookmark := formMain.cdsComps.Bookmark;
+//   formMain.gridComps.SaveBookmark;
+
+   iOldRow := TMyDBGrid(formMain.gridComps).Row;
    formMain.cdsComps.DisableControls;
+   bookmark := formMain.cdsComps.Bookmark;
    SortDataSet(False);
    if ( CompsCount = 0 ) or (formMain.cdsComps.RecordCount <> CompsCount) then begin
       bUpdate := false;
@@ -977,6 +1016,7 @@ begin
    SortDataSet(True);
    formMain.cdsComps.Bookmark := bookmark;
    formMain.cdsComps.EnableControls;
+   ScrollActiveToRow(formMain.gridComps,iOldRow);
 end;
 
 // PreLogon actions

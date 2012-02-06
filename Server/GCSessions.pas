@@ -776,11 +776,11 @@ begin
     BasePrice := tarif.CalculateCost(FdtStart, dtCurrentWithPenalty,
         Comps[ComputersGetIndex(FnIdComp)].IdGroup,
         GAccountSystem.Accounts[FnIdClient].Discount,
-        False);
+        False, True, 0);
     FullPrice := tarif.CalculateCost(FdtStart, dtStopWithPenalty,
         Comps[ComputersGetIndex(FnIdComp)].IdGroup,
         GAccountSystem.Accounts[FnIdClient].Discount,
-        True);
+        True, True, 0);
   end else begin
     FullPrice := tarif.GetWholeCostByIndex(FnWhole, FnIdComp);
     BasePrice := SecondsBetween(FdtStart, dtCurrentWithPenalty) * FullPrice

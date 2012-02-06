@@ -1,12 +1,12 @@
 object formMain: TformMain
   Left = 194
-  Top = 112
+  Top = 113
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 568
+  ClientHeight = 567
   ClientWidth = 951
   Color = clBtnFace
   Constraints.MinHeight = 360
@@ -225,7 +225,7 @@ object formMain: TformMain
     Left = 0
     Top = 57
     Width = 951
-    Height = 511
+    Height = 510
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -234,7 +234,7 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 351
+        Top = 350
         Width = 943
         Height = 6
         Cursor = crVSplit
@@ -244,7 +244,7 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 884
-        Height = 351
+        Height = 350
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -401,7 +401,7 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 357
+        Top = 356
         Width = 943
         Height = 126
         Align = alBottom
@@ -445,7 +445,7 @@ object formMain: TformMain
         Left = 884
         Top = 0
         Width = 59
-        Height = 351
+        Height = 350
         Align = alRight
         AutoSize = True
         ButtonHeight = 54
@@ -518,11 +518,11 @@ object formMain: TformMain
         Left = 0
         Top = 0
         Width = 943
-        Height = 483
+        Height = 482
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 442
+          Top = 441
           Width = 943
           DesignSize = (
             943
@@ -537,16 +537,16 @@ object formMain: TformMain
         end
         inherited Panel2: TPanel
           Width = 943
-          Height = 442
+          Height = 441
           inherited memMessages: TMemo
             Width = 781
-            Height = 440
+            Height = 439
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 440
+            Height = 439
             inherited lvUsers: TListView
-              Height = 438
+              Height = 437
             end
           end
         end

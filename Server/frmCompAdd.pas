@@ -401,7 +401,7 @@ begin
                 HourOf(dtpTimeLength.Time));
             dtStop := session.TimeStop + dtLength;
             fMoney := session.Tariff.CalculateCost(
-                session.TimeStop, dtStop, session.ComputerGroupId, 0, True);
+                session.TimeStop, dtStop, session.ComputerGroupId, 0, True, True, 0);
             fSummaryMoney := fSummaryMoney + fMoney;
           end;
           casEndTime: begin
@@ -415,7 +415,7 @@ begin
               // Сделать пересчет от старта за вычетом TimeCost
               fMoney := session.Tariff.CalculateCost(
                   session.TimeStop, dtpEndTime.DateTime,
-                  Comps[ComputersGetIndex(session.IdComp)].IdGroup, 0, True);
+                  Comps[ComputersGetIndex(session.IdComp)].IdGroup, 0, True, True, 0);
               dtLength := dtpEndTime.DateTime - session.TimeStop;
             end;
             fSummaryMoney := fSummaryMoney + fMoney;
@@ -432,7 +432,7 @@ begin
               // Сделать пересчет от старта за вычетом TimeCost
               fMoney := session.Tariff.CalculateCost(
                   session.TimeStop, dtpEndTime.DateTime,
-                  Comps[ComputersGetIndex(session.IdComp)].IdGroup, 0, True);
+                  Comps[ComputersGetIndex(session.IdComp)].IdGroup, 0, True, True, 0);
               dtLength := dtpEndTime.DateTime - session.TimeStop;
             end;
             fSummaryMoney := fSummaryMoney + fMoney;
@@ -496,7 +496,7 @@ begin
     dtpTimeLength.Time := TimeOf(stop-GetSession.TimeStop);
     tdMoney := Tarifs[TarifsGetIndex(GetSession.IdTarif)].CalculateCost(
         GetSession.TimeStop, stop,
-        Comps[ComputersGetIndex(GetSession.IdComp)].IdGroup, 0, True);
+        Comps[ComputersGetIndex(GetSession.IdComp)].IdGroup, 0, True, True, 0);
     edtMoney.Text := FormatFloat('0.00',tdMoney);
   end
   else if (Money in FState) then begin
@@ -513,7 +513,7 @@ begin
     dtpEndTime.DateTime := stop;
     tdMoney := Tarifs[TarifsGetIndex(GetSession.IdTarif)].CalculateCost(
         GetSession.TimeStop, stop,
-        Comps[ComputersGetIndex(GetSession.IdComp)].IdGroup, 0, True);
+        Comps[ComputersGetIndex(GetSession.IdComp)].IdGroup, 0, True, True, 0);
     edtMoney.Text := FormatFloat('0.00',tdMoney);
   end;
   btnOk.Enabled := (( HourOf(dtpTimeLength.Time)<>0 ) or ( MinuteOf(dtpTimeLength.Time) <> 0 )) and
