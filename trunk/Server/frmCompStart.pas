@@ -582,7 +582,7 @@ begin
       FDesignedSession.TimeStop := dtMaxStop;
       FDesignedSession.CommonPay := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].CalculateCost(
           FDesignedSession.TimeStart, FDesignedSession.TimeStop,
-          Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True)
+          Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True, True, 0)
     end;
   end
   else if (EndTime in FState) then begin
@@ -604,7 +604,7 @@ begin
     end;
     tdMoney := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].CalculateCost(
         FDesignedSession.TimeStart, FDesignedSession.TimeStop,
-        Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True);
+        Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True, True, 0);
 //    tdMoney := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].fnRoundMoney(tdMoney, Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].roundmoney, 1);
     FDesignedSession.CommonPay := tdMoney;
   end
@@ -618,7 +618,7 @@ begin
     FDesignedSession.TimeStop := FDesignedSession.TimeStart + TimeOf(dtpTimeLength.Time);
     tdMoney := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].CalculateCost(
         FDesignedSession.TimeStart, FDesignedSession.TimeStop,
-        Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True);
+        Comps[ComputersGetIndex(FDesignedSession.IdComp)].IdGroup, 0, True, True, 0);
 //    tdMoney := Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].fnRoundMoney(tdMoney, Tarifs[TarifsGetIndex(FDesignedSession.IdTarif)].roundmoney, 1);
     FDesignedSession.CommonPay := tdMoney;
   end;

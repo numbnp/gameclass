@@ -48,7 +48,8 @@ type
     destructor Destroy; override;
     function CalculateTimeLength(start: TDateTime; money: double; vip: Integer; discount:integer):TDateTime;
     function CalculateCost(start,stop: TDateTime;
-        vip: Integer; discount:integer; AbClearSeconds: Boolean):double;
+        vip: Integer; discount:integer; AbClearSeconds: Boolean;
+        UseStartMoneyMinimum: Boolean; StartMoneyMinimumBySession: Double):double;
     // переводит секунды во время
     function TimeFromSeconds(seconds: longword): TDateTime;
     function GetWholeStartByIndex(idWhole: longword): TDateTime;
@@ -463,8 +464,9 @@ begin
 end;
 
 // функция подсчета денег исходя из времени
+{ TODO : Реализовать функцию взымания минимальной суммы только при окончании сесии }
 function TTarif.CalculateCost(start,stop: TDateTime; vip: Integer;
-    discount:integer; AbClearSeconds: Boolean):double;
+    discount:integer; AbClearSeconds: Boolean; UseStartMoneyMinimum: Boolean; StartMoneyMinimumBySession: Double):double;
 var
   new_stop: TDateTime;
   summa: double;
