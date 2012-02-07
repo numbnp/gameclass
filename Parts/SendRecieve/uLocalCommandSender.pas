@@ -65,7 +65,8 @@ uses
   uCommandSender,
   uClientInfo,
 {$ENDIF}
-  uLocalCommandReceiver;
+  uLocalCommandReceiver,
+  uProtocolTcp;
 
 var
   CommandSender: TLocalCommandSender;
@@ -131,6 +132,8 @@ end; // TLocalCommandSender.Destroy
 // Result: TRUE  - send commsnd success
 //         FALSE - send command error
 function TLocalCommandSender.SendCommand(const AstrData: String): boolean;
+var
+  CommBlock: TCommandPakage;
 begin
   Result := TRUE;
   if tcpClient = nil then
@@ -145,8 +148,11 @@ begin
           tcpClient.Connect();
         end;
         if tcpClient.Connected then begin
-          tcpClient.WriteInteger(length(AstrData));
+{          tcpClient.WriteInteger(length(AstrData));
           tcpClient.WriteLn(AstrData);
+}
+          CommBlock.Command := AstrData;
+          tcpClient.WriteBuffer(CommBlock,SizeOf(CommBlock), true);
 //          tcpClient.Disconnect();
         end else begin
           Result := FALSE;

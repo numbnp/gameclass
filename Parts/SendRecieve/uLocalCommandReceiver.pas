@@ -73,7 +73,8 @@ uses
 //  Dialogs,
   // project units
   uDebugLog,
-  uY2KCommon;
+  uY2KCommon,
+  uProtocolTcp;
 
 
 
@@ -134,9 +135,10 @@ end; // TLocalCommandReceiver.StopReceiveProcess
 
 procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
 var
-  strTest: string;
+{  strTest: string;
   strLine: string;
-  nLength: integer;
+  nLength: integer;}
+  CommBlock: TCommandPakage;
 begin
   try
     with AThread.Connection do
@@ -144,9 +146,10 @@ begin
 //        strTest := ReadString(4);
 //        if strTest = 'sYNc' then
         begin
-          nLength := ReadInteger();
+          AThread.Connection.ReadBuffer(CommBlock, SizeOf(CommBlock))
+{          nLength := ReadInteger();
           strLine := ReadString(nLength);
-          strTest := ReadString(2);
+          strTest := ReadString(2);}
         end
       except
         Disconnect();
@@ -154,8 +157,8 @@ begin
 //        Disconnect();
       end;
 
-    _SendDataReceiveEvent(strLine);
-
+//    _SendDataReceiveEvent(strLine);
+      _SendDataReceiveEvent(CommBlock.Command);
   except
     on e: Exception do begin
       Debug.Trace0('_TCPServerRead error! ' + e.Message);
