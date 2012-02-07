@@ -111,7 +111,7 @@ ProjectLang=
 RootDir=
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=1
+AutoIncBuild=0
 MajorVer=3
 MinorVer=85
 Release=2
@@ -132,7 +132,7 @@ LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3 Client
-ProductVersion=3.85.2.11 Free
+ProductVersion=3.85.2.12 Free
 [HistoryLists\hlConditionals]
 Count=3
 Item0=ASPROTECT, GCCL

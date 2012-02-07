@@ -63,7 +63,8 @@ uses
   uGetWinVer in '..\Parts\Tools\uGetWinVer.pas',
   uSetVolumeRemoteCommand in '..\Parts\RemoteCommands\uSetVolumeRemoteCommand.pas',
   MMDevApi_tlb in '..\Parts\ControlVolume\MMDevApi_tlb.pas',
-  Mixer in '..\Parts\ControlVolume\Mixer.pas';
+  Mixer in '..\Parts\ControlVolume\Mixer.pas',
+  uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas';
 
 {$R *.res}
 const
