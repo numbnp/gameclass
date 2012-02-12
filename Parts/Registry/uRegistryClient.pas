@@ -28,6 +28,9 @@ type
     function LocateUseWOL: Boolean;
     function GetUseWOL: Boolean;
     procedure SetUseWOL(AValue: Boolean);
+    function LocateShowSumm: Boolean;
+    function GetShowSumm: Boolean;
+    procedure SetShowSumm(AValue: Boolean);
 
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
@@ -44,6 +47,8 @@ type
         read GetTaskKillBeforeStart write SetTaskKillBeforeStart;
     property UseWOL: Boolean
         read GetUseWOL write SetUseWOL;
+    property ShowSumm: Boolean
+        read GetShowSumm write SetShowSumm;
 
   end;
 
@@ -151,6 +156,23 @@ end;
 procedure TRegistryClient.SetUseWOL(AValue: Boolean);
 begin
   LocateUseWOL;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryClient.LocateShowSumm: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('Client\ShowSumm', '1');
+end;
+
+function TRegistryClient.GetShowSumm: Boolean;
+begin
+  LocateShowSumm;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryClient.SetShowSumm(AValue: Boolean);
+begin
+  LocateShowSumm;
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 
