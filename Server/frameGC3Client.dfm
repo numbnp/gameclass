@@ -1,14 +1,14 @@
 object framGC3Client: TframGC3Client
   Left = 0
   Top = 0
-  Width = 443
-  Height = 403
+  Width = 509
+  Height = 404
   TabOrder = 0
   object pnlTop2: TPanel
     Left = 0
     Top = 126
-    Width = 443
-    Height = 131
+    Width = 509
+    Height = 139
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
@@ -16,7 +16,7 @@ object framGC3Client: TframGC3Client
       Left = 0
       Top = 0
       Width = 169
-      Height = 131
+      Height = 139
       Align = alLeft
       Caption = #1047#1072#1074#1077#1088#1096#1077#1085#1080#1077' '#1089#1077#1072#1085#1089#1072
       TabOrder = 0
@@ -85,16 +85,16 @@ object framGC3Client: TframGC3Client
     object pnlTop2RightTop: TPanel
       Left = 169
       Top = 0
-      Width = 274
-      Height = 131
+      Width = 340
+      Height = 139
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object gbOther: TGroupBox
         Left = 0
         Top = 52
-        Width = 274
-        Height = 79
+        Width = 340
+        Height = 87
         Align = alClient
         Caption = #1044#1088#1091#1075#1086#1077
         TabOrder = 0
@@ -110,7 +110,7 @@ object framGC3Client: TframGC3Client
         object cbxTaskKillBeforeStart: TCheckBox
           Left = 8
           Top = 32
-          Width = 265
+          Width = 257
           Height = 17
           Caption = #1057#1085#1080#1084#1072#1090#1100' '#1079#1072#1076#1072#1095#1080' '#1087#1077#1088#1077#1076' '#1085#1072#1095#1072#1083#1086#1084' '#1089#1077#1072#1085#1089#1072
           TabOrder = 1
@@ -125,11 +125,20 @@ object framGC3Client: TframGC3Client
           TabOrder = 2
           OnClick = cbxUseWOLClick
         end
+        object cbShowSummOnClient: TCheckBox
+          Left = 8
+          Top = 63
+          Width = 268
+          Height = 17
+          Caption = #1055#1086#1082#1072#1079#1099#1074#1072#1090#1100' '#1085#1072#1082#1086#1087#1083#1077#1085#1085#1091#1102' '#1089#1091#1084#1084#1091' '#1085#1072' '#1082#1083#1080#1077#1085#1090#1077
+          TabOrder = 3
+          OnClick = cbShowSummOnClientClick
+        end
       end
       object gbShell: TGroupBox
         Left = 0
         Top = 0
-        Width = 274
+        Width = 340
         Height = 52
         Align = alTop
         Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1099#1081' '#1096#1077#1083#1083
@@ -158,7 +167,7 @@ object framGC3Client: TframGC3Client
   object pnlTop1: TPanel
     Left = 0
     Top = 0
-    Width = 443
+    Width = 509
     Height = 126
     Align = alTop
     BevelOuter = bvNone
@@ -166,7 +175,7 @@ object framGC3Client: TframGC3Client
     object gbBlockAction: TGroupBox
       Left = 225
       Top = 0
-      Width = 218
+      Width = 284
       Height = 126
       Align = alClient
       Caption = #1041#1083#1086#1082#1080#1088#1086#1074#1082#1080' '#1089#1088#1072#1073#1072#1090#1099#1074#1072#1102#1090
@@ -377,24 +386,24 @@ object framGC3Client: TframGC3Client
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 257
-    Width = 443
-    Height = 146
+    Top = 265
+    Width = 509
+    Height = 139
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
     object pnlTop2Right: TPanel
       Left = 0
       Top = 0
-      Width = 443
-      Height = 146
+      Width = 509
+      Height = 139
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object gbSessionScript: TGroupBox
         Left = 0
         Top = 0
-        Width = 443
+        Width = 509
         Height = 50
         Align = alTop
         Caption = '    '

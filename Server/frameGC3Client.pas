@@ -56,6 +56,7 @@ type
     pnlBottom: TPanel;
     lblDistribPath: TLabel;
     cbxUseWOL: TCheckBox;
+    cbShowSummOnClient: TCheckBox;
     procedure cbxKeyboardClick(Sender: TObject);
     procedure cbxMouseClick(Sender: TObject);
     procedure cbxTasksClick(Sender: TObject);
@@ -86,6 +87,7 @@ type
     procedure cbxAutoInstallClick(Sender: TObject);
     procedure cbxTaskKillBeforeStartClick(Sender: TObject);
     procedure cbxUseWOLClick(Sender: TObject);
+    procedure cbShowSummOnClientClick(Sender: TObject);
   private
     { Private declarations }
 //    FbUnblockPasswordNotChanged: Boolean;
@@ -194,7 +196,8 @@ begin
   editInstallPath.FileName := GRegistry.Options.InstallPath;
   cbxAutoInstall.Checked := GRegistry.Options.AutoInstall;
   cbxTaskKillBeforeStart.Checked := GRegistry.Client.TaskKillBeforeStart;
-  cbxUseWOL.Checked := GRegistry.Client.UseWOL; 
+  cbxUseWOL.Checked := GRegistry.Client.UseWOL;
+  cbShowSummOnClient.Checked := GRegistry.Client.ShowSumm; 
   GbFormGC3ClientLock := False;
 end;
 
@@ -515,6 +518,13 @@ begin
    GRegistry.Client.UseWOL := cbxUseWOL.Checked;
   _AfterControlDataChange;
 
+end;
+
+procedure TframGC3Client.cbShowSummOnClientClick(Sender: TObject);
+begin
+  if GbFormGC3ClientLock then exit;  GbFormGC3ClientLock := True;;
+   GRegistry.Client.ShowSumm := cbShowSummOnClient.Checked;
+  _AfterControlDataChange;
 end;
 
 end.
