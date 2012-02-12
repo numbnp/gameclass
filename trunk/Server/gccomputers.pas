@@ -916,12 +916,17 @@ begin
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'Login'
           + '/' + GetAccountName(a));
-      UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
-          + 'Balance'
-          + '/' + FloatToStr(GetAccountBalance(a)));
-      UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
-          + 'Spent'
-          + '/' + FloatToStr(GetAccountSummary(a)));
+          UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
+            + 'Balance'
+            + '/' + FloatToStr(GetAccountBalance(a)));
+   {   if GRegistry.Client.ShowSumm then
+          UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
+            + 'Spent'
+            + '/' + FloatToStr(GetAccountSummary(a)))
+        else
+          UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
+            + 'Spent/-1');}
+
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'BalanceLimit'
           + '/' + FloatToStr(GetAccountBalanceLimit(a)));
