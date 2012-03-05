@@ -499,15 +499,15 @@ begin
   FbOnChangeEnabled := False;
   lblLoggedAs.Caption := GClientInfo.Login;
   lblBalance.Caption := FloatToStr(GClientInfo.Balance);
-{  if GClientInfo.Spent >= 0 then
+  if GClientInfo.Spent > 0 then
   begin
     lblSpent.Visible := True;
-    lblSpentCaption.Visible := True;}
+    lblSpentCaption.Visible := True;
     lblSpent.Caption := FloatToStr(GClientInfo.Spent);
-{  end else begin
+  end else begin
     lblSpent.Visible := False;
     lblSpentCaption.Visible := False;
-  end;}
+  end;
   memInfo.Text := GClientInfo.FullInfo;
   memBalanceHistory.Text := GClientInfo.BalanceHistory;
   FbOnChangeEnabled := True;

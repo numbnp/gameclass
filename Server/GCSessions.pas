@@ -1393,7 +1393,8 @@ begin
             FProxy.IPDisable(computer.ipaddr);
         end;
 
-        if (TimeStop <= GetVirtualTime) or IsTimeOff then begin
+        if (TimeStop <= (GetVirtualTime + EncodeTime (0,0,4,0))) or IsTimeOff then begin
+          formMain.timerGSessionsLoad.Enabled := False;
           bActionCanceled := False;
           if GRegistry.Modules.KKM.Active then begin
             bActionCanceled := not PrintCheckStop(Items[i])
@@ -1404,10 +1405,11 @@ begin
                 'Операция отменена из-за ошибки ККМ: '
                 + GKKMPlugin.GetLastError)
           else begin
-            Stop(TimeStop <= GetVirtualTime);
+            Stop(TimeStop <= (GetVirtualTime + - EncodeTime (0,0,4,0)));
             if (computer.a.state = ClientState_Session) then
               SendAuthGoState2(index);
           end;
+          formMain.timerGSessionsLoad.Enabled := True;
         end;
       end;
       if (Status = ssReserve) and (TimeStart <= GetVirtualTime) then begin

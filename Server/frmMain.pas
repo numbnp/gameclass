@@ -1774,11 +1774,17 @@ begin
    Comps[CompIndex].a.state := ClientState_Order;
    Comps[CompIndex].a.LogonOrStopMoment := GetVirtualTime;
    with GAccountSystem.Accounts[Comps[CompIndex].a.number] do begin
-     UDPSend(Comps[CompIndex].ipaddr, STR_CMD_AUTH_GOSTATE_2+'='
-        + Name + '/'
-        + FloatToStr(Balance) + '/'
-        + FloatToStr(LimitBalance) + '/'
-        + FloatToStr(Summary));
+     if GRegistry.Client.ShowSumm then
+        UDPSend(Comps[CompIndex].ipaddr, STR_CMD_AUTH_GOSTATE_2+'='
+          + Name + '/'
+          + FloatToStr(Balance) + '/'
+          + FloatToStr(LimitBalance) + '/'
+          + FloatToStr(Summary))
+     else
+        UDPSend(Comps[CompIndex].ipaddr, STR_CMD_AUTH_GOSTATE_2+'='
+          + Name + '/'
+          + FloatToStr(Balance) + '/'
+          + FloatToStr(LimitBalance) + '/0');
      UDPSend(Comps[CompIndex].ipaddr,
         STR_CMD_AUTH_SENDBALANCEHISTORY+ '='
         + History);
