@@ -146,6 +146,7 @@ begin
 //        strTest := ReadString(4);
 //        if strTest = 'sYNc' then
         begin
+        CommBlock.Command:='';
           AThread.Connection.ReadBuffer(CommBlock, SizeOf(CommBlock))
 {          nLength := ReadInteger();
           strLine := ReadString(nLength);

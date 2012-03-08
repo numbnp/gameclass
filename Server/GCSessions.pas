@@ -1405,7 +1405,7 @@ begin
                 'Операция отменена из-за ошибки ККМ: '
                 + GKKMPlugin.GetLastError)
           else begin
-            Stop(TimeStop <= (GetVirtualTime + - EncodeTime (0,0,4,0)));
+            Stop(TimeStop <= (GetVirtualTime + EncodeTime (0,0,4,0)));
             if (computer.a.state = ClientState_Session) then
               SendAuthGoState2(index);
           end;
