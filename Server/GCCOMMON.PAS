@@ -336,6 +336,7 @@ begin
     Tarifs[0].SpeedLimitInKB := 0;
     Tarifs[0].PluginGroupName := '';
     Tarifs[0].userlevel:=0;
+    Tarifs[0].operatorlevel:=0;
     Tarifs[0].variantscount := 1;
     Tarifs[0].tarifvariants[0] := TTarifVariants.Create;
     Tarifs[0].tarifvariants[0].id := 0;
@@ -372,6 +373,7 @@ begin
       Tarifs[i].SpeedLimitInKB := dts.Recordset.Fields.Item['SpeedLimitInKB'].Value;
       Tarifs[i].PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
       Tarifs[i].userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
+      Tarifs[i].operatorlevel := dts.Recordset.Fields.Item['operatorlevel'].Value;
       Tarifs[i].useseparatesumm  := dts.Recordset.Fields.Item['useseparatesumm'].Value;
       Tarifs[i].startmoneymin := dts.Recordset.Fields.Item['startmoneymin'].Value;
       Tarifs[i].startmoneymax := dts.Recordset.Fields.Item['startmoneymax'].Value;

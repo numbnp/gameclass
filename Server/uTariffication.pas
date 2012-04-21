@@ -120,6 +120,7 @@ type
     variantscount: integer;
     idGroup: Integer;
     userlevel: Integer; // требуемый уровень доступа пользователя
+    operatorlevel: Integer; // требуемый уровень доступа пользователя
     useseparatesumm: integer; // Использовать отдельную настройку сумм
     startmoneymin: integer;   // минимальная стартовая сумма тарифа
     startmoneymax: integer;   // максимальная стартовая сумма тарифа

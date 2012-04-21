@@ -291,6 +291,7 @@ var
 
   CurOperatorName: string; // текущий оператор
   isManager: boolean;      // текущий юзер - менеджер!
+  OperatorSecLevel: integer;      // Уровень допуска текущего пользователя
   IntTimeShift: TDateTime; // сдвиг между временем сервера и локальным
   IntTimeShiftReset: TDateTime; // время без дополнительных сдвигов
   CurServer: string; //нигде не используется

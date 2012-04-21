@@ -1,13 +1,13 @@
 object framUsers: TframUsers
   Left = 0
   Top = 0
-  Width = 449
-  Height = 409
+  Width = 460
+  Height = 522
   TabOrder = 0
   object lvUsers: TListView
     Left = 0
     Top = 0
-    Width = 450
+    Width = 460
     Height = 273
     Align = alTop
     Columns = <
@@ -18,6 +18,10 @@ object framUsers: TframUsers
       item
         AutoSize = True
         Caption = 'Group'
+      end
+      item
+        Caption = 'SecLevel'
+        Width = 120
       end>
     HideSelection = False
     ReadOnly = True
@@ -30,7 +34,7 @@ object framUsers: TframUsers
     Left = 0
     Top = 275
     Width = 450
-    Height = 96
+    Height = 134
     TabOrder = 1
     object lblGroup: TLabel
       Left = 7
@@ -60,11 +64,18 @@ object framUsers: TframUsers
       Height = 13
       Caption = #1055#1072#1088#1086#1083#1100
     end
+    object lblSecLevel: TLabel
+      Left = 7
+      Top = 89
+      Width = 45
+      Height = 13
+      Caption = 'SecLevel'
+    end
     object editLogin: TEdit
       Left = 8
-      Top = 25
+      Top = 26
       Width = 132
-      Height = 21
+      Height = 20
       TabOrder = 0
       OnChange = editLoginChange
     end
@@ -107,10 +118,31 @@ object framUsers: TframUsers
       TabOrder = 2
       OnChange = editPassChange
     end
+    object cmbSecLevel: TComboBox
+      Left = 7
+      Top = 105
+      Width = 136
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 4
+      OnChange = cmbSecLevelChange
+      Items.Strings = (
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8'
+        '9'
+        '10')
+    end
   end
   object butAdd: TButton
     Left = 293
-    Top = 379
+    Top = 416
     Width = 75
     Height = 25
     Caption = 'add'
@@ -119,7 +151,7 @@ object framUsers: TframUsers
   end
   object butDelete: TButton
     Left = 375
-    Top = 379
+    Top = 416
     Width = 75
     Height = 25
     Caption = 'delete'
@@ -128,7 +160,7 @@ object framUsers: TframUsers
   end
   object butChangePass: TButton
     Left = 166
-    Top = 379
+    Top = 416
     Width = 121
     Height = 25
     Caption = 'change pass'

@@ -127,12 +127,13 @@ begin
   //Fill tariffs
   if (lvTarifs.Items.Count = 0) then begin
     for i:=1 to (TarifsCount-1) do
-      if ((Tarifs[i].idGroup = Comps[ComputersGetIndex(CompsSel[0])].IdGroup) and
-        (Tarifs[i].id <> session.IdTarif)) then begin
-        li := lvTarifs.Items.Add;
-        li.Caption := Tarifs[i].name;
-        li.Data := nil;
-      end;
+      if OperatorSecLevel >= Tarifs[i].operatorlevel then
+        if ((Tarifs[i].idGroup = Comps[ComputersGetIndex(CompsSel[0])].IdGroup) and
+          (Tarifs[i].id <> session.IdTarif)) then begin
+          li := lvTarifs.Items.Add;
+          li.Caption := Tarifs[i].name;
+          li.Data := nil;
+        end;
     if (lvTarifs.Items.Count >0) then begin
       lvTarifs.ItemIndex := 0;
       lvTarifsClick(Self);

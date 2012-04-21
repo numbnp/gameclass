@@ -202,6 +202,9 @@ uses
 type
   TMyDBGrid = class(TDBGridEh);
 
+//var
+  //NoRestoreCompsGrid:Boolean;
+
 // Функция для предотвращения "прыгания" курсора в сетке с компами на средину
 procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
  var FTitleOffset, SDistance : Integer;
@@ -594,6 +597,7 @@ begin
         SetVirtualTime(FieldList[0].AsDateTime);
         IntTimeShiftReset := IntTimeShift;
         isManager := FieldList[1].AsBoolean;
+        OperatorSecLevel :=FieldList[2].AsInteger ;
         Close;
       end;
       Close;
@@ -726,13 +730,16 @@ begin
     end;
     formMain.FfrmReports.InitData;
     // загрузим внешний вид текущего оператора
+//    NoRestoreCompsGrid := true;
     OperatorProfile.Load;
+//    NoRestoreCompsGrid := false;
     Application.ProcessMessages;
     if not isManager then
       GRegistry.Info.LastOperatorName := CurOperatorName;
     RunServerScript(aLogon, CurOperatorName);
   end;
   frmLogon.Free;
+
 end;
 
 // logout
@@ -1016,7 +1023,8 @@ begin
    SortDataSet(True);
    formMain.cdsComps.Bookmark := bookmark;
    formMain.cdsComps.EnableControls;
-   ScrollActiveToRow(formMain.gridComps,iOldRow);
+//   if not NoRestoreCompsGrid then
+//    ScrollActiveToRow(formMain.gridComps,iOldRow);
 end;
 
 // PreLogon actions
