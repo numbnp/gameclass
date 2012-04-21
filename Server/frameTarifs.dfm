@@ -2,7 +2,7 @@ object framTarifs: TframTarifs
   Left = 0
   Top = 0
   Width = 576
-  Height = 538
+  Height = 613
   TabOrder = 0
   object lblComputerGroup: TLabel
     Left = 8
@@ -25,7 +25,7 @@ object framTarifs: TframTarifs
     Left = 8
     Top = 48
     Width = 129
-    Height = 233
+    Height = 265
     Columns = <
       item
         Caption = 'Tarif'
@@ -50,7 +50,7 @@ object framTarifs: TframTarifs
   end
   object pgctrlDetails: TPageControl
     Left = 0
-    Top = 288
+    Top = 313
     Width = 453
     Height = 241
     ActivePage = tabTarifSelected
@@ -414,7 +414,7 @@ object framTarifs: TframTarifs
     Left = 144
     Top = 6
     Width = 305
-    Height = 283
+    Height = 307
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1090#1072#1088#1080#1092#1072
     TabOrder = 4
     object lblTarifName: TLabel
@@ -445,9 +445,16 @@ object framTarifs: TframTarifs
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
     end
+    object lblOperatorLevel: TLabel
+      Left = 8
+      Top = 79
+      Width = 143
+      Height = 13
+      Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072' '#1086#1087#1077#1088#1072#1090#1086#1088#1072
+    end
     object butMoveUp: TButton
       Left = 4
-      Top = 249
+      Top = 274
       Width = 70
       Height = 25
       Caption = 'Move up'
@@ -457,7 +464,7 @@ object framTarifs: TframTarifs
     end
     object butTarifUpdate: TButton
       Left = 155
-      Top = 249
+      Top = 274
       Width = 70
       Height = 25
       Caption = 'update'
@@ -467,7 +474,7 @@ object framTarifs: TframTarifs
     end
     object butTarifDelete: TButton
       Left = 230
-      Top = 249
+      Top = 274
       Width = 70
       Height = 25
       Caption = 'delete'
@@ -476,7 +483,7 @@ object framTarifs: TframTarifs
     end
     object butTarifAdd: TButton
       Left = 79
-      Top = 249
+      Top = 274
       Width = 70
       Height = 25
       Caption = 'add'
@@ -486,7 +493,7 @@ object framTarifs: TframTarifs
     end
     object gbInternet: TGroupBox
       Left = 8
-      Top = 178
+      Top = 203
       Width = 289
       Height = 67
       Caption = '   '
@@ -574,7 +581,7 @@ object framTarifs: TframTarifs
     end
     object cbInternet: TCheckBox
       Left = 18
-      Top = 175
+      Top = 201
       Width = 77
       Height = 17
       Caption = 'Internet'
@@ -604,7 +611,7 @@ object framTarifs: TframTarifs
     end
     object gbSum: TGroupBox
       Left = 8
-      Top = 79
+      Top = 104
       Width = 289
       Height = 98
       TabOrder = 10
@@ -691,12 +698,33 @@ object framTarifs: TframTarifs
     end
     object cbSumm: TCheckBox
       Left = 18
-      Top = 74
+      Top = 101
       Width = 238
       Height = 17
       Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1086#1090#1076#1077#1083#1100#1085#1091#1102' '#1085#1072#1089#1090#1088#1086#1081#1082#1091' '#1089#1091#1084#1084
       TabOrder = 11
       OnClick = cbSummClick
+    end
+    object cbOperatorLevel: TComboBox
+      Left = 222
+      Top = 79
+      Width = 75
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 12
+      OnChange = cbUserLevelChange
+      Items.Strings = (
+        '0'
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8'
+        '9'
+        '10')
     end
   end
 end

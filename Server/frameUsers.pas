@@ -17,6 +17,7 @@ type
     name: string;
     namegroup: string;
     idgroup: integer;
+    seclevel: integer;
   end;
 
   TGroup = class
@@ -42,6 +43,8 @@ type
     butAdd: TButton;
     butDelete: TButton;
     butChangePass: TButton;
+    lblSecLevel: TLabel;
+    cmbSecLevel: TComboBox;
     procedure lvUsersClick(Sender: TObject);
     procedure editLoginChange(Sender: TObject);
     procedure butDeleteClick(Sender: TObject);
@@ -49,6 +52,7 @@ type
     procedure editPassChange(Sender: TObject);
     procedure editPassRepeateChange(Sender: TObject);
     procedure butChangePassClick(Sender: TObject);
+    procedure cmbSecLevelChange(Sender: TObject);
   private
     { Private declarations }
     pass_equal: boolean;
@@ -95,11 +99,13 @@ begin
   butChangePass.Caption := translate('mnuChangePass');
   lblGroup.Caption := translate('Group');
   lblLogin.Caption := translate('Login');
+  lblSecLevel.Caption := translate('SecLevel');
   lblPassword.Caption := translate('lblNewPassword');
   lblRepeatPassword.Caption := translate('lblRepeatPassword');
 
   lvUsers.Column[0].Caption := translate('Login');
   lvUsers.Column[1].Caption := translate('Group');
+  lvUsers.Column[2].Caption := translate('SecLevel');
 end;
 
 procedure TframUsers.UpdateUsersList;
@@ -129,10 +135,12 @@ begin
       User.name := dts.Recordset.Fields.Item['name'].Value;
       User.namegroup := dts.Recordset.Fields.Item['group'].Value;
       User.idgroup := dts.Recordset.Fields.Item['idUsersGroup'].Value;
+      User.seclevel := dts.Recordset.Fields.Item['seclevel'].Value;
 
       li := lvUsers.Items.Add;
       li.Caption := User.name;
       li.SubItems.Insert(0, User.namegroup);
+      li.SubItems.Insert(1, inttostr(User.seclevel));
       li.Data := User;            
       dts.Recordset.MoveNext;
     end;
@@ -171,6 +179,7 @@ begin
    User := lvUsers.Items[lvUsers.ItemIndex].Data;
    butDelete.Enabled := true;
    butChangePass.Enabled := true;
+   cmbSecLevel.ItemIndex := User.seclevel-1;
    editLogin.Text := User.name;
    editPassRepeate.Text := '';
    editPass.Text := '';
@@ -183,16 +192,30 @@ end;
 
 procedure TframUsers.editLoginChange(Sender: TObject);
 var
-  f1, f2: boolean;
+  f1, f2, f3: boolean;
   i: integer;
+  User: TUser;
 begin
   f1 := (length(editLogin.Text)>2);
   f2 := true;
+  f3 := true;
   for i:=0 to lvUsers.Items.Count-1 do
     if (lvUsers.Items[i].Caption = editLogin.Text) then
+    begin
       f2 := false;
+      User := lvUsers.Items[i].Data;
+      if length(cmbSecLevel.Text)>0 then
+        if (User.seclevel = strtoint(cmbSecLevel.Text)) then
+          f3 := false;
+    end;
 
   butAdd.Enabled := (f1 and f2);
+  butAdd.Caption := translate('Add');
+  if not butAdd.Enabled and f3 then
+  begin
+    butAdd.Enabled := true;
+    butAdd.Caption := translate('Save');
+  end;
   cmbGroups.Enabled := butAdd.Enabled;
   butChangePass.Enabled := ((not f2) and pass_equal);
   butDelete.Enabled := ((not f2) and ((editLogin.Text <> CurOperatorName)));
@@ -209,8 +232,31 @@ begin
 end;
 
 procedure TframUsers.butAddClick(Sender: TObject);
+var
+  f1, f2, f3: boolean;
+  i: integer;
+  User: TUser;
+  Qerty: string;
 begin
-  dsDoCommand(DS_USERS_CREATE + ' @login_name='''+editLogin.Text+''', @group_name='''+cmbGroups.Text+''', @password='''+editPass.Text + '''');
+  f1 := (length(editLogin.Text)>2);
+  f2 := true;
+  f3 := true;
+  for i:=0 to lvUsers.Items.Count-1 do
+    if (lvUsers.Items[i].Caption = editLogin.Text) then
+    begin
+      f2 := false;
+      User := lvUsers.Items[i].Data;
+      if length(cmbSecLevel.Text)>0 then
+        if (User.seclevel = strtoint(cmbSecLevel.Text)) then
+          f3 := false;
+    end;
+
+  Qerty := DS_USERS_CREATE + ' @login_name='''+editLogin.Text+''', @group_name='''+cmbGroups.Text+''', @password='''+editPass.Text + ''', @seclevel=' + cmbSecLevel.Text;
+  if not (f1 and f2) and f3 then
+  begin
+    Qerty := DS_USERS_SECLEVEL + ' @login_name='''+editLogin.Text+''', @seclevel=' + cmbSecLevel.Text;
+  end;
+  dsDoCommand(Qerty);
   UpdateUsersList;
 end;
 
@@ -234,6 +280,35 @@ begin
     editPassRepeate.Text := '';
     editPass.Text := '';
   end;
+end;
+
+procedure TframUsers.cmbSecLevelChange(Sender: TObject);
+{var
+  f1, f2, f3: boolean;
+  User: TUser;
+  i: integer;}
+begin
+  editLoginChange(Sender);
+
+{  f1 := (length(editLogin.Text)>2);
+  f2 := true;
+  f3 := true;
+  for i:=0 to lvUsers.Items.Count-1 do
+    if (lvUsers.Items[i].Caption = editLogin.Text) then
+    begin
+      f2 := false;
+      User := lvUsers.Items[i].Data;
+      if (User.seclevel = strtoint(cmbSecLevel.Text)) then
+        f3 := false;
+    end;
+
+  butAdd.Enabled := (f1 and f2);
+  butAdd.Caption := translate('Add');
+  if not butAdd.Enabled and f3 then
+  begin
+    butAdd.Enabled := true;
+    butAdd.Caption := translate('Save');
+  end; }
 end;
 
 end.

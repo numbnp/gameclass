@@ -189,6 +189,162 @@ GO
 SET ANSI_NULLS OFF 
 GO
 
+
+/* -----------------------------------------------------------------------------
+  Колонки уровня доступа оператора
+----------------------------------------------------------------------------- */
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'seclevel' 
+  AND id = object_id(N'[GameClass].[dbo].[Users]')) 
+ALTER TABLE [Users] ADD [seclevel] [int] NOT NULL DEFAULT (1)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'operatorlevel' 
+  AND id = object_id(N'[GameClass].[dbo].[Tarifs]')) 
+ALTER TABLE [Tarifs] ADD [operatorlevel] [int] NOT NULL DEFAULT (1)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[UsersChangeSecLevel]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[UsersChangeSecLevel]
+GO
+
+CREATE PROCEDURE UsersChangeSecLevel
+@login_name nvarchar(50),
+@seclevel INT
+AS 
+
+/*  проверка на наличие такого пользователя */
+if not exists (select [id] from Users where [name]=@login_name and [isdelete]=0)
+begin
+ raiserror 50000 'User not exist!'
+ return 50000
+end
+
+UPDATE Users SET [seclevel] = @seclevel WHERE [name] = @login_name
+GO
+
+ALTER PROCEDURE UsersCreate
+  @login_name NVARCHAR(50),
+  @group_name NVARCHAR(50),
+  @password NVARCHAR(50),
+  @seclevel INT
+AS 
+BEGIN
+  DECLARE @error_descr VARCHAR(400)
+  DECLARE @idGroup INT
+  
+  SELECT @idGroup=[id] FROM UsersGroup WHERE [name]=@group_name
+  
+  /*  проверка на наличие пользователя с таким же именем */
+  IF EXISTS(SELECT [id] FROM Users WHERE [name]=@login_name AND [isdelete]=0)
+  BEGIN
+   RAISERROR 50000  'User already exist!'
+   RETURN 50000
+  END
+  
+  DECLARE @err1 INT
+  DECLARE @err2 INT
+  DECLARE @err3 INT
+
+  IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[tempdb]..[#msver]') )
+    DROP TABLE #msver
+  DECLARE @MSSQLVERSION INT
+  CREATE TABLE #msver ([Index] INT PRIMARY KEY, [Name] VARCHAR(200), Internal_Value INT, Character_Value VARCHAR(200))
+  INSERT INTO #msver EXEC master..xp_msver ProductVersion
+  SELECT @MSSQLVERSION=CAST(LEFT(Character_Value,1) AS INT) FROM #msver
+  DROP TABLE #msver
+  
+  DECLARE @sql VARCHAR(400)
+  IF (@MSSQLVERSION = 8) 
+  EXEC @err1=master.dbo.sp_addlogin @login_name
+  IF (@MSSQLVERSION = 9) 
+  BEGIN
+    SET @sql = 'CREATE LOGIN ' + @login_name + ' WITH PASSWORD = '''', CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF'
+    EXEC (@sql)
+  END
+  EXEC @err2=sp_adduser @login_name, @login_name, 'public'
+  IF (@group_name='Management')
+    EXEC @err3=sp_addsrvrolemember @login_name, 'sysadmin'
+  IF (@err1<>0) OR (@err2<>0)
+  BEGIN
+    RAISERROR 50000 'Ошибка создания пользователя'
+    RETURN 50000
+  END
+  
+  INSERT INTO Users ([name], [idUsersGroup], [seclevel]) VALUES (@login_name,@idGroup,@seclevel)
+  EXEC UsersChangePass @login_name, @password
+END
+GO
+
+
+ALTER PROCEDURE TarifsUpdate
+@idTarif int,
+@name nvarchar(100),
+@internet int,
+@calctraffic int,
+@roundtime int,
+@roundmoney money,
+@idGroup int,
+@BytesInMB int,
+@SpeedLimitInKB int,
+@PluginGroupName nvarchar(50),
+@userlevel int,
+@operatorlevel int,
+@useseparatesumm int,
+@startmoneymin int,
+@startmoneymax int,
+@addmoneymin int,
+@addmoneymax int,
+@maximumtrust int
+/*WITH ENCRYPTION*/  
+AS 
+
+set nocount on
+
+if (exists(select * from Tarifs where ([name]=@name) and [id]<>@idTarif and [isdelete]=0))
+begin
+  raiserror 50000 'Tarif with these name already exist!'
+  return 50000
+end
+
+update Tarifs set [name]=@name ,[internet]=@internet ,[calctraffic]=@calctraffic ,[roundtime]=@roundtime ,
+         [roundmoney]=@roundmoney, [idGroup]=@idGroup, [BytesInMB]=@BytesInMB,
+    [SpeedLimitInKB]=@SpeedLimitInKB, [PluginGroupName]=@PluginGroupName, [userlevel]=@userlevel,
+	[operatorlevel]=@operatorlevel,
+	[useseparatesumm]=@useseparatesumm,
+	[startmoneymin]=@startmoneymin,
+	[startmoneymax]=@startmoneymax,
+	[addmoneymin]=@addmoneymin,
+	[addmoneymax]=@addmoneymax,
+	[maximumtrust]=@maximumtrust
+    where [id]=@idTarif
+GO
+
+ALTER PROCEDURE GetLogonInfo
+@id int,
+@Value bigint
+/*WITH ENCRYPTION*/
+AS
+BEGIN
+  SET NOCOUNT ON
+    DECLARE @isManager int
+    DECLARE @idGroup int
+    DECLARE @UserLevel int
+  
+    SET @isManager = 0
+    SET @idGroup = -1
+    SELECT @idGroup = [idUsersGroup] FROM Users WHERE ([name] = SYSTEM_USER) AND ([isdelete]=0)
+    SELECT @UserLevel = [seclevel] FROM Users WHERE ([Name] = SYSTEM_USER) AND ([isdelete]=0)
+
+    IF (@idGroup = 2)
+      SET @isManager = 1
+    SELECT GETDATE(), CAST(@isManager AS bit), @UserLevel
+END
+GO
+
+
+
+
 /* -----------------------------------------------------------------------------
                                UPDATE Version
 ----------------------------------------------------------------------------- */
