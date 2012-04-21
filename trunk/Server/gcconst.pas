@@ -132,6 +132,7 @@ const
   DS_USERS_DELETE = 'UsersDelete';
   DS_USERS_CREATE = 'UsersCreate';
   DS_USERS_CHANGEPASS = 'UsersChangePass';
+  DS_USERS_SECLEVEL = 'UsersChangeSecLevel';
   DS_GROUPS_SELECT = 'GroupsSelect';
   DS_SESSIONS_READ_UNCONTROLSTATE = 'SessionsReadUncontrolState';
   DS_CLEAR_STATISTICS = 'ClearStatistics';

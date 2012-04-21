@@ -925,18 +925,19 @@ begin
     strSelectedTarif := lvTarifs.Selected.Caption;
   lvTarifs.Clear;
   for i:=1 to (TarifsCount-1) do
-    if (Tarifs[i].idGroup = Comps[ComputersGetIndex(CompsSel[0])].IdGroup) then begin
-      li := lvTarifs.Items.Add;
-      li.Caption := Tarifs[i].name;
-      li.Data := nil;
-      for j:=0 to Tarifs[i].variantscount-1 do
-      if (Tarifs[i].tarifvariants[j].IsAvailable(dtpStartTime.DateTime)) then
-      begin
+    if OperatorSecLevel >= Tarifs[i].operatorlevel then
+      if (Tarifs[i].idGroup = Comps[ComputersGetIndex(CompsSel[0])].IdGroup) then begin
         li := lvTarifs.Items.Add;
-        li.Caption := Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name;
-        li.Data := Tarifs[i].tarifvariants[j];
+        li.Caption := Tarifs[i].name;
+        li.Data := nil;
+        for j:=0 to Tarifs[i].variantscount-1 do
+        if (Tarifs[i].tarifvariants[j].IsAvailable(dtpStartTime.DateTime)) then
+        begin
+          li := lvTarifs.Items.Add;
+          li.Caption := Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name;
+          li.Data := Tarifs[i].tarifvariants[j];
+        end;
       end;
-    end;
   lvTarifs.ItemIndex := 0;
   if not GRegistry.Options.AutoSelectDefaultTarif then
   begin

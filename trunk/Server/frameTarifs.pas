@@ -87,6 +87,8 @@ type
     edtAddMoneyMax: TEdit;
     edtMaximumTrust: TEdit;
     cbSumm: TCheckBox;
+    lblOperatorLevel: TLabel;
+    cbOperatorLevel: TComboBox;
     procedure lvTarifsClick(Sender: TObject);
     procedure butMoveUpClick(Sender: TObject);
     procedure butTarifAddClick(Sender: TObject);
@@ -294,7 +296,7 @@ begin
       Tarif.SpeedLimitInKB := dts.Recordset.Fields.Item['SpeedLimitInKB'].Value;
       Tarif.PluginGroupName := dts.Recordset.Fields.Item['PluginGroupName'].Value;
       Tarif.userlevel := dts.Recordset.Fields.Item['userlevel'].Value;
-
+      Tarif.operatorlevel := dts.Recordset.Fields.Item['operatorlevel'].Value;
       Tarif.useseparatesumm  := dts.Recordset.Fields.Item['useseparatesumm'].Value;
       Tarif.startmoneymin := dts.Recordset.Fields.Item['startmoneymin'].Value;
       Tarif.startmoneymax := dts.Recordset.Fields.Item['startmoneymax'].Value;
@@ -323,6 +325,7 @@ begin
     cbInternet.Checked := false;
     cbCalcTraffic.Checked := false;
     cbUserLevel.Text := '';
+    cbOperatorLevel.Text := '';
 
     cbSumm.Checked := false; 
     edtStartMoneyMax.Text := '';
@@ -499,7 +502,7 @@ begin
    editTrafficCost.Enabled := cbInternet.Checked;
    cbTrafficSeparatePayment.Enabled := cbInternet.Checked;
    cbUserLevel.Text := IntToStr(Tarif.userlevel); 
-
+   cbOperatorLevel.Text := IntToStr(Tarif.operatorlevel);
    cbSumm.Checked := (Tarif.useseparatesumm = 1);
    edtStartMoneyMin.Text := IntToStr(Tarif.startmoneymin);
    edtStartMoneyMax.Text := IntToStr(Tarif.startmoneymax);
@@ -510,7 +513,9 @@ begin
    UpdateVariantsList;
    locktarif := false;
    pgctrlDetails.ActivePage := tabTarifSelected;
+   UpdateTarifsInterface;
  end;
+
 end;
 
 procedure TframTarifs.butMoveUpClick(Sender: TObject);
@@ -595,6 +600,7 @@ begin
       + ', @SpeedLimitInKB='+ editSpeedLimitInKB.Text
       + ', @PluginGroupName=''' + editPluginGroup.Text
       + ''', @userlevel=' + cbUserLevel.Text
+      + ', @operatorlevel=' + cbOperatorLevel.Text
       + ', @useseparatesumm=' + separatesumm
       + ', @startmoneymin=' + edtStartMoneyMin.Text
       + ', @startmoneymax=' + edtStartMoneyMax.Text

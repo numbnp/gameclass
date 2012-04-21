@@ -1,6 +1,6 @@
 object formCompStart: TformCompStart
-  Left = 134
-  Top = 143
+  Left = 186
+  Top = 132
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 10
