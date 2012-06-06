@@ -44,7 +44,8 @@ var
 
 {$R *.res}
 
-//Добавляет ошибку в список
+{$LIBSUFFIX '116'}
+
 procedure _AddError(AstrError: String);
 begin
   FlstErrors.Add(AstrError);

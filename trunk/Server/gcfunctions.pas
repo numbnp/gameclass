@@ -1070,23 +1070,26 @@ begin
   i := ComputersGetIndex(CompsSel[0]);
   if (formCompStop.ShowModal(caStop,
       Comps[i].session.IdSessionsAdd) = mrOK) then begin
-    for i := 0 to CompsSelCount - 1 do begin
-      session := Comps[ComputersGetIndex(CompsSel[i])].session;
-      if (session <> nil) and (session.Status <> ssFinished) then begin
-        bActionCanceled := False;
-        if GRegistry.Modules.KKM.Active then begin
-          bActionCanceled := not PrintCheckStop(session)
-              and GRegistry.Modules.KKM.DisconnectBlock;
+      formMain.StopUpdate;
+        for i := 0 to CompsSelCount - 1 do begin
+          session := Comps[ComputersGetIndex(CompsSel[i])].session;
+          if (session <> nil) and (session.Status <> ssFinished) then begin
+            bActionCanceled := False;
+            if GRegistry.Modules.KKM.Active then begin
+              bActionCanceled := not PrintCheckStop(session)
+                and GRegistry.Modules.KKM.DisconnectBlock;
+            end;
+            if bActionCanceled then
+              Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+                'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
+            else begin
+              session.Stop(False);
+              QueryAuthGoState1(ComputersGetIndex(CompsSel[i]));
+              end;
+          end;
+
         end;
-        if bActionCanceled then
-          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-              'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
-        else begin
-          session.Stop(False);
-          QueryAuthGoState1(ComputersGetIndex(CompsSel[i]));
-        end;
-      end;
-    end;
+      formMain.StartUpdate;  
   end;
   dmActions.actLoadSessions.Execute;
   DoInterfaceComps;
