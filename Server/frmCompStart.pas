@@ -406,8 +406,7 @@ begin
   end;
 
   timerFrmCompStart.Enabled := false; //TODO kill
-  formMain.timerCompsList.Enabled := false;
-  formMain.timerGSessionsLoad.Enabled := False;
+  formMain.StopUpdate;
   for i:=GSessions.Count-1 downto 0 do
     with GSessions.Items[i] do
       if (Status = ssDesigned) then begin
@@ -458,8 +457,7 @@ begin
           end;
         end;
       end;
-  formMain.timerGSessionsLoad.Enabled := true;  
-  formMain.timerCompsList.Enabled := true;
+  formMain.StartUpdate;
   ModalResult := mrOk;
 end;
 

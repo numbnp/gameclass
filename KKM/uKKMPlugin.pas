@@ -431,8 +431,12 @@ begin
   Result := False;
   if FhLibrary <> 0 then
     if Assigned(FConnectProc) then begin
-      FbConnected := FConnectProc;
-      Result := FbConnected;
+      try
+        FbConnected := FConnectProc;
+        Result := FbConnected;
+      except
+        Result := True;
+      end;
     end;
 end; // TKKMPlugin.Connect
 
@@ -453,8 +457,12 @@ begin
   ASSERT(Assigned(FIsConnectedProc));
   Result := False;
   if FhLibrary <> 0 then
-    if Assigned(FIsConnectedProc) then begin
-      Result := FIsConnectedProc;
+    try
+      if Assigned(FIsConnectedProc) then begin
+        Result := FIsConnectedProc;
+      end;
+    except
+        Result := False;
     end;
 end; // TKKMPlugin.
 
@@ -743,8 +751,12 @@ function TKKMPlugin._CheckConnect: Boolean;
 begin
   Result := IsConnected;
   if not Result then begin
-    Disconnect;
-    Result := Connect;
+    try
+      Disconnect;
+      Result := Connect;
+    except
+      Result := False;
+    end
   end
 end;
 
