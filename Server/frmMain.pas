@@ -342,6 +342,8 @@ type
     procedure tlbStationUnlockClick(Sender: TObject);
     procedure tlbStationLockClick(Sender: TObject);
     procedure mnuPanelRunPadClick(Sender: TObject);
+    procedure StopUpdate();
+    procedure StartUpdate();
 
   private
     { Private declarations }
@@ -444,6 +446,20 @@ begin
   FfrmReports.Align := alClient;
   FfrmReports.Show();
 end; // TformMain.Create
+
+procedure TformMain.StopUpdate();
+begin
+  timerCompsList.Enabled := False;
+  timerGSessionsLoad.Enabled := False;
+end;
+
+procedure TformMain.StartUpdate();
+begin
+  timerCompsList.Enabled := True;
+  timerGSessionsLoad.Enabled := True;
+end;
+
+
 
 procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
  var FTitleOffset, SDistance : Integer;
@@ -700,7 +716,9 @@ begin
 
   if (GSessions <> Nil) then // Обновление информации о сессия
   begin
+    formMain.StopUpdate;
     GSessions.Check;
+    formMain.StartUpdate;
 //    GSessions.Load;
   end;
 
@@ -709,7 +727,7 @@ begin
       if (Comps[i].session <> nil) then
         if Comps[i].session.Status = ssReserve then
           ReserveActivate(Comps[i].session);
-
+  DoInterfaceComps;
   dmActions.actRedrawComps.Execute;
 end;
 
