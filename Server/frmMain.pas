@@ -683,6 +683,7 @@ begin formMain.lvConsole.Column[0].Caption := translate('lvConsoleColumn0');end;
 procedure TformMain.timerCompsListTimer(Sender: TObject);
 var
   i: integer;
+  ChangedSessions: boolean;
 begin
   if not dsConnected then
     exit;
@@ -717,7 +718,7 @@ begin
   if (GSessions <> Nil) then // Обновление информации о сессия
   begin
     formMain.StopUpdate;
-    GSessions.Check;
+    ChangedSessions := GSessions.Check;
     formMain.StartUpdate;
 //    GSessions.Load;
   end;
@@ -727,7 +728,11 @@ begin
       if (Comps[i].session <> nil) then
         if Comps[i].session.Status = ssReserve then
           ReserveActivate(Comps[i].session);
-  DoInterfaceComps;
+  if ChangedSessions then
+  begin
+    SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
+    DoInterfaceComps;
+  end;
   dmActions.actRedrawComps.Execute;
 end;
 
@@ -1903,9 +1908,9 @@ end;
 procedure TformMain.gridCompsContextPopup(Sender: TObject;
   MousePos: TPoint; var Handled: Boolean);
 begin
-   if cdsComps.FieldValues['Selection'] = DS_SELECTION_UNSELECTED then
+  if cdsComps.FieldValues['Selection'] = DS_SELECTION_UNSELECTED then
     gridComps.SelectedRows.Clear;
-   formMain.gridCompsCellClick(Nil);
+  formMain.gridCompsCellClick(Nil);
 end;
 
 

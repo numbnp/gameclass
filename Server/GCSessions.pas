@@ -246,7 +246,7 @@ type
     procedure SetItem(Index: Integer; Value: TGCSession);
     property Items[Index: Integer]:TGCSession read GetItem write SetItem; default;
     procedure Load;
-    procedure Check;
+    function Check:boolean;
     property IsBadDesignedSessions:Boolean read GetIsBadDesignedSessions;
     function GetDesignedMaxStopTime:TDateTime;
     function GetMaxStopTime(AnIdComp: Integer):TDateTime;
@@ -1326,13 +1326,16 @@ begin
           end;
 end;
 
-procedure TGCSessions.Check;
+function TGCSessions.Check:boolean ;
 var
   i : integer;
   computer: Tcomputer;
   tarif: TTarif;
   bActionCanceled: Boolean;
+  ChangeSessions:boolean;
 begin
+  ChangeSessions := False;
+
   if (isManager) then begin
     for i:=Count-1 downto 0 do
       with Items[i] do
@@ -1340,7 +1343,9 @@ begin
             and ((TimeStop <= GetVirtualTime) or IsTimeOff) then begin
           Stop(TimeStop <= GetVirtualTime);
           Delete(i);
+          ChangeSessions := True;
         end;
+    Result := ChangeSessions;
     exit;
   end;
   for i:=Count-1 downto 0 do
@@ -1394,7 +1399,7 @@ begin
         end;
 
         if (TimeStop <= (GetVirtualTime + EncodeTime (0,0,4,0))) or IsTimeOff then begin
-          formMain.timerGSessionsLoad.Enabled := False;
+          //formMain.timerGSessionsLoad.Enabled := False;
           bActionCanceled := False;
           if GRegistry.Modules.KKM.Active then begin
             bActionCanceled := not PrintCheckStop(Items[i])
@@ -1409,7 +1414,8 @@ begin
             if (computer.a.state = ClientState_Session) then
               SendAuthGoState2(index);
           end;
-          formMain.timerGSessionsLoad.Enabled := True;
+          //formMain.timerGSessionsLoad.Enabled := True;
+          ChangeSessions := True;
         end;
       end;
       if (Status = ssReserve) and (TimeStart <= GetVirtualTime) then begin
@@ -1430,6 +1436,7 @@ begin
       if Status = ssFinished then
         Delete(i);
     end;
+  Result := ChangeSessions;
 end;
 
 procedure TGCSession.SetStatus(AnStatus : TGCSessionStatus);
