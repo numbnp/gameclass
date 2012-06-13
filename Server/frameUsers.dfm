@@ -75,7 +75,7 @@ object framUsers: TframUsers
       Left = 8
       Top = 26
       Width = 132
-      Height = 20
+      Height = 21
       TabOrder = 0
       OnChange = editLoginChange
     end
@@ -125,7 +125,9 @@ object framUsers: TframUsers
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
+      ItemIndex = 0
       TabOrder = 4
+      Text = '1'
       OnChange = cmbSecLevelChange
       Items.Strings = (
         '1'
