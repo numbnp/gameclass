@@ -871,6 +871,9 @@ var
   cmd: TOptionGetRemoteCommand;
   strParm: string;
 begin
+  // Если комп не пингуется то выходим
+  if not Comps[index].IcmpPingable then exit;
+
   if (GClientOptions.SyncTime) then begin
     dt := GetVirtualTime;
     curtime := IntToStr(YearOf(dt)) + '/' + IntToStr(MonthOf(dt)) + '/'
