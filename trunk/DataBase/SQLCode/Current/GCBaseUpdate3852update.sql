@@ -223,59 +223,57 @@ end
 UPDATE Users SET [seclevel] = @seclevel WHERE [name] = @login_name
 GO
 
-ALTER PROCEDURE UsersCreate
-  @login_name NVARCHAR(50),
-  @group_name NVARCHAR(50),
-  @password NVARCHAR(50),
-  @seclevel INT
-AS 
-BEGIN
-  DECLARE @error_descr VARCHAR(400)
-  DECLARE @idGroup INT
-  
-  SELECT @idGroup=[id] FROM UsersGroup WHERE [name]=@group_name
-  
-  /*  проверка на наличие пользователя с таким же именем */
-  IF EXISTS(SELECT [id] FROM Users WHERE [name]=@login_name AND [isdelete]=0)
-  BEGIN
-   RAISERROR 50000  'User already exist!'
-   RETURN 50000
-  END
-  
-  DECLARE @err1 INT
-  DECLARE @err2 INT
-  DECLARE @err3 INT
-
-  IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[tempdb]..[#msver]') )
-    DROP TABLE #msver
-  DECLARE @MSSQLVERSION INT
-  CREATE TABLE #msver ([Index] INT PRIMARY KEY, [Name] VARCHAR(200), Internal_Value INT, Character_Value VARCHAR(200))
-  INSERT INTO #msver EXEC master..xp_msver ProductVersion
-  SELECT @MSSQLVERSION=CAST(LEFT(Character_Value,1) AS INT) FROM #msver
-  DROP TABLE #msver
-  
-  DECLARE @sql VARCHAR(400)
-  IF (@MSSQLVERSION = 8) 
-  EXEC @err1=master.dbo.sp_addlogin @login_name
-  IF (@MSSQLVERSION = 9) 
-  BEGIN
-    SET @sql = 'CREATE LOGIN ' + @login_name + ' WITH PASSWORD = '''', CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF'
-    EXEC (@sql)
-  END
-  EXEC @err2=sp_adduser @login_name, @login_name, 'public'
-  IF (@group_name='Management')
-    EXEC @err3=sp_addsrvrolemember @login_name, 'sysadmin'
-  IF (@err1<>0) OR (@err2<>0)
-  BEGIN
-    RAISERROR 50000 'Ошибка создания пользователя'
-    RETURN 50000
-  END
-  
-  INSERT INTO Users ([name], [idUsersGroup], [seclevel]) VALUES (@login_name,@idGroup,@seclevel)
-  EXEC UsersChangePass @login_name, @password
-END
+ALTER PROCEDURE [dbo].[UsersCreate] 
+	@login_name NVARCHAR(50), 
+	@group_name NVARCHAR(50), 
+	@password NVARCHAR(50), 
+	@seclevel INT 
+	AS  
+BEGIN 
+	DECLARE @error_descr VARCHAR(400) 
+	DECLARE @idGroup INT 
+	SELECT @idGroup=[id] FROM UsersGroup WHERE [name]=@group_name 
+	/*  проверка на наличие пользователя с таким же именем */ 
+	IF EXISTS(SELECT [id] FROM Users WHERE [name]=@login_name AND [isdelete]=0) 
+	BEGIN 
+		RAISERROR 50000  'User already exist!' 
+		RETURN 50000 
+	END 
+	DECLARE @err1 INT 
+	DECLARE @err2 INT 
+	DECLARE @err3 INT 
+	IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[tempdb]..[#msver]') ) 
+		DROP TABLE #msver 
+	DECLARE @MSSQLVERSION INT 
+	SELECT @MSSQLVERSION=CAST(REPLACE(LEFT(CAST(SERVERPROPERTY('ProductVersion')AS VARCHAR(20)),2),'.','') as INT);
+	if (@MSSQLVERSION=0)
+	BEGIN
+		CREATE TABLE #msver ([Index] INT PRIMARY KEY, [Name] VARCHAR(200), Internal_Value INT, Character_Value VARCHAR(200)) 
+		INSERT INTO #msver EXEC master..xp_msver ProductVersion 
+		SELECT @MSSQLVERSION=CAST(LEFT(Character_Value,1) AS INT) FROM #msver 
+		DROP TABLE #msver 
+	END
+	DECLARE @sql VARCHAR(400) 
+	SET @err1 = 0
+	IF (@MSSQLVERSION = 8)  
+		EXEC @err1=master.dbo.sp_addlogin @login_name 
+	IF (@MSSQLVERSION = 9)  
+	BEGIN 
+		SET @sql = 'CREATE LOGIN ' + @login_name + ' WITH PASSWORD = '''', CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF' 
+		EXEC (@sql) 
+	END 
+	EXEC @err2=sp_adduser @login_name, @login_name, 'public' 
+	IF (@group_name='Management') 
+	EXEC @err3=sp_addsrvrolemember @login_name, 'sysadmin' 
+	IF (@err1<>0) OR (@err2<>0) 
+	BEGIN 
+		RAISERROR 50000 'Ошибка создания пользователя' 
+		RETURN 50000 
+	END 
+	INSERT INTO Users ([name], [idUsersGroup], [seclevel]) VALUES (@login_name,@idGroup,@seclevel) 
+	EXEC UsersChangePass @login_name, @password 
+END 
 GO
-
 
 ALTER PROCEDURE TarifsUpdate
 @idTarif int,

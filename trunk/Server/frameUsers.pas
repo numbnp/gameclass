@@ -210,6 +210,7 @@ begin
     end;
 
   butAdd.Enabled := (f1 and f2);
+  if butAdd.Enabled then cmbSecLevel.ItemIndex := 0; 
   butAdd.Caption := translate('Add');
   if not butAdd.Enabled and f3 then
   begin
