@@ -160,7 +160,7 @@ object frmMain: TfrmMain
             Top = 10
             Width = 338
             Height = 331
-            ActivePage = tabStartStop
+            ActivePage = tabAccountInfo
             Align = alRight
             MultiLine = True
             TabOrder = 0

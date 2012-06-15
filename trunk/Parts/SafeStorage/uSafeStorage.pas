@@ -19,7 +19,8 @@ uses
   SyncObjs,
   uY2KCommon,
   uRemoteCommand,
-  uSetVolumeRemoteCommand;
+  uSetVolumeRemoteCommand,
+  uClientInfoConst;
   // project units
 //const
   // значения по умолчанию для опций
@@ -496,10 +497,34 @@ begin
       case AOperation.FormAction of
         FormAction_Show:
 {$IFDEF MSWINDOWS}
+          begin
           if not frmMain.Visible then
-            frmMain.Show
-          else
-            SetForegroundWindow(frmMain.Handle);
+            frmMain.Show;
+          with frmMain do
+              SetWindowPos(Handle,
+                HWND_TOPMOST,
+                round( (Screen.Width-Width)/2),
+                round( (Screen.Height-Height)/2),
+                Width,
+                Height,
+                SWP_NOACTIVATE  or SWP_NOSIZE);
+
+          SetForegroundWindow(frmMain.Handle);
+         // if (not GClientInfo.Blocked) and (GClientInfo.ClientState <> ClientState_Order)  then
+            with frmMain do
+              SetWindowPos(Handle,
+                HWND_NOTOPMOST,
+                Left,
+                Top,
+                Width,
+                Height,
+                SWP_NOMOVE or SWP_NOSIZE);
+
+//            frmMain.FormStyle := fsNormal;}
+
+          //  ShowWindow(frmMain.Handle,SW_SHOWDEFAULT);
+
+          end;
 {$ENDIF}
 {$IFDEF LINUX}
           if not frmMain.Visible then
