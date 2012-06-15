@@ -319,6 +319,9 @@ begin
   dtpEndTime.DateTime := dtpStartTime.DateTime;
   dtpEndDate.DateTime := dtpStartTime.DateTime;
   RedrawTarifsList;
+  if GRegistry.Options.AutoSelectDefaultTarif then
+    lvTarifs.ItemIndex := 0;
+  lvTarifsClick(Self);
   if Reserve in FState then begin
     CompsSelDeselect(caReserve);
     FfrmComputers.Init(caReserve);
@@ -937,15 +940,9 @@ begin
         end;
       end;
   lvTarifs.ItemIndex := 0;
-  if not GRegistry.Options.AutoSelectDefaultTarif then
-  begin
-    for i:=1 to lvTarifs.Items.Count-1 do
-      if (lvTarifs.Items[i].Caption = strSelectedTarif) then
-        lvTarifs.ItemIndex := i;
-  end
-  else
-    lvTarifs.ItemIndex := 0;
-  lvTarifsClick(Self);
+  for i:=1 to lvTarifs.Items.Count-1 do
+    if (lvTarifs.Items[i].Caption = strSelectedTarif) then
+      lvTarifs.ItemIndex := i;
 end;
 
 procedure TformCompStart.UpdateInformationFromChart(AbUpdateOnlyCompList: Boolean);
