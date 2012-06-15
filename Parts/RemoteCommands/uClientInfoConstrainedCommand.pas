@@ -127,6 +127,7 @@ begin
         GetParamFromString(FstrParameters,3), 0);
 {$IFDEF GCCL}
       TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData, 0); //frmMain.UpdateData;
+      TSafeStorage.Instance().Push(ThreadSafeOperation_MainFormAction,  Integer(FormAction_Show)); //frmMain.UpdateData;
 {$ENDIF}
 
 
@@ -142,6 +143,7 @@ begin
         GetParamFromString(FstrParameters,4));
 {$IFDEF GCCL}
     TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData, 0); //frmMain.UpdateData;
+//    TSafeStorage.Instance().Push(ThreadSafeOperation_MainFormAction,  Integer(FormAction_Show)); //frmMain.UpdateData;
 {$ENDIF}
     // True - если GOSTATE_3 приходит первый раз, т.е. начало сессии
     //TODO Это убить
