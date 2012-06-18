@@ -93,7 +93,8 @@ begin
       + ', @PeriodOfValidity='+ IntToStr(FieldValues['PeriodOfValidity'])
       + ', @ExpirationDate=N'''+ DateTimeToSQLStr(FieldValues['ExpirationDate'])
       + ''', @assigntarif='+ IntToStr(FieldValues['assigntarif'])
-      + ', @userlevel='+ IntToStr(FieldValues['userlevel']));
+      + ', @userlevel='+ IntToStr(FieldValues['userlevel'])
+      + ', @force_tariff='+ IntToStr(FieldValues['force_tariff']));
 
 
   Result := Result and dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_UPDATECODES

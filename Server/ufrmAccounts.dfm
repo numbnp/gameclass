@@ -1,6 +1,6 @@
 object frmAccounts: TfrmAccounts
-  Left = 305
-  Top = 254
+  Left = 309
+  Top = 195
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
@@ -725,6 +725,8 @@ object frmAccounts: TfrmAccounts
       Top = 168
       Width = 113
       Height = 21
+      DataField = 'ExpirationDate'
+      DataSource = dsrcAccounts
       EditButtons = <>
       Kind = dtkDateEh
       TabOrder = 18
@@ -733,7 +735,7 @@ object frmAccounts: TfrmAccounts
   end
   object gbBalanceInfo: TGroupBox
     Left = 264
-    Top = 312
+    Top = 345
     Width = 388
     Height = 129
     Caption = #1041#1072#1083#1072#1085#1089' '#1091#1095#1077#1090#1085#1086#1081' '#1079#1072#1087#1080#1089#1080
@@ -774,7 +776,7 @@ object frmAccounts: TfrmAccounts
       Caption = '%'
     end
     object editOnBalance: TDBEditEh
-      Left = 71
+      Left = 82
       Top = 18
       Width = 98
       Height = 21
@@ -786,7 +788,7 @@ object frmAccounts: TfrmAccounts
       Visible = True
     end
     object editSummary: TDBEditEh
-      Left = 71
+      Left = 82
       Top = 44
       Width = 98
       Height = 21
@@ -914,7 +916,7 @@ object frmAccounts: TfrmAccounts
     Left = 264
     Top = 251
     Width = 388
-    Height = 54
+    Height = 78
     Caption = #1041#1077#1079#1086#1087#1072#1089#1085#1086#1089#1090#1100
     TabOrder = 6
     object lblUserLevel: TLabel
@@ -923,6 +925,13 @@ object frmAccounts: TfrmAccounts
       Width = 90
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072':'
+    end
+    object lblForceTariff: TLabel
+      Left = 8
+      Top = 52
+      Width = 126
+      Height = 13
+      Caption = #1055#1088#1080#1085#1091#1076#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092':'
     end
     object cbTarifsLimit: TDBCheckBoxEh
       Left = 8
@@ -959,8 +968,8 @@ object frmAccounts: TfrmAccounts
         '10')
     end
     object editUserLevel: TDBEditEh
-      Left = 304
-      Top = 48
+      Left = 312
+      Top = 8
       Width = 73
       Height = 21
       DataField = 'userlevel'
@@ -969,6 +978,39 @@ object frmAccounts: TfrmAccounts
       TabOrder = 2
       Visible = False
       OnChange = editUserLevelChange
+    end
+    object cbForceTariff: TComboBox
+      Left = 208
+      Top = 49
+      Width = 169
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 3
+      OnChange = cbForceTariffChange
+      Items.Strings = (
+        '0'
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8'
+        '9'
+        '10')
+    end
+    object editForceTariff: TDBEditEh
+      Left = 315
+      Top = 40
+      Width = 73
+      Height = 21
+      DataField = 'force_tariff'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 4
+      Visible = False
+      OnChange = editForceTariffChange
     end
   end
   object gbFilter: TGroupBox
@@ -995,11 +1037,11 @@ object frmAccounts: TfrmAccounts
     end
   end
   object dsrcAccounts: TDataSource
-    Left = 400
-    Top = 440
+    Left = 392
+    Top = 488
   end
   object OpenDialog1: TOpenDialog
     Left = 428
-    Top = 440
+    Top = 472
   end
 end
