@@ -53,6 +53,7 @@ type
     procedure SetIsTarifsLimit(Value: Boolean);
     function GetUserLevel: Integer;
     procedure SetUserLevel(Value: Integer);
+    function GetForceTariff: Integer;
   public
     constructor Create(AAccountsDataSet: TAccountsDataSet);
 //      function GetPhoto:boolean;        // загрузить фоту, если она есть
@@ -109,6 +110,8 @@ type
         read GetIsTarifsLimit write SetIsTarifsLimit;
     property UserLevel: Integer
         read GetUserLevel write SetUserLevel;
+    property ForceTariff: Integer
+        read GetForceTariff;
   end;
 
 
@@ -487,6 +490,11 @@ begin
   FAccountsDataSet.Edit;
   FAccountsDataSet.FieldValues['userlevel'] := Value;
   FAccountsDataSet.Post;
+end;
+
+function TAccountsRecord.GetForceTariff: Integer;
+begin
+  Result := FAccountsDataSet.FieldValues['force_tariff'];
 end;
 
 end.

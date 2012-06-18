@@ -1346,6 +1346,18 @@ begin
       if (cmd = STR_CMD_AUTH_QUERYTARIFS_2) then begin
         rettarifs := '';
         if Comps[index].a.state <> ClientState_Authentication then
+        if GAccountSystem.Accounts[Comps[index].a.number].ForceTariff>=0 then
+          begin
+          for i:=1 to (TarifsCount-1) do
+              if (Tarifs[i].idGroup = Comps[index].IdGroup) and
+              (Tarifs[i].id = GAccountSystem.Accounts[Comps[index].a.number].ForceTariff) then begin
+                rettarifs := rettarifs + Tarifs[i].name + '/';
+                for j:=0 to Tarifs[i].variantscount-1 do
+                  if (Tarifs[i].tarifvariants[j].IsAvailable(GetVirtualTime)) then
+                    rettarifs := rettarifs + Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name + '/';
+              end;
+          end
+        else
         if GAccountSystem.Accounts[Comps[index].a.number].IsTarifsLimit then
           begin
             iUserLevel:=GAccountSystem.Accounts[Comps[index].a.number].UserLevel;
@@ -1358,7 +1370,7 @@ begin
                     rettarifs := rettarifs + Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name + '/';
               end;
           end
-          else
+        else
           for i:=1 to (TarifsCount-1) do
             if (Tarifs[i].idGroup = Comps[index].IdGroup) then begin
               rettarifs := rettarifs + Tarifs[i].name + '/';

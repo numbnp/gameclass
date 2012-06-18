@@ -341,6 +341,64 @@ END
 GO
 
 
+/* -----------------------------------------------------------------------------
+  Колонка назначенного тарифа
+----------------------------------------------------------------------------- */
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'force_tariff' 
+  AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
+ALTER TABLE [Accounts] ADD [force_tariff] [int] NOT NULL DEFAULT (-1)
+GO
+
+
+ALTER PROCEDURE AccountsUpdate
+@id int,
+@name nvarchar(50),
+@password nvarchar(50),
+@email nvarchar(80),
+@phone nvarchar(50),
+@isenabled int,
+@isblocked int,
+@isprivileged int, 
+@privilegedDiscount int, 
+@zeroBalance money,
+@memotext nvarchar(2000) = N'',
+@address nvarchar(300)=N'',
+@summary money,
+@PeriodOfValidity int = 0,
+@ExpirationDate datetime,
+@assigntarif int,
+@userlevel int,
+@force_tariff int
+/*WITH ENCRYPTION*/
+AS 
+
+IF (EXISTS (SELECT * FROM Accounts WHERE ([name]=@name) AND (@name <> N'') AND ([id]<>@id) AND ([isdeleted]=0))) BEGIN
+  RAISERROR 50001 'Account already exists! Choose other name...'
+  RETURN 50001
+END
+
+IF (EXISTS (SELECT * FROM Accounts WHERE [id] = @id AND [isdeleted] = 0)) BEGIN
+ UPDATE Accounts SET
+  [name] = @name,
+  [password] = @password,
+  [email] = @email,
+  [phone] = @phone,
+  [isenabled] = @isenabled,
+  [isblocked] = @isblocked,
+  [isprivileged] = @isprivileged, 
+  [privilegedDiscount] = @privilegedDiscount, 
+  [zeroBalance] = @zeroBalance,
+  [memo] = @memotext,
+  [address] = @address,
+  [summary] = @summary,
+  [PeriodOfValidity] = @PeriodOfValidity,
+  [ExpirationDate] = @ExpirationDate,
+  [assigntarif] = @assigntarif,
+  [userlevel] = @userlevel,
+  [force_tariff] = @force_tariff
+  WHERE [id] = @id
+END
+GO
 
 
 /* -----------------------------------------------------------------------------
