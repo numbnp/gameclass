@@ -46,11 +46,6 @@ type
     butHelp: TButton;
     butGenerateSecCodes: TButton;
     lblSummaryDiscount: TLabel;
-    gbFilter: TGroupBox;
-    lblFilterNumber: TLabel;
-    editFilterNumber: TEdit;
-    lblFilterName: TLabel;
-    editFilterName: TEdit;
     lblAccountEmail: TLabel;
     editAccountEmail: TDBEditEh;
     lblAccountMemo: TLabel;
@@ -61,12 +56,16 @@ type
     OpenDialog1: TOpenDialog;
     imgAccountPhoto: TEDBImage;
     cbxPeriodOfValidity: TDBCheckBox;
-    dtpExpirationDate: TDBDateEdit;
+ 
     gbTarifsInfo: TGroupBox;
     cbTarifsLimit: TDBCheckBoxEh;
     lblUserLevel: TLabel;
     cbUserLevel: TComboBox;
     editUserLevel: TDBEditEh;
+    dtpExpirationDate: TDBDateTimeEditEh;
+    gbFilter: TGroupBox;
+    lblFilterNumber: TLabel;
+    editFilter: TEdit;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -75,7 +74,7 @@ type
     procedure butViewSecCodesClick(Sender: TObject);
     procedure butGenerateSecCodesClick(Sender: TObject);
     procedure cbAccountBlockedClick(Sender: TObject);
-    procedure editFilterNumberChange(Sender: TObject);
+    procedure editFilterChange(Sender: TObject);
     procedure editFilterNameChange(Sender: TObject);
     procedure butAccountSaveClick(Sender: TObject);
     procedure butBalanceAddClick(Sender: TObject);
@@ -318,7 +317,7 @@ begin
     _OnChange(Sender);
 end;
 
-procedure TfrmAccounts.editFilterNumberChange(Sender: TObject);
+procedure TfrmAccounts.editFilterChange(Sender: TObject);
 begin
   if Dirty then exit;
   UpdateFilter;
@@ -560,14 +559,14 @@ end;
 procedure TfrmAccounts.UpdateFilter;
 var
   str: String;
+  fvalue: Single;
 begin
   str := '';
-  if Length(editFilterNumber.Text) > 0 then
-    str := 'id=' + editFilterNumber.Text;
-  if Length(editFilterName.Text) > 0 then begin
-    if Length(str) > 0 then
-      str := str + ' and ';
-    str := str + 'name LIKE ''*' + editFilterName.Text + '*''';
+  if Length(editFilter.Text) > 0 then
+  begin
+    if TryStrToFloat(editFilter.Text,fvalue) then
+      str := '(id=' + inttostr(round(fvalue)) + ') or ';
+    str := str + '(name LIKE ''*' + editFilter.Text + '*'')';
   end;
   GAccountsCopy.Filter := str;
   GAccountsCopy.Filtered := (Length(str) > 0);
