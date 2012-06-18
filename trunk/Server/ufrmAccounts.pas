@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls,
   GCLangUtils, Grids, DBGridEh, DB, Mask, DBCtrlsEh, DBCtrls,
-  ADODB, EDBImage, RxGIF, ToolEdit, RXDBCtrl;
+  ADODB, EDBImage, RxGIF, ToolEdit, RXDBCtrl,
+  uTariffication;
 
 type
   TfrmAccounts = class(TForm)
@@ -66,6 +67,9 @@ type
     gbFilter: TGroupBox;
     lblFilterNumber: TLabel;
     editFilter: TEdit;
+    cbForceTariff: TComboBox;
+    lblForceTariff: TLabel;
+    editForceTariff: TDBEditEh;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -91,9 +95,11 @@ type
     procedure dtpExpirationDateChange(Sender: TObject);
     procedure cbxPeriodOfValidityClick(Sender: TObject);
     procedure cbTarifsLimitClick(Sender: TObject);
-    procedure dsrcAccountsStateChange(Sender: TObject);
+//   procedure dsrcAccountsStateChange(Sender: TObject);
     procedure cbUserLevelChange(Sender: TObject);
     procedure editUserLevelChange(Sender: TObject);
+    procedure editForceTariffChange(Sender: TObject);
+    procedure cbForceTariffChange(Sender: TObject);
   private
     { Private declarations }
     FbDirty: Boolean;
@@ -202,6 +208,7 @@ begin
   butClearPass.Visible := (isManager
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
   cbUserLevel.Enabled:=cbTarifsLimit.Checked and bManagerPermission;
+  cbForceTariff.Enabled:=bManagerPermission;
   UpdateDiscount;
   DoDesignExpirationDate;
 end;
@@ -519,6 +526,7 @@ begin
 end;
 
 procedure TfrmAccounts.FormCreate(Sender: TObject);
+var i: Integer;
 begin
   FbUpdateDuringEditing := False;
   FbControlsEnabled := False;
@@ -529,6 +537,12 @@ begin
   GAccountsCopy.BeforeScroll := _BeforeScroll;
   FbDirty := False;
   FbControlsEnabled := True;
+
+  cbForceTariff.Items.Clear;
+  cbForceTariff.Items.Add('Нет');
+  for i := 0 to TarifsCount-1 do
+    cbForceTariff.Items.Add( Tarifs[i].name);
+
   DoDesign;
 end;
 
@@ -568,8 +582,13 @@ begin
       str := '(id=' + inttostr(round(fvalue)) + ') or ';
     str := str + '(name LIKE ''*' + editFilter.Text + '*'')';
   end;
-  GAccountsCopy.Filter := str;
-  GAccountsCopy.Filtered := (Length(str) > 0);
+  try
+    GAccountsCopy.Filter := str;
+    GAccountsCopy.Filtered := (Length(str) > 0);
+  except
+    GAccountsCopy.Filter := '(id=100500)';
+    GAccountsCopy.Filtered := True;
+  end;
 end;
 
 procedure TfrmAccounts.editAccountNameChange(Sender: TObject);
@@ -599,10 +618,10 @@ begin
   _OnChange(Sender);
 end;
 
-procedure TfrmAccounts.dsrcAccountsStateChange(Sender: TObject);
+{procedure TfrmAccounts.dsrcAccountsStateChange(Sender: TObject);
 begin
 //  cbUserLevel.Text := editUserLevel.Text;
-end;
+end;}
 
 procedure TfrmAccounts.cbUserLevelChange(Sender: TObject);
 begin
@@ -613,6 +632,35 @@ end;
 procedure TfrmAccounts.editUserLevelChange(Sender: TObject);
 begin
   cbUserLevel.Text := editUserLevel.Text;
+end;
+
+procedure TfrmAccounts.editForceTariffChange(Sender: TObject);
+var
+  i: integer;
+  id_tariff: integer;
+begin
+  id_tariff:= strtoint(editForceTariff.text);
+  if id_tariff<0 then
+  begin
+     cbForceTariff.Text := 'Нет';
+  end
+  else
+  for i := 0 to TarifsCount - 1 do
+    if Tarifs[i].id = id_tariff then
+       cbForceTariff.Text := Tarifs[i].name;
+end;
+
+procedure TfrmAccounts.cbForceTariffChange(Sender: TObject);
+var
+  i: integer;
+begin
+  if cbForceTariff.Text = 'Нет' then
+     editForceTariff.text := '-1'
+  else
+    for i := 0 to TarifsCount - 1 do
+      if Tarifs[i].name = cbForceTariff.Text then
+         editForceTariff.text := inttostr(Tarifs[i].id);
+  _OnChange(Sender);
 end;
 
 end.
