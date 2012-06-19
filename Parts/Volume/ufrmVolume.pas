@@ -13,18 +13,15 @@ type
   TfrmVolume = class(TForm)
     pnlVolume: TPanel;
     tbMain: TTrackBar;
-    tbWave: TTrackBar;
     cbMute: TCheckBox;
     cbCustom: TCheckBox;
     lblMain: TLabel;
-    lblWave: TLabel;
     ListViewVolume: TListView;
     butClose: TButton;
     cbOnlyLimit: TCheckBox;
 
     procedure Load();
     procedure OnChangeMain(Sender: TObject);
-    procedure OnChangeWave(Sender: TObject);
     procedure OnClickMute(Sender: TObject);
     procedure OnClickCustomVolume(Sender: TObject);
     procedure ListViewVolumeSelectItem(Sender: TObject; Item: TListItem;
@@ -74,18 +71,12 @@ begin
   if not ControlsEnabled then exit;
   DisableControls;
   if (ListViewVolume.Selected <> nil) then
+  begin
     GRegistry.Volume[ListViewVolume.Selected.Index].Main := VOLUME_MAX
         - tbMain.Position * (VOLUME_MAX div tbMain.Max);
-  EnableControls;
-end;
-
-procedure TfrmVolume.OnChangeWave(Sender: TObject);
-begin
-  if not ControlsEnabled then exit;
-  DisableControls;
-  If (ListViewVolume.Selected <> nil) Then
     GRegistry.Volume[ListViewVolume.Selected.Index].Wave := VOLUME_MAX
-        - tbWave.Position * (VOLUME_MAX div tbWave.Max);
+        - tbMain.Position * (VOLUME_MAX div tbMain.Max);
+  end;
   EnableControls;
 end;
 
@@ -120,17 +111,13 @@ begin
 
    if GRegistry.Volume[Item.Index].Custom = true then begin
      tbMain.Enabled := true;
-     tbWave.Enabled := true;
      cbMute.Enabled := true;
    end else begin
      tbMain.Enabled := false;
-     tbWave.Enabled := false;
      cbMute.Enabled := false;
   end;
   tbMain.Position := tbMain.Max
       - GRegistry.Volume[Item.Index].Main * tbMain.Max div VOLUME_MAX;
-  tbWave.Position := tbWave.Max
-      - GRegistry.Volume[Item.Index].Wave * tbWave.Max div VOLUME_MAX;
   cbMute.Checked := GRegistry.Volume[Item.Index].Mute;
   cbCustom.Checked := GRegistry.Volume[Item.Index].Custom;
   EnableControls;
