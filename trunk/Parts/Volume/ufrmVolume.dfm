@@ -24,21 +24,14 @@ object frmVolume: TfrmVolume
     Height = 305
     TabOrder = 0
     object lblMain: TLabel
-      Left = 200
+      Left = 232
       Top = 40
       Width = 23
       Height = 13
       Caption = 'Main'
     end
-    object lblWave: TLabel
-      Left = 256
-      Top = 40
-      Width = 29
-      Height = 13
-      Caption = 'Wave'
-    end
     object tbMain: TTrackBar
-      Left = 192
+      Left = 224
       Top = 56
       Width = 41
       Height = 201
@@ -48,24 +41,13 @@ object frmVolume: TfrmVolume
       TickMarks = tmBoth
       OnChange = OnChangeMain
     end
-    object tbWave: TTrackBar
-      Left = 256
-      Top = 56
-      Width = 41
-      Height = 201
-      Max = 25
-      Orientation = trVertical
-      TabOrder = 1
-      TickMarks = tmBoth
-      OnChange = OnChangeWave
-    end
     object cbMute: TCheckBox
-      Left = 200
+      Left = 201
       Top = 272
       Width = 97
       Height = 17
       Caption = 'Mute'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = OnClickMute
     end
     object cbCustom: TCheckBox
@@ -74,7 +56,7 @@ object frmVolume: TfrmVolume
       Width = 105
       Height = 17
       Caption = 'Custom Volume'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = OnClickCustomVolume
     end
     object ListViewVolume: TListView
@@ -86,7 +68,7 @@ object frmVolume: TfrmVolume
       HideSelection = False
       ReadOnly = True
       RowSelect = True
-      TabOrder = 4
+      TabOrder = 3
       ViewStyle = vsSmallIcon
       OnSelectItem = ListViewVolumeSelectItem
     end
@@ -96,7 +78,7 @@ object frmVolume: TfrmVolume
       Width = 169
       Height = 17
       Caption = 'Only limit'
-      TabOrder = 5
+      TabOrder = 4
       OnClick = cbOnlyLimitClick
     end
   end
