@@ -10,10 +10,14 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[tempdb]..[#msver
 	drop table #msver
 GO
 DECLARE @MSSQLVERSION int
-create table #msver ([Index] int PRIMARY KEY, [Name] varchar(200), Internal_Value int, Character_Value varchar(200))
-insert into #msver exec master..xp_msver ProductVersion
-select @MSSQLVERSION=CAST(LEFT(Character_Value,1) AS int) from #msver
-drop table #msver
+SELECT @MSSQLVERSION=CAST(REPLACE(LEFT(CAST(SERVERPROPERTY('ProductVersion')AS VARCHAR(20)),2),'.','') as INT);
+if (@MSSQLVERSION=0)
+BEGIN
+	CREATE TABLE #msver ([Index] INT PRIMARY KEY, [Name] VARCHAR(200), Internal_Value INT, Character_Value VARCHAR(200)) 
+	INSERT INTO #msver EXEC master..xp_msver ProductVersion 
+	SELECT @MSSQLVERSION=CAST(LEFT(Character_Value,1) AS INT) FROM #msver 
+	DROP TABLE #msver 
+END
 
 IF (@MSSQLVERSION = 8) BEGIN
   exec master.dbo.sp_addlogin 'operator'
@@ -25,6 +29,12 @@ IF (@MSSQLVERSION = 8) BEGIN
 END
 
 IF (@MSSQLVERSION = 9) BEGIN
+  exec sp_executesql N'CREATE LOGIN operator WITH PASSWORD = '''' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF' 
+  exec sp_executesql N'CREATE LOGIN manager WITH PASSWORD = '''' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF' 
+  exec sp_executesql N'CREATE LOGIN pm_service WITH PASSWORD = ''rfnfgekmnf'' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF'
+END
+
+IF (@MSSQLVERSION = 10) BEGIN
   exec sp_executesql N'CREATE LOGIN operator WITH PASSWORD = '''' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF' 
   exec sp_executesql N'CREATE LOGIN manager WITH PASSWORD = '''' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF' 
   exec sp_executesql N'CREATE LOGIN pm_service WITH PASSWORD = ''rfnfgekmnf'' ,CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF'
