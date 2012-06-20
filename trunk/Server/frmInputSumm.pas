@@ -18,6 +18,8 @@ type
     procedure editSummaChange(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure butOKClick(Sender: TObject);
+    procedure editSummaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -73,6 +75,12 @@ begin
     exit;
   end;
   ModalResult := mrOK;
+end;
+
+procedure TformInputSumm.editSummaKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_ESCAPE then ModalResult := mrCancel; 
 end;
 
 end.
