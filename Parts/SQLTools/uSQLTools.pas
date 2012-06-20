@@ -105,7 +105,7 @@ function ADOConnect(const AcnnResult: TADOConnection;
     const AstrDataBase: String = '';
     const AstrLogin: String = '';
     const AstrPassword: String = ''): Boolean;
-function ConfigureServerWithLogon(var AstrServerName: String): Boolean;
+function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
 function ConfigureServer(const AstrServerName: String): Boolean;
 function DetectInstance(const AcnnMain: TADOConnection;
     var AstrInstanceName: String): Boolean; overload;
@@ -404,7 +404,7 @@ begin
   dmo := null;
 end;
 
-function ConfigureServerWithLogon(var AstrServerName: String): Boolean;
+function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
 var
   dmo: OleVariant;
   frmLogon: TfrmLogon;
@@ -446,7 +446,7 @@ begin
       if frmLogon.WindowsAuthentication then try
         dmo.LoginSecure := True;
         dmo.Connect(frmLogon.ServerName);
-        SetSAPassword(dmo);
+//        SetSAPassword(dmo);
         if dmo.IntegratedSecurity.SecurityMode = 2 {SQLDMOSecurity_Mixed} then
           dmo.DisConnect
         else begin
@@ -457,16 +457,19 @@ begin
           until dmo.Status = 	3; {SQLDMOSvc_Stopped}
           dmo.Start(False, frmLogon.ServerName);
         end;
-        dmo.Connect(frmLogon.ServerName, 'sa', '1');
+        dmo.Connect(frmLogon.ServerName,frmLogon.UserName,
+            frmLogon.Password);
         Result := True;
       except
       end else begin//try
         dmo.LoginSecure := False;
         dmo.Connect(frmLogon.ServerName, frmLogon.UserName,
             frmLogon.Password);
-        SetSAPassword(dmo);
+        dbUserName := frmLogon.UserName;
+        dbPassword := frmLogon.Password; 
+{        SetSAPassword(dmo);
         dmo.DisConnect;
-        dmo.Connect(frmLogon.ServerName, 'sa', '1');
+        dmo.Connect(frmLogon.ServerName, 'sa', '1');}
         Result := True;
      // except
       end;
@@ -482,6 +485,7 @@ begin
       except
       end;
     dmo.DisConnect;
+
   end;
   dmo := null;
 end;
@@ -526,7 +530,7 @@ end;
 function SQLServerDataRootPath(const AstrInstanceName: String = ''): String;
 var
   reg: TRegistry;
-  strInstanceName, str: String;
+  strInstanceName: String;
   i: Integer;
   lstStrings: TStringList;
 begin
@@ -1017,8 +1021,8 @@ begin
     Result := True;
   except
   end;
-  {if not Result then } //убрал т.к. первый код на 2005 отрабатывает
-                        // а логин не энейблится
+//  if not Result then  //убрал т.к. первый код на 2005 отрабатывает
+//                        // а логин не энейблится
   try
     ADmo.ExecuteImmediate(
         'ALTER LOGIN sa WITH PASSWORD = ''1'' ,CHECK_POLICY = OFF, '
