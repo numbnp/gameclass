@@ -1,11 +1,6 @@
 Use GameClass
 Go
 
-declare @pass sysname
-set @pass=CAST(newid() AS sysname)
-exec master.dbo.sp_password NULL, @pass, N'sa'
-GO
-
 CREATE PROCEDURE UsageDateSelect
 /*WITH ENCRYPTION*/
 AS

@@ -46,6 +46,7 @@ var
   frmLogon: TfrmLogon;
   str: String;
   cnnResult: TADOConnection;
+  dbPassword,dbUserName: String;
 begin
   ExitCode := 1;
   Application.Initialize;
@@ -56,6 +57,7 @@ begin
   // gcosql configure
   // gcosql encode source.sql destination.sqp
   // gcosql createdatabase DBConfig.xml
+  // gcosql customcreatedatabase DBConfig.xml
   // gcosql updatedatabase DBConfig.xml
   // gcosql execute script.sqp
 
@@ -64,7 +66,7 @@ begin
       ExitCode := 0;
   end else if (ParamStr(2) = GCOSQL_MODE_CUSTOMCONFIGURE)
       and (ParamCount = 1) then begin
-    if ConfigureServerWithLogon(str) then
+    if ConfigureServerWithLogon(str,dbUserName,dbPassword) then
       ExitCode := 0;
   end else if (ParamStr(1) = GCOSQL_MODE_ENCODE)
       and (ParamCount = 3) then begin

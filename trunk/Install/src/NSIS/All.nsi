@@ -133,7 +133,7 @@ Section "Создание БД" SEC03
   SetOverwrite ifnewer
   File "c:\Projects\Free\Install\src\Packages\Database\GCosql.exe"
   
-  ExecWait "$INSTDIR\SQL\GCosql.exe createdatabase dbconfig.xml"
+  ExecWait "$INSTDIR\SQL\GCosql.exe customcreatedatabase dbconfig.xml"
   
 ;  Delete "$INSTDIR\SQL\*.*"
   RMDir /r "$INSTDIR\SQL"

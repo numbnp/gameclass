@@ -1,6 +1,6 @@
 object formMain: TformMain
   Left = 235
-  Top = 156
+  Top = 175
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -397,6 +397,12 @@ object formMain: TformMain
             Footers = <>
             Title.TitleButton = True
             Width = 50
+          end
+          item
+            AutoFitColWidth = False
+            EditButtons = <>
+            FieldName = 'Group'
+            Footers = <>
           end>
       end
       object pnlBottom: TPanel
@@ -3975,6 +3981,11 @@ object formMain: TformMain
         Name = 'SysState'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'Group'
+        DataType = ftString
+        Size = 50
       end>
     Parameters = <>
     StoreDefs = True
