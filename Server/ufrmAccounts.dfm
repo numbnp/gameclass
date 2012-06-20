@@ -895,6 +895,7 @@ object frmAccounts: TfrmAccounts
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = []
     FilterStringColor = clWindow
+    OnKeyDown = grdAccountsKeyDown
     Columns = <
       item
         Alignment = taCenter
@@ -929,7 +930,7 @@ object frmAccounts: TfrmAccounts
     object lblForceTariff: TLabel
       Left = 8
       Top = 52
-      Width = 126
+      Width = 123
       Height = 13
       Caption = #1055#1088#1080#1085#1091#1076#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092':'
     end
@@ -1034,6 +1035,7 @@ object frmAccounts: TfrmAccounts
       Height = 21
       TabOrder = 0
       OnChange = editFilterChange
+      OnKeyDown = editFilterKeyDown
     end
   end
   object dsrcAccounts: TDataSource

@@ -100,6 +100,10 @@ type
     procedure editUserLevelChange(Sender: TObject);
     procedure editForceTariffChange(Sender: TObject);
     procedure cbForceTariffChange(Sender: TObject);
+    procedure editFilterKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure grdAccountsKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     FbDirty: Boolean;
@@ -661,6 +665,20 @@ begin
       if Tarifs[i].name = cbForceTariff.Text then
          editForceTariff.text := inttostr(Tarifs[i].id);
   _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.editFilterKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  If Key=VK_DOWN then grdAccounts.SetFocus;
+  If Key=VK_RETURN then
+    if grdAccounts.RowCount= 2 then butBalanceAddClick(Sender);
+end;
+
+procedure TfrmAccounts.grdAccountsKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  If (Key=VK_RETURN) and (not isManager) then butBalanceAddClick(Sender);
 end;
 
 end.

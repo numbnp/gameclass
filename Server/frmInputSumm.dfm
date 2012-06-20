@@ -51,6 +51,7 @@ object formInputSumm: TformInputSumm
     Height = 21
     TabOrder = 0
     OnChange = editSummaChange
+    OnKeyDown = editSummaKeyDown
   end
   object butOK: TButton
     Left = 102
