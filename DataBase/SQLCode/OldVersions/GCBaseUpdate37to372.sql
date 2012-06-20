@@ -52,7 +52,7 @@ CREATE PROCEDURE AccountsUpdate
 @zeroBalance money,
 @memotext nvarchar(2000) = N'',
 @address nvarchar(300)=N''
-/*WITH ENCRYPTION*/
+
 AS 
 
 if (exists (select * from Accounts where ([name]=@name) and (@name <> N'') and ([id]<>@id) and ([isdeleted]=0))) begin
@@ -117,7 +117,7 @@ CREATE PROCEDURE SessionsGo
 @summa money,
 @whole int,
 @minpenalty int
-/*WITH ENCRYPTION*/   
+   
 AS 
 
 set nocount on
@@ -168,7 +168,7 @@ CREATE PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/   
+   
 AS 
 
 set nocount on
@@ -222,7 +222,7 @@ GO
 
 CREATE PROCEDURE SessionsSelect
 @now datetime
-/*WITH ENCRYPTION*/   
+   
 AS 
 
 set nocount on
@@ -255,7 +255,7 @@ GO
 
 CREATE PROCEDURE AccountsHistorySelect
 @idAccount int = 0
-/*WITH ENCRYPTION*/ 
+ 
 AS
 
 if (@idAccount = 0) 
@@ -281,7 +281,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repDetails 
-/*WITH ENCRYPTION*/   
+   
 AS 
 SELECT TOP 100 PERCENT 
  Computers.[ipaddress],
@@ -350,7 +350,7 @@ CREATE PROCEDURE [spgc_repGeneral]
 @OperatorName nvarchar(50),
 @CompNumber int
 
-/*WITH ENCRYPTION*/   
+   
 AS 
 
 set nocount on
@@ -440,7 +440,7 @@ GO
 
 CREATE PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/   
+   
 AS 
 
 set nocount on

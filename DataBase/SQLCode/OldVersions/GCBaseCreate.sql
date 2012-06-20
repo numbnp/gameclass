@@ -618,7 +618,7 @@ GO
 
 CREATE PROCEDURE AccountsDelete
 @number int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 update Accounts set [isdeleted]=1 where [id]=@number
 
@@ -636,7 +636,7 @@ GO
 
 CREATE PROCEDURE AccountsDiscountDelete
 @summary money
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 delete from AccountsDiscount where [summary] = @summary
 
@@ -655,7 +655,7 @@ GO
 CREATE PROCEDURE AccountsDiscountInsert
 @summary money,
 @discount int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 insert into AccountsDiscount
  ([summary], [discount])
@@ -675,7 +675,7 @@ GO
 
 
 CREATE PROCEDURE AccountsDiscountSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select * from AccountsDiscount order by summary asc
 
@@ -698,7 +698,7 @@ CREATE PROCEDURE AccountsDiscountUpdate
 @id int,
 @summary money,
 @discount int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 update AccountsDiscount
  set
@@ -720,7 +720,7 @@ GO
 
 CREATE PROCEDURE AccountsHistorySelect
 @idAccount int = 0
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (@idAccount = 0) 
@@ -748,7 +748,7 @@ CREATE PROCEDURE AccountsMoneyPay
 @summa money,
 @moment datetime,
 @comment nvarchar(200) = N''
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 /*
@@ -788,7 +788,7 @@ CREATE PROCEDURE AccountsMoneyReturn
 @summa money,
 @moment datetime,
 @comment nvarchar(200) = N''
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 /*
@@ -822,7 +822,7 @@ GO
 
 CREATE PROCEDURE AccountsNew
 @seccodes nvarchar(80) = N''
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 insert into Accounts 
  ([seccodes])   values  (@seccodes)
@@ -843,7 +843,7 @@ GO
 
 CREATE PROCEDURE AccountsSelect
 @number int = -1
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 if (@number = -1) begin
 select Accounts.* from Accounts where [isdeleted] = 0 
@@ -872,7 +872,7 @@ GO
 
 CREATE PROCEDURE AccountsUnblock
 @number int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 update Accounts set
  [isblocked] = 0
@@ -904,7 +904,7 @@ CREATE PROCEDURE AccountsUpdate
 @isprivileged int, 
 @privilegedDiscount int, 
 @zeroBalance money
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (exists (select * from Accounts where ([name]=@name) and (@name <> N'') and ([id]<>@id) and ([isdeleted]=0))) begin
@@ -941,7 +941,7 @@ GO
 CREATE PROCEDURE AccountsUpdateCodes
 @number int,
 @seccodes nvarchar(80)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 update Accounts set
  [seccodes] = @seccodes
@@ -965,7 +965,7 @@ GO
 
 
 CREATE PROCEDURE ClearStatistics
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 delete from Logs
 delete from JournalOp
@@ -1002,7 +1002,7 @@ CREATE PROCEDURE ComputersAdd
 @number int,
 @ipaddress nvarchar(15),
 @vip int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1039,7 +1039,7 @@ GO
 
 CREATE PROCEDURE ComputersDelete
 @idComp int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (not exists(select * from Computers where [id]=@idComp and [isdelete]=0))
@@ -1076,7 +1076,7 @@ GO
  selecting all not deleted computers
 */
 CREATE PROCEDURE ComputersSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1113,7 +1113,7 @@ CREATE PROCEDURE ComputersUpdate
 @number int,
 @ipaddress nvarchar(15),
 @vip int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1152,7 +1152,7 @@ GO
   selecting functions, that have right current user
 */
 CREATE PROCEDURE FunctionsSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1189,7 +1189,7 @@ GO
 
 
 CREATE PROCEDURE GetLogonInfo
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 declare @isManager as int
 declare @idGroup int
@@ -1228,7 +1228,7 @@ GO
 
 
 CREATE PROCEDURE GroupsSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select * from UsersGroup
 
@@ -1263,7 +1263,7 @@ CREATE PROCEDURE HardwareInsert
 @value nvarchar(500),
 @moment datetime,
 @comment nvarchar(200)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 declare @idHardware int
@@ -1307,7 +1307,7 @@ GO
 CREATE PROCEDURE HardwareSelect
 @idComputers int,
 @histored int=1
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 select 
@@ -1347,7 +1347,7 @@ GO
 
 
 CREATE PROCEDURE JournalOpSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select jo.[id], jo.[summa], jo.[moment], u.[name] operator  from journalop as jo 
   inner join users as u on (jo.[operator]=u.[id])
@@ -1386,7 +1386,7 @@ CREATE PROCEDURE LogsInsert
 @prioritet int,
 @message nvarchar(4000),
 @moment datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1424,7 +1424,7 @@ CREATE PROCEDURE MappingsAdd
 @listenport int,
 @mappedport int,
 @mappedip nvarchar(15)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 insert into Mappings (listenport, mappedport, mappedip) values (@listenport, @mappedport, @mappedip)
 
@@ -1453,7 +1453,7 @@ GO
 
 CREATE PROCEDURE MappingsDelete
 @id int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 delete from Mappings where [id]=@id
 
@@ -1481,7 +1481,7 @@ GO
 
 
 CREATE PROCEDURE MappingsSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select * from Mappings
 
@@ -1514,7 +1514,7 @@ GO
  called on the start App
 */
 CREATE PROCEDURE OnInitDatabase
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 set dateformat dmy
 
@@ -1546,7 +1546,7 @@ CREATE PROCEDURE PrinterScan
 @printer nvarchar(500) = N'',
 @begin datetime = '01 jan 1900 0:00:00',
 @end datetime = '31 dec 2100 0:00:00'
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 if (@mode = 0)
  select jobs.* from jobs where jobs.[id]>@idLast order by [id] asc
@@ -1583,7 +1583,7 @@ GO
 CREATE PROCEDURE RegistryInsert
 @key nvarchar(200),
 @value nvarchar(1000)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1620,7 +1620,7 @@ GO
 
 CREATE PROCEDURE RegistrySelect
 @key nvarchar(200)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1650,7 +1650,7 @@ GO
 
 CREATE PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1715,7 +1715,7 @@ CREATE PROCEDURE ReportCurrentInsert
 @moment datetime,
 @summa money,
 @comment nvarchar(200)=''
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1752,7 +1752,7 @@ GO
 
 
 CREATE PROCEDURE RightsSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1825,7 +1825,7 @@ CREATE PROCEDURE RightsUpdate
 @rOperators int,
 @rAdmins int,
 @rBosses int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1882,7 +1882,7 @@ CREATE PROCEDURE ServiceToSell
 @goods nvarchar(100),
 @count int,
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -1924,7 +1924,7 @@ GO
 CREATE PROCEDURE ServicesBaseAdd
 @goods nvarchar(100),
 @price money
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (not exists(select * from ServicesBase where [name]=@goods and [isdelete]=0))
@@ -1959,7 +1959,7 @@ GO
 
 CREATE PROCEDURE ServicesBaseDelete
 @goods nvarchar(100)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 update ServicesBase set [isdelete]=1 where [name]=@goods
@@ -1987,7 +1987,7 @@ GO
 
 
 CREATE PROCEDURE ServicesBaseSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select * from ServicesBase where [isdelete]=0
 
@@ -2021,7 +2021,7 @@ CREATE PROCEDURE ServicesBaseUpdate
 @newgoods nvarchar(100),
 @newprice money
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 update ServicesBase set [name]=@newgoods, [price]=@newprice
@@ -2055,7 +2055,7 @@ CREATE PROCEDURE SessionsAddMoney
 @newstop datetime,
 @summa money,
 @moment datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2104,7 +2104,7 @@ CREATE PROCEDURE SessionsGo
 @summa money,
 @whole int,
 @minpenalty int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2154,7 +2154,7 @@ GO
 CREATE PROCEDURE SessionsMoveComps
 @idSessionsAdd int,
 @idComp int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2188,7 +2188,7 @@ GO
 
 CREATE PROCEDURE SessionsReadUncontrolState
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
  
 
@@ -2230,7 +2230,7 @@ GO
 CREATE PROCEDURE SessionsSelect
 @now datetime
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2269,7 +2269,7 @@ CREATE PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2331,7 +2331,7 @@ CREATE PROCEDURE SessionsUpdate
 @printed int,
 @idSessionsAdd int,
 @newstop datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2367,7 +2367,7 @@ CREATE PROCEDURE TarifsAdd
 @calctraffic int,
 @roundtime int,
 @roundmoney money
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2406,7 +2406,7 @@ GO
 
 CREATE PROCEDURE TarifsDelete
 @idTarif int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2445,7 +2445,7 @@ GO
 
 CREATE PROCEDURE TarifsMoveUp
 @idTarif int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2478,7 +2478,7 @@ GO
 
 
 CREATE PROCEDURE TarifsSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2517,7 +2517,7 @@ CREATE PROCEDURE TarifsUpdate
 @calctraffic int,
 @roundtime int,
 @roundmoney money
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2556,7 +2556,7 @@ CREATE PROCEDURE TarifsVariantsAdd
 @ispacket int = 0,
 @daysofweek nvarchar(7),
 @condition nvarchar(50) = N''
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2576,7 +2576,7 @@ GO
 
 CREATE PROCEDURE TarifsVariantsDelete
 @idVariants int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 set nocount on
 declare @count int
@@ -2611,7 +2611,7 @@ GO
 
 CREATE PROCEDURE TarifsVariantsSelect
 @idTarifs int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select [id], [name], [start], [stop], [cost], [ispacket], [daysofweek], [condition] from TarifsVariants where [idTarifs]=@idTarifs
 
@@ -2643,7 +2643,7 @@ CREATE PROCEDURE TarifsVariantsUpdate
 @ispacket int,
 @daysofweek nvarchar(7),
 @condition nvarchar(50)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2679,7 +2679,7 @@ GO
 */
 CREATE PROCEDURE UnControlClubStart
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2730,7 +2730,7 @@ GO
 */
 CREATE PROCEDURE UnControlClubTimer
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2780,7 +2780,7 @@ GO
 CREATE PROCEDURE UnControlCompStart
 @idComp int,
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2818,7 +2818,7 @@ GO
 CREATE PROCEDURE UnControlCompTimer
 @idComp int,
 @now datetime
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -2861,7 +2861,7 @@ GO
 CREATE PROCEDURE UsersChangePass
 @login_name nvarchar(50),
 @pw nvarchar(50)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 /*  проверка на наличие такого пользователя */
@@ -2950,7 +2950,7 @@ GO
 
 CREATE PROCEDURE UsersDelete
 @idUsers int
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 declare @login_name nvarchar(50)
@@ -3001,7 +3001,7 @@ GO
 
 
 CREATE PROCEDURE UsersSelect
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 select Users.*, UsersGroup.name [group] from Users
  inner join UsersGroup on (Users.[idUsersGroup]=UsersGroup.[id]) 
@@ -3036,7 +3036,7 @@ GO
 CREATE PROCEDURE secChangePass
 @oldpass nvarchar(100),
 @newpass nvarchar(100)
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if @oldpass=''  set @oldpass=NULL
@@ -3071,7 +3071,7 @@ GO
 
 CREATE PROCEDURE [spgc_Computers] 
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 select distinct [number] from [Computers]
@@ -3104,7 +3104,7 @@ CREATE PROCEDURE [spgc_Operators]
 @begin datetime,
 @end datetime
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 select distinct [operator] from [repJournalOp]
@@ -3133,7 +3133,7 @@ CREATE PROCEDURE [spgc_repDetails]
 @OperatorName nvarchar(50),
 @compNumber int
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (len(@OperatorName) = 0) 
@@ -3172,7 +3172,7 @@ CREATE PROCEDURE [spgc_repGeneral]
 @OperatorName nvarchar(50),
 @CompNumber int
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 set nocount on
@@ -3265,7 +3265,7 @@ CREATE PROCEDURE [spgc_repJournalOp]
 @end datetime,
 @OperatorName nvarchar(50)
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (len(@OperatorName) = 0)
@@ -3300,7 +3300,7 @@ GO
 
 CREATE PROCEDURE [spgc_repLogs] 
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 select [Logs].[moment], 
@@ -3341,7 +3341,7 @@ CREATE PROCEDURE [spgc_repRepair]
 @OperatorName nvarchar(50),
 @CompNumber int
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (len(@OperatorName) = 0) begin
@@ -3393,7 +3393,7 @@ CREATE PROCEDURE [spgc_repServices]
 @end datetime,
 @OperatorName nvarchar(50)
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (len(@OperatorName) = 0)
@@ -3432,7 +3432,7 @@ CREATE PROCEDURE [spgc_repUncontrol]
 @end datetime,
 @CompNumber int
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 if (@CompNumber = 0)
@@ -3469,7 +3469,7 @@ CREATE PROCEDURE [spgc_repUncontrolClub]
 @begin datetime,
 @end datetime
 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 
 select * from [repUncontrolClub]
@@ -3488,7 +3488,7 @@ GO
 
 
 CREATE VIEW dbo.repDetails 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT TOP 100 PERCENT 
  Computers.[ipaddress],
@@ -3541,7 +3541,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repJournalOp 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT     dbo.Users.Name AS operator, dbo.JournalOp.moment, dbo.JournalOp.summa, dbo.JournalOp.comment 
 FROM         dbo.JournalOp INNER JOIN 
@@ -3559,7 +3559,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repRepair 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT TOP 100 PERCENT
  Computers.[ipaddress],
@@ -3592,7 +3592,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repServices 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT    
  Users.[name] AS operator, 
@@ -3619,7 +3619,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repUncontrol 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT     TOP 100 PERCENT dbo.Computers.number number, dbo.Computers.ipaddress ipAddress, dbo.Uncontrol.start start,  
                       dbo.Uncontrol.stop stop, DATEDIFF(minute, dbo.Uncontrol.start, dbo.Uncontrol.stop) length 
@@ -3642,7 +3642,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE VIEW dbo.repUncontrolClub 
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 SELECT     TOP 100 PERCENT dbo.Uncontrol.start start, dbo.Uncontrol.stop stop, DATEDIFF(minute, dbo.Uncontrol.start, dbo.Uncontrol.stop) length 
 FROM         dbo.Uncontrol INNER JOIN 

@@ -6,7 +6,7 @@ ALTER PROCEDURE UsersCreate
   @login_name NVARCHAR(50),
   @group_name NVARCHAR(50),
   @password NVARCHAR(50)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   DECLARE @error_descr VARCHAR(400)
@@ -57,7 +57,7 @@ GO
 
 ALTER PROCEDURE [dbo].[UsersDelete]
   @idUsers INT
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   DECLARE @login_name NVARCHAR(50)
@@ -170,7 +170,7 @@ ALTER PROCEDURE ServiceToSell
 @idComputer int,
 @idAccount int,
 @TypeCost int
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   set nocount on
@@ -188,7 +188,7 @@ ALTER PROCEDURE RegistryUpdate
   @id INT,
   @key VARCHAR(200),
   @value VARCHAR(7000)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   SET NOCOUNT ON
@@ -218,7 +218,7 @@ ALTER PROCEDURE SessionsUpdate
 @newstatus int,
 @newstate int,
 @Services money
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   set nocount on
@@ -241,7 +241,7 @@ GO
 
 ALTER PROCEDURE SessionsSelect
 @now datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -258,7 +258,7 @@ END
 GO
 
 ALTER VIEW dbo.repServices 
-/*WITH ENCRYPTION*/
+
 AS 
 SELECT    
  Users.[name] AS operator, 
@@ -284,7 +284,7 @@ GO
 
 ALTER PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -364,7 +364,7 @@ ALTER PROCEDURE ReportCurrentInsert
 @removedMoney money = 0,
 @comment nvarchar(200)='',
 @traffic int = 0
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   set nocount on
@@ -377,7 +377,7 @@ END
 GO
 
 ALTER VIEW dbo.repJournalOp 
-/*WITH ENCRYPTION*/
+
 AS 
 SELECT     dbo.Users.Name AS operator, dbo.JournalOp.moment, dbo.JournalOp.traffic, dbo.JournalOp.summa, dbo.JournalOp.comment 
 FROM         dbo.JournalOp INNER JOIN 

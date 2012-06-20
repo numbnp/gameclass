@@ -2,7 +2,7 @@ Use GameClass
 Go
 
 CREATE PROCEDURE UsageDateSelect
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
 

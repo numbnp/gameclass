@@ -44,7 +44,7 @@ CREATE PROCEDURE CustomReportsAdd
 @sqlcode nvarchar(3500),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -64,7 +64,7 @@ GO
 
 CREATE PROCEDURE CustomReportsDelete
 @idReport uniqueidentifier
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 if (not exists(select * from CustomReports where [id]=@idReport))
@@ -77,7 +77,7 @@ else
 GO
 
 CREATE PROCEDURE CustomReportsSelect
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 set nocount on
@@ -92,7 +92,7 @@ CREATE PROCEDURE CustomReportsUpdate
 @sqlcode nvarchar(3500),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 set nocount on
@@ -113,7 +113,7 @@ CREATE PROCEDURE CustomReportsImport
 @sqlcode nvarchar(4000),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 set nocount on
@@ -138,7 +138,7 @@ CREATE PROCEDURE SessionsChangeTariff
 @CurrentTime datetime,
 @NewTariffStop datetime,
 @MoneyLeft money --сумма стоимости последнего тарифа без учета принтера и трафика
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 set nocount on
@@ -180,7 +180,7 @@ CREATE PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 set nocount on
@@ -234,7 +234,7 @@ drop procedure [dbo].[ClearStatistics]
 GO
 
 CREATE PROCEDURE ClearStatistics
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 delete from Logs
 delete from JournalOp

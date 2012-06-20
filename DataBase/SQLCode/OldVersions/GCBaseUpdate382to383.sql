@@ -6,7 +6,7 @@ GO
 
 CREATE FUNCTION [IsManager] ()
   RETURNS INT
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   IF EXISTS(SELECT * FROM Users WHERE ([Name] = SYSTEM_USER) AND (idUsersGroup = 2) AND (IsDelete = 0)) 
@@ -24,7 +24,7 @@ ALTER PROCEDURE UsersCreate
   @login_name NVARCHAR(50),
   @group_name NVARCHAR(50),
   @password NVARCHAR(50)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   DECLARE @error_descr VARCHAR(400)
@@ -75,7 +75,7 @@ GO
 
 ALTER PROCEDURE [dbo].[UsersDelete]
   @idUsers INT
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   DECLARE @login_name NVARCHAR(50)
@@ -186,7 +186,7 @@ INSERT dbo.AutoUpdateTables VALUES (1, 'Accounts')
 GO
 
 CREATE TRIGGER AccountsAutoUPDATE ON [dbo].[Accounts] 
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE 
 AS
 BEGIN
@@ -224,7 +224,7 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[AutoUpdateSelectLastId]
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT ISNULL((SELECT TOP 1 id FROM [AutoUpdate] ORDER BY id DESC), 0) id
@@ -236,7 +236,7 @@ GO
 
 CREATE PROCEDURE [dbo].[AutoUpdateSelect]
   @idPrev INT = -1
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT * FROM [AutoUpdate] WHERE ([id] > @idPrev) ORDER BY [id] ASC 
@@ -249,7 +249,7 @@ GO
 CREATE PROCEDURE AccountsUpdatePhoto
   @id INT,
   @photo image
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   UPDATE Accounts SET [photo] = @photo WHERE [id]=@id
@@ -265,7 +265,7 @@ GO
 
 CREATE PROCEDURE AccountsInsert
   @seccodes NVARCHAR(80) = N''
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   INSERT INTO Accounts([seccodes]) VALUES (@seccodes)
@@ -278,7 +278,7 @@ GO
 
 ALTER PROCEDURE AccountsSelect
   @id INT = NULL
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT Accounts.* FROM Accounts 
@@ -292,7 +292,7 @@ GO
 
 ALTER PROCEDURE AccountsDelete
   @id INT
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   UPDATE Accounts SET [isdeleted]=1 WHERE [id]=@id
@@ -302,7 +302,7 @@ GO
 
 ALTER PROCEDURE AccountsUnblock
   @id INT
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   UPDATE Accounts SET [isblocked] = 0 WHERE [id]=@id
@@ -312,7 +312,7 @@ GO
 ALTER PROCEDURE AccountsUpdateCodes
   @id INT,
   @seccodes NVARCHAR(80)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   UPDATE Accounts SET [seccodes] = @seccodes WHERE [id]=@id
@@ -342,7 +342,7 @@ GO
 
 CREATE PROCEDURE AccountsDiscountsSelect
   @id INT = NULL
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT * FROM AccountsDiscounts 
@@ -357,7 +357,7 @@ GO
 CREATE PROCEDURE AccountsDiscountsInsert
   @summary money = 0,
   @discount INT = 0
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   INSERT INTO AccountsDiscounts ([summary], [discount]) VALUES (@summary, @discount)
@@ -367,7 +367,7 @@ GO
 
 CREATE PROCEDURE AccountsDiscountsDelete
   @id money
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DELETE FROM AccountsDiscounts WHERE [id] = @id
@@ -378,7 +378,7 @@ CREATE PROCEDURE AccountsDiscountsUpdate
   @id INT,
   @summary money,
   @discount INT
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   UPDATE AccountsDiscounts SET [summary] = @summary, [discount] = @discount
@@ -387,7 +387,7 @@ END
 GO
 
 CREATE TRIGGER AccountsDiscountsAutoUPDATE ON [dbo].[AccountsDiscounts] 
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE 
 AS
 BEGIN
@@ -473,7 +473,7 @@ GO
 
 CREATE PROCEDURE RegistrySelectByKey
   @key NVARCHAR(200)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SET NOCOUNT ON
@@ -486,7 +486,7 @@ GO
 
 ALTER PROCEDURE RegistrySelect
   @id INT = null
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SET NOCOUNT ON
@@ -499,7 +499,7 @@ GO
 ALTER PROCEDURE RegistryInsert
   @key VARCHAR(200) = NULL,
   @value VARCHAR(7000) = ''
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SET NOCOUNT ON
@@ -518,7 +518,7 @@ CREATE PROCEDURE RegistryUpdate
   @id INT,
   @key VARCHAR(200),
   @value VARCHAR(7000)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   SET NOCOUNT ON
@@ -536,7 +536,7 @@ GRANT EXEC ON [RegistryUpdate] to public
 GO
 
 CREATE TRIGGER RegistryAutoUPDATE ON [dbo].[Registry] 
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE 
 AS
 BEGIN
@@ -576,7 +576,7 @@ GO
 ----------------------------------------------------------------------------- */
 CREATE PROCEDURE PMJobsSelect
   @id INT = -1
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SET NOCOUNT ON
@@ -590,7 +590,7 @@ GRANT  EXECUTE  ON [dbo].[PMJobsSelect]  TO [public]
 GO
 
 CREATE PROCEDURE PMJobsSelectUnprocessed
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SET NOCOUNT ON
@@ -606,7 +606,7 @@ GRANT  EXECUTE  ON [dbo].[PMJobsSelectUnprocessed]  TO [public]
 GO
 
 CREATE TRIGGER _pm_jobsAutoUPDATE ON [dbo].[_pm_jobs] 
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE 
 AS
 BEGIN
