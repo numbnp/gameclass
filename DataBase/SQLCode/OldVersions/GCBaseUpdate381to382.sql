@@ -29,7 +29,7 @@ ALTER PROCEDURE TarifsAdd
 @BytesInMB int,
 @SpeedLimitInKB int,
 @PluginGroupName nvarchar(50)
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -71,7 +71,7 @@ ALTER PROCEDURE TarifsUpdate
 @BytesInMB int,
 @SpeedLimitInKB int,
 @PluginGroupName nvarchar(50)
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -101,7 +101,7 @@ ALTER PROCEDURE TarifsVariantsAdd
 @TrafficCost money = 1,
 @TrafficSeparatePayment bit =0,
 @FreePacket bit =0
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -114,7 +114,7 @@ GO
 
 ALTER PROCEDURE TarifsVariantsSelect
 @idTarifs int
-/*WITH ENCRYPTION*/  
+  
 AS 
 select [id], [name], [start], [stop], [cost], [ispacket], [daysofweek], [condition],[TrafficLimit],[TrafficCost],[TrafficSeparatePayment],[FreePacket]
     from TarifsVariants where [idTarifs]=@idTarifs
@@ -133,7 +133,7 @@ ALTER PROCEDURE TarifsVariantsUpdate
 @TrafficCost money,
 @TrafficSeparatePayment bit,
 @FreePacket bit 
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -177,7 +177,7 @@ CREATE PROCEDURE ProcessAdd
   @Name varchar(250),
   @ExeFile varchar(250),
   @Moment datetime
-/*WITH ENCRYPTION*/  
+  
 AS 
   set nocount on
 
@@ -218,7 +218,7 @@ ALTER PROCEDURE HardwareInsert
 @moment datetime,
 @comment nvarchar(200),
 @FullInfo varchar(500)
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 declare @idHardware int
@@ -244,7 +244,7 @@ GO
 ALTER PROCEDURE HardwareSelect
 @idComputers int,
 @histored int=1
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 select 

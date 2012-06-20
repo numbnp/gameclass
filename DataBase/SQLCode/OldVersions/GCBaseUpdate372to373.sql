@@ -67,7 +67,7 @@ drop view [dbo].[repDetails]
 GO
 
 CREATE VIEW dbo.repDetails 
-/*WITH ENCRYPTION*/
+
 AS 
 SELECT TOP 100 PERCENT 
  Computers.[ipaddress],
@@ -119,7 +119,7 @@ GO
 
 CREATE PROCEDURE ComputerGroupsAdd
 @name nvarchar(15)  
-/*WITH ENCRYPTION*/
+
 AS 
 
 declare @idGroup int
@@ -144,7 +144,7 @@ GO
 
 CREATE PROCEDURE ComputerGroupsDelete
 @idGroup int
-/*WITH ENCRYPTION*/
+
 AS 
 
 if (not exists(select * from ComputerGroups where [id]=@idGroup and [isdelete]=0))
@@ -163,7 +163,7 @@ drop procedure [dbo].[ComputerGroupsSelect]
 GO
 
 CREATE PROCEDURE ComputerGroupsSelect
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -178,7 +178,7 @@ GO
 CREATE PROCEDURE ComputerGroupsUpdate
 @idGroup int,
 @name nvarchar(50)
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -201,7 +201,7 @@ CREATE PROCEDURE ComputersAdd
 @number int,
 @ipaddress nvarchar(15),
 @idGroup int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -221,7 +221,7 @@ GO
 
 CREATE PROCEDURE ComputersDelete
 @idComp int
-/*WITH ENCRYPTION*/
+
 AS 
 
 if (not exists(select * from Computers where [id]=@idComp and [isdelete]=0))
@@ -239,7 +239,7 @@ GO
 
 CREATE PROCEDURE ComputersSelect
 @idGroup int 
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -258,7 +258,7 @@ CREATE PROCEDURE ComputersUpdate
 @number int,
 @ipaddress nvarchar(15),
 @idGroup int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -278,7 +278,7 @@ GO
 
 CREATE PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -348,7 +348,7 @@ CREATE PROCEDURE SessionsChangeTariff
 @CurrentTime datetime,
 @NewTariffStop datetime,
 @MoneyLeft money --сумма стоимости последнего тарифа без учета принтера и трафика
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -402,7 +402,7 @@ CREATE PROCEDURE SessionsGo
 @summa money,
 @whole int,
 @minpenalty int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -441,7 +441,7 @@ GO
 CREATE PROCEDURE SessionsMoveComps
 @idSessionsAdd int,
 @idComp int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -455,7 +455,7 @@ GO
 
 CREATE PROCEDURE SessionsSelect
 @now datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -487,7 +487,7 @@ CREATE PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -542,7 +542,7 @@ CREATE PROCEDURE SessionsUpdate
 @printed int,
 @idSessionsAdd int,
 @newstop datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -568,7 +568,7 @@ CREATE PROCEDURE SessionsUpdatePenalty
 @newstop datetime,
 @minpenalty int,
 @moment datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -599,7 +599,7 @@ CREATE PROCEDURE TarifsVariantsAdd
 @daysofweek nvarchar(7),
 @condition nvarchar(50) = N'',
 @TrafficLimit int = 1000
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -614,7 +614,7 @@ GO
 
 CREATE PROCEDURE TarifsVariantsSelect
 @idTarifs int
-/*WITH ENCRYPTION*/
+
 AS 
 select [id], [name], [start], [stop], [cost], [ispacket], [daysofweek], [condition],[TrafficLimit] from TarifsVariants where [idTarifs]=@idTarifs
 GO
@@ -634,7 +634,7 @@ CREATE PROCEDURE TarifsVariantsUpdate
 @daysofweek nvarchar(7),
 @condition nvarchar(50),
 @TrafficLimit int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -662,7 +662,7 @@ CREATE PROCEDURE TarifsAdd
 @roundtime int,
 @roundmoney money,
 @idGroup int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -696,7 +696,7 @@ GO
 
 CREATE PROCEDURE TarifsSelect
 @idGroup int 
-/*WITH ENCRYPTION*/
+
 AS 
 set nocount on
 if @idGroup=-1
@@ -718,7 +718,7 @@ CREATE PROCEDURE TarifsUpdate
 @roundtime int,
 @roundmoney money,
 @idGroup int
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on

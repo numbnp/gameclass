@@ -7,7 +7,7 @@ GO
 
 CREATE PROCEDURE SessionsSelect
 @now datetime
-/*WITH ENCRYPTION*/  
+  
 AS 
 BEGIN
     SET NOCOUNT ON

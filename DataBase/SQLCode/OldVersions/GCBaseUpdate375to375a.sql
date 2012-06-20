@@ -23,7 +23,7 @@ CREATE PROCEDURE SessionsSave
 @state int,
 @status int,
 @moment datetime
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on

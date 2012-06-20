@@ -23,7 +23,7 @@ ALTER PROCEDURE SessionsInsert
 @state int,
 @status int,
 @moment datetime
-/*WITH ENCRYPTION*/
+
 AS
 
 SET NOCOUNT ON
@@ -71,7 +71,7 @@ ALTER PROCEDURE SessionsUpdate
 @Status int,
 @State int,
 @Moment datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -140,7 +140,7 @@ GO
 CREATE PROCEDURE SessionsUpdateTimeCost
 @IdSessionsAdd int,
 @TimeCost money
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -159,7 +159,7 @@ ALTER PROCEDURE SessionsChangeTariff
 @NewTariffStop datetime,
 @MoneyLeft money, --сумма стоимости последнего тарифа без учета принтера и трафика
 @TimeCost money
-/*WITH ENCRYPTION*/    
+    
 AS 
 
 SET NOCOUNT ON
@@ -206,7 +206,7 @@ CREATE FUNCTION [IsSpecialReportOrFolder] (
   @idReport int
 )
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   IF @idReport IS NULL RETURN 0
@@ -228,7 +228,7 @@ CREATE FUNCTION [IsSpecialReport] (
   @idReport int
 )
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @IsFolder int
@@ -243,7 +243,7 @@ GO
           Обновление триггера для дерева отчетов
 ----------------------------------------------------------------------------- */
 ALTER TRIGGER ReportsUpdate ON [dbo].[Reports]
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE
 AS
 BEGIN
@@ -297,7 +297,7 @@ BEGIN
 @CurrentShiftBegin datetime,
 @PrevShiftBegin datetime,
 @PrevShiftEnd datetime
-WITH ENCRYPTION
+
 AS
 SET NOCOUNT ON
 ' + CASE WHEN @Invariable <> 1 THEN 'IF dbo.GetCustomReportParentId() = ' + CONVERT(varchar(5),@idParent) ELSE ' ' END + '
@@ -331,7 +331,7 @@ ALTER PROCEDURE ReportCurrent
 @AccountsPayed money OUTPUT,
 @AccountsReturned money OUTPUT,
 @Rest money OUTPUT
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -410,7 +410,7 @@ GO
 
 CREATE FUNCTION [GetLastOperatorName] ()
   RETURNS varchar(50)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @LastOperatorName varchar(50)
@@ -517,7 +517,7 @@ UPDATE S SET S.[Cost] = SB.[price] FROM Services S
 GO
 
 ALTER VIEW dbo.repServices 
-/*WITH ENCRYPTION*/
+
 AS 
 SELECT    
  Users.[name] AS operator, 
@@ -545,7 +545,7 @@ ALTER PROCEDURE ServiceToSell
 @TypeCost int,
 @UseCustomCost int = 0,
 @CustomCost money = 0
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   set nocount on
@@ -613,7 +613,7 @@ RETURNS @PMJobs TABLE (
 	[status] [varchar] (20) COLLATE Cyrillic_General_CI_AS NOT NULL,
         [Cost] [money] NOT NULL
 )
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   DECLARE @GCCost money
@@ -650,7 +650,7 @@ GO
 
 ALTER PROCEDURE PMJobsSelect
   @id INT = -1
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT * FROM dbo.PMJobs(@id, 0)
@@ -658,7 +658,7 @@ END
 GO
 
 ALTER PROCEDURE PMJobsSelectUnprocessed
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT * FROM dbo.PMJobs(0, 1)
@@ -674,7 +674,7 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[repDetails
 GO
 
 CREATE VIEW dbo.repDetails 
-/*WITH ENCRYPTION*/   
+   
 AS 
 SELECT TOP 100 PERCENT 
  Computers.[ipaddress],

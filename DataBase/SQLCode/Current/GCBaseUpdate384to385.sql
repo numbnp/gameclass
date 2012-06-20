@@ -20,7 +20,6 @@ GO
 ----------------------------------------------------------------------------- */
 ALTER PROCEDURE ComputerGroupsAdd
 @name nvarchar(15)  
-WITH ENCRYPTION
 AS 
 
 DECLARE @idGroup int
@@ -135,7 +134,7 @@ ALTER PROCEDURE SessionsAddMoney
 @NewStop datetime,
 @Summa money,
 @Moment datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -164,7 +163,7 @@ GO
 ----------------------------------------------------------------------------- */
 CREATE FUNCTION [GetUserGroup] ()
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @idGroup int
@@ -179,7 +178,7 @@ GO
 
 CREATE FUNCTION [GetUserGroupName] ()
   RETURNS varchar(50)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @GroupName varchar(50)
@@ -197,7 +196,7 @@ CREATE FUNCTION [CheckFunctionsRight] (
 @FunctionName nvarchar(50)
 )
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
     DECLARE @Result int
@@ -221,7 +220,7 @@ GO
 ALTER PROCEDURE GetLogonInfo
 @id int,
 @Value bigint
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SET NOCOUNT ON
@@ -278,7 +277,7 @@ CREATE PROC ServicesRunpadInsert3
 @data_size   int,            -- размер в  Ѕ обработанных данных
 @data_time   int,            -- врем€ в секундах пользовани€ услугой
 @comments    varchar(512)    -- комментарии (например, название распечатанного документа)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SET NOCOUNT ON
@@ -299,7 +298,7 @@ GRANT EXEC ON [ServicesRunpadInsert3] TO pm_service
 GO
 
 CREATE TRIGGER ServicesRunpadAutoUpdate ON [dbo].[ServicesRunpad]
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE
 AS
 BEGIN
@@ -335,7 +334,7 @@ INSERT dbo.AutoUpdateTables VALUES (5, 'ServicesRunpad')
 GO
 
 ALTER TRIGGER RegistryAutoUpdate ON [dbo].[Registry]
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE
 AS
 BEGIN
@@ -500,7 +499,7 @@ GO
 
 CREATE FUNCTION [GetCustomReportParentId] ()
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @idParent int
@@ -521,7 +520,7 @@ GRANT EXEC ON [GetCustomReportParentId] TO public
 GO
 
 CREATE PROCEDURE CustomReportsSelect
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SELECT [id], [Name], '' [Code], '' [Description], [IsFolder], 0 [ParentId], 
@@ -536,7 +535,7 @@ GO
 
 CREATE PROCEDURE CustomReportColumnsSelect
 @idReport int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SELECT RC.* FROM ReportColumns RC 
@@ -555,7 +554,7 @@ GO
 ----------------------------------------------------------------------------- */
 --DROP TRIGGER ReportsUpdate 
 CREATE TRIGGER ReportsUpdate ON [dbo].[Reports]
-/*WITH ENCRYPTION*/
+
 FOR INSERT, UPDATE, DELETE
 AS
 BEGIN
@@ -609,7 +608,7 @@ BEGIN
 @CurrentShiftBegin datetime,
 @PrevShiftBegin datetime,
 @PrevShiftEnd datetime
-WITH ENCRYPTION
+
 AS
 SET NOCOUNT ON
 ' + CASE WHEN @Invariable <> 1 THEN 'IF dbo.GetCustomReportParentId() = ' + CONVERT(varchar(5),@idParent) ELSE ' ' END + '
@@ -822,7 +821,7 @@ GO
 ALTER PROCEDURE SessionsSelect
   @id int = NULL,
   @dt datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -880,7 +879,7 @@ CREATE PROCEDURE SessionsInsert
 @state int,
 @status int,
 @moment datetime
-/*WITH ENCRYPTION*/
+
 AS
 
 SET NOCOUNT ON
@@ -925,7 +924,7 @@ CREATE PROCEDURE SessionsStop
 @ResultCommonPay money,
 @ResultSeparateTrafficPay money = 0,
 @autostop int = 0
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
 
@@ -1008,7 +1007,7 @@ ALTER PROCEDURE SessionsUpdate
 @Status int,
 @State int,
 @Moment datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -1080,7 +1079,7 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[repDetails
 GO
 
 CREATE VIEW dbo.repDetails 
-/*WITH ENCRYPTION*/   
+   
 AS 
 SELECT TOP 100 PERCENT 
  Computers.[ipaddress],
@@ -1137,7 +1136,7 @@ ALTER PROCEDURE ReportCurrent
 @AccountsPayed money OUTPUT,
 @AccountsReturned money OUTPUT,
 @Rest money OUTPUT
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -1205,7 +1204,7 @@ GO
 
 CREATE PROCEDURE DiscountsRecalc
 @dtStart datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
 
@@ -1244,7 +1243,7 @@ ALTER PROCEDURE AccountsUpdate
 @summary money,
 @PeriodOfValidity int = 0,
 @ExpirationDate datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 IF (EXISTS (SELECT * FROM Accounts WHERE ([name]=@name) AND (@name <> N'') AND ([id]<>@id) AND ([isdeleted]=0))) BEGIN
@@ -1275,7 +1274,7 @@ GO
 
 CREATE FUNCTION [GetFreeCheckAccountsName] ()
   RETURNS nvarchar(50)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @Name nvarchar(50)

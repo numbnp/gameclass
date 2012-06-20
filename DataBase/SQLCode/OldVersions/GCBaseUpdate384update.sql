@@ -9,7 +9,7 @@ ALTER PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -61,7 +61,7 @@ GO
 
 ALTER PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -164,7 +164,7 @@ ALTER PROCEDURE RegistryUpdate
   @id INT,
   @key VARCHAR(200),
   @value VARCHAR(7000)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   SET NOCOUNT ON
@@ -200,7 +200,7 @@ GO
 ----------------------------------------------------------------------------- */
 ALTER PROCEDURE ComputerGroupsAdd
 @name nvarchar(15)  
-/*WITH ENCRYPTION*/
+
 AS 
 
 DECLARE @idGroup int

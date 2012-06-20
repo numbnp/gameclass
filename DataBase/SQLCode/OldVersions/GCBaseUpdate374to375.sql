@@ -667,7 +667,6 @@ CREATE PROCEDURE SessionsSave
 @minpenalty int,
 @state int,
 @status int
-/*WITH ENCRYPTION*/  
 AS 
 
 set nocount on
@@ -704,7 +703,6 @@ GO
 
 CREATE PROCEDURE SessionsSelect
 @now datetime
-/*WITH ENCRYPTION*/  
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -730,7 +728,6 @@ CREATE PROCEDURE SessionsStopIt
 @newstop datetime,
 @summa money,
 @autostop int = 0
-/*WITH ENCRYPTION*/  
 AS 
 
 set nocount on
@@ -786,7 +783,6 @@ CREATE PROCEDURE SessionsUpdate
 @idSessionsAdd int,
 @newstop datetime,
 @newstatus int
-/*WITH ENCRYPTION*/  
 AS 
 
 set nocount on
@@ -807,8 +803,7 @@ GO
 
 
 CREATE PROCEDURE SessionsReadUncontrolState
-@now datetime
-/*WITH ENCRYPTION*/  
+@now datetime  
 AS   
 
 set nocount on
@@ -942,7 +937,7 @@ CREATE PROCEDURE CustomReportsAdd
 @sqlcode varchar(7000),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -962,7 +957,7 @@ GO
 
 CREATE PROCEDURE CustomReportsDelete
 @idReport uniqueidentifier
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 if (not exists(select * from CustomReports where [id]=@idReport))
@@ -975,7 +970,7 @@ else
 GO
 
 CREATE PROCEDURE CustomReportsSelect
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -990,7 +985,7 @@ CREATE PROCEDURE CustomReportsUpdate
 @sqlcode varchar(7000),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1011,7 +1006,7 @@ CREATE PROCEDURE CustomReportsImport
 @sqlcode varchar(7000),
 @tabindex int,
 @version int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1033,7 +1028,7 @@ GO
 
 CREATE PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1135,7 +1130,7 @@ CREATE PROCEDURE TarifsVariantsAdd
 @TrafficLimit int = 1000,
 @TrafficCost money = 1,
 @TrafficSeparatePayment bit =0
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1152,7 +1147,7 @@ GO
 
 CREATE PROCEDURE TarifsVariantsSelect
 @idTarifs int
-/*WITH ENCRYPTION*/  
+  
 AS 
 select [id], [name], [start], [stop], [cost], [ispacket], [daysofweek], [condition],[TrafficLimit],[TrafficCost],[TrafficSeparatePayment]
     from TarifsVariants where [idTarifs]=@idTarifs
@@ -1175,7 +1170,7 @@ CREATE PROCEDURE TarifsVariantsUpdate
 @TrafficLimit int,
 @TrafficCost money,
 @TrafficSeparatePayment bit
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1206,7 +1201,7 @@ CREATE PROCEDURE TarifsAdd
 @roundmoney money,
 @idGroup int,
 @BytesInMB int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1240,7 +1235,7 @@ GO
 
 CREATE PROCEDURE TarifsSelect
 @idGroup int 
-/*WITH ENCRYPTION*/  
+  
 AS 
 set nocount on
 if @idGroup=-1
@@ -1263,7 +1258,7 @@ CREATE PROCEDURE TarifsUpdate
 @roundmoney money,
 @idGroup int,
 @BytesInMB int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -1292,7 +1287,7 @@ CREATE PROCEDURE SessionsTrafficPayment
 @TrafficAdded int,
 @Summa money,
 @Moment datetime
-/*WITH ENCRYPTION*/  
+  
 AS 
 BEGIN
     SET NOCOUNT ON

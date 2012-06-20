@@ -22,7 +22,7 @@ ALTER PROCEDURE TarifsUpdate
 @SpeedLimitInKB int,
 @PluginGroupName nvarchar(50),
 @userlevel int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -71,7 +71,7 @@ ALTER PROCEDURE AccountsUpdate
 @ExpirationDate datetime,
 @assigntarif int,
 @userlevel int
-/*WITH ENCRYPTION*/
+
 AS 
 
 IF (EXISTS (SELECT * FROM Accounts WHERE ([name]=@name) AND (@name <> N'') AND ([id]<>@id) AND ([isdeleted]=0))) BEGIN
@@ -125,7 +125,7 @@ CREATE PROCEDURE ComputersUpdate
 @ipaddress nvarchar(15),
 @idGroup int,
 @macaddress nvarchar(17)
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -155,7 +155,7 @@ CREATE PROCEDURE ComputersAdd
 @ipaddress nvarchar(15),
 @idGroup int,
 @macaddress nvarchar(17)
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
@@ -178,7 +178,7 @@ DROP PROCEDURE [dbo].[OnInitDatabase]
 GO
 
 CREATE PROCEDURE OnInitDatabase
-/*WITH ENCRYPTION*/ 
+ 
 AS 
 set dateformat dmy
 
@@ -200,7 +200,7 @@ GO
 ALTER PROCEDURE GetLogonInfo
 @id int,
 @Value bigint
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SET NOCOUNT ON

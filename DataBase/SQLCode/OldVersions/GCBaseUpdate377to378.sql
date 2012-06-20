@@ -11,7 +11,7 @@ ALTER PROCEDURE SessionsTrafficPayment
 @TrafficAdded int,
 @Summa money,
 @Moment datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -34,7 +34,7 @@ GO
 
 ALTER PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/
+
 AS 
 
 set nocount on
