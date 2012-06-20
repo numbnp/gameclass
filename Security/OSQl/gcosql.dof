@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=createdatabase dbconfig.xml
+RunParams=customcreatedatabase dbconfig.xml
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=4
 Release=0
-Build=1
+Build=6
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=2.4.0.1
+FileVersion=2.4.0.6
 InternalName=
 LegalCopyright=
 LegalTrademarks=

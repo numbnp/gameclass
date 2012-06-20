@@ -237,6 +237,7 @@ const
   COL_TRAFFIC = 9;
   COL_CLIENT = 10;
   COL_DESCRIPTION = 11;
+  COL_GROUP = 12;
 
   // иконки в EVENTS LIST'e
   EVENT_ICON_EMPTY = 0;

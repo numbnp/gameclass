@@ -98,7 +98,10 @@ var
   frmLogon: TfrmLogon;
   strBackupFileName: String;
   ReportManager: TReportManager;
+  dbPassword,dbUserName: String;
 begin
+  dbUserName := 'sa';
+  dbPassword := '1';
   frmMain.Invalidate;
   CoInitialize(Nil);
   cnnMain := TADOConnection.Create(Nil);
@@ -112,13 +115,13 @@ begin
     end;
     if not FbResult then begin
       frmMain.MessageAdd(DBCFG_SERVER_TUNING);
-      FbResult := ConfigureServerWithLogon(strServerName);
+      FbResult := ConfigureServerWithLogon(strServerName,dbUserName,dbPassword);
       MessageResultAppend(FbResult);
     end;
     if FbResult then begin
       frmMain.MessageAdd(DBCFG_SERVER_CONNECT);
       FbResult := ADOConnect(cnnMain, lstErrors, i, True, strServerName,
-          '', 'sa', '1');
+          '', dbUserName, dbPassword);
       MessageResultAppend(FbResult);
       if not FbResult and Assigned(lstErrors) then
         FreeAndNil(lstErrors);

@@ -259,13 +259,16 @@ var
   bResult: Boolean;
   lstErrors: TStringList;
   i: Integer;
+  dbUserName,dbPassword: String;
 begin
+  dbUserName := 'sa';
+  dbPassword := '1';
   cnnMain := TADOConnection.Create(Nil);
   lstErrors := TStringList.Create;
   bResult := False;
   memInfo.Lines.Add(MSG_CREATE_BASE_STARTED);
   if FbCustomMode then
-    bResult := ConfigureServerWithLogon(strServer)
+    bResult := ConfigureServerWithLogon(strServer,dbUserName,dbPassword)
   else begin
     strServer := SQL_LOCAL_NAME;
     bResult := ConfigureServer(strServer);
@@ -273,7 +276,7 @@ begin
   Invalidate;
   if bResult then begin
     if ADOConnect(cnnMain, lstErrors, i, True,
-        strServer, '', 'sa', '1') then begin
+        strServer, '', dbUserName, dbPassword) then begin
       try
         cnnMain.Execute('create database GameClass');
         cnnMain.Execute('use GameClass');
@@ -282,8 +285,8 @@ begin
         cnnMain.Execute(SQL_CODE_CREATE_LOGINS2);
 
         //Установим сложный случайный пароль на sa
-        cnnMain.Execute('declare @pass sysname set @pass=CAST(newid()'
-            + ' AS sysname) exec master.dbo.sp_password NULL, @pass, ''sa''');
+        //cnnMain.Execute('declare @pass sysname set @pass=CAST(newid()'
+        //    + ' AS sysname) exec master.dbo.sp_password NULL, @pass, ''sa''');
         memInfo.Lines.Add(MSG_CREATE_BASE_SUCCESSFUL);
       except
         memInfo.Lines.Add(MSG_CREATE_BASE_FAILED);

@@ -390,8 +390,8 @@ function FindParamInString(const AstrForSearch: String;
     const AstrParameters: String;
     const AbIsCaseSensitivity: Boolean;
     const AstrDividerSymbol: String = '/'): Boolean;
-var
-  i: Integer;
+{var
+  i: Integer;}
 begin
   Result := False;
   if AbIsCaseSensitivity then

@@ -674,6 +674,7 @@ begin
   formMain.gridComps.Columns[COL_TRAFFIC+1].Title.Caption := translate('Traffic');
   formMain.gridComps.Columns[COL_CLIENT+1].Title.Caption := translate('Client');
   formMain.gridComps.Columns[COL_DESCRIPTION+1].Title.Caption := translate('Description');
+  formMain.gridComps.Columns[COL_GROUP+1].Title.Caption := translate('Group');
 end;
 
 // call when change language

@@ -927,6 +927,7 @@ begin
       else
          formMain.cdsComps.Append;
       formMain.cdsComps.FieldValues['id'] := Comps[i].id;
+      formMain.cdsComps.FieldValues['Group'] := Comps[i].GroupName; 
       if Comps[i].busy then
         nNumber := 3 //сессия
       else begin

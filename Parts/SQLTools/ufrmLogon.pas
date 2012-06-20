@@ -55,7 +55,7 @@ type
     FlstUsers: TStringList;
     FOnError: TErrorEvent;
     FbSaveConnectedServer: Boolean;
-    FbUseOtherServer: Boolean;
+//    FbUseOtherServer: Boolean;
     FbNeedAdminRights: Boolean;
 //    FbCreateConnection: Boolean;
     procedure MRUListsLoad;
@@ -112,7 +112,7 @@ constructor TfrmLogon.Create(const AOwner: TComponent;
     const AbUseOtherServer: Boolean = False;
     const AbNeedAdminRights: Boolean = False);
 begin
-  ASSERT(Assigned(AcnnResult));
+//  ASSERT(Assigned(AcnnResult));
   inherited Create(AOwner);
   FcnnResult := AcnnResult;
   FOnError := Error;
