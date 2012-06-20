@@ -9,7 +9,7 @@ GO
 ALTER PROCEDURE SessionsSelect
   @id int = NULL,
   @dt datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
     SET NOCOUNT ON
@@ -55,7 +55,7 @@ GO
 
 CREATE PROCEDURE SessionsSeparateTrafficConstSelect
   @id int = NULL
-/*WITH ENCRYPTION*/
+
 AS 
     SET NOCOUNT ON
     SELECT SS.idSessions, SS.CurrentSeparateTrafficPay FROM

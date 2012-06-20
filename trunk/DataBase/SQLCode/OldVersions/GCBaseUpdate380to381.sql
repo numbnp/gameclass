@@ -17,7 +17,7 @@ GO
 ALTER PROCEDURE RegistryInsert
 @key varchar(200),
 @value varchar(7000)
-/*WITH ENCRYPTION*/  
+  
 AS 
 set nocount on
 if (exists(select * from registry where [key]=@key))
@@ -34,7 +34,7 @@ ALTER PROCEDURE SessionsUpdate
 @newstop datetime,
 @newstatus int,
 @newstate int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 set nocount on
@@ -56,7 +56,7 @@ GO
 
 ALTER PROCEDURE UsersDelete
 @idUsers int
-/*WITH ENCRYPTION*/  
+  
 AS 
 
 declare @login_name nvarchar(50)
