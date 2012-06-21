@@ -77,7 +77,7 @@ begin
 
   Active := True;
   GAccountSystem := TAccountSystem.Create(Self);
-  GRegistry := TRegistry.Create(Self);
+  GRegistry := TGCRegistry.Create(Self);
   GPMJobs := TPMJobs.Create(Self);
 end; // TAutoUpdate.Create
 

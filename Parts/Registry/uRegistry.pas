@@ -16,10 +16,11 @@ uses
   uRegistryClient,
   uRegistryInfo,
   uRegistryReportStrings,
-  uRegistryControlCommands;
+  uRegistryControlCommands,
+  uRegistryMail;
 
 type
-  TRegistry = class(TRegistryDataSet)
+  TGCRegistry = class(TRegistryDataSet)
   private
     FRegistryRecord: TRegistryRecord;
     FRegistryVolume: TRegistryVolume;
@@ -33,6 +34,7 @@ type
     FRegistryInfo: TRegistryInfo;
     FRegistryReportStrings: TRegistryReportStrings;
     FRegistryControlCommands: TRegistryControlCommands;
+    FRegistryMail: TRegistryMail;
 
     function GetBaseVersion: String;
     function GetItem(AstrValue: String): TRegistryRecord;
@@ -74,10 +76,12 @@ type
         read FRegistryReportStrings;
     property ControlCommands: TRegistryControlCommands
         read FRegistryControlCommands;
+    property Mail: TRegistryMail
+        read FRegistryMail;
   end;
 
 var
-  GRegistry: TRegistry;
+  GRegistry: TGCRegistry;
 
 implementation
 
@@ -85,7 +89,7 @@ uses
   SysUtils,
   DB, uGCDataSet;
 
-constructor TRegistry.Create(AAutoUpdate: TAutoUpdate);
+constructor TGCRegistry.Create(AAutoUpdate: TAutoUpdate);
 begin
   inherited Create(Nil, AAutoUpdate.Connection);
   AAutoUpdate.Add(Self,'Registry',3);
@@ -104,9 +108,11 @@ begin
       FRegistryRecord);
   FRegistryControlCommands := TRegistryControlCommands.Create(Self,
       FRegistryRecord);
+  FRegistryMail := TRegistryMail.Create(Self, FRegistryRecord);
+
 end;
 
-destructor TRegistry.Destroy;
+destructor TGCRegistry.Destroy;
 begin
   FreeAndNil(FRegistryVolume);
   FreeAndNil(FRegistryRecord);
@@ -120,33 +126,34 @@ begin
   FreeAndNil(FRegistryInfo);
   FreeAndNil(FRegistryReportStrings);
   FreeAndNil(FRegistryControlCommands);
+  FreeAndNil(FRegistryMail);
   inherited Destroy;
 end;
 
-function TRegistry.GetBaseVersion: String;
+function TGCRegistry.GetBaseVersion: String;
 begin
   LocateByKey('BaseVersion','');
   Result :=  FRegistryRecord.Value;
 end;
 
-function TRegistry.GetItem(AstrValue: String): TRegistryRecord;
+function TGCRegistry.GetItem(AstrValue: String): TRegistryRecord;
 begin
   LocateByKey(AstrValue,'');
   Result :=  FRegistryRecord;
 end;
 
-function TRegistry.LocateLastLogin: Boolean;
+function TGCRegistry.LocateLastLogin: Boolean;
 begin
   Result := LocateByKeyWithUserName('LastLogin', '');
 end;
 
-function TRegistry.GetLastLogin: String;
+function TGCRegistry.GetLastLogin: String;
 begin
   LocateLastLogin;
   Result := FRegistryRecord.Value;
 end;
 
-procedure TRegistry.SetLastLogin(AValue: String);
+procedure TGCRegistry.SetLastLogin(AValue: String);
 begin
   LocateLastLogin;
   FRegistryRecord.Value := AValue;

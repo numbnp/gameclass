@@ -20,7 +20,8 @@ uses
   PrnDbgeh,
 //  uLanguagesManager,
   ufrmReport,
-  uReport;
+  uReport,
+  ufrmMailSend;
 
 
 type
@@ -83,6 +84,7 @@ type
 
     procedure EnableAutofilter(const AbEnable: Boolean);
     procedure SaveTable(const AbIsOpenFilesAfterSave: Boolean);
+    procedure SendTable();
     procedure PrintTable();
 
   end; // TfrmReportView
@@ -192,6 +194,24 @@ begin
   end;
 end; // TfrmReportView.SaveTable
 
+procedure TfrmReportView.SendTable();
+var
+  ExportClass: TDBGridEhExportClass;
+  bSaveAll: Boolean;
+  strFileName: String;
+begin
+  if not Assigned(FReport) then begin
+    Exit;
+  end;
+  strFileName := GetEnvironmentVariable('TEMP') + '\pm_' + FReport.ReportName + '.html';
+  ExportClass := TDBGridEhExportAsHTML;
+  bSaveAll := True;
+  SaveDBGridEhToExportFile(ExportClass, grdReport, strFileName, bSaveAll);
+  //ShellExecute(0, 'open', PChar(strFileName), nil, nil, SW_SHOWNORMAL);
+  frmMailSend.repFileName := strFileName;
+  frmMailSend.ShowModal;
+
+end; // TfrmReportView.SaveTable
 
 procedure TfrmReportView.PrintTable();
 var

@@ -8,650 +8,807 @@
   resources were bound to the produced executable.
 */
 
-#define GCSessions_INFO_SEPARATETRAFFICPAY 64720
-#define GCSessions_INFO_SERVICE 64721
-#define GCSessions_INFO_TOTAL 64722
-#define GCSessions_INFO_INDENTION 64723
-#define JConsts_sChangeJPGSize 64736
-#define JConsts_sJPEGError 64737
-#define JConsts_sJPEGImageFile 64738
-#define ufrmClearStatistic_WARNING 64739
-#define ufrmClearStatistic_MESSAGE_STR 64740
-#define ufrmClearStatistic_AFFIRMATION 64741
-#define ufrmClearStatistic_CLEAR_COMPLETE_BY_USER 64742
-#define ufrmClearStatistic_CLEAR_COMPLETE 64743
-#define GCSessions_INFO_PREV_TARIF 64744
-#define GCSessions_INFO_CURRENT_TARIF 64745
-#define GCSessions_INFO_TIME 64746
-#define GCSessions_INFO_PRINT 64747
-#define GCSessions_INFO_TRAFFIC 64748
-#define GCSessions_INFO_SEPARATETRAFFIC 64749
-#define GCSessions_INFO_MIXEDTRAFFIC 64750
-#define GCSessions_INFO_COMMONPAY 64751
-#define SynEditStrConst_SYNS_AttrNumber 64752
-#define SynEditStrConst_SYNS_AttrPLSQL 64753
-#define SynEditStrConst_SYNS_AttrReservedWord 64754
-#define SynEditStrConst_SYNS_AttrSpace 64755
-#define SynEditStrConst_SYNS_AttrSQLPlus 64756
-#define SynEditStrConst_SYNS_AttrString 64757
-#define SynEditStrConst_SYNS_AttrSymbol 64758
-#define SynEditStrConst_SYNS_AttrTableName 64759
-#define SynEditStrConst_SYNS_AttrVariable 64760
-#define SynEditStrConst_SYNS_ScrollInfoFmt 64761
-#define SynEditStrConst_SYNS_ScrollInfoFmtTop 64762
-#define SynEditStrConst_SYNS_EDuplicateShortcut 64763
-#define SynEditStrConst_SYNS_FilterSQL 64764
-#define SynEditStrConst_SYNS_LangSQL 64765
-#define SynEditTextBuffer_SListIndexOutOfBounds 64766
-#define SynEditTextBuffer_SInvalidCapacity 64767
-#define SqlConst_SLOCALTRANSACTIVE 64768
-#define SqlConst_SMULTIPLETRANSNOTENABLED 64769
-#define VirtualTrees_SEditLinkIsNil 64770
-#define VirtualTrees_SWrongMoveError 64771
-#define VirtualTrees_SWrongStreamFormat 64772
-#define VirtualTrees_SWrongStreamVersion 64773
-#define VirtualTrees_SStreamTooSmall 64774
-#define VirtualTrees_SCorruptStream1 64775
-#define VirtualTrees_SCorruptStream2 64776
-#define VirtualTrees_SClipboardFailed 64777
-#define SynEditStrConst_SYNS_AttrComment 64778
-#define SynEditStrConst_SYNS_AttrDataType 64779
-#define SynEditStrConst_SYNS_AttrDefaultPackage 64780
-#define SynEditStrConst_SYNS_AttrException 64781
-#define SynEditStrConst_SYNS_AttrFunction 64782
-#define SynEditStrConst_SYNS_AttrIdentifier 64783
-#define SqlConst_SINVALIDFLDTYPE 64784
-#define SqlConst_SINVALIDHNDL 64785
-#define SqlConst_SINVALIDTIME 64786
-#define SqlConst_SNOTSUPPORTED 64787
-#define SqlConst_SINVALIDXLATION 64788
-#define SqlConst_SINVALIDPARAM 64789
-#define SqlConst_SOUTOFRANGE 64790
-#define SqlConst_SSQLPARAMNOTSET 64791
-#define SqlConst_SEOF 64792
-#define SqlConst_SINVALIDUSRPASS 64793
-#define SqlConst_SINVALIDPRECISION 64794
-#define SqlConst_SINVALIDLEN 64795
-#define SqlConst_SINVALIDXISOLEVEL 64796
-#define SqlConst_SINVALIDTXNID 64797
-#define SqlConst_SDUPLICATETXNID 64798
-#define SqlConst_SDRIVERRESTRICTED 64799
-#define bdeconst_SDatabaseClosed 64800
-#define bdeconst_SDatabaseHandleSet 64801
-#define bdeconst_SSessionActive 64802
-#define bdeconst_SHandleError 64803
-#define bdeconst_SNoReferenceTableName 64804
-#define bdeconst_SNoParameterValue 64805
-#define bdeconst_SLoginError 64806
-#define bdeconst_SInitError 64807
-#define bdeconst_SIDAPILangID 64808
-#define bdeconst_SBDEError 64809
-#define bdeconst_SNoDataSetField 64810
-#define bdeconst_SNoCachedUpdates 64811
-#define bdeconst_SNoFieldAccess 64812
-#define bdeconst_SUntitled 64813
-#define bdeconst_SLocalTransDirty 64814
-#define SqlConst_SNOMEMORY 64815
-#define TeeConst_TeeMsg_ValuesGanttNextTask 64816
-#define TeeConst_TeeMsg_ValuesBubbleRadius 64817
-#define OleConst_SCannotActivate 64818
-#define OleConst_SNoWindowHandle 64819
-#define OleConst_SInvalidLicense 64820
-#define OleConst_SNotLicensed 64821
-#define OleConst_sNoRunningObject 64822
-#define bdeconst_SAutoSessionExclusive 64823
-#define bdeconst_SAutoSessionExists 64824
-#define bdeconst_SAutoSessionActive 64825
-#define bdeconst_SDuplicateDatabaseName 64826
-#define bdeconst_SDuplicateSessionName 64827
-#define bdeconst_SInvalidSessionName 64828
-#define bdeconst_SDatabaseNameMissing 64829
-#define bdeconst_SSessionNameMissing 64830
-#define bdeconst_SDatabaseOpen 64831
-#define TeeConst_TeeMsg_FunctionDivide 64832
-#define TeeConst_TeeMsg_FunctionHigh 64833
-#define TeeConst_TeeMsg_FunctionLow 64834
-#define TeeConst_TeeMsg_FunctionAverage 64835
-#define TeeConst_TeeMsg_GalleryBubble 64836
-#define TeeConst_TeeMsg_DefaultFontName 64837
-#define TeeConst_TeeMsg_CheckPointerSize 64838
-#define TeeConst_TeeMsg_FunctionPeriod 64839
-#define TeeConst_TeeMsg_PieOther 64840
-#define TeeConst_TeeMsg_ValuesX 64841
-#define TeeConst_TeeMsg_ValuesY 64842
-#define TeeConst_TeeMsg_ValuesPie 64843
-#define TeeConst_TeeMsg_ValuesBar 64844
-#define TeeConst_TeeMsg_ValuesAngle 64845
-#define TeeConst_TeeMsg_ValuesGanttStart 64846
-#define TeeConst_TeeMsg_ValuesGanttEnd 64847
-#define TeeConst_TeeMsg_GalleryFunctions 64848
-#define TeeConst_TeeMsg_GalleryGantt 64849
-#define TeeConst_TeeMsg_GanttSample1 64850
-#define TeeConst_TeeMsg_GanttSample2 64851
-#define TeeConst_TeeMsg_GanttSample3 64852
-#define TeeConst_TeeMsg_GanttSample4 64853
-#define TeeConst_TeeMsg_GanttSample5 64854
-#define TeeConst_TeeMsg_GanttSample6 64855
-#define TeeConst_TeeMsg_GanttSample7 64856
-#define TeeConst_TeeMsg_GanttSample8 64857
-#define TeeConst_TeeMsg_GanttSample9 64858
-#define TeeConst_TeeMsg_GanttSample10 64859
-#define TeeConst_TeeMsg_DefaultFontSize 64860
-#define TeeConst_TeeMsg_FunctionAdd 64861
-#define TeeConst_TeeMsg_FunctionSubtract 64862
-#define TeeConst_TeeMsg_FunctionMultiply 64863
-#define TeeConst_TeeMsg_GalleryPoint 64864
-#define TeeConst_TeeMsg_GalleryArea 64865
-#define TeeConst_TeeMsg_GalleryBar 64866
-#define TeeConst_TeeMsg_GalleryHorizBar 64867
-#define TeeConst_TeeMsg_GalleryPie 64868
-#define TeeConst_TeeMsg_GalleryFastLine 64869
-#define TeeConst_TeeMsg_Rotation 64870
-#define TeeConst_TeeMsg_PieSample1 64871
-#define TeeConst_TeeMsg_PieSample2 64872
-#define TeeConst_TeeMsg_PieSample3 64873
-#define TeeConst_TeeMsg_PieSample4 64874
-#define TeeConst_TeeMsg_PieSample5 64875
-#define TeeConst_TeeMsg_PieSample6 64876
-#define TeeConst_TeeMsg_PieSample7 64877
-#define TeeConst_TeeMsg_PieSample8 64878
-#define TeeConst_TeeMsg_GalleryStandard 64879
-#define TeeConst_TeeMsg_AxisMinMax 64880
-#define TeeConst_TeeMsg_AxisMaxMin 64881
-#define TeeConst_TeeMsg_AxisLogBase 64882
-#define TeeConst_TeeMsg_MaxPointsPerPage 64883
-#define TeeConst_TeeMsg_3dPercent 64884
-#define TeeConst_TeeMsg_CircularSeries 64885
-#define TeeConst_TeeMsg_BarWidthPercent 64886
-#define TeeConst_TeeMsg_BarOffsetPercent 64887
-#define TeeConst_TeeMsg_DefaultPercentOf 64888
-#define TeeConst_TeeMsg_DefPercentFormat 64889
-#define TeeConst_TeeMsg_DefValueFormat 64890
-#define TeeConst_TeeMsg_AxisTitle 64891
-#define TeeConst_TeeMsg_AxisLabels 64892
-#define TeeConst_TeeMsg_RefreshInterval 64893
-#define TeeConst_TeeMsg_SeriesParentNoSelf 64894
-#define TeeConst_TeeMsg_GalleryLine 64895
-#define XMLConst_SNodeReadOnly 64896
-#define XMLConst_SNoRefresh 64897
-#define XMLConst_SMissingFileName 64898
-#define XMLConst_SLine 64899
-#define uReportManager_INVARIABLE_REPORT_CODE 64900
-#define TeeConst_TeeMsg_LegendTopPos 64901
-#define TeeConst_TeeMsg_LegendFirstValue 64902
-#define TeeConst_TeeMsg_LegendColorWidth 64903
-#define TeeConst_TeeMsg_SeriesSetDataSource 64904
-#define TeeConst_TeeMsg_SeriesInvDataSource 64905
-#define TeeConst_TeeMsg_FillSample 64906
-#define TeeConst_TeeMsg_Angle 64907
-#define TeeConst_TeeMsg_AxisLogDateTime 64908
-#define TeeConst_TeeMsg_AxisLogNotPositive 64909
-#define TeeConst_TeeMsg_AxisLabelSep 64910
-#define TeeConst_TeeMsg_AxisIncrementNeg 64911
-#define uReportStrings_REPORT_STRINGS_CURRENT_MANAGER_SUM 64912
-#define uReportStrings_REPORT_STRINGS_CURRENT_REST 64913
-#define XMLConst_SDuplicateRegistration 64914
-#define XMLConst_SNoMatchingDOMVendor 64915
-#define XMLConst_SNoDOMNodeEx 64916
-#define XMLConst_SDOMNotSupported 64917
-#define XMLConst_SNodeExpected 64918
-#define XMLConst_SMSDOMNotInstalled 64919
-#define XMLConst_SNotActive 64920
-#define XMLConst_SNodeNotFound 64921
-#define XMLConst_SMissingNode 64922
-#define XMLConst_SNoAttributes 64923
-#define XMLConst_SInvalidNodeType 64924
-#define XMLConst_SMismatchedRegItems 64925
-#define XMLConst_SNotSingleTextNode 64926
-#define XMLConst_SNoDOMParseOptions 64927
-#define DbUtilsEh_SIncorrectExpressionEh 64928
-#define DbUtilsEh_SUnexpectedANDorOREh 64929
-#define uReportStrings_REPORT_STRINGS_CURRENT_HEADER 64930
-#define uReportStrings_REPORT_STRINGS_CURRENT_BEGIN 64931
-#define uReportStrings_REPORT_STRINGS_CURRENT_END 64932
-#define uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR 64933
-#define uReportStrings_REPORT_STRINGS_CURRENT_TOTAL 64934
-#define uReportStrings_REPORT_STRINGS_CURRENT_TIME 64935
-#define uReportStrings_REPORT_STRINGS_CURRENT_SERVICES 64936
-#define uReportStrings_REPORT_STRINGS_CURRENT_INTERNET 64937
-#define uReportStrings_REPORT_STRINGS_CURRENT_PRINT 64938
-#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_ADDED 64939
-#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_PAYED 64940
-#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_RETURNED 64941
-#define uReportStrings_REPORT_STRINGS_CURRENT_TOTAL_SUM 64942
-#define uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR_SUM 64943
-#define EhLibConsts_SSTFilterListItem_All 64944
-#define EhLibConsts_SSTFilterListItem_ClearFilter 64945
-#define EhLibConsts_SSTFilterListItem_SortingByDescend 64946
-#define EhLibConsts_SSTFilterListItem_SortingByAscend 64947
-#define DbUtilsEh_SNotOperatorEh 64948
-#define DbUtilsEh_SAndOperatorEh 64949
-#define DbUtilsEh_SOrOperatorEh 64950
-#define DbUtilsEh_SLikePredicatEh 64951
-#define DbUtilsEh_SInPredicatEh 64952
-#define DbUtilsEh_SNullConstEh 64953
-#define DbUtilsEh_SQuoteIsAbsentEh 64954
-#define DbUtilsEh_SLeftBracketExpectedEh 64955
-#define DbUtilsEh_SRightBracketExpectedEh 64956
-#define DbUtilsEh_SErrorInExpressionEh 64957
-#define DbUtilsEh_SUnexpectedExpressionBeforeNullEh 64958
-#define DbUtilsEh_SUnexpectedExpressionAfterOperatorEh 64959
-#define VDBConsts_SCancelEdit 64960
-#define VDBConsts_SRefreshRecord 64961
-#define VDBConsts_SDataSourceFixed 64962
-#define VDBConsts_SPropDefByLookup 64963
-#define VDBConsts_SRemoteLogin 64964
-#define EhLibConsts_SClearSelectedCellsEh 64965
-#define EhLibConsts_SInvalidTextFormatEh 64966
-#define EhLibConsts_SInvalidVCLDBIFFormatEh 64967
-#define EhLibConsts_SErrorDuringInsertValueEh 64968
-#define EhLibConsts_SIgnoreErrorEh 64969
-#define EhLibConsts_STabularInformationEh 64970
-#define EhLibConsts_SPageOfPagesEh 64971
-#define EhLibConsts_SPreviewEh 64972
-#define EhLibConsts_SFindDialogStringNotFoundMessageEh 64973
-#define EhLibConsts_SSTFilterListItem_Empties 64974
-#define EhLibConsts_SSTFilterListItem_NotEmpties 64975
-#define IdResourceStrings_RSSocksServerCommandError 64976
-#define IdResourceStrings_RSSocksServerAddressError 64977
-#define IdResourceStrings_RSThreadTerminateAndWaitFor 64978
-#define uErrors_ERR_CAPTION 64979
-#define uErrors_ERR_SQLSERVER_NOT_EXIST 64980
-#define uErrors_ERR_SQLSERVER_PASSWORD_INCORRECT 64981
-#define uErrors_ERR_SOCKET 64982
-#define uSQLTools_SQL_TOOLS_NEED_SYSADMIN 64983
-#define VDBConsts_SFirstRecord 64984
-#define VDBConsts_SPriorRecord 64985
-#define VDBConsts_SNextRecord 64986
-#define VDBConsts_SLastRecord 64987
-#define VDBConsts_SInsertRecord 64988
-#define VDBConsts_SDeleteRecord 64989
-#define VDBConsts_SEditRecord 64990
-#define VDBConsts_SPostEdit 64991
-#define IdResourceStrings_RSStackEHOSTUNREACH 64992
-#define IdResourceStrings_RSStackENOTEMPTY 64993
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 64994
-#define IdResourceStrings_RSSocksRequestFailed 64995
-#define IdResourceStrings_RSSocksRequestServerFailed 64996
-#define IdResourceStrings_RSSocksRequestIdentFailed 64997
-#define IdResourceStrings_RSSocksUnknownError 64998
-#define IdResourceStrings_RSSocksServerRespondError 64999
-#define IdResourceStrings_RSSocksAuthMethodError 65000
-#define IdResourceStrings_RSSocksAuthError 65001
-#define IdResourceStrings_RSSocksServerGeneralError 65002
-#define IdResourceStrings_RSSocksServerPermissionError 65003
-#define IdResourceStrings_RSSocksServerNetUnreachableError 65004
-#define IdResourceStrings_RSSocksServerHostUnreachableError 65005
-#define IdResourceStrings_RSSocksServerConnectionRefusedError 65006
-#define IdResourceStrings_RSSocksServerTTLExpiredError 65007
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 65008
-#define IdResourceStrings_RSStackENETDOWN 65009
-#define IdResourceStrings_RSStackENETUNREACH 65010
-#define IdResourceStrings_RSStackENETRESET 65011
-#define IdResourceStrings_RSStackECONNABORTED 65012
-#define IdResourceStrings_RSStackECONNRESET 65013
-#define IdResourceStrings_RSStackENOBUFS 65014
-#define IdResourceStrings_RSStackEISCONN 65015
-#define IdResourceStrings_RSStackENOTCONN 65016
-#define IdResourceStrings_RSStackESHUTDOWN 65017
-#define IdResourceStrings_RSStackETOOMANYREFS 65018
-#define IdResourceStrings_RSStackETIMEDOUT 65019
-#define IdResourceStrings_RSStackECONNREFUSED 65020
-#define IdResourceStrings_RSStackELOOP 65021
-#define IdResourceStrings_RSStackENAMETOOLONG 65022
-#define IdResourceStrings_RSStackEHOSTDOWN 65023
-#define IdResourceStrings_RSStackEINVAL 65024
-#define IdResourceStrings_RSStackEMFILE 65025
-#define IdResourceStrings_RSStackEWOULDBLOCK 65026
-#define IdResourceStrings_RSStackEINPROGRESS 65027
-#define IdResourceStrings_RSStackEALREADY 65028
-#define IdResourceStrings_RSStackENOTSOCK 65029
-#define IdResourceStrings_RSStackEDESTADDRREQ 65030
-#define IdResourceStrings_RSStackEMSGSIZE 65031
-#define IdResourceStrings_RSStackEPROTOTYPE 65032
-#define IdResourceStrings_RSStackENOPROTOOPT 65033
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 65034
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65035
-#define IdResourceStrings_RSStackEOPNOTSUPP 65036
-#define IdResourceStrings_RSStackEPFNOSUPPORT 65037
-#define IdResourceStrings_RSStackEAFNOSUPPORT 65038
-#define IdResourceStrings_RSStackEADDRINUSE 65039
-#define IdResourceStrings_RSNoCommandHandlerFound 65040
-#define IdResourceStrings_RSWS2CallError 65041
-#define IdResourceStrings_RSWS2LoadError 65042
-#define IdResourceStrings_RSStatusResolving 65043
-#define IdResourceStrings_RSStatusConnecting 65044
-#define IdResourceStrings_RSStatusConnected 65045
-#define IdResourceStrings_RSStatusDisconnecting 65046
-#define IdResourceStrings_RSStatusDisconnected 65047
-#define IdResourceStrings_RSStatusText 65048
-#define IdResourceStrings_RSConnectTimeout 65049
-#define IdResourceStrings_RSInvalidServiceName 65050
-#define IdResourceStrings_RSStackError 65051
-#define IdResourceStrings_RSStackEINTR 65052
-#define IdResourceStrings_RSStackEBADF 65053
-#define IdResourceStrings_RSStackEACCES 65054
-#define IdResourceStrings_RSStackEFAULT 65055
-#define IdResourceStrings_RSNotAllBytesSent 65056
-#define IdResourceStrings_RSNotEnoughDataInBuffer 65057
-#define IdResourceStrings_RSPackageSizeTooBig 65058
-#define IdResourceStrings_RSWinsockInitializationError 65059
-#define IdResourceStrings_RSSetSizeExceeded 65060
-#define IdResourceStrings_RSThreadClassNotSpecified 65061
-#define IdResourceStrings_RSFileNotFound 65062
-#define IdResourceStrings_RSOnlyOneAntiFreeze 65063
-#define IdResourceStrings_RSNotConnected 65064
-#define IdResourceStrings_RSTerminateThreadTimeout 65065
-#define IdResourceStrings_RSNoExecuteSpecified 65066
-#define IdResourceStrings_RSIdNoDataToRead 65067
-#define IdResourceStrings_RSCanNotBindRange 65068
-#define IdResourceStrings_RSInvalidPortRange 65069
-#define IdResourceStrings_RSReadTimeout 65070
-#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65071
-#define ADOConst_SMissingCommandText 65072
-#define ADOConst_SNoResultSet 65073
-#define ADOConst_SADOCreateError 65074
-#define ADOConst_SEventsNotSupported 65075
-#define ADOConst_SUsupportedFieldType 65076
-#define ADOConst_SNoMatchingADOType 65077
-#define ADOConst_SConnectionRequired 65078
-#define ADOConst_SCantRequery 65079
-#define ADOConst_SNoFilterOptions 65080
-#define ADOConst_SRecordsetNotOpen 65081
-#define ADOConst_sNameAttr 65082
-#define ADOConst_sValueAttr 65083
-#define IdResourceStrings_RSAlreadyConnected 65084
-#define IdResourceStrings_RSCannotAllocateSocket 65085
-#define IdResourceStrings_RSConnectionClosedGracefully 65086
-#define IdResourceStrings_RSCouldNotBindSocket 65087
-#define DBConsts_SInvalidBcdValue 65088
-#define DBConsts_SInvalidFormatType 65089
-#define DBConsts_SCouldNotParseTimeStamp 65090
-#define DBConsts_SInvalidSqlTimeStamp 65091
-#define DBConsts_SDeleteRecordQuestion 65092
-#define DBConsts_SDeleteMultipleRecordsQuestion 65093
-#define DBConsts_STooManyColumns 65094
-#define ComConst_SOleError 65095
-#define ComConst_SNoMethod 65096
-#define ComConst_SVarNotObject 65097
-#define ComConst_STooManyParams 65098
-#define ComConst_SDCOMNotInstalled 65099
-#define ADOConst_SInvalidEnumValue 65100
-#define ADOConst_SMissingConnection 65101
-#define ADOConst_SNoDetailFilter 65102
-#define ADOConst_SBookmarksRequired 65103
-#define DBConsts_SExprBadConst 65104
-#define DBConsts_SExprNoAggFilter 65105
-#define DBConsts_SExprEmptyInList 65106
-#define DBConsts_SInvalidKeywordUse 65107
-#define DBConsts_STextFalse 65108
-#define DBConsts_STextTrue 65109
-#define DBConsts_SParameterNotFound 65110
-#define DBConsts_SInvalidVersion 65111
-#define DBConsts_SBadFieldType 65112
-#define DBConsts_SProviderSQLNotSupported 65113
-#define DBConsts_SProviderExecuteNotSupported 65114
-#define DBConsts_SExprNoAggOnCalcs 65115
-#define DBConsts_SDataSetUnidirectional 65116
-#define DBConsts_SUnassignedVar 65117
-#define DBConsts_SRecordNotFound 65118
-#define DBConsts_SBcdOverflow 65119
-#define DBConsts_SExprNameError 65120
-#define DBConsts_SExprStringError 65121
-#define DBConsts_SExprInvalidChar 65122
-#define DBConsts_SExprNoLParen 65123
-#define DBConsts_SExprNoRParen 65124
-#define DBConsts_SExprNoRParenOrComma 65125
-#define DBConsts_SExprExpected 65126
-#define DBConsts_SExprBadField 65127
-#define DBConsts_SExprBadNullTest 65128
-#define DBConsts_SExprRangeError 65129
-#define DBConsts_SExprIncorrect 65130
-#define DBConsts_SExprNothing 65131
-#define DBConsts_SExprTypeMis 65132
-#define DBConsts_SExprBadScope 65133
-#define DBConsts_SExprNoArith 65134
-#define DBConsts_SExprNotAgg 65135
-#define DBConsts_SDataSetMissing 65136
-#define DBConsts_SInvalidCalcType 65137
-#define DBConsts_SFieldReadOnly 65138
-#define DBConsts_SNotIndexField 65139
-#define DBConsts_SNoIndexForFields 65140
-#define DBConsts_SIndexNotFound 65141
-#define DBConsts_SCircularDataLink 65142
-#define DBConsts_SLookupInfoError 65143
-#define DBConsts_SDataSourceChange 65144
-#define DBConsts_SDataSetOpen 65145
-#define DBConsts_SNotEditing 65146
-#define DBConsts_SDataSetClosed 65147
-#define DBConsts_SDataSetEmpty 65148
-#define DBConsts_SDataSetReadOnly 65149
-#define DBConsts_SNestedDataSetClass 65150
-#define DBConsts_SExprTermination 65151
-#define DBConsts_SUnknownFieldType 65152
-#define DBConsts_SFieldNameMissing 65153
-#define DBConsts_SDuplicateFieldName 65154
-#define DBConsts_SFieldNotFound 65155
-#define DBConsts_SFieldAccessError 65156
-#define DBConsts_SFieldValueError 65157
-#define DBConsts_SFieldRangeError 65158
-#define DBConsts_SBcdFieldRangeError 65159
-#define DBConsts_SInvalidIntegerValue 65160
-#define DBConsts_SInvalidBoolValue 65161
-#define DBConsts_SInvalidFloatValue 65162
-#define DBConsts_SFieldTypeMismatch 65163
-#define DBConsts_SFieldSizeMismatch 65164
-#define DBConsts_SInvalidVarByteArray 65165
-#define DBConsts_SFieldOutOfRange 65166
-#define DBConsts_SFieldRequired 65167
-#define ComStrs_sInvalidOwner 65168
-#define ComStrs_sRichEditInsertError 65169
-#define ComStrs_sRichEditLoadFail 65170
-#define ComStrs_sRichEditSaveFail 65171
-#define ComStrs_sPageIndexError 65172
-#define ComStrs_sInvalidComCtl32 65173
-#define ComStrs_sDateTimeMax 65174
-#define ComStrs_sDateTimeMin 65175
-#define ComStrs_sNeedAllowNone 65176
-#define ComStrs_sFailSetCalDateTime 65177
-#define ComStrs_sFailSetCalMaxSelRange 65178
-#define ComStrs_sFailSetCalMinMaxRange 65179
-#define ComStrs_sFailsetCalSelRange 65180
-#define WinHelpViewer_hNoKeyword 65181
-#define DBConsts_SInvalidFieldSize 65182
-#define DBConsts_SInvalidFieldKind 65183
-#define ExtCtrls_clNameNone 65184
-#define ExtCtrls_clNameScrollBar 65185
-#define ExtCtrls_clName3DDkShadow 65186
-#define ExtCtrls_clName3DLight 65187
-#define ExtCtrls_clNameWindow 65188
-#define ExtCtrls_clNameWindowFrame 65189
-#define ExtCtrls_clNameWindowText 65190
-#define ComStrs_sTabFailClear 65191
-#define ComStrs_sTabFailDelete 65192
-#define ComStrs_sTabFailRetrieve 65193
-#define ComStrs_sTabFailGetObject 65194
-#define ComStrs_sTabFailSet 65195
-#define ComStrs_sTabFailSetObject 65196
-#define ComStrs_sTabMustBeMultiLine 65197
-#define ComStrs_sInvalidIndex 65198
-#define ComStrs_sInsertError 65199
-#define ExtCtrls_clNameBtnFace 65200
-#define ExtCtrls_clNameBtnHighlight 65201
-#define ExtCtrls_clNameBtnShadow 65202
-#define ExtCtrls_clNameBtnText 65203
-#define ExtCtrls_clNameCaptionText 65204
-#define ExtCtrls_clNameDefault 65205
-#define ExtCtrls_clNameGrayText 65206
-#define ExtCtrls_clNameHighlight 65207
-#define ExtCtrls_clNameHighlightText 65208
-#define ExtCtrls_clNameInactiveBorder 65209
-#define ExtCtrls_clNameInactiveCaption 65210
-#define ExtCtrls_clNameInactiveCaptionText 65211
-#define ExtCtrls_clNameInfoBk 65212
-#define ExtCtrls_clNameInfoText 65213
-#define ExtCtrls_clNameMenu 65214
-#define ExtCtrls_clNameMenuText 65215
-#define ExtCtrls_clNameSilver 65216
-#define ExtCtrls_clNameRed 65217
-#define ExtCtrls_clNameLime 65218
-#define ExtCtrls_clNameYellow 65219
-#define ExtCtrls_clNameBlue 65220
-#define ExtCtrls_clNameFuchsia 65221
-#define ExtCtrls_clNameAqua 65222
-#define ExtCtrls_clNameWhite 65223
-#define ExtCtrls_clNameMoneyGreen 65224
-#define ExtCtrls_clNameSkyBlue 65225
-#define ExtCtrls_clNameCream 65226
-#define ExtCtrls_clNameMedGray 65227
-#define ExtCtrls_clNameActiveBorder 65228
-#define ExtCtrls_clNameActiveCaption 65229
-#define ExtCtrls_clNameAppWorkSpace 65230
-#define ExtCtrls_clNameBackground 65231
-#define Consts_SUnableToSaveSettings 65232
-#define Consts_SRestoreDefaultSchedule 65233
-#define Consts_SNoGetItemEventHandler 65234
-#define Consts_SActionBarStyleMissing 65235
-#define HelpIntfs_hNoTableOfContents 65236
-#define HelpIntfs_hNothingFound 65237
-#define HelpIntfs_hNoContext 65238
-#define HelpIntfs_hNoTopics 65239
-#define ExtCtrls_clNameBlack 65240
-#define ExtCtrls_clNameMaroon 65241
-#define ExtCtrls_clNameGreen 65242
-#define ExtCtrls_clNameOlive 65243
-#define ExtCtrls_clNameNavy 65244
-#define ExtCtrls_clNamePurple 65245
-#define ExtCtrls_clNameTeal 65246
-#define ExtCtrls_clNameGray 65247
-#define Consts_SNoEqualsInKey 65248
-#define Consts_SAssignSubItemError 65249
-#define Consts_SDeleteItemWithSubItems 65250
-#define Consts_SDeleteNotAllowed 65251
-#define Consts_SMoveNotAllowed 65252
-#define Consts_SMoreButtons 65253
-#define Consts_SExpand 65254
-#define Consts_SErrorLoadingFile 65255
-#define Consts_SNoName 65256
-#define Consts_SAddRemoveButtons 65257
-#define Consts_SResetActionToolBar 65258
-#define Consts_SSeparator 65259
-#define Consts_SCirularReferencesNotAllowed 65260
-#define Consts_SCannotHideActionBand 65261
-#define Consts_SErrorSettingCount 65262
-#define Consts_SListBoxMustBeVirtual 65263
-#define Consts_SInvalidPrinterOp 65264
-#define Consts_SNoDefaultPrinter 65265
-#define Consts_SDuplicateMenus 65266
-#define Consts_SPictureLabel 65267
-#define Consts_SPictureDesc 65268
-#define Consts_SPreviewLabel 65269
-#define Consts_SDockedCtlNeedsName 65270
-#define Consts_SDockTreeRemoveError 65271
-#define Consts_SDockZoneNotFound 65272
-#define Consts_SDockZoneHasNoCtl 65273
-#define Consts_SMultiSelectRequired 65274
-#define Consts_SKeyCaption 65275
-#define Consts_SValueCaption 65276
-#define Consts_SKeyConflict 65277
-#define Consts_SKeyNotFound 65278
-#define Consts_SNoColumnMoving 65279
-#define Consts_SmkcUp 65280
-#define Consts_SmkcRight 65281
-#define Consts_SmkcDown 65282
-#define Consts_SmkcIns 65283
-#define Consts_SmkcDel 65284
-#define Consts_SmkcShift 65285
-#define Consts_SmkcCtrl 65286
-#define Consts_SmkcAlt 65287
-#define Consts_srNone 65288
-#define Consts_SOutOfRange 65289
-#define Consts_sAllFilter 65290
-#define Consts_SInsertLineError 65291
-#define Consts_SInvalidClipFmt 65292
-#define Consts_SIconToClipboard 65293
-#define Consts_SCannotOpenClipboard 65294
-#define Consts_SInvalidMemoSize 65295
-#define Consts_SMsgDlgAbort 65296
-#define Consts_SMsgDlgRetry 65297
-#define Consts_SMsgDlgIgnore 65298
-#define Consts_SMsgDlgAll 65299
-#define Consts_SMsgDlgNoToAll 65300
-#define Consts_SMsgDlgYesToAll 65301
-#define Consts_SmkcBkSp 65302
-#define Consts_SmkcTab 65303
-#define Consts_SmkcEsc 65304
-#define Consts_SmkcEnter 65305
-#define Consts_SmkcSpace 65306
-#define Consts_SmkcPgUp 65307
-#define Consts_SmkcPgDn 65308
-#define Consts_SmkcEnd 65309
-#define Consts_SmkcHome 65310
-#define Consts_SmkcLeft 65311
-#define Consts_SCannotDragForm 65312
-#define Consts_SVMetafiles 65313
-#define Consts_SVEnhMetafiles 65314
-#define Consts_SVIcons 65315
-#define Consts_SVBitmaps 65316
-#define Consts_SMaskErr 65317
-#define Consts_SMaskEditErr 65318
-#define Consts_SMsgDlgWarning 65319
-#define Consts_SMsgDlgError 65320
-#define Consts_SMsgDlgInformation 65321
-#define Consts_SMsgDlgConfirm 65322
-#define Consts_SMsgDlgYes 65323
-#define Consts_SMsgDlgNo 65324
-#define Consts_SMsgDlgOK 65325
-#define Consts_SMsgDlgCancel 65326
-#define Consts_SMsgDlgHelp 65327
-#define Consts_SPrinterIndexError 65328
-#define Consts_SInvalidPrinter 65329
-#define Consts_SDeviceOnPort 65330
-#define Consts_SGroupIndexTooLow 65331
-#define Consts_SNoMDIForm 65332
-#define Consts_SControlParentSetToSelf 65333
-#define Consts_SOKButton 65334
-#define Consts_SCancelButton 65335
-#define Consts_SYesButton 65336
-#define Consts_SNoButton 65337
-#define Consts_SHelpButton 65338
-#define Consts_SCloseButton 65339
-#define Consts_SIgnoreButton 65340
-#define Consts_SRetryButton 65341
-#define Consts_SAbortButton 65342
-#define Consts_SAllButton 65343
-#define Consts_SWindowDCError 65344
-#define Consts_SWindowClass 65345
-#define Consts_SCannotFocus 65346
-#define Consts_SParentRequired 65347
-#define Consts_SParentGivenNotAParent 65348
-#define Consts_SMDIChildNotVisible 65349
-#define Consts_SVisibleChanged 65350
-#define Consts_SCannotShowModal 65351
-#define Consts_SScrollBarRange 65352
-#define Consts_SPropertyOutOfRange 65353
-#define Consts_SMenuIndexError 65354
-#define Consts_SMenuReinserted 65355
-#define Consts_SMenuNotFound 65356
-#define Consts_SNoTimers 65357
-#define Consts_SNotPrinting 65358
-#define Consts_SPrinting 65359
-#define Consts_SInvalidMetafile 65360
-#define Consts_SInvalidPixelFormat 65361
-#define Consts_SInvalidImage 65362
-#define Consts_SScanLine 65363
-#define Consts_SChangeIconSize 65364
-#define Consts_SOleGraphic 65365
-#define Consts_SUnknownExtension 65366
-#define Consts_SUnknownClipboardFormat 65367
-#define Consts_SOutOfResources 65368
-#define Consts_SNoCanvasHandle 65369
-#define Consts_SInvalidImageSize 65370
-#define Consts_SInvalidImageList 65371
-#define Consts_SReplaceImage 65372
-#define Consts_SImageIndexError 65373
-#define Consts_SImageReadFail 65374
-#define Consts_SImageWriteFail 65375
+#define GCSessions_INFO_INDENTION 64560
+#define ufrmClearStatistic_WARNING 64576
+#define ufrmClearStatistic_MESSAGE_STR 64577
+#define ufrmClearStatistic_AFFIRMATION 64578
+#define ufrmClearStatistic_CLEAR_COMPLETE_BY_USER 64579
+#define ufrmClearStatistic_CLEAR_COMPLETE 64580
+#define GCSessions_INFO_PREV_TARIF 64581
+#define GCSessions_INFO_CURRENT_TARIF 64582
+#define GCSessions_INFO_TIME 64583
+#define GCSessions_INFO_PRINT 64584
+#define GCSessions_INFO_TRAFFIC 64585
+#define GCSessions_INFO_SEPARATETRAFFIC 64586
+#define GCSessions_INFO_MIXEDTRAFFIC 64587
+#define GCSessions_INFO_COMMONPAY 64588
+#define GCSessions_INFO_SEPARATETRAFFICPAY 64589
+#define GCSessions_INFO_SERVICE 64590
+#define GCSessions_INFO_TOTAL 64591
+#define SynEditStrConst_SYNS_AttrSpace 64592
+#define SynEditStrConst_SYNS_AttrSQLPlus 64593
+#define SynEditStrConst_SYNS_AttrString 64594
+#define SynEditStrConst_SYNS_AttrSymbol 64595
+#define SynEditStrConst_SYNS_AttrTableName 64596
+#define SynEditStrConst_SYNS_AttrVariable 64597
+#define SynEditStrConst_SYNS_ScrollInfoFmt 64598
+#define SynEditStrConst_SYNS_ScrollInfoFmtTop 64599
+#define SynEditStrConst_SYNS_EDuplicateShortcut 64600
+#define SynEditStrConst_SYNS_FilterSQL 64601
+#define SynEditStrConst_SYNS_LangSQL 64602
+#define SynEditTextBuffer_SListIndexOutOfBounds 64603
+#define SynEditTextBuffer_SInvalidCapacity 64604
+#define JConsts_sChangeJPGSize 64605
+#define JConsts_sJPEGError 64606
+#define JConsts_sJPEGImageFile 64607
+#define VirtualTrees_SWrongMoveError 64608
+#define VirtualTrees_SWrongStreamFormat 64609
+#define VirtualTrees_SWrongStreamVersion 64610
+#define VirtualTrees_SStreamTooSmall 64611
+#define VirtualTrees_SCorruptStream1 64612
+#define VirtualTrees_SCorruptStream2 64613
+#define VirtualTrees_SClipboardFailed 64614
+#define SynEditStrConst_SYNS_AttrComment 64615
+#define SynEditStrConst_SYNS_AttrDataType 64616
+#define SynEditStrConst_SYNS_AttrDefaultPackage 64617
+#define SynEditStrConst_SYNS_AttrException 64618
+#define SynEditStrConst_SYNS_AttrFunction 64619
+#define SynEditStrConst_SYNS_AttrIdentifier 64620
+#define SynEditStrConst_SYNS_AttrNumber 64621
+#define SynEditStrConst_SYNS_AttrPLSQL 64622
+#define SynEditStrConst_SYNS_AttrReservedWord 64623
+#define SqlConst_SNOTSUPPORTED 64624
+#define SqlConst_SINVALIDXLATION 64625
+#define SqlConst_SINVALIDPARAM 64626
+#define SqlConst_SOUTOFRANGE 64627
+#define SqlConst_SSQLPARAMNOTSET 64628
+#define SqlConst_SEOF 64629
+#define SqlConst_SINVALIDUSRPASS 64630
+#define SqlConst_SINVALIDPRECISION 64631
+#define SqlConst_SINVALIDLEN 64632
+#define SqlConst_SINVALIDXISOLEVEL 64633
+#define SqlConst_SINVALIDTXNID 64634
+#define SqlConst_SDUPLICATETXNID 64635
+#define SqlConst_SDRIVERRESTRICTED 64636
+#define SqlConst_SLOCALTRANSACTIVE 64637
+#define SqlConst_SMULTIPLETRANSNOTENABLED 64638
+#define VirtualTrees_SEditLinkIsNil 64639
+#define bdeconst_SHandleError 64640
+#define bdeconst_SNoReferenceTableName 64641
+#define bdeconst_SNoParameterValue 64642
+#define bdeconst_SLoginError 64643
+#define bdeconst_SInitError 64644
+#define bdeconst_SIDAPILangID 64645
+#define bdeconst_SBDEError 64646
+#define bdeconst_SNoDataSetField 64647
+#define bdeconst_SNoCachedUpdates 64648
+#define bdeconst_SNoFieldAccess 64649
+#define bdeconst_SUntitled 64650
+#define bdeconst_SLocalTransDirty 64651
+#define SqlConst_SNOMEMORY 64652
+#define SqlConst_SINVALIDFLDTYPE 64653
+#define SqlConst_SINVALIDHNDL 64654
+#define SqlConst_SINVALIDTIME 64655
+#define OleConst_SNoWindowHandle 64656
+#define OleConst_SInvalidLicense 64657
+#define OleConst_SNotLicensed 64658
+#define OleConst_sNoRunningObject 64659
+#define bdeconst_SAutoSessionExclusive 64660
+#define bdeconst_SAutoSessionExists 64661
+#define bdeconst_SAutoSessionActive 64662
+#define bdeconst_SDuplicateDatabaseName 64663
+#define bdeconst_SDuplicateSessionName 64664
+#define bdeconst_SInvalidSessionName 64665
+#define bdeconst_SDatabaseNameMissing 64666
+#define bdeconst_SSessionNameMissing 64667
+#define bdeconst_SDatabaseOpen 64668
+#define bdeconst_SDatabaseClosed 64669
+#define bdeconst_SDatabaseHandleSet 64670
+#define bdeconst_SSessionActive 64671
+#define TeeConst_TeeMsg_FunctionAverage 64672
+#define TeeConst_TeeMsg_GalleryBubble 64673
+#define TeeConst_TeeMsg_DefaultFontName 64674
+#define TeeConst_TeeMsg_CheckPointerSize 64675
+#define TeeConst_TeeMsg_FunctionPeriod 64676
+#define TeeConst_TeeMsg_PieOther 64677
+#define TeeConst_TeeMsg_ValuesX 64678
+#define TeeConst_TeeMsg_ValuesY 64679
+#define TeeConst_TeeMsg_ValuesPie 64680
+#define TeeConst_TeeMsg_ValuesBar 64681
+#define TeeConst_TeeMsg_ValuesAngle 64682
+#define TeeConst_TeeMsg_ValuesGanttStart 64683
+#define TeeConst_TeeMsg_ValuesGanttEnd 64684
+#define TeeConst_TeeMsg_ValuesGanttNextTask 64685
+#define TeeConst_TeeMsg_ValuesBubbleRadius 64686
+#define OleConst_SCannotActivate 64687
+#define TeeConst_TeeMsg_GanttSample2 64688
+#define TeeConst_TeeMsg_GanttSample3 64689
+#define TeeConst_TeeMsg_GanttSample4 64690
+#define TeeConst_TeeMsg_GanttSample5 64691
+#define TeeConst_TeeMsg_GanttSample6 64692
+#define TeeConst_TeeMsg_GanttSample7 64693
+#define TeeConst_TeeMsg_GanttSample8 64694
+#define TeeConst_TeeMsg_GanttSample9 64695
+#define TeeConst_TeeMsg_GanttSample10 64696
+#define TeeConst_TeeMsg_DefaultFontSize 64697
+#define TeeConst_TeeMsg_FunctionAdd 64698
+#define TeeConst_TeeMsg_FunctionSubtract 64699
+#define TeeConst_TeeMsg_FunctionMultiply 64700
+#define TeeConst_TeeMsg_FunctionDivide 64701
+#define TeeConst_TeeMsg_FunctionHigh 64702
+#define TeeConst_TeeMsg_FunctionLow 64703
+#define TeeConst_TeeMsg_GalleryHorizBar 64704
+#define TeeConst_TeeMsg_GalleryPie 64705
+#define TeeConst_TeeMsg_GalleryFastLine 64706
+#define TeeConst_TeeMsg_Rotation 64707
+#define TeeConst_TeeMsg_PieSample1 64708
+#define TeeConst_TeeMsg_PieSample2 64709
+#define TeeConst_TeeMsg_PieSample3 64710
+#define TeeConst_TeeMsg_PieSample4 64711
+#define TeeConst_TeeMsg_PieSample5 64712
+#define TeeConst_TeeMsg_PieSample6 64713
+#define TeeConst_TeeMsg_PieSample7 64714
+#define TeeConst_TeeMsg_PieSample8 64715
+#define TeeConst_TeeMsg_GalleryStandard 64716
+#define TeeConst_TeeMsg_GalleryFunctions 64717
+#define TeeConst_TeeMsg_GalleryGantt 64718
+#define TeeConst_TeeMsg_GanttSample1 64719
+#define TeeConst_TeeMsg_MaxPointsPerPage 64720
+#define TeeConst_TeeMsg_3dPercent 64721
+#define TeeConst_TeeMsg_CircularSeries 64722
+#define TeeConst_TeeMsg_BarWidthPercent 64723
+#define TeeConst_TeeMsg_BarOffsetPercent 64724
+#define TeeConst_TeeMsg_DefaultPercentOf 64725
+#define TeeConst_TeeMsg_DefPercentFormat 64726
+#define TeeConst_TeeMsg_DefValueFormat 64727
+#define TeeConst_TeeMsg_AxisTitle 64728
+#define TeeConst_TeeMsg_AxisLabels 64729
+#define TeeConst_TeeMsg_RefreshInterval 64730
+#define TeeConst_TeeMsg_SeriesParentNoSelf 64731
+#define TeeConst_TeeMsg_GalleryLine 64732
+#define TeeConst_TeeMsg_GalleryPoint 64733
+#define TeeConst_TeeMsg_GalleryArea 64734
+#define TeeConst_TeeMsg_GalleryBar 64735
+#define XMLConst_SLine 64736
+#define uReportManager_INVARIABLE_REPORT_CODE 64737
+#define TeeConst_TeeMsg_LegendTopPos 64738
+#define TeeConst_TeeMsg_LegendFirstValue 64739
+#define TeeConst_TeeMsg_LegendColorWidth 64740
+#define TeeConst_TeeMsg_SeriesSetDataSource 64741
+#define TeeConst_TeeMsg_SeriesInvDataSource 64742
+#define TeeConst_TeeMsg_FillSample 64743
+#define TeeConst_TeeMsg_Angle 64744
+#define TeeConst_TeeMsg_AxisLogDateTime 64745
+#define TeeConst_TeeMsg_AxisLogNotPositive 64746
+#define TeeConst_TeeMsg_AxisLabelSep 64747
+#define TeeConst_TeeMsg_AxisIncrementNeg 64748
+#define TeeConst_TeeMsg_AxisMinMax 64749
+#define TeeConst_TeeMsg_AxisMaxMin 64750
+#define TeeConst_TeeMsg_AxisLogBase 64751
+#define XMLConst_SNoMatchingDOMVendor 64752
+#define XMLConst_SNoDOMNodeEx 64753
+#define XMLConst_SDOMNotSupported 64754
+#define XMLConst_SNodeExpected 64755
+#define XMLConst_SMSDOMNotInstalled 64756
+#define XMLConst_SNotActive 64757
+#define XMLConst_SNodeNotFound 64758
+#define XMLConst_SMissingNode 64759
+#define XMLConst_SNoAttributes 64760
+#define XMLConst_SInvalidNodeType 64761
+#define XMLConst_SMismatchedRegItems 64762
+#define XMLConst_SNotSingleTextNode 64763
+#define XMLConst_SNoDOMParseOptions 64764
+#define XMLConst_SNodeReadOnly 64765
+#define XMLConst_SNoRefresh 64766
+#define XMLConst_SMissingFileName 64767
+#define uReportStrings_REPORT_STRINGS_CURRENT_BEGIN 64768
+#define uReportStrings_REPORT_STRINGS_CURRENT_END 64769
+#define uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR 64770
+#define uReportStrings_REPORT_STRINGS_CURRENT_TOTAL 64771
+#define uReportStrings_REPORT_STRINGS_CURRENT_TIME 64772
+#define uReportStrings_REPORT_STRINGS_CURRENT_SERVICES 64773
+#define uReportStrings_REPORT_STRINGS_CURRENT_INTERNET 64774
+#define uReportStrings_REPORT_STRINGS_CURRENT_PRINT 64775
+#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_ADDED 64776
+#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_PAYED 64777
+#define uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_RETURNED 64778
+#define uReportStrings_REPORT_STRINGS_CURRENT_TOTAL_SUM 64779
+#define uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR_SUM 64780
+#define uReportStrings_REPORT_STRINGS_CURRENT_MANAGER_SUM 64781
+#define uReportStrings_REPORT_STRINGS_CURRENT_REST 64782
+#define XMLConst_SDuplicateRegistration 64783
+#define EhLibConsts_SSTFilterListItem_SortingByAscend 64784
+#define DbUtilsEh_SNotOperatorEh 64785
+#define DbUtilsEh_SAndOperatorEh 64786
+#define DbUtilsEh_SOrOperatorEh 64787
+#define DbUtilsEh_SLikePredicatEh 64788
+#define DbUtilsEh_SInPredicatEh 64789
+#define DbUtilsEh_SNullConstEh 64790
+#define DbUtilsEh_SQuoteIsAbsentEh 64791
+#define DbUtilsEh_SLeftBracketExpectedEh 64792
+#define DbUtilsEh_SRightBracketExpectedEh 64793
+#define DbUtilsEh_SErrorInExpressionEh 64794
+#define DbUtilsEh_SUnexpectedExpressionBeforeNullEh 64795
+#define DbUtilsEh_SUnexpectedExpressionAfterOperatorEh 64796
+#define DbUtilsEh_SIncorrectExpressionEh 64797
+#define DbUtilsEh_SUnexpectedANDorOREh 64798
+#define uReportStrings_REPORT_STRINGS_CURRENT_HEADER 64799
+#define VDBConsts_SPropDefByLookup 64800
+#define VDBConsts_SRemoteLogin 64801
+#define EhLibConsts_SClearSelectedCellsEh 64802
+#define EhLibConsts_SInvalidTextFormatEh 64803
+#define EhLibConsts_SInvalidVCLDBIFFormatEh 64804
+#define EhLibConsts_SErrorDuringInsertValueEh 64805
+#define EhLibConsts_SIgnoreErrorEh 64806
+#define EhLibConsts_STabularInformationEh 64807
+#define EhLibConsts_SPageOfPagesEh 64808
+#define EhLibConsts_SPreviewEh 64809
+#define EhLibConsts_SFindDialogStringNotFoundMessageEh 64810
+#define EhLibConsts_SSTFilterListItem_Empties 64811
+#define EhLibConsts_SSTFilterListItem_NotEmpties 64812
+#define EhLibConsts_SSTFilterListItem_All 64813
+#define EhLibConsts_SSTFilterListItem_ClearFilter 64814
+#define EhLibConsts_SSTFilterListItem_SortingByDescend 64815
+#define uErrors_ERR_CAPTION 64816
+#define uErrors_ERR_SQLSERVER_NOT_EXIST 64817
+#define uErrors_ERR_SQLSERVER_PASSWORD_INCORRECT 64818
+#define uErrors_ERR_SOCKET 64819
+#define uSQLTools_SQL_TOOLS_NEED_SYSADMIN 64820
+#define VDBConsts_SFirstRecord 64821
+#define VDBConsts_SPriorRecord 64822
+#define VDBConsts_SNextRecord 64823
+#define VDBConsts_SLastRecord 64824
+#define VDBConsts_SInsertRecord 64825
+#define VDBConsts_SDeleteRecord 64826
+#define VDBConsts_SEditRecord 64827
+#define VDBConsts_SPostEdit 64828
+#define VDBConsts_SCancelEdit 64829
+#define VDBConsts_SRefreshRecord 64830
+#define VDBConsts_SDataSourceFixed 64831
+#define IdResourceStrings_RSSocksServerRespondError 64832
+#define IdResourceStrings_RSSocksAuthMethodError 64833
+#define IdResourceStrings_RSSocksAuthError 64834
+#define IdResourceStrings_RSSocksServerGeneralError 64835
+#define IdResourceStrings_RSSocksServerPermissionError 64836
+#define IdResourceStrings_RSSocksServerNetUnreachableError 64837
+#define IdResourceStrings_RSSocksServerHostUnreachableError 64838
+#define IdResourceStrings_RSSocksServerConnectionRefusedError 64839
+#define IdResourceStrings_RSSocksServerTTLExpiredError 64840
+#define IdResourceStrings_RSSocksServerCommandError 64841
+#define IdResourceStrings_RSSocksServerAddressError 64842
+#define IdResourceStrings_RSUnevenSizeInDecodeStream 64843
+#define IdResourceStrings_RSUnevenSizeInEncodeStream 64844
+#define IdResourceStrings_RSMessageEncoderNotFound 64845
+#define IdResourceStrings_RSUnrecognizedUUEEncodingScheme 64846
+#define IdResourceStrings_RSThreadTerminateAndWaitFor 64847
+#define IdResourceStrings_RSStackENOTCONN 64848
+#define IdResourceStrings_RSStackESHUTDOWN 64849
+#define IdResourceStrings_RSStackETOOMANYREFS 64850
+#define IdResourceStrings_RSStackETIMEDOUT 64851
+#define IdResourceStrings_RSStackECONNREFUSED 64852
+#define IdResourceStrings_RSStackELOOP 64853
+#define IdResourceStrings_RSStackENAMETOOLONG 64854
+#define IdResourceStrings_RSStackEHOSTDOWN 64855
+#define IdResourceStrings_RSStackEHOSTUNREACH 64856
+#define IdResourceStrings_RSStackENOTEMPTY 64857
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 64858
+#define IdResourceStrings_RSTIdMessagePartCreate 64859
+#define IdResourceStrings_RSSocksRequestFailed 64860
+#define IdResourceStrings_RSSocksRequestServerFailed 64861
+#define IdResourceStrings_RSSocksRequestIdentFailed 64862
+#define IdResourceStrings_RSSocksUnknownError 64863
+#define IdResourceStrings_RSStackEPROTOTYPE 64864
+#define IdResourceStrings_RSStackENOPROTOOPT 64865
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 64866
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64867
+#define IdResourceStrings_RSStackEOPNOTSUPP 64868
+#define IdResourceStrings_RSStackEPFNOSUPPORT 64869
+#define IdResourceStrings_RSStackEAFNOSUPPORT 64870
+#define IdResourceStrings_RSStackEADDRINUSE 64871
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 64872
+#define IdResourceStrings_RSStackENETDOWN 64873
+#define IdResourceStrings_RSStackENETUNREACH 64874
+#define IdResourceStrings_RSStackENETRESET 64875
+#define IdResourceStrings_RSStackECONNABORTED 64876
+#define IdResourceStrings_RSStackECONNRESET 64877
+#define IdResourceStrings_RSStackENOBUFS 64878
+#define IdResourceStrings_RSStackEISCONN 64879
+#define IdResourceStrings_RSMsgClientUnkownMessagePartType 64880
+#define IdResourceStrings_RSMsgClientInvalidEncoding 64881
+#define IdResourceStrings_RSInvalidServiceName 64882
+#define IdResourceStrings_RSStackError 64883
+#define IdResourceStrings_RSStackEINTR 64884
+#define IdResourceStrings_RSStackEBADF 64885
+#define IdResourceStrings_RSStackEACCES 64886
+#define IdResourceStrings_RSStackEFAULT 64887
+#define IdResourceStrings_RSStackEINVAL 64888
+#define IdResourceStrings_RSStackEMFILE 64889
+#define IdResourceStrings_RSStackEWOULDBLOCK 64890
+#define IdResourceStrings_RSStackEINPROGRESS 64891
+#define IdResourceStrings_RSStackEALREADY 64892
+#define IdResourceStrings_RSStackENOTSOCK 64893
+#define IdResourceStrings_RSStackEDESTADDRREQ 64894
+#define IdResourceStrings_RSStackEMSGSIZE 64895
+#define IdResourceStrings_RSInvalidPortRange 64896
+#define IdResourceStrings_RSReadTimeout 64897
+#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 64898
+#define IdResourceStrings_RSNoCommandHandlerFound 64899
+#define IdResourceStrings_RSEMailSymbolOutsideAddress 64900
+#define IdResourceStrings_RSWS2CallError 64901
+#define IdResourceStrings_RSWS2LoadError 64902
+#define IdResourceStrings_RSStatusResolving 64903
+#define IdResourceStrings_RSStatusConnecting 64904
+#define IdResourceStrings_RSStatusConnected 64905
+#define IdResourceStrings_RSStatusDisconnecting 64906
+#define IdResourceStrings_RSStatusDisconnected 64907
+#define IdResourceStrings_RSStatusText 64908
+#define IdResourceStrings_RSConnectTimeout 64909
+#define IdResourceStrings_RSMsgClientEncodingText 64910
+#define IdResourceStrings_RSMsgClientEncodingAttachment 64911
+#define IdResourceStrings_RSCouldNotBindSocket 64912
+#define IdResourceStrings_RSFailedTimeZoneInfo 64913
+#define IdResourceStrings_RSNotAllBytesSent 64914
+#define IdResourceStrings_RSNotEnoughDataInBuffer 64915
+#define IdResourceStrings_RSPackageSizeTooBig 64916
+#define IdResourceStrings_RSWinsockInitializationError 64917
+#define IdResourceStrings_RSSetSizeExceeded 64918
+#define IdResourceStrings_RSThreadClassNotSpecified 64919
+#define IdResourceStrings_RSFileNotFound 64920
+#define IdResourceStrings_RSOnlyOneAntiFreeze 64921
+#define IdResourceStrings_RSNotConnected 64922
+#define IdResourceStrings_RSObjectTypeNotSupported 64923
+#define IdResourceStrings_RSTerminateThreadTimeout 64924
+#define IdResourceStrings_RSNoExecuteSpecified 64925
+#define IdResourceStrings_RSIdNoDataToRead 64926
+#define IdResourceStrings_RSCanNotBindRange 64927
+#define ADOConst_SBookmarksRequired 64928
+#define ADOConst_SMissingCommandText 64929
+#define ADOConst_SNoResultSet 64930
+#define ADOConst_SADOCreateError 64931
+#define ADOConst_SEventsNotSupported 64932
+#define ADOConst_SUsupportedFieldType 64933
+#define ADOConst_SNoMatchingADOType 64934
+#define ADOConst_SConnectionRequired 64935
+#define ADOConst_SCantRequery 64936
+#define ADOConst_SNoFilterOptions 64937
+#define ADOConst_SRecordsetNotOpen 64938
+#define ADOConst_sNameAttr 64939
+#define ADOConst_sValueAttr 64940
+#define IdResourceStrings_RSAlreadyConnected 64941
+#define IdResourceStrings_RSCannotAllocateSocket 64942
+#define IdResourceStrings_RSConnectionClosedGracefully 64943
+#define DBConsts_SBcdOverflow 64944
+#define DBConsts_SInvalidBcdValue 64945
+#define DBConsts_SInvalidFormatType 64946
+#define DBConsts_SCouldNotParseTimeStamp 64947
+#define DBConsts_SInvalidSqlTimeStamp 64948
+#define DBConsts_SDeleteRecordQuestion 64949
+#define DBConsts_SDeleteMultipleRecordsQuestion 64950
+#define DBConsts_STooManyColumns 64951
+#define ComConst_SOleError 64952
+#define ComConst_SNoMethod 64953
+#define ComConst_SVarNotObject 64954
+#define ComConst_STooManyParams 64955
+#define ComConst_SDCOMNotInstalled 64956
+#define ADOConst_SInvalidEnumValue 64957
+#define ADOConst_SMissingConnection 64958
+#define ADOConst_SNoDetailFilter 64959
+#define DBConsts_SExprNotAgg 64960
+#define DBConsts_SExprBadConst 64961
+#define DBConsts_SExprNoAggFilter 64962
+#define DBConsts_SExprEmptyInList 64963
+#define DBConsts_SInvalidKeywordUse 64964
+#define DBConsts_STextFalse 64965
+#define DBConsts_STextTrue 64966
+#define DBConsts_SParameterNotFound 64967
+#define DBConsts_SInvalidVersion 64968
+#define DBConsts_SBadFieldType 64969
+#define DBConsts_SProviderSQLNotSupported 64970
+#define DBConsts_SProviderExecuteNotSupported 64971
+#define DBConsts_SExprNoAggOnCalcs 64972
+#define DBConsts_SDataSetUnidirectional 64973
+#define DBConsts_SUnassignedVar 64974
+#define DBConsts_SRecordNotFound 64975
+#define DBConsts_SExprTermination 64976
+#define DBConsts_SExprNameError 64977
+#define DBConsts_SExprStringError 64978
+#define DBConsts_SExprInvalidChar 64979
+#define DBConsts_SExprNoLParen 64980
+#define DBConsts_SExprNoRParen 64981
+#define DBConsts_SExprNoRParenOrComma 64982
+#define DBConsts_SExprExpected 64983
+#define DBConsts_SExprBadField 64984
+#define DBConsts_SExprBadNullTest 64985
+#define DBConsts_SExprRangeError 64986
+#define DBConsts_SExprIncorrect 64987
+#define DBConsts_SExprNothing 64988
+#define DBConsts_SExprTypeMis 64989
+#define DBConsts_SExprBadScope 64990
+#define DBConsts_SExprNoArith 64991
+#define DBConsts_SFieldRequired 64992
+#define DBConsts_SDataSetMissing 64993
+#define DBConsts_SInvalidCalcType 64994
+#define DBConsts_SFieldReadOnly 64995
+#define DBConsts_SNotIndexField 64996
+#define DBConsts_SNoIndexForFields 64997
+#define DBConsts_SIndexNotFound 64998
+#define DBConsts_SCircularDataLink 64999
+#define DBConsts_SLookupInfoError 65000
+#define DBConsts_SDataSourceChange 65001
+#define DBConsts_SDataSetOpen 65002
+#define DBConsts_SNotEditing 65003
+#define DBConsts_SDataSetClosed 65004
+#define DBConsts_SDataSetEmpty 65005
+#define DBConsts_SDataSetReadOnly 65006
+#define DBConsts_SNestedDataSetClass 65007
+#define DBConsts_SInvalidFieldKind 65008
+#define DBConsts_SUnknownFieldType 65009
+#define DBConsts_SFieldNameMissing 65010
+#define DBConsts_SDuplicateFieldName 65011
+#define DBConsts_SFieldNotFound 65012
+#define DBConsts_SFieldAccessError 65013
+#define DBConsts_SFieldValueError 65014
+#define DBConsts_SFieldRangeError 65015
+#define DBConsts_SBcdFieldRangeError 65016
+#define DBConsts_SInvalidIntegerValue 65017
+#define DBConsts_SInvalidBoolValue 65018
+#define DBConsts_SInvalidFloatValue 65019
+#define DBConsts_SFieldTypeMismatch 65020
+#define DBConsts_SFieldSizeMismatch 65021
+#define DBConsts_SInvalidVarByteArray 65022
+#define DBConsts_SFieldOutOfRange 65023
+#define ComStrs_sInsertError 65024
+#define ComStrs_sInvalidOwner 65025
+#define ComStrs_sRichEditInsertError 65026
+#define ComStrs_sRichEditLoadFail 65027
+#define ComStrs_sRichEditSaveFail 65028
+#define ComStrs_sPageIndexError 65029
+#define ComStrs_sInvalidComCtl32 65030
+#define ComStrs_sDateTimeMax 65031
+#define ComStrs_sDateTimeMin 65032
+#define ComStrs_sNeedAllowNone 65033
+#define ComStrs_sFailSetCalDateTime 65034
+#define ComStrs_sFailSetCalMaxSelRange 65035
+#define ComStrs_sFailSetCalMinMaxRange 65036
+#define ComStrs_sFailsetCalSelRange 65037
+#define WinHelpViewer_hNoKeyword 65038
+#define DBConsts_SInvalidFieldSize 65039
+#define ExtCtrls_clNameMenuText 65040
+#define ExtCtrls_clNameNone 65041
+#define ExtCtrls_clNameScrollBar 65042
+#define ExtCtrls_clName3DDkShadow 65043
+#define ExtCtrls_clName3DLight 65044
+#define ExtCtrls_clNameWindow 65045
+#define ExtCtrls_clNameWindowFrame 65046
+#define ExtCtrls_clNameWindowText 65047
+#define ComStrs_sTabFailClear 65048
+#define ComStrs_sTabFailDelete 65049
+#define ComStrs_sTabFailRetrieve 65050
+#define ComStrs_sTabFailGetObject 65051
+#define ComStrs_sTabFailSet 65052
+#define ComStrs_sTabFailSetObject 65053
+#define ComStrs_sTabMustBeMultiLine 65054
+#define ComStrs_sInvalidIndex 65055
+#define ExtCtrls_clNameBackground 65056
+#define ExtCtrls_clNameBtnFace 65057
+#define ExtCtrls_clNameBtnHighlight 65058
+#define ExtCtrls_clNameBtnShadow 65059
+#define ExtCtrls_clNameBtnText 65060
+#define ExtCtrls_clNameCaptionText 65061
+#define ExtCtrls_clNameDefault 65062
+#define ExtCtrls_clNameGrayText 65063
+#define ExtCtrls_clNameHighlight 65064
+#define ExtCtrls_clNameHighlightText 65065
+#define ExtCtrls_clNameInactiveBorder 65066
+#define ExtCtrls_clNameInactiveCaption 65067
+#define ExtCtrls_clNameInactiveCaptionText 65068
+#define ExtCtrls_clNameInfoBk 65069
+#define ExtCtrls_clNameInfoText 65070
+#define ExtCtrls_clNameMenu 65071
+#define ExtCtrls_clNameGray 65072
+#define ExtCtrls_clNameSilver 65073
+#define ExtCtrls_clNameRed 65074
+#define ExtCtrls_clNameLime 65075
+#define ExtCtrls_clNameYellow 65076
+#define ExtCtrls_clNameBlue 65077
+#define ExtCtrls_clNameFuchsia 65078
+#define ExtCtrls_clNameAqua 65079
+#define ExtCtrls_clNameWhite 65080
+#define ExtCtrls_clNameMoneyGreen 65081
+#define ExtCtrls_clNameSkyBlue 65082
+#define ExtCtrls_clNameCream 65083
+#define ExtCtrls_clNameMedGray 65084
+#define ExtCtrls_clNameActiveBorder 65085
+#define ExtCtrls_clNameActiveCaption 65086
+#define ExtCtrls_clNameAppWorkSpace 65087
+#define Consts_SListBoxMustBeVirtual 65088
+#define Consts_SUnableToSaveSettings 65089
+#define Consts_SRestoreDefaultSchedule 65090
+#define Consts_SNoGetItemEventHandler 65091
+#define Consts_SActionBarStyleMissing 65092
+#define HelpIntfs_hNoTableOfContents 65093
+#define HelpIntfs_hNothingFound 65094
+#define HelpIntfs_hNoContext 65095
+#define HelpIntfs_hNoTopics 65096
+#define ExtCtrls_clNameBlack 65097
+#define ExtCtrls_clNameMaroon 65098
+#define ExtCtrls_clNameGreen 65099
+#define ExtCtrls_clNameOlive 65100
+#define ExtCtrls_clNameNavy 65101
+#define ExtCtrls_clNamePurple 65102
+#define ExtCtrls_clNameTeal 65103
+#define Consts_SNoColumnMoving 65104
+#define Consts_SNoEqualsInKey 65105
+#define Consts_SAssignSubItemError 65106
+#define Consts_SDeleteItemWithSubItems 65107
+#define Consts_SDeleteNotAllowed 65108
+#define Consts_SMoveNotAllowed 65109
+#define Consts_SMoreButtons 65110
+#define Consts_SExpand 65111
+#define Consts_SErrorLoadingFile 65112
+#define Consts_SNoName 65113
+#define Consts_SAddRemoveButtons 65114
+#define Consts_SResetActionToolBar 65115
+#define Consts_SSeparator 65116
+#define Consts_SCirularReferencesNotAllowed 65117
+#define Consts_SCannotHideActionBand 65118
+#define Consts_SErrorSettingCount 65119
+#define Consts_SInvalidMemoSize 65120
+#define Consts_SInvalidPrinterOp 65121
+#define Consts_SNoDefaultPrinter 65122
+#define Consts_SDuplicateMenus 65123
+#define Consts_SPictureLabel 65124
+#define Consts_SPictureDesc 65125
+#define Consts_SPreviewLabel 65126
+#define Consts_SDockedCtlNeedsName 65127
+#define Consts_SDockTreeRemoveError 65128
+#define Consts_SDockZoneNotFound 65129
+#define Consts_SDockZoneHasNoCtl 65130
+#define Consts_SMultiSelectRequired 65131
+#define Consts_SKeyCaption 65132
+#define Consts_SValueCaption 65133
+#define Consts_SKeyConflict 65134
+#define Consts_SKeyNotFound 65135
+#define Consts_SmkcLeft 65136
+#define Consts_SmkcUp 65137
+#define Consts_SmkcRight 65138
+#define Consts_SmkcDown 65139
+#define Consts_SmkcIns 65140
+#define Consts_SmkcDel 65141
+#define Consts_SmkcShift 65142
+#define Consts_SmkcCtrl 65143
+#define Consts_SmkcAlt 65144
+#define Consts_srNone 65145
+#define Consts_SOutOfRange 65146
+#define Consts_sAllFilter 65147
+#define Consts_SInsertLineError 65148
+#define Consts_SInvalidClipFmt 65149
+#define Consts_SIconToClipboard 65150
+#define Consts_SCannotOpenClipboard 65151
+#define Consts_SMsgDlgHelp 65152
+#define Consts_SMsgDlgAbort 65153
+#define Consts_SMsgDlgRetry 65154
+#define Consts_SMsgDlgIgnore 65155
+#define Consts_SMsgDlgAll 65156
+#define Consts_SMsgDlgNoToAll 65157
+#define Consts_SMsgDlgYesToAll 65158
+#define Consts_SmkcBkSp 65159
+#define Consts_SmkcTab 65160
+#define Consts_SmkcEsc 65161
+#define Consts_SmkcEnter 65162
+#define Consts_SmkcSpace 65163
+#define Consts_SmkcPgUp 65164
+#define Consts_SmkcPgDn 65165
+#define Consts_SmkcEnd 65166
+#define Consts_SmkcHome 65167
+#define Consts_SAllButton 65168
+#define Consts_SCannotDragForm 65169
+#define Consts_SVMetafiles 65170
+#define Consts_SVEnhMetafiles 65171
+#define Consts_SVIcons 65172
+#define Consts_SVBitmaps 65173
+#define Consts_SMaskErr 65174
+#define Consts_SMaskEditErr 65175
+#define Consts_SMsgDlgWarning 65176
+#define Consts_SMsgDlgError 65177
+#define Consts_SMsgDlgInformation 65178
+#define Consts_SMsgDlgConfirm 65179
+#define Consts_SMsgDlgYes 65180
+#define Consts_SMsgDlgNo 65181
+#define Consts_SMsgDlgOK 65182
+#define Consts_SMsgDlgCancel 65183
+#define Consts_SPrinting 65184
+#define Consts_SPrinterIndexError 65185
+#define Consts_SInvalidPrinter 65186
+#define Consts_SDeviceOnPort 65187
+#define Consts_SGroupIndexTooLow 65188
+#define Consts_SNoMDIForm 65189
+#define Consts_SControlParentSetToSelf 65190
+#define Consts_SOKButton 65191
+#define Consts_SCancelButton 65192
+#define Consts_SYesButton 65193
+#define Consts_SNoButton 65194
+#define Consts_SHelpButton 65195
+#define Consts_SCloseButton 65196
+#define Consts_SIgnoreButton 65197
+#define Consts_SRetryButton 65198
+#define Consts_SAbortButton 65199
+#define Consts_SImageWriteFail 65200
+#define Consts_SWindowDCError 65201
+#define Consts_SWindowClass 65202
+#define Consts_SCannotFocus 65203
+#define Consts_SParentRequired 65204
+#define Consts_SParentGivenNotAParent 65205
+#define Consts_SMDIChildNotVisible 65206
+#define Consts_SVisibleChanged 65207
+#define Consts_SCannotShowModal 65208
+#define Consts_SScrollBarRange 65209
+#define Consts_SPropertyOutOfRange 65210
+#define Consts_SMenuIndexError 65211
+#define Consts_SMenuReinserted 65212
+#define Consts_SMenuNotFound 65213
+#define Consts_SNoTimers 65214
+#define Consts_SNotPrinting 65215
+#define Consts_SInvalidIcon 65216
+#define Consts_SInvalidMetafile 65217
+#define Consts_SInvalidPixelFormat 65218
+#define Consts_SInvalidImage 65219
+#define Consts_SScanLine 65220
+#define Consts_SChangeIconSize 65221
+#define Consts_SOleGraphic 65222
+#define Consts_SUnknownExtension 65223
+#define Consts_SUnknownClipboardFormat 65224
+#define Consts_SOutOfResources 65225
+#define Consts_SNoCanvasHandle 65226
+#define Consts_SInvalidImageSize 65227
+#define Consts_SInvalidImageList 65228
+#define Consts_SReplaceImage 65229
+#define Consts_SImageIndexError 65230
+#define Consts_SImageReadFail 65231
+#define RTLConsts_SDaysDescription 65232
+#define RTLConsts_SWeeksDescription 65233
+#define RTLConsts_SFortnightsDescription 65234
+#define RTLConsts_SMonthsDescription 65235
+#define RTLConsts_SYearsDescription 65236
+#define RTLConsts_SDecadesDescription 65237
+#define RTLConsts_SCenturiesDescription 65238
+#define RTLConsts_SMillenniaDescription 65239
+#define RTLConsts_SDateTimeDescription 65240
+#define RTLConsts_SJulianDateDescription 65241
+#define RTLConsts_SModifiedJulianDateDescription 65242
+#define RTLConsts_SInvalidDateTime 65243
+#define Consts_SCantWriteResourceStreamError 65244
+#define Consts_SInvalidTabPosition 65245
+#define Consts_SInvalidTabStyle 65246
+#define Consts_SInvalidBitmap 65247
+#define RTLConsts_STonsDescription 65248
+#define RTLConsts_SLongTonsDescription 65249
+#define RTLConsts_SOuncesDescription 65250
+#define RTLConsts_SPoundsDescription 65251
+#define RTLConsts_SStonesDescription 65252
+#define RTLConsts_STemperatureDescription 65253
+#define RTLConsts_SCelsiusDescription 65254
+#define RTLConsts_SKelvinDescription 65255
+#define RTLConsts_SFahrenheitDescription 65256
+#define RTLConsts_SRankineDescription 65257
+#define RTLConsts_SReaumurDescription 65258
+#define RTLConsts_STimeDescription 65259
+#define RTLConsts_SMilliSecondsDescription 65260
+#define RTLConsts_SSecondsDescription 65261
+#define RTLConsts_SMinutesDescription 65262
+#define RTLConsts_SHoursDescription 65263
+#define RTLConsts_SUKPecksDescription 65264
+#define RTLConsts_SUKBucketsDescription 65265
+#define RTLConsts_SUKBushelsDescription 65266
+#define RTLConsts_SMassDescription 65267
+#define RTLConsts_SNanogramsDescription 65268
+#define RTLConsts_SMicrogramsDescription 65269
+#define RTLConsts_SMilligramsDescription 65270
+#define RTLConsts_SCentigramsDescription 65271
+#define RTLConsts_SDecigramsDescription 65272
+#define RTLConsts_SGramsDescription 65273
+#define RTLConsts_SDecagramsDescription 65274
+#define RTLConsts_SHectogramsDescription 65275
+#define RTLConsts_SKilogramsDescription 65276
+#define RTLConsts_SMetricTonsDescription 65277
+#define RTLConsts_SDramsDescription 65278
+#define RTLConsts_SGrainsDescription 65279
+#define RTLConsts_SFluidGillsDescription 65280
+#define RTLConsts_SFluidOuncesDescription 65281
+#define RTLConsts_SFluidTablespoonsDescription 65282
+#define RTLConsts_SFluidTeaspoonsDescription 65283
+#define RTLConsts_SDryGallonsDescription 65284
+#define RTLConsts_SDryQuartsDescription 65285
+#define RTLConsts_SDryPintsDescription 65286
+#define RTLConsts_SDryPecksDescription 65287
+#define RTLConsts_SDryBucketsDescription 65288
+#define RTLConsts_SDryBushelsDescription 65289
+#define RTLConsts_SUKGallonsDescription 65290
+#define RTLConsts_SUKPottlesDescription 65291
+#define RTLConsts_SUKQuartsDescription 65292
+#define RTLConsts_SUKPintsDescription 65293
+#define RTLConsts_SUKGillsDescription 65294
+#define RTLConsts_SUKOuncesDescription 65295
+#define RTLConsts_SDeciLitersDescription 65296
+#define RTLConsts_SLitersDescription 65297
+#define RTLConsts_SDecaLitersDescription 65298
+#define RTLConsts_SHectoLitersDescription 65299
+#define RTLConsts_SKiloLitersDescription 65300
+#define RTLConsts_SAcreFeetDescription 65301
+#define RTLConsts_SAcreInchesDescription 65302
+#define RTLConsts_SCordsDescription 65303
+#define RTLConsts_SCordFeetDescription 65304
+#define RTLConsts_SDecisteresDescription 65305
+#define RTLConsts_SSteresDescription 65306
+#define RTLConsts_SDecasteresDescription 65307
+#define RTLConsts_SFluidGallonsDescription 65308
+#define RTLConsts_SFluidQuartsDescription 65309
+#define RTLConsts_SFluidPintsDescription 65310
+#define RTLConsts_SFluidCupsDescription 65311
+#define RTLConsts_SHectaresDescription 65312
+#define RTLConsts_SSquareRodsDescription 65313
+#define RTLConsts_SVolumeDescription 65314
+#define RTLConsts_SCubicMillimetersDescription 65315
+#define RTLConsts_SCubicCentimetersDescription 65316
+#define RTLConsts_SCubicDecimetersDescription 65317
+#define RTLConsts_SCubicMetersDescription 65318
+#define RTLConsts_SCubicDecametersDescription 65319
+#define RTLConsts_SCubicHectometersDescription 65320
+#define RTLConsts_SCubicKilometersDescription 65321
+#define RTLConsts_SCubicInchesDescription 65322
+#define RTLConsts_SCubicFeetDescription 65323
+#define RTLConsts_SCubicYardsDescription 65324
+#define RTLConsts_SCubicMilesDescription 65325
+#define RTLConsts_SMilliLitersDescription 65326
+#define RTLConsts_SCentiLitersDescription 65327
+#define RTLConsts_SPointsDescription 65328
+#define RTLConsts_SAreaDescription 65329
+#define RTLConsts_SSquareMillimetersDescription 65330
+#define RTLConsts_SSquareCentimetersDescription 65331
+#define RTLConsts_SSquareDecimetersDescription 65332
+#define RTLConsts_SSquareMetersDescription 65333
+#define RTLConsts_SSquareDecametersDescription 65334
+#define RTLConsts_SSquareHectometersDescription 65335
+#define RTLConsts_SSquareKilometersDescription 65336
+#define RTLConsts_SSquareInchesDescription 65337
+#define RTLConsts_SSquareFeetDescription 65338
+#define RTLConsts_SSquareYardsDescription 65339
+#define RTLConsts_SSquareMilesDescription 65340
+#define RTLConsts_SAcresDescription 65341
+#define RTLConsts_SCentaresDescription 65342
+#define RTLConsts_SAresDescription 65343
+#define RTLConsts_SFeetDescription 65344
+#define RTLConsts_SYardsDescription 65345
+#define RTLConsts_SMilesDescription 65346
+#define RTLConsts_SNauticalMilesDescription 65347
+#define RTLConsts_SAstronomicalUnitsDescription 65348
+#define RTLConsts_SLightYearsDescription 65349
+#define RTLConsts_SParsecsDescription 65350
+#define RTLConsts_SCubitsDescription 65351
+#define RTLConsts_SFathomsDescription 65352
+#define RTLConsts_SFurlongsDescription 65353
+#define RTLConsts_SHandsDescription 65354
+#define RTLConsts_SPacesDescription 65355
+#define RTLConsts_SRodsDescription 65356
+#define RTLConsts_SChainsDescription 65357
+#define RTLConsts_SLinksDescription 65358
+#define RTLConsts_SPicasDescription 65359
+#define RTLConsts_SConvFactorZero 65360
+#define RTLConsts_SDistanceDescription 65361
+#define RTLConsts_SMicromicronsDescription 65362
+#define RTLConsts_SAngstromsDescription 65363
+#define RTLConsts_SMillimicronsDescription 65364
+#define RTLConsts_SMicronsDescription 65365
+#define RTLConsts_SMillimetersDescription 65366
+#define RTLConsts_SCentimetersDescription 65367
+#define RTLConsts_SDecimetersDescription 65368
+#define RTLConsts_SMetersDescription 65369
+#define RTLConsts_SDecametersDescription 65370
+#define RTLConsts_SHectometersDescription 65371
+#define RTLConsts_SKilometersDescription 65372
+#define RTLConsts_SMegametersDescription 65373
+#define RTLConsts_SGigametersDescription 65374
+#define RTLConsts_SInchesDescription 65375
 #define RTLConsts_SResNotFound 65376
 #define RTLConsts_SSeekNotImplemented 65377
 #define RTLConsts_SSortedListError 65378
@@ -661,13 +818,13 @@
 #define RTLConsts_SWriteError 65382
 #define RTLConsts_SThreadCreateError 65383
 #define RTLConsts_SThreadError 65384
-#define RTLConsts_SMissingDateTimeField 65385
-#define RTLConsts_SInvalidDateTime 65386
-#define Consts_SCantWriteResourceStreamError 65387
-#define Consts_SInvalidTabPosition 65388
-#define Consts_SInvalidTabStyle 65389
-#define Consts_SInvalidBitmap 65390
-#define Consts_SInvalidIcon 65391
+#define RTLConsts_SInvalidJulianDate 65385
+#define RTLConsts_SMissingDateTimeField 65386
+#define RTLConsts_SConvDuplicateType 65387
+#define RTLConsts_SConvUnknownFamily 65388
+#define RTLConsts_SConvDuplicateFamily 65389
+#define RTLConsts_SConvUnknownDescriptionWithPrefix 65390
+#define RTLConsts_SConvIllegalFamily 65391
 #define RTLConsts_SInvalidPropertyElement 65392
 #define RTLConsts_SInvalidPropertyPath 65393
 #define RTLConsts_SInvalidPropertyType 65394
@@ -814,13 +971,7 @@
 #define SysConst_SEndOfFile 65535
 STRINGTABLE
 BEGIN
-	GCSessions_INFO_SEPARATETRAFFICPAY,	"Внесено предоплатой отдельно за трафик = %m"
-	GCSessions_INFO_SERVICE,	"За услуги = %m"
-	GCSessions_INFO_TOTAL,	"Итого = %m"
 	GCSessions_INFO_INDENTION,	"   "
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
 	ufrmClearStatistic_WARNING,	"Внимание!"
 	ufrmClearStatistic_MESSAGE_STR,	"Сообщение!"
 	ufrmClearStatistic_AFFIRMATION,	"Возможно, Вам стоит еще раз все взвесить, прежде чем выполнять\r\nоперацию очистки статистики.  Вы точно уверены, что хотите это сделать?"
@@ -834,9 +985,9 @@ BEGIN
 	GCSessions_INFO_SEPARATETRAFFIC,	"Трафик ( %s ) = отдельная оплата %m"
 	GCSessions_INFO_MIXEDTRAFFIC,	"Трафик ( %s ) = %m + отдельная оплата %m"
 	GCSessions_INFO_COMMONPAY,	"Внесено предоплатой = %m"
-	SynEditStrConst_SYNS_AttrNumber,	"Number"
-	SynEditStrConst_SYNS_AttrPLSQL,	"PL/SQL Reserved Word"
-	SynEditStrConst_SYNS_AttrReservedWord,	"Reserved Word"
+	GCSessions_INFO_SEPARATETRAFFICPAY,	"Внесено предоплатой отдельно за трафик = %m"
+	GCSessions_INFO_SERVICE,	"За услуги = %m"
+	GCSessions_INFO_TOTAL,	"Итого = %m"
 	SynEditStrConst_SYNS_AttrSpace,	"Space"
 	SynEditStrConst_SYNS_AttrSQLPlus,	"SQL*Plus Command"
 	SynEditStrConst_SYNS_AttrString,	"String"
@@ -850,9 +1001,9 @@ BEGIN
 	SynEditStrConst_SYNS_LangSQL,	"SQL"
 	SynEditTextBuffer_SListIndexOutOfBounds,	"Invalid stringlist index %d"
 	SynEditTextBuffer_SInvalidCapacity,	"Stringlist capacity cannot be smaller than count"
-	SqlConst_SLOCALTRANSACTIVE,	"dbExpress Error: Local Transaction already active"
-	SqlConst_SMULTIPLETRANSNOTENABLED,	"dbExpress Error: Multiple Transactions not Enabled"
-	VirtualTrees_SEditLinkIsNil,	"Edit link must not be nil."
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
 	VirtualTrees_SWrongMoveError,	"Target node cannot be a child node of the node to be moved."
 	VirtualTrees_SWrongStreamFormat,	"Unable to load tree structure, the format is wrong."
 	VirtualTrees_SWrongStreamVersion,	"Unable to load tree structure, the version is unknown."
@@ -866,9 +1017,9 @@ BEGIN
 	SynEditStrConst_SYNS_AttrException,	"Exception"
 	SynEditStrConst_SYNS_AttrFunction,	"Function"
 	SynEditStrConst_SYNS_AttrIdentifier,	"Identifier"
-	SqlConst_SINVALIDFLDTYPE,	"dbExpress Error: Invalid Field Type"
-	SqlConst_SINVALIDHNDL,	"dbExpress Error: Invalid Handle"
-	SqlConst_SINVALIDTIME,	"dbExpress Error: Invalid Time"
+	SynEditStrConst_SYNS_AttrNumber,	"Number"
+	SynEditStrConst_SYNS_AttrPLSQL,	"PL/SQL Reserved Word"
+	SynEditStrConst_SYNS_AttrReservedWord,	"Reserved Word"
 	SqlConst_SNOTSUPPORTED,	"dbExpress Error: Operation Not Supported"
 	SqlConst_SINVALIDXLATION,	"dbExpress Error: Invalid Data Translation"
 	SqlConst_SINVALIDPARAM,	"dbExpress Error: Invalid Parameter"
@@ -882,9 +1033,9 @@ BEGIN
 	SqlConst_SINVALIDTXNID,	"dbExpress Error: Invalid Transaction ID"
 	SqlConst_SDUPLICATETXNID,	"dbExpress Error: Duplicate Transaction ID"
 	SqlConst_SDRIVERRESTRICTED,	"dbExpress Error: Application is not licensed to use this feature"
-	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
-	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
-	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
+	SqlConst_SLOCALTRANSACTIVE,	"dbExpress Error: Local Transaction already active"
+	SqlConst_SMULTIPLETRANSNOTENABLED,	"dbExpress Error: Multiple Transactions not Enabled"
+	VirtualTrees_SEditLinkIsNil,	"Edit link must not be nil."
 	bdeconst_SHandleError,	"Error creating cursor handle"
 	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
 	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
@@ -898,9 +1049,9 @@ BEGIN
 	bdeconst_SUntitled,	"Untitled Application"
 	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
 	SqlConst_SNOMEMORY,	"dbExpress Error: Insufficient Memory for Operation"
-	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
-	TeeConst_TeeMsg_ValuesBubbleRadius,	"Radius"
-	OleConst_SCannotActivate,	"OLE control activation failed"
+	SqlConst_SINVALIDFLDTYPE,	"dbExpress Error: Invalid Field Type"
+	SqlConst_SINVALIDHNDL,	"dbExpress Error: Invalid Handle"
+	SqlConst_SINVALIDTIME,	"dbExpress Error: Invalid Time"
 	OleConst_SNoWindowHandle,	"Could not obtain OLE control window handle"
 	OleConst_SInvalidLicense,	"License information for %s is invalid"
 	OleConst_SNotLicensed,	"License information for %s not found. You cannot use this control in design mode"
@@ -914,9 +1065,9 @@ BEGIN
 	bdeconst_SDatabaseNameMissing,	"Database name missing"
 	bdeconst_SSessionNameMissing,	"Session name missing"
 	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
-	TeeConst_TeeMsg_FunctionDivide,	"Divide"
-	TeeConst_TeeMsg_FunctionHigh,	"High"
-	TeeConst_TeeMsg_FunctionLow,	"Low"
+	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
+	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
+	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
 	TeeConst_TeeMsg_FunctionAverage,	"Average"
 	TeeConst_TeeMsg_GalleryBubble,	"Bubble"
 	TeeConst_TeeMsg_DefaultFontName,	"Arial"
@@ -930,9 +1081,9 @@ BEGIN
 	TeeConst_TeeMsg_ValuesAngle,	"Angle"
 	TeeConst_TeeMsg_ValuesGanttStart,	"Start"
 	TeeConst_TeeMsg_ValuesGanttEnd,	"End"
-	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
-	TeeConst_TeeMsg_GalleryGantt,	"Gantt"
-	TeeConst_TeeMsg_GanttSample1,	"Design"
+	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
+	TeeConst_TeeMsg_ValuesBubbleRadius,	"Radius"
+	OleConst_SCannotActivate,	"OLE control activation failed"
 	TeeConst_TeeMsg_GanttSample2,	"Prototyping"
 	TeeConst_TeeMsg_GanttSample3,	"Development"
 	TeeConst_TeeMsg_GanttSample4,	"Sales"
@@ -946,9 +1097,9 @@ BEGIN
 	TeeConst_TeeMsg_FunctionAdd,	"Add"
 	TeeConst_TeeMsg_FunctionSubtract,	"Subtract"
 	TeeConst_TeeMsg_FunctionMultiply,	"Multiply"
-	TeeConst_TeeMsg_GalleryPoint,	"Point"
-	TeeConst_TeeMsg_GalleryArea,	"Area"
-	TeeConst_TeeMsg_GalleryBar,	"Bar"
+	TeeConst_TeeMsg_FunctionDivide,	"Divide"
+	TeeConst_TeeMsg_FunctionHigh,	"High"
+	TeeConst_TeeMsg_FunctionLow,	"Low"
 	TeeConst_TeeMsg_GalleryHorizBar,	"Horiz. Bar"
 	TeeConst_TeeMsg_GalleryPie,	"Pie"
 	TeeConst_TeeMsg_GalleryFastLine,	"Fast Line"
@@ -962,9 +1113,9 @@ BEGIN
 	TeeConst_TeeMsg_PieSample7,	"Bikes"
 	TeeConst_TeeMsg_PieSample8,	"Chairs"
 	TeeConst_TeeMsg_GalleryStandard,	"Standard"
-	TeeConst_TeeMsg_AxisMinMax,	"Axis Minimum Value must be <= Maximum"
-	TeeConst_TeeMsg_AxisMaxMin,	"Axis Maximum Value must be >= Minimum"
-	TeeConst_TeeMsg_AxisLogBase,	"Axis Logarithmic Base should be >= 2"
+	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
+	TeeConst_TeeMsg_GalleryGantt,	"Gantt"
+	TeeConst_TeeMsg_GanttSample1,	"Design"
 	TeeConst_TeeMsg_MaxPointsPerPage,	"MaxPointsPerPage must be >= 0"
 	TeeConst_TeeMsg_3dPercent,	"3D effect percent must be between %d and %d"
 	TeeConst_TeeMsg_CircularSeries,	"Circular Series dependences are not allowed"
@@ -978,9 +1129,9 @@ BEGIN
 	TeeConst_TeeMsg_RefreshInterval,	"Refresh Interval must be between 0 and 60"
 	TeeConst_TeeMsg_SeriesParentNoSelf,	"Series.ParentChart is not myself!"
 	TeeConst_TeeMsg_GalleryLine,	"Line"
-	XMLConst_SNodeReadOnly,	"Node is readonly"
-	XMLConst_SNoRefresh,	"Refresh is only supported if the FileName or XML properties are set"
-	XMLConst_SMissingFileName,	"FileName cannot be blank"
+	TeeConst_TeeMsg_GalleryPoint,	"Point"
+	TeeConst_TeeMsg_GalleryArea,	"Area"
+	TeeConst_TeeMsg_GalleryBar,	"Bar"
 	XMLConst_SLine,	"Line"
 	uReportManager_INVARIABLE_REPORT_CODE,	"/*  Код этого отчета нельзя изменять!  */ \r\n"
 	TeeConst_TeeMsg_LegendTopPos,	"Top Legend Position must be between 0 and 100 %"
@@ -994,9 +1145,9 @@ BEGIN
 	TeeConst_TeeMsg_AxisLogNotPositive,	"Logarithmic Axis Min and Max values should be >= 0"
 	TeeConst_TeeMsg_AxisLabelSep,	"Labels Separation % must be greater than 0"
 	TeeConst_TeeMsg_AxisIncrementNeg,	"Axis increment must be >= 0"
-	uReportStrings_REPORT_STRINGS_CURRENT_MANAGER_SUM,	" в том числе у менеджера"
-	uReportStrings_REPORT_STRINGS_CURRENT_REST,	"Не отработано текущими клиентами"
-	XMLConst_SDuplicateRegistration,	"\"%s\" DOMImplementation already registered"
+	TeeConst_TeeMsg_AxisMinMax,	"Axis Minimum Value must be <= Maximum"
+	TeeConst_TeeMsg_AxisMaxMin,	"Axis Maximum Value must be >= Minimum"
+	TeeConst_TeeMsg_AxisLogBase,	"Axis Logarithmic Base should be >= 2"
 	XMLConst_SNoMatchingDOMVendor,	"No matching DOM Vendor: \"%s\""
 	XMLConst_SNoDOMNodeEx,	"Selected DOM Vendor does not support this property or method"
 	XMLConst_SDOMNotSupported,	"Property or Method \"%s\" is not supported by DOM Vendor \"%s\""
@@ -1010,9 +1161,9 @@ BEGIN
 	XMLConst_SMismatchedRegItems,	"Mismatched paramaters to RegisterChildNodes"
 	XMLConst_SNotSingleTextNode,	"Element does not contain a single text node"
 	XMLConst_SNoDOMParseOptions,	"DOM Implementation does not support IDOMParseOptions"
-	DbUtilsEh_SIncorrectExpressionEh,	"Incorrect expression: "
-	DbUtilsEh_SUnexpectedANDorOREh,	"Unexpected AND or OR: "
-	uReportStrings_REPORT_STRINGS_CURRENT_HEADER,	">Текущая смена"
+	XMLConst_SNodeReadOnly,	"Node is readonly"
+	XMLConst_SNoRefresh,	"Refresh is only supported if the FileName or XML properties are set"
+	XMLConst_SMissingFileName,	"FileName cannot be blank"
 	uReportStrings_REPORT_STRINGS_CURRENT_BEGIN,	"Начиная с"
 	uReportStrings_REPORT_STRINGS_CURRENT_END,	"Заканчивая"
 	uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR,	"Оператор"
@@ -1026,9 +1177,9 @@ BEGIN
 	uReportStrings_REPORT_STRINGS_CURRENT_ACCOUNTS_RETURNED,	"Возвращено с карт"
 	uReportStrings_REPORT_STRINGS_CURRENT_TOTAL_SUM,	"Итого заработано"
 	uReportStrings_REPORT_STRINGS_CURRENT_OPERATOR_SUM,	" в том числе у оператора"
-	EhLibConsts_SSTFilterListItem_All,	"(All)"
-	EhLibConsts_SSTFilterListItem_ClearFilter,	"(Clear filter)"
-	EhLibConsts_SSTFilterListItem_SortingByDescend,	"(Order by ascending)"
+	uReportStrings_REPORT_STRINGS_CURRENT_MANAGER_SUM,	" в том числе у менеджера"
+	uReportStrings_REPORT_STRINGS_CURRENT_REST,	"Не отработано текущими клиентами"
+	XMLConst_SDuplicateRegistration,	"\"%s\" DOMImplementation already registered"
 	EhLibConsts_SSTFilterListItem_SortingByAscend,	"(Order by descending)"
 	DbUtilsEh_SNotOperatorEh,	"Not"
 	DbUtilsEh_SAndOperatorEh,	"AND"
@@ -1042,9 +1193,9 @@ BEGIN
 	DbUtilsEh_SErrorInExpressionEh,	"Error in expression: "
 	DbUtilsEh_SUnexpectedExpressionBeforeNullEh,	"Unexpected expression before Null: "
 	DbUtilsEh_SUnexpectedExpressionAfterOperatorEh,	"Unexpected expression after operator: "
-	VDBConsts_SCancelEdit,	"Cancel edit"
-	VDBConsts_SRefreshRecord,	"Refresh data"
-	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	DbUtilsEh_SIncorrectExpressionEh,	"Incorrect expression: "
+	DbUtilsEh_SUnexpectedANDorOREh,	"Unexpected AND or OR: "
+	uReportStrings_REPORT_STRINGS_CURRENT_HEADER,	">Текущая смена"
 	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
 	VDBConsts_SRemoteLogin,	"Remote Login"
 	EhLibConsts_SClearSelectedCellsEh,	"Clear selected cells?"
@@ -1058,9 +1209,9 @@ BEGIN
 	EhLibConsts_SFindDialogStringNotFoundMessageEh,	"String \"%s\" not found."
 	EhLibConsts_SSTFilterListItem_Empties,	"(Empty)"
 	EhLibConsts_SSTFilterListItem_NotEmpties,	"(Not empty)"
-	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
-	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
-	IdResourceStrings_RSThreadTerminateAndWaitFor,	"Cannot call TerminateAndWaitFor on FreeAndTerminate threads"
+	EhLibConsts_SSTFilterListItem_All,	"(All)"
+	EhLibConsts_SSTFilterListItem_ClearFilter,	"(Clear filter)"
+	EhLibConsts_SSTFilterListItem_SortingByDescend,	"(Order by ascending)"
 	uErrors_ERR_CAPTION,	"Ошибка"
 	uErrors_ERR_SQLSERVER_NOT_EXIST,	"Ошибка подключения к SQL-серверу.\r\nCервер не существует/не был установлен/инсталляция GameClass3 была проведена неверно."
 	uErrors_ERR_SQLSERVER_PASSWORD_INCORRECT,	"Введен неверный пароль."
@@ -1074,13 +1225,9 @@ BEGIN
 	VDBConsts_SDeleteRecord,	"Delete record"
 	VDBConsts_SEditRecord,	"Edit record"
 	VDBConsts_SPostEdit,	"Post edit"
-	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
-	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
-	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
-	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
-	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
-	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
-	IdResourceStrings_RSSocksUnknownError,	"Unknown socks error."
+	VDBConsts_SCancelEdit,	"Cancel edit"
+	VDBConsts_SRefreshRecord,	"Refresh data"
+	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
 	IdResourceStrings_RSSocksServerRespondError,	"Socks server did not respond."
 	IdResourceStrings_RSSocksAuthMethodError,	"Invalid socks authentication method."
 	IdResourceStrings_RSSocksAuthError,	"Authentication error to socks server."
@@ -1090,14 +1237,13 @@ BEGIN
 	IdResourceStrings_RSSocksServerHostUnreachableError,	"Host unreachable."
 	IdResourceStrings_RSSocksServerConnectionRefusedError,	"Connection refused."
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
-	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
-	IdResourceStrings_RSStackENETDOWN,	"Network is down."
-	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
-	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
-	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
-	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
-	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
-	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
+	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
+	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSUnevenSizeInDecodeStream,	"Uneven size in DecodeToStream."
+	IdResourceStrings_RSUnevenSizeInEncodeStream,	"Uneven size in Encode."
+	IdResourceStrings_RSMessageEncoderNotFound,	"Message encoder not found"
+	IdResourceStrings_RSUnrecognizedUUEEncodingScheme,	"Unrecognized UUE encoding scheme."
+	IdResourceStrings_RSThreadTerminateAndWaitFor,	"Cannot call TerminateAndWaitFor on FreeAndTerminate threads"
 	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
 	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
 	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
@@ -1106,14 +1252,14 @@ BEGIN
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
 	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
-	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
-	IdResourceStrings_RSStackEMFILE,	"Too many open files."
-	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
-	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
-	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
-	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
-	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
-	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
+	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
+	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
+	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
+	IdResourceStrings_RSTIdMessagePartCreate,	"TIdMessagePart can not be created.  Use descendant classes. "
+	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
+	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
+	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
+	IdResourceStrings_RSSocksUnknownError,	"Unknown socks error."
 	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
 	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
 	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
@@ -1122,7 +1268,35 @@ BEGIN
 	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
 	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
 	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
+	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
+	IdResourceStrings_RSStackENETDOWN,	"Network is down."
+	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
+	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
+	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
+	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
+	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
+	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
+	IdResourceStrings_RSMsgClientUnkownMessagePartType,	"Unknown Message Part Type."
+	IdResourceStrings_RSMsgClientInvalidEncoding,	"Invalid Encoding. UU only allows Body and Attachments"
+	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
+	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
+	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
+	IdResourceStrings_RSStackEBADF,	"Bad file number."
+	IdResourceStrings_RSStackEACCES,	"Access denied."
+	IdResourceStrings_RSStackEFAULT,	"Bad address."
+	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
+	IdResourceStrings_RSStackEMFILE,	"Too many open files."
+	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
+	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
+	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
+	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
+	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
+	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
+	IdResourceStrings_RSInvalidPortRange,	"Invalid Port Range (%d - %d)"
+	IdResourceStrings_RSReadTimeout,	"Read Timeout"
+	IdResourceStrings_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
 	IdResourceStrings_RSNoCommandHandlerFound,	"No command handler found."
+	IdResourceStrings_RSEMailSymbolOutsideAddress,	"@ Outside address"
 	IdResourceStrings_RSWS2CallError,	"Error on call Winsock2 library function %s"
 	IdResourceStrings_RSWS2LoadError,	"Error on loading Winsock2 library (%s)"
 	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
@@ -1132,12 +1306,10 @@ BEGIN
 	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
 	IdResourceStrings_RSStatusText,	"%s"
 	IdResourceStrings_RSConnectTimeout,	"Connect timed out."
-	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
-	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
-	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
-	IdResourceStrings_RSStackEBADF,	"Bad file number."
-	IdResourceStrings_RSStackEACCES,	"Access denied."
-	IdResourceStrings_RSStackEFAULT,	"Bad address."
+	IdResourceStrings_RSMsgClientEncodingText,	"Encoding text"
+	IdResourceStrings_RSMsgClientEncodingAttachment,	"Encoding attachment"
+	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
+	IdResourceStrings_RSFailedTimeZoneInfo,	"Failed attempting to retrieve time zone information."
 	IdResourceStrings_RSNotAllBytesSent,	"Not all bytes sent."
 	IdResourceStrings_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
 	IdResourceStrings_RSPackageSizeTooBig,	"Package Size Too Big."
@@ -1147,13 +1319,12 @@ BEGIN
 	IdResourceStrings_RSFileNotFound,	"File \"%s\" not found"
 	IdResourceStrings_RSOnlyOneAntiFreeze,	"Only one TIdAntiFreeze can exist per application."
 	IdResourceStrings_RSNotConnected,	"Not Connected"
+	IdResourceStrings_RSObjectTypeNotSupported,	"Object type not supported."
 	IdResourceStrings_RSTerminateThreadTimeout,	"Terminate Thread Timeout"
 	IdResourceStrings_RSNoExecuteSpecified,	"No execute handler found."
 	IdResourceStrings_RSIdNoDataToRead,	"No data to read."
 	IdResourceStrings_RSCanNotBindRange,	"Can not bind in port range (%d - %d)"
-	IdResourceStrings_RSInvalidPortRange,	"Invalid Port Range (%d - %d)"
-	IdResourceStrings_RSReadTimeout,	"Read Timeout"
-	IdResourceStrings_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
+	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
 	ADOConst_SMissingCommandText,	"Missing %s property"
 	ADOConst_SNoResultSet,	"CommandText does not return a result set"
 	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
@@ -1169,7 +1340,7 @@ BEGIN
 	IdResourceStrings_RSAlreadyConnected,	"Already connected."
 	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
 	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
-	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
+	DBConsts_SBcdOverflow,	"BCD overflow"
 	DBConsts_SInvalidBcdValue,	"%s is not a valid BCD value"
 	DBConsts_SInvalidFormatType,	"Invalid format type for BCD"
 	DBConsts_SCouldNotParseTimeStamp,	"Could not parse SQL TimeStamp string"
@@ -1185,7 +1356,7 @@ BEGIN
 	ADOConst_SInvalidEnumValue,	"Invalid Enum Value"
 	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
 	ADOConst_SNoDetailFilter,	"Filter property cannot be used for detail tables"
-	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
+	DBConsts_SExprNotAgg,	"Expression is not an aggregate expression"
 	DBConsts_SExprBadConst,	"Constant is not correct type %s"
 	DBConsts_SExprNoAggFilter,	"Aggregate expressions not allowed in filters"
 	DBConsts_SExprEmptyInList,	"IN predicate list may not be empty"
@@ -1201,7 +1372,7 @@ BEGIN
 	DBConsts_SDataSetUnidirectional,	"Operation not allowed on a unidirectional dataset"
 	DBConsts_SUnassignedVar,	"Unassigned variant value"
 	DBConsts_SRecordNotFound,	"Record not found"
-	DBConsts_SBcdOverflow,	"BCD overflow"
+	DBConsts_SExprTermination,	"Filter expression incorrectly terminated"
 	DBConsts_SExprNameError,	"Unterminated field name"
 	DBConsts_SExprStringError,	"Unterminated string constant"
 	DBConsts_SExprInvalidChar,	"Invalid filter expression character: '%s'"
@@ -1217,7 +1388,7 @@ BEGIN
 	DBConsts_SExprTypeMis,	"Type mismatch in expression"
 	DBConsts_SExprBadScope,	"Operation cannot mix aggregate value with record-varying value"
 	DBConsts_SExprNoArith,	"Arithmetic in filter expressions not supported"
-	DBConsts_SExprNotAgg,	"Expression is not an aggregate expression"
+	DBConsts_SFieldRequired,	"Field '%s' must have a value"
 	DBConsts_SDataSetMissing,	"Field '%s' has no dataset"
 	DBConsts_SInvalidCalcType,	"Field '%s' cannot be a calculated or lookup field"
 	DBConsts_SFieldReadOnly,	"Field '%s' cannot be modified"
@@ -1233,7 +1404,7 @@ BEGIN
 	DBConsts_SDataSetEmpty,	"Cannot perform this operation on an empty dataset"
 	DBConsts_SDataSetReadOnly,	"Cannot modify a read-only dataset"
 	DBConsts_SNestedDataSetClass,	"Nested dataset must inherit from %s"
-	DBConsts_SExprTermination,	"Filter expression incorrectly terminated"
+	DBConsts_SInvalidFieldKind,	"Invalid FieldKind"
 	DBConsts_SUnknownFieldType,	"Field '%s' is of an unknown type"
 	DBConsts_SFieldNameMissing,	"Field name missing"
 	DBConsts_SDuplicateFieldName,	"Duplicate field name '%s'"
@@ -1249,7 +1420,7 @@ BEGIN
 	DBConsts_SFieldSizeMismatch,	"Size mismatch for field '%s', expecting: %d actual: %d"
 	DBConsts_SInvalidVarByteArray,	"Invalid variant type or size for field '%s'"
 	DBConsts_SFieldOutOfRange,	"Value of field '%s' is out of range"
-	DBConsts_SFieldRequired,	"Field '%s' must have a value"
+	ComStrs_sInsertError,	"Unable to insert an item"
 	ComStrs_sInvalidOwner,	"Invalid owner"
 	ComStrs_sRichEditInsertError,	"RichEdit line insertion error"
 	ComStrs_sRichEditLoadFail,	"Failed to Load Stream"
@@ -1265,7 +1436,7 @@ BEGIN
 	ComStrs_sFailsetCalSelRange,	"Failed to set calendar selected range"
 	WinHelpViewer_hNoKeyword,	"No help keyword specified."
 	DBConsts_SInvalidFieldSize,	"Invalid field size"
-	DBConsts_SInvalidFieldKind,	"Invalid FieldKind"
+	ExtCtrls_clNameMenuText,	"Menu Text"
 	ExtCtrls_clNameNone,	"None"
 	ExtCtrls_clNameScrollBar,	"Scroll Bar"
 	ExtCtrls_clName3DDkShadow,	"3D Dark Shadow"
@@ -1281,7 +1452,7 @@ BEGIN
 	ComStrs_sTabFailSetObject,	"Failed to set object at index %d"
 	ComStrs_sTabMustBeMultiLine,	"MultiLine must be True when TabPosition is tpLeft or tpRight"
 	ComStrs_sInvalidIndex,	"Invalid index"
-	ComStrs_sInsertError,	"Unable to insert an item"
+	ExtCtrls_clNameBackground,	"Background"
 	ExtCtrls_clNameBtnFace,	"Button Face"
 	ExtCtrls_clNameBtnHighlight,	"Button Highlight"
 	ExtCtrls_clNameBtnShadow,	"Button Shadow"
@@ -1297,7 +1468,7 @@ BEGIN
 	ExtCtrls_clNameInfoBk,	"Info Background"
 	ExtCtrls_clNameInfoText,	"Info Text"
 	ExtCtrls_clNameMenu,	"Menu Background"
-	ExtCtrls_clNameMenuText,	"Menu Text"
+	ExtCtrls_clNameGray,	"Gray"
 	ExtCtrls_clNameSilver,	"Silver"
 	ExtCtrls_clNameRed,	"Red"
 	ExtCtrls_clNameLime,	"Lime"
@@ -1313,7 +1484,7 @@ BEGIN
 	ExtCtrls_clNameActiveBorder,	"Active Border"
 	ExtCtrls_clNameActiveCaption,	"Active Caption"
 	ExtCtrls_clNameAppWorkSpace,	"Application Workspace"
-	ExtCtrls_clNameBackground,	"Background"
+	Consts_SListBoxMustBeVirtual,	"Listbox (%s) style must be virtual in order to set Count"
 	Consts_SUnableToSaveSettings,	"Unable to save settings"
 	Consts_SRestoreDefaultSchedule,	"Would you like to reset to the default Priority Schedule?"
 	Consts_SNoGetItemEventHandler,	"No OnGetItem event handler assigned"
@@ -1329,7 +1500,7 @@ BEGIN
 	ExtCtrls_clNameNavy,	"Navy"
 	ExtCtrls_clNamePurple,	"Purple"
 	ExtCtrls_clNameTeal,	"Teal"
-	ExtCtrls_clNameGray,	"Gray"
+	Consts_SNoColumnMoving,	"goColMoving is not a supported option"
 	Consts_SNoEqualsInKey,	"Key may not contain equals sign (\"=\")"
 	Consts_SAssignSubItemError,	"Cannot assign a subitem to an actionbar when one of it's parent's is already assigned to an actionbar"
 	Consts_SDeleteItemWithSubItems,	"Item %s has subitems, delete anyway?"
@@ -1345,7 +1516,7 @@ BEGIN
 	Consts_SCirularReferencesNotAllowed,	"Circular references not allowed"
 	Consts_SCannotHideActionBand,	"%s does not allow hiding"
 	Consts_SErrorSettingCount,	"Error setting %s.Count"
-	Consts_SListBoxMustBeVirtual,	"Listbox (%s) style must be virtual in order to set Count"
+	Consts_SInvalidMemoSize,	"Text exceeds memo capacity"
 	Consts_SInvalidPrinterOp,	"Operation not supported on selected printer"
 	Consts_SNoDefaultPrinter,	"There is no default printer currently selected"
 	Consts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
@@ -1361,7 +1532,7 @@ BEGIN
 	Consts_SValueCaption,	"Value"
 	Consts_SKeyConflict,	"A key with the name of \"%s\" already exists"
 	Consts_SKeyNotFound,	"Key \"%s\" not found"
-	Consts_SNoColumnMoving,	"goColMoving is not a supported option"
+	Consts_SmkcLeft,	"Left"
 	Consts_SmkcUp,	"Up"
 	Consts_SmkcRight,	"Right"
 	Consts_SmkcDown,	"Down"
@@ -1377,7 +1548,7 @@ BEGIN
 	Consts_SInvalidClipFmt,	"Invalid clipboard format"
 	Consts_SIconToClipboard,	"Clipboard does not support Icons"
 	Consts_SCannotOpenClipboard,	"Cannot open clipboard"
-	Consts_SInvalidMemoSize,	"Text exceeds memo capacity"
+	Consts_SMsgDlgHelp,	"&Help"
 	Consts_SMsgDlgAbort,	"&Abort"
 	Consts_SMsgDlgRetry,	"&Retry"
 	Consts_SMsgDlgIgnore,	"&Ignore"
@@ -1393,7 +1564,7 @@ BEGIN
 	Consts_SmkcPgDn,	"PgDn"
 	Consts_SmkcEnd,	"End"
 	Consts_SmkcHome,	"Home"
-	Consts_SmkcLeft,	"Left"
+	Consts_SAllButton,	"&All"
 	Consts_SCannotDragForm,	"Cannot drag a form"
 	Consts_SVMetafiles,	"Metafiles"
 	Consts_SVEnhMetafiles,	"Enhanced Metafiles"
@@ -1409,7 +1580,7 @@ BEGIN
 	Consts_SMsgDlgNo,	"&No"
 	Consts_SMsgDlgOK,	"OK"
 	Consts_SMsgDlgCancel,	"Cancel"
-	Consts_SMsgDlgHelp,	"&Help"
+	Consts_SPrinting,	"Printing in progress"
 	Consts_SPrinterIndexError,	"Printer index out of range"
 	Consts_SInvalidPrinter,	"Printer selected is not valid"
 	Consts_SDeviceOnPort,	"%s on %s"
@@ -1425,7 +1596,7 @@ BEGIN
 	Consts_SIgnoreButton,	"&Ignore"
 	Consts_SRetryButton,	"&Retry"
 	Consts_SAbortButton,	"Abort"
-	Consts_SAllButton,	"&All"
+	Consts_SImageWriteFail,	"Failed to write ImageList data to stream"
 	Consts_SWindowDCError,	"Error creating window device context"
 	Consts_SWindowClass,	"Error creating window class"
 	Consts_SCannotFocus,	"Cannot focus a disabled or invisible window"
@@ -1441,7 +1612,7 @@ BEGIN
 	Consts_SMenuNotFound,	"Sub-menu is not in menu"
 	Consts_SNoTimers,	"Not enough timers available"
 	Consts_SNotPrinting,	"Printer is not currently printing"
-	Consts_SPrinting,	"Printing in progress"
+	Consts_SInvalidIcon,	"Icon image is not valid"
 	Consts_SInvalidMetafile,	"Metafile is not valid"
 	Consts_SInvalidPixelFormat,	"Invalid pixel format"
 	Consts_SInvalidImage,	"Invalid image"
@@ -1457,7 +1628,150 @@ BEGIN
 	Consts_SReplaceImage,	"Unable to Replace Image"
 	Consts_SImageIndexError,	"Invalid ImageList Index"
 	Consts_SImageReadFail,	"Failed to read ImageList data from stream"
-	Consts_SImageWriteFail,	"Failed to write ImageList data to stream"
+	RTLConsts_SDaysDescription,	"Days"
+	RTLConsts_SWeeksDescription,	"Weeks"
+	RTLConsts_SFortnightsDescription,	"Fortnights"
+	RTLConsts_SMonthsDescription,	"Months"
+	RTLConsts_SYearsDescription,	"Years"
+	RTLConsts_SDecadesDescription,	"Decades"
+	RTLConsts_SCenturiesDescription,	"Centuries"
+	RTLConsts_SMillenniaDescription,	"Millennia"
+	RTLConsts_SDateTimeDescription,	"DateTime"
+	RTLConsts_SJulianDateDescription,	"JulianDate"
+	RTLConsts_SModifiedJulianDateDescription,	"ModifiedJulianDate"
+	RTLConsts_SInvalidDateTime,	"''%s'' is not a valid date and time"
+	Consts_SCantWriteResourceStreamError,	"Can't write to a read-only resource stream"
+	Consts_SInvalidTabPosition,	"Tab position incompatible with current tab style"
+	Consts_SInvalidTabStyle,	"Tab style incompatible with current tab position"
+	Consts_SInvalidBitmap,	"Bitmap image is not valid"
+	RTLConsts_STonsDescription,	"Tons"
+	RTLConsts_SLongTonsDescription,	"LongTons"
+	RTLConsts_SOuncesDescription,	"Ounces"
+	RTLConsts_SPoundsDescription,	"Pounds"
+	RTLConsts_SStonesDescription,	"Stones"
+	RTLConsts_STemperatureDescription,	"Temperature"
+	RTLConsts_SCelsiusDescription,	"Celsius"
+	RTLConsts_SKelvinDescription,	"Kelvin"
+	RTLConsts_SFahrenheitDescription,	"Fahrenheit"
+	RTLConsts_SRankineDescription,	"Rankine"
+	RTLConsts_SReaumurDescription,	"Reaumur"
+	RTLConsts_STimeDescription,	"Time"
+	RTLConsts_SMilliSecondsDescription,	"MilliSeconds"
+	RTLConsts_SSecondsDescription,	"Seconds"
+	RTLConsts_SMinutesDescription,	"Minutes"
+	RTLConsts_SHoursDescription,	"Hours"
+	RTLConsts_SUKPecksDescription,	"UKPecks"
+	RTLConsts_SUKBucketsDescription,	"UKBuckets"
+	RTLConsts_SUKBushelsDescription,	"UKBushels"
+	RTLConsts_SMassDescription,	"Mass"
+	RTLConsts_SNanogramsDescription,	"Nanograms"
+	RTLConsts_SMicrogramsDescription,	"Micrograms"
+	RTLConsts_SMilligramsDescription,	"Milligrams"
+	RTLConsts_SCentigramsDescription,	"Centigrams"
+	RTLConsts_SDecigramsDescription,	"Decigrams"
+	RTLConsts_SGramsDescription,	"Grams"
+	RTLConsts_SDecagramsDescription,	"Decagrams"
+	RTLConsts_SHectogramsDescription,	"Hectograms"
+	RTLConsts_SKilogramsDescription,	"Kilograms"
+	RTLConsts_SMetricTonsDescription,	"MetricTons"
+	RTLConsts_SDramsDescription,	"Drams"
+	RTLConsts_SGrainsDescription,	"Grains"
+	RTLConsts_SFluidGillsDescription,	"FluidGills"
+	RTLConsts_SFluidOuncesDescription,	"FluidOunces"
+	RTLConsts_SFluidTablespoonsDescription,	"FluidTablespoons"
+	RTLConsts_SFluidTeaspoonsDescription,	"FluidTeaspoons"
+	RTLConsts_SDryGallonsDescription,	"DryGallons"
+	RTLConsts_SDryQuartsDescription,	"DryQuarts"
+	RTLConsts_SDryPintsDescription,	"DryPints"
+	RTLConsts_SDryPecksDescription,	"DryPecks"
+	RTLConsts_SDryBucketsDescription,	"DryBuckets"
+	RTLConsts_SDryBushelsDescription,	"DryBushels"
+	RTLConsts_SUKGallonsDescription,	"UKGallons"
+	RTLConsts_SUKPottlesDescription,	"UKPottle"
+	RTLConsts_SUKQuartsDescription,	"UKQuarts"
+	RTLConsts_SUKPintsDescription,	"UKPints"
+	RTLConsts_SUKGillsDescription,	"UKGill"
+	RTLConsts_SUKOuncesDescription,	"UKOunces"
+	RTLConsts_SDeciLitersDescription,	"DeciLiters"
+	RTLConsts_SLitersDescription,	"Liters"
+	RTLConsts_SDecaLitersDescription,	"DecaLiters"
+	RTLConsts_SHectoLitersDescription,	"HectoLiters"
+	RTLConsts_SKiloLitersDescription,	"KiloLiters"
+	RTLConsts_SAcreFeetDescription,	"AcreFeet"
+	RTLConsts_SAcreInchesDescription,	"AcreInches"
+	RTLConsts_SCordsDescription,	"Cords"
+	RTLConsts_SCordFeetDescription,	"CordFeet"
+	RTLConsts_SDecisteresDescription,	"Decisteres"
+	RTLConsts_SSteresDescription,	"Steres"
+	RTLConsts_SDecasteresDescription,	"Decasteres"
+	RTLConsts_SFluidGallonsDescription,	"FluidGallons"
+	RTLConsts_SFluidQuartsDescription,	"FluidQuarts"
+	RTLConsts_SFluidPintsDescription,	"FluidPints"
+	RTLConsts_SFluidCupsDescription,	"FluidCups"
+	RTLConsts_SHectaresDescription,	"Hectares"
+	RTLConsts_SSquareRodsDescription,	"SquareRods"
+	RTLConsts_SVolumeDescription,	"Volume"
+	RTLConsts_SCubicMillimetersDescription,	"CubicMillimeters"
+	RTLConsts_SCubicCentimetersDescription,	"CubicCentimeters"
+	RTLConsts_SCubicDecimetersDescription,	"CubicDecimeters"
+	RTLConsts_SCubicMetersDescription,	"CubicMeters"
+	RTLConsts_SCubicDecametersDescription,	"CubicDecameters"
+	RTLConsts_SCubicHectometersDescription,	"CubicHectometers"
+	RTLConsts_SCubicKilometersDescription,	"CubicKilometers"
+	RTLConsts_SCubicInchesDescription,	"CubicInches"
+	RTLConsts_SCubicFeetDescription,	"CubicFeet"
+	RTLConsts_SCubicYardsDescription,	"CubicYards"
+	RTLConsts_SCubicMilesDescription,	"CubicMiles"
+	RTLConsts_SMilliLitersDescription,	"MilliLiters"
+	RTLConsts_SCentiLitersDescription,	"CentiLiters"
+	RTLConsts_SPointsDescription,	"Points"
+	RTLConsts_SAreaDescription,	"Area"
+	RTLConsts_SSquareMillimetersDescription,	"SquareMillimeters"
+	RTLConsts_SSquareCentimetersDescription,	"SquareCentimeters"
+	RTLConsts_SSquareDecimetersDescription,	"SquareDecimeters"
+	RTLConsts_SSquareMetersDescription,	"SquareMeters"
+	RTLConsts_SSquareDecametersDescription,	"SquareDecameters"
+	RTLConsts_SSquareHectometersDescription,	"SquareHectometers"
+	RTLConsts_SSquareKilometersDescription,	"SquareKilometers"
+	RTLConsts_SSquareInchesDescription,	"SquareInches"
+	RTLConsts_SSquareFeetDescription,	"SquareFeet"
+	RTLConsts_SSquareYardsDescription,	"SquareYards"
+	RTLConsts_SSquareMilesDescription,	"SquareMiles"
+	RTLConsts_SAcresDescription,	"Acres"
+	RTLConsts_SCentaresDescription,	"Centares"
+	RTLConsts_SAresDescription,	"Ares"
+	RTLConsts_SFeetDescription,	"Feet"
+	RTLConsts_SYardsDescription,	"Yards"
+	RTLConsts_SMilesDescription,	"Miles"
+	RTLConsts_SNauticalMilesDescription,	"NauticalMiles"
+	RTLConsts_SAstronomicalUnitsDescription,	"AstronomicalUnits"
+	RTLConsts_SLightYearsDescription,	"LightYears"
+	RTLConsts_SParsecsDescription,	"Parsecs"
+	RTLConsts_SCubitsDescription,	"Cubits"
+	RTLConsts_SFathomsDescription,	"Fathoms"
+	RTLConsts_SFurlongsDescription,	"Furlongs"
+	RTLConsts_SHandsDescription,	"Hands"
+	RTLConsts_SPacesDescription,	"Paces"
+	RTLConsts_SRodsDescription,	"Rods"
+	RTLConsts_SChainsDescription,	"Chains"
+	RTLConsts_SLinksDescription,	"Links"
+	RTLConsts_SPicasDescription,	"Picas"
+	RTLConsts_SConvFactorZero,	"%s has a factor of zero"
+	RTLConsts_SDistanceDescription,	"Distance"
+	RTLConsts_SMicromicronsDescription,	"Micromicrons"
+	RTLConsts_SAngstromsDescription,	"Angstroms"
+	RTLConsts_SMillimicronsDescription,	"Millimicrons"
+	RTLConsts_SMicronsDescription,	"Microns"
+	RTLConsts_SMillimetersDescription,	"Millimeters"
+	RTLConsts_SCentimetersDescription,	"Centimeters"
+	RTLConsts_SDecimetersDescription,	"Decimeters"
+	RTLConsts_SMetersDescription,	"Meters"
+	RTLConsts_SDecametersDescription,	"Decameters"
+	RTLConsts_SHectometersDescription,	"Hectometers"
+	RTLConsts_SKilometersDescription,	"Kilometers"
+	RTLConsts_SMegametersDescription,	"Megameters"
+	RTLConsts_SGigametersDescription,	"Gigameters"
+	RTLConsts_SInchesDescription,	"Inches"
 	RTLConsts_SResNotFound,	"Resource %s not found"
 	RTLConsts_SSeekNotImplemented,	"%s.Seek not implemented"
 	RTLConsts_SSortedListError,	"Operation not allowed on sorted list"
@@ -1467,13 +1781,13 @@ BEGIN
 	RTLConsts_SWriteError,	"Stream write error"
 	RTLConsts_SThreadCreateError,	"Thread creation error: %s"
 	RTLConsts_SThreadError,	"Thread Error: %s (%d)"
+	RTLConsts_SInvalidJulianDate,	"%f Julian cannot be represented as a DateTime"
 	RTLConsts_SMissingDateTimeField,	"?"
-	RTLConsts_SInvalidDateTime,	"''%s'' is not a valid date and time"
-	Consts_SCantWriteResourceStreamError,	"Can't write to a read-only resource stream"
-	Consts_SInvalidTabPosition,	"Tab position incompatible with current tab style"
-	Consts_SInvalidTabStyle,	"Tab style incompatible with current tab position"
-	Consts_SInvalidBitmap,	"Bitmap image is not valid"
-	Consts_SInvalidIcon,	"Icon image is not valid"
+	RTLConsts_SConvDuplicateType,	"Conversion type (%s) already registered in %s"
+	RTLConsts_SConvUnknownFamily,	"Unknown conversion family %s"
+	RTLConsts_SConvDuplicateFamily,	"Conversion family (%s) already registered"
+	RTLConsts_SConvUnknownDescriptionWithPrefix,	"[%s%.8x]"
+	RTLConsts_SConvIllegalFamily,	"Illegal family"
 	RTLConsts_SInvalidPropertyElement,	"Invalid property element: %s"
 	RTLConsts_SInvalidPropertyPath,	"Invalid property path"
 	RTLConsts_SInvalidPropertyType,	"Invalid property type: %s"
