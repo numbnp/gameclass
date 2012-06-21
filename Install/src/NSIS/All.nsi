@@ -1,7 +1,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "GameClass3"
-!define PRODUCT_VERSION "3.85.2.14"
+!define PRODUCT_VERSION "3.85.2.15"
 !define PRODUCT_PUBLISHER "numb"
 !define PRODUCT_WEB_SITE "http://forum.nodasoft.ru"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"

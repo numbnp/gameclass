@@ -138,6 +138,8 @@ type
     pmnuAddReport: TMenuItem;
     pmnuDeleteReport: TMenuItem;
     NavigatorMenuSeparator1: TMenuItem;
+    tbtnSend: TToolButton;
+    actSendMail: TAction;
     procedure actConstructorExecute(Sender: TObject);
     procedure tvReportsNavigatorGetText(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
@@ -185,6 +187,8 @@ type
     procedure actImportReportExecute(Sender: TObject);
     procedure actSaveToFileExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
+    procedure tbtnSendClick(Sender: TObject);
+    procedure actSendMailExecute(Sender: TObject);
 
   private
     // fields
@@ -639,6 +643,7 @@ begin
   actEnableDTFilter.Visible := (not actConstructor.Checked) and actShowGrid.Checked;
   actSaveToFile.Visible := not actConstructor.Checked;
   actPrint.Visible := not actConstructor.Checked;
+  actSendMail.Visible := not actConstructor.Checked;
   tbarMainSeparator7.Visible := not actConstructor.Checked;
 
   tbarFilter.Visible := actEnableDTFilter.Checked
@@ -1237,5 +1242,15 @@ begin
 
 end; // TfrmReports._SubscribeToLanguagesManagerEvents
 }
+
+procedure TfrmReports.tbtnSendClick(Sender: TObject);
+begin
+  FReportFormsManager.SendFileByEmail();
+end;
+
+procedure TfrmReports.actSendMailExecute(Sender: TObject);
+begin
+  FReportFormsManager.SendFileByEmail();
+end;
 
 end.

@@ -82,6 +82,7 @@ type
     procedure DeleteReportColumn(const AnId: Integer);
     function GetActiveColumnId(): Integer;
     procedure SaveToFile();
+    procedure SendFileByEmail();
     procedure Print();    
 
     procedure HideAll();
@@ -234,6 +235,12 @@ begin
   end;
 end; // TReportFormsManager.SaveToFile
 
+procedure TReportFormsManager.SendFileByEmail();
+begin
+  if FfrmReportView.Visible then begin
+    FfrmReportView.SendTable;
+  end;
+end; // TReportFormsManager.SaveToFile
 
 procedure TReportFormsManager.Print();
 begin

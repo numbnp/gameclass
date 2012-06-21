@@ -122,13 +122,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=NodaSoft
 FileDescription=GC3Server
-FileVersion=3.85.2.14
+FileVersion=3.85.2.15
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3
-ProductVersion=3.85.2.14 Free
+ProductVersion=3.85.2.15 Free
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\dclite70.bpl=Borland Integrated Translation Environment
 c:\program files\borland\delphi7\Projects\Bpl\Win2KTray.bpl=(untitled)
