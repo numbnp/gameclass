@@ -46,7 +46,6 @@ uses
   frmGCMessageBox in 'frmGCMessageBox.pas' {formGCMessageBox},
   frmInputSumm in 'frmInputSumm.pas' {formInputSumm},
   frmInstallLogin in 'frmInstallLogin.pas' {formInstallLogin},
-  frmMail in 'frmMail.pas' {formMail},
   frmMain in 'frmMain.pas' {formMain},
   frmPassChange in 'frmPassChange.pas' {formPassChange},
   frmRemontLong in 'frmRemontLong.pas' {formRemontLong},
@@ -185,7 +184,11 @@ uses
   uPingIcmp in '..\Parts\Tools\uPingIcmp.pas',
   uPingThread in '..\Parts\Tools\uPingThread.pas',
   uTimeShift in '..\Parts\Reports\uTimeShift.pas',
-  uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas';
+  uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
+  ufrmMailSend in 'ufrmMailSend.pas' {frmMailSend},
+  frameMail in 'frameMail.pas' {framMail: TFrame},
+  frmMail in 'frmMail.pas' {formMail},
+  uRegistryMail in '..\Parts\Registry\uRegistryMail.pas';
 
 {$R *.res}
 
@@ -232,6 +235,8 @@ begin
   Application.CreateForm(TformCompStop, formCompStop);
   Application.CreateForm(TfrmVolume, frmVolume);
   Application.CreateForm(TfrmOperatorOpt, frmOperatorOpt);
+  Application.CreateForm(TfrmMailSend, frmMailSend);
+  Application.CreateForm(TformMail, formMail);
   Application.Run;
 
   FreeAndNilWithAssert(Debug);

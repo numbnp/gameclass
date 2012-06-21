@@ -12,7 +12,7 @@ uses QGraphics;
 const
   // misc2
   BASE_VERSION = '3.85.2';
-  APP_VERSION = '3.85.2.14 Free';
+  APP_VERSION = '3.85.2.15 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -273,7 +273,7 @@ const
   FRAME_CLIENT_INTERFACE = 16;
   FRAME_TASKKILL = 17;
   FRAME_DISCOUNTS = 18;
-
+  FRAME_MAIL = 19;
   //всякая муть
   READ_UNCONTROLSTATE_TIMEOUT = GLOBAL_TIMER + 1; //задержка в сек. для того чтобы процедура у менеджера
                                    //успевала читать данные записанные оператором

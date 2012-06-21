@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 235
-  Top = 175
+  Left = 355
+  Top = 157
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -508,8 +508,8 @@ object formMain: TformMain
       object pnlReports: TPanel
         Left = 0
         Top = 0
-        Width = 911
-        Height = 489
+        Width = 943
+        Height = 482
         Align = alClient
         BevelOuter = bvNone
         BiDiMode = bdLeftToRight
