@@ -185,6 +185,9 @@ type
     FCanceledReserveSession: TGCSession;
     FDesignedSession: TGCSession;
     ReserveEditSumm: string;
+    FbControlsEnabled: Boolean;
+    procedure EnableControls;
+    procedure DisableControls;
     procedure UpdateInformation;
     procedure DoDesign(AbSetFocus: Boolean);
     procedure DoDesignSessionChart;
@@ -339,11 +342,23 @@ begin
 //  timerFrmCompStartTimer(Sender);
   timerFrmCompStart.Enabled := true;
   editMoney.Text := '';
-
+  EnableControls;
 {  frameSessionsChart1.DoDesign;
   frameSessionsChart1.Activate;
   frameSessionsChart1.Invalidate;
   Invalidate;}
+end;
+
+procedure TformCompStart.EnableControls;
+begin
+  FbControlsEnabled := True;
+  butOk.Enabled := FbControlsEnabled;
+end;
+
+procedure TformCompStart.DisableControls;
+begin
+  FbControlsEnabled := false;
+  butOk.Enabled := FbControlsEnabled;
 end;
 
 procedure TformCompStart.DoDesignSessionChart;
@@ -374,6 +389,8 @@ var
   summmin : Real;
   index: integer;
 begin
+  if not FbControlsEnabled then exit;
+  DisableControls;
   timerFrmCompStartTimer(nil);
   Index := TarifsGetIndex(FDesignedSession.IdTarif);
 
@@ -396,6 +413,7 @@ begin
         + GRegistry.Options.Currency;
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
+    EnableControls;
     exit;
   end;
   if (StartSumma > summmax) then
@@ -405,6 +423,7 @@ begin
         + GRegistry.Options.Currency;
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
+    EnableControls;
     exit;
   end;
 
@@ -460,6 +479,7 @@ begin
           end;
         end;
       end;
+  EnableControls;
   formMain.StartUpdate;
   ModalResult := mrOk;
 end;
