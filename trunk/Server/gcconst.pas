@@ -11,8 +11,8 @@ uses QGraphics;
 
 const
   // misc2
-  BASE_VERSION = '3.85.2';
-  APP_VERSION = '3.85.2.15 Free';
+  BASE_VERSION = '3.85.3';
+  APP_VERSION = '3.85.3.1 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -160,6 +160,7 @@ const
   DS_DISCOUNTS_DELETE = 'AccountsDiscountDelete';
   DS_DISCOUNTS_UPDATE = 'AccountsDiscountUpdate';
   DS_ACCOUNTS_MONEYPAY = 'AccountsMoneyPay';
+  DS_ACCOUNTS_MONEYBONUSPAY = 'AccountsMoneyBonusPay';
   DS_ACCOUNTS_MONEYRETURN = 'AccountsMoneyReturn';
   DS_ACCOUNTS_MONEYHISTORYSELECT = 'AccountsHistorySelect';
   DS_CUSTOMREPORTS_SELECT = 'CustomReportsSelect';

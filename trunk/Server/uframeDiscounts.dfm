@@ -2,7 +2,7 @@ object frameDiscounts: TframeDiscounts
   Left = 0
   Top = 0
   Width = 449
-  Height = 409
+  Height = 418
   TabOrder = 0
   object gbOptions: TGroupBox
     Left = 0
@@ -198,31 +198,117 @@ object frameDiscounts: TframeDiscounts
     Left = 0
     Top = 272
     Width = 449
-    Height = 137
+    Height = 146
     Align = alClient
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1088#1077#1092#1077#1088#1089#1082#1086#1081' '#1089#1080#1089#1090#1077#1084#1099
     TabOrder = 3
-    object vleBonus: TValueListEditor
-      Left = 16
+    object lblBonus: TLabel
+      Left = 246
+      Top = 72
+      Width = 47
+      Height = 13
+      Caption = #1041#1086#1085#1091#1089' (%)'
+    end
+    object lblLevel: TLabel
+      Left = 247
       Top = 24
-      Width = 217
-      Height = 105
-      Strings.Strings = (
-        '1=0'
-        '2=0'
-        '3=0'
-        '4=0'
-        '5=0')
+      Width = 44
+      Height = 13
+      Caption = #1059#1088#1086#1074#1077#1085#1100
+    end
+    object butReferalsUpdate: TButton
+      Left = 358
+      Top = 93
+      Width = 75
+      Height = 25
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100
       TabOrder = 0
-      TitleCaptions.Strings = (
-        #1059#1088#1086#1074#1077#1085#1100
-        #1041#1086#1085#1091#1089' %')
-      ColWidths = (
-        61
-        133)
+      OnClick = butReferalsUpdateClick
+    end
+    object butReferalsDel: TButton
+      Left = 358
+      Top = 61
+      Width = 75
+      Height = 25
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      TabOrder = 1
+      OnClick = butReferalsDelClick
+    end
+    object editLevel: TEdit
+      Left = 245
+      Top = 43
+      Width = 92
+      Height = 21
+      TabOrder = 2
+      OnChange = editLevelChange
+    end
+    object editBonus: TEdit
+      Left = 245
+      Top = 91
+      Width = 92
+      Height = 21
+      TabOrder = 3
+      OnChange = editBonusChange
+    end
+    object butReferalsAdd: TButton
+      Left = 358
+      Top = 29
+      Width = 75
+      Height = 25
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+      TabOrder = 4
+      OnClick = butReferalsAddClick
+    end
+    object grdReferals: TDBGridEh
+      Left = 16
+      Top = 23
+      Width = 217
+      Height = 114
+      AutoFitColWidths = True
+      DataSource = dsrcReferals
+      FooterColor = clWindow
+      FooterFont.Charset = DEFAULT_CHARSET
+      FooterFont.Color = clWindowText
+      FooterFont.Height = -11
+      FooterFont.Name = 'MS Sans Serif'
+      FooterFont.Style = []
+      Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+      TabOrder = 5
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Style = []
+      VertScrollBar.VisibleMode = sbNeverShowEh
+      FilterStringColor = clWindow
+      OnCellClick = grdReferalsCellClick
+      Columns = <
+        item
+          EditButtons = <>
+          FieldName = 'id'
+          Footers = <>
+          Visible = False
+        end
+        item
+          EditButtons = <>
+          FieldName = 'level'
+          Footers = <>
+          Title.Caption = #1059#1088#1086#1074#1077#1085#1100
+          Width = 106
+        end
+        item
+          EditButtons = <>
+          FieldName = 'percent'
+          Footers = <>
+          Title.Caption = #1041#1086#1085#1091#1089' %'
+          Width = 105
+        end>
     end
   end
   object dsrcDiscounts: TDataSource
     Left = 392
+  end
+  object dsrcReferals: TDataSource
+    Left = 360
   end
 end

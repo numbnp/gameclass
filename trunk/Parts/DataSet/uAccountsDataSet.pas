@@ -17,6 +17,7 @@ type
   public
     function LocateByName(const AstrName: String): Boolean;
     function DoUpdateMoneyPut(const AnId: Integer; AfMoney: Double): Boolean;
+    function DoUpdateMoneyBonusPut(const AnId: Integer; AfMoney: Double): Boolean;
     function DoUpdateMoneyRemove(const AnId: Integer; AfMoney: Double): Boolean;
     function GetFreeCheckAccountsName: String;
     function GetCheckAccountsPassword: String;
@@ -94,7 +95,11 @@ begin
       + ', @ExpirationDate=N'''+ DateTimeToSQLStr(FieldValues['ExpirationDate'])
       + ''', @assigntarif='+ IntToStr(FieldValues['assigntarif'])
       + ', @userlevel='+ IntToStr(FieldValues['userlevel'])
-      + ', @force_tariff='+ IntToStr(FieldValues['force_tariff']));
+      + ', @force_tariff='+ IntToStr(FieldValues['force_tariff'])
+      + ', @referal='+ IntToStr(FieldValues['referal'])
+      + ', @username=N''' + FieldValues['username']
+      + ''', @uname=N''' + FieldValues['uname']
+      + ''', @uotch=N''' + FieldValues['uotch'] + '''');
 
 
   Result := Result and dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_UPDATECODES
@@ -110,6 +115,16 @@ begin
       + ', @summa=' + FloatToSQLStr(AfMoney)
       + ', @moment=''' + DateTimeToSQLStr(GetVirtualTimeReset) + '''');
 end;
+
+function TAccountsDataSet.DoUpdateMoneyBonusPut(const AnId: Integer;
+    AfMoney: Double): Boolean;
+begin
+  Result := dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_MONEYBONUSPAY
+      + ' @id=' + IntToStr(FieldValues['id'])
+      + ', @summa=' + FloatToSQLStr(AfMoney)
+      + ', @moment=''' + DateTimeToSQLStr(GetVirtualTimeReset) + '''');
+end;
+
 
 function TAccountsDataSet.DoUpdateMoneyRemove(const AnId: Integer;
     AfMoney: Double): Boolean;

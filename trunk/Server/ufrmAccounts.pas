@@ -14,14 +14,12 @@ type
     gbAccountInfo: TGroupBox;
     lblAccountName: TLabel;
     lblAccountNumber: TLabel;
-    lblAccountPassword: TLabel;
     lblAccountAddress: TLabel;
     lblAccountPhone: TLabel;
     lblAccountPhoto: TLabel;
     imgAccountPhotoBG: TImage;
     editAccountName: TDBEditEh;
     editAccountNumber: TDBEditEh;
-    editAccountPass: TDBEditEh;
     editAccountAddress: TDBEditEh;
     editAccountPhone: TDBEditEh;
     butPhoto: TButton;
@@ -38,20 +36,14 @@ type
     butBalanceRemove: TButton;
     lblZeroAccountBalance: TLabel;
     editAccountZeroBalance: TDBEditEh;
-    butAccountAdd: TButton;
-    butAccountSave: TButton;
-    butAccountDelete: TButton;
-    butViewSecCodes: TButton;
     Label6: TLabel;
     butClose: TButton;
     butHelp: TButton;
-    butGenerateSecCodes: TButton;
     lblSummaryDiscount: TLabel;
     lblAccountEmail: TLabel;
     editAccountEmail: TDBEditEh;
     lblAccountMemo: TLabel;
     memoAccountMemo: TDBMemo;
-    butClearPass: TButton;
     dsrcAccounts: TDataSource;
     grdAccounts: TDBGridEh;
     OpenDialog1: TOpenDialog;
@@ -70,6 +62,23 @@ type
     cbForceTariff: TComboBox;
     lblForceTariff: TLabel;
     editForceTariff: TDBEditEh;
+    butAccountAdd: TButton;
+    butAccountSave: TButton;
+    butAccountDelete: TButton;
+    editSername: TDBEditEh;
+    lblSername: TLabel;
+    lblName: TLabel;
+    editName: TDBEditEh;
+    lblOt: TLabel;
+    editOt: TDBEditEh;
+    butGenerateSecCodes: TButton;
+    butViewSecCodes: TButton;
+    butClearPass: TButton;
+    lblAccountPassword: TLabel;
+    editAccountPass: TDBEditEh;
+    lblReferal: TLabel;
+    cbReferal: TComboBox;
+    editReferal: TDBEditEh;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -104,6 +113,12 @@ type
       Shift: TShiftState);
     procedure grdAccountsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure editOtChange(Sender: TObject);
+    procedure editNameChange(Sender: TObject);
+    procedure editSernameChange(Sender: TObject);
+    procedure cbReferalChange(Sender: TObject);
+    procedure editReferalChange(Sender: TObject);
+    procedure editAccountPassChange(Sender: TObject);
   private
     { Private declarations }
     FbDirty: Boolean;
@@ -147,7 +162,8 @@ uses
   uAccountsRecord,
   uY2KString,
   uKKMTools,
-  uRegistry;
+  uRegistry,
+  uAccountSystem, uAccountsReferals;
 
 {$R *.dfm}
 
@@ -167,6 +183,8 @@ var
   bRecordSelected: Boolean;
   bEditPermission: Boolean;
   bManagerPermission: Boolean;
+  i:Integer;
+  bookmark: Pointer;
 begin
   bCreateRigth := isManager or FunctionAmIRight(FN_ACCOUNTS_CREATE);
   bRecordSelected := not GAccountsCopy.IsEmpty;
@@ -213,6 +231,19 @@ begin
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
   cbUserLevel.Enabled:=cbTarifsLimit.Checked and bManagerPermission;
   cbForceTariff.Enabled:=bManagerPermission;
+  cbReferal.Enabled := GAccountSystem.RefersSystemEnabled and bEditPermission;
+  editAccountPass.Enabled := isManager; 
+  if cbReferal.Items.Count <> GAccountSystem.Accounts.RecordCount+1 then
+  begin
+    cbReferal.Items.Clear;
+    cbReferal.Items.Add('');
+    GAccountSystem.Accounts.First;
+    while not GAccountSystem.Accounts.Eof do
+    begin
+      cbReferal.Items.Add(GAccountSystem.Accounts.Current.Name);
+      GAccountSystem.Accounts.Next;
+    end;
+  end;
   UpdateDiscount;
   DoDesignExpirationDate;
 end;
@@ -359,6 +390,16 @@ begin
   GAccountsCopy.Post;
   //butAccountSave.Enabled := false;
   DoDesign;
+
+  cbReferal.Items.Clear;
+  cbReferal.Items.Add('');
+  GAccountSystem.Accounts.First;
+  while not GAccountSystem.Accounts.Eof do
+  begin
+    cbReferal.Items.Add(GAccountSystem.Accounts.Current.Name);
+    GAccountSystem.Accounts.Next;
+  end;
+
 end;
 
 procedure TfrmAccounts.butBalanceAddClick(Sender: TObject);
@@ -367,6 +408,7 @@ var
   res: double;
   str: string;
   bActionCanceled: Boolean;
+  Rbonus,refer,Rlevel:integer;
 begin
   If not FunctionAmIRight(FN_ACCOUNTS_CHANGE_MONEY) then exit;
   if butAccountSave.Enabled then
@@ -399,6 +441,25 @@ begin
       Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_0, 'Учетная запись '         //перевести
           + GAccountsCopy.Current.Name + '. Внесение денег на счет :'            //перевести
           + FloatToStrGC(res));
+      if GAccountSystem.RefersSystemEnabled and (GAccountsCopy.Current.Referal > 0) then
+      begin
+        Rlevel:=1;
+        refer:= GAccountsCopy.Current.Referal;
+        Rbonus:=GAccountSystem.AccountsReferals.BonusByLevel(Rlevel);
+        While ((Rbonus>0) and (refer>0)) do
+        begin
+          GAccountSystem.Accounts.Items[refer].MoneyBonusPut((res*Rbonus)/100);
+
+
+          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_0, 'Учетная запись '         //перевести
+            + GAccountSystem.Accounts.Items[refer].Name + '. Начислен реферский бонус :'            //перевести
+            + FloatToStrGC((res*Rbonus)/100));
+          refer:=GAccountSystem.Accounts.Items[refer].Referal;
+          inc(Rlevel);
+          Rbonus := GAccountSystem.AccountsReferals.BonusByLevel(Rlevel);
+        end;
+      end;
+
     end;
   end;
 end;
@@ -583,8 +644,8 @@ begin
   if Length(editFilter.Text) > 0 then
   begin
     if TryStrToFloat(editFilter.Text,fvalue) then
-      str := '(id=' + inttostr(round(fvalue)) + ') or ';
-    str := str + '(name LIKE ''*' + editFilter.Text + '*'')';
+      str := '( [id]=' + inttostr(round(fvalue))  + ' ) or ';
+    str := str + '([name] LIKE ''*' + editFilter.Text + '*'' )';
   end;
   try
     GAccountsCopy.Filter := str;
@@ -643,7 +704,7 @@ var
   i: integer;
   id_tariff: integer;
 begin
-  id_tariff:= strtoint(editForceTariff.text);
+  id_tariff:= StrToIntDef (editForceTariff.text,-1);
   if id_tariff<0 then
   begin
      cbForceTariff.Text := 'Нет';
@@ -678,7 +739,55 @@ end;
 procedure TfrmAccounts.grdAccountsKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  If (Key=VK_RETURN) and (not isManager) then butBalanceAddClick(Sender);
+  If (Key=VK_RETURN) then butBalanceAddClick(Sender);
+end;
+
+procedure TfrmAccounts.editOtChange(Sender: TObject);
+begin
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.editNameChange(Sender: TObject);
+begin
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.editSernameChange(Sender: TObject);
+begin
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.cbReferalChange(Sender: TObject);
+var
+  uindex: Integer;
+begin
+  if cbReferal.Text = '' then
+    uindex:=0
+  else
+  begin
+    GAccountSystem.Accounts.First;
+    while not GAccountSystem.Accounts.Eof do
+    begin
+      if GAccountSystem.Accounts.Current.Name = cbReferal.Text then
+        uindex := GAccountSystem.Accounts.Current.Id;
+      GAccountSystem.Accounts.Next;
+    end;
+  end;
+  editReferal.Text := inttostr(uindex);
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.editReferalChange(Sender: TObject);
+begin
+  if (editReferal.text='0') or (editReferal.text = '') then
+    cbReferal.Text := ''
+  else
+    cbReferal.Text := GAccountSystem.Accounts.Items[strtoint(editReferal.text)].Name;
+end;
+
+procedure TfrmAccounts.editAccountPassChange(Sender: TObject);
+begin
+  _OnChange(Sender);
 end;
 
 end.
