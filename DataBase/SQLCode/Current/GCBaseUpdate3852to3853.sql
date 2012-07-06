@@ -408,10 +408,252 @@ END
 GO
 
 
+
+/* -----------------------------------------------------------------------------
+                       AccountsReferals for AutoUpdate
+----------------------------------------------------------------------------- */
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[AccountsReferals]'))
+CREATE TABLE [dbo].[AccountsReferals] (
+	[id] [int] IDENTITY (1, 1) NOT NULL ,
+	[level] [int] NOT NULL ,
+	[percent] [int] NOT NULL 
+) ON [PRIMARY]
+
+insert into AccountsReferals ([level],[percent]) values (1,20)
+insert into AccountsReferals ([level],[percent]) values (2,15)
+insert into AccountsReferals ([level],[percent]) values (3,10)
+insert into AccountsReferals ([level],[percent]) values (4,5)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsReferalsSelect]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[AccountsReferalsSelect]
+GO
+CREATE PROCEDURE AccountsReferalsSelect
+  @id INT = NULL
+AS 
+BEGIN
+  SELECT * FROM AccountsReferals 
+    WHERE ([id] = @id) OR (@id IS NULL)
+    ORDER BY level asc
+END
+GO
+
+GRANT EXECUTE ON [dbo].[AccountsReferalsSelect] TO [public]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsReferalsInsert]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[AccountsReferalsInsert]
+GO
+CREATE PROCEDURE AccountsReferalsInsert
+  @level INT = 0,
+  @percent INT = 0
+
+AS
+BEGIN
+  INSERT INTO AccountsReferals ([level], [percent]) VALUES (@level, @percent)
+  SELECT SCOPE_IDENTITY() [id]
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsReferalsDelete]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[AccountsReferalsDelete]
+GO
+CREATE PROCEDURE AccountsReferalsDelete
+  @id money
+AS
+BEGIN 
+  DELETE FROM AccountsReferals WHERE [id] = @id
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsReferalsUpdate]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[AccountsReferalsUpdate]
+GO
+CREATE PROCEDURE AccountsReferalsUpdate
+  @id INT,
+  @level INT,
+  @percent INT
+
+AS 
+BEGIN
+  UPDATE AccountsReferals SET [level] = @level, [percent] = @percent
+    WHERE [id]=@id
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsReferalsAutoUPDATE]') 
+        AND OBJECTPROPERTY(id, N'IsTrigger') = 1)
+    DROP TRIGgER [dbo].[AccountsReferalsAutoUPDATE]
+GO
+CREATE TRIGGER AccountsReferalsAutoUPDATE ON [dbo].[AccountsReferals] 
+
+FOR INSERT, UPDATE, DELETE 
+AS
+BEGIN
+  DECLARE @idI INT
+  DECLARE @idD INT
+  DECLARE @idAction INT
+  DECLARE @isdeleted INT
+
+  DECLARE IDcursor CURSOR FOR SELECT I.id AS [idI], D.id AS [idD] 
+    FROM INSERTED AS I  
+    FULL OUTER JOIN DELETED AS D ON I.id = D.id
+  OPEN IDcursor
+  FETCH NEXT FROM IDcursor INTO @idI, @idD
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+    IF NOT(@idI IS NULL) AND (@idD IS NULL) 
+      SET @idAction = 1 --Insert
+    IF (@idI IS NULL) AND NOT(@idD IS NULL) 
+      SET @idAction = 2 --Delete
+    IF NOT(@idI IS NULL) AND NOT(@idD IS NULL) 
+      SET @idAction = 3 --Update
+    INSERT AutoUpdate(idTable, idAction, idRecord) VALUES(2/*AccountsReferals*/, @idAction, ISNULL(@idI,@idD))
+    FETCH NEXT FROM IDcursor INTO @idI, @idD
+  END
+
+  CLOSE IDcursor
+  DEALLOCATE IDcursor
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[AutoUpdateTables] WHERE [id] = 6)
+	INSERT dbo.AutoUpdateTables VALUES (6, 'AccountsReferals')
+GO
+
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'referal' 
+  AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
+ALTER TABLE [Accounts] ADD [referal] [int] NOT NULL DEFAULT (0)
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'username' 
+  AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
+ALTER TABLE [Accounts] ADD [username] [nvarchar] (80) NOT NULL DEFAULT ''
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'uname' 
+  AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
+ALTER TABLE [Accounts] ADD [uname] [nvarchar] (80) NOT NULL DEFAULT ''
+GO
+
+IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'uotch' 
+  AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
+ALTER TABLE [Accounts] ADD [uotch] [nvarchar] (80) NOT NULL DEFAULT ''
+GO
+
+
+
+ALTER PROCEDURE AccountsUpdate
+@id int,
+@name nvarchar(50),
+@password nvarchar(50),
+@email nvarchar(80),
+@phone nvarchar(50),
+@isenabled int,
+@isblocked int,
+@isprivileged int, 
+@privilegedDiscount int, 
+@zeroBalance money,
+@memotext nvarchar(2000) = N'',
+@address nvarchar(300)=N'',
+@summary money,
+@PeriodOfValidity int = 0,
+@ExpirationDate datetime,
+@assigntarif int,
+@userlevel int,
+@force_tariff int,
+@referal int,
+@username nvarchar(50),
+@uname nvarchar(50),
+@uotch nvarchar(50)
+AS 
+
+IF (EXISTS (SELECT * FROM Accounts WHERE ([name]=@name) AND (@name <> N'') AND ([id]<>@id) AND ([isdeleted]=0))) BEGIN
+  RAISERROR 50001 'Account already exists! Choose other name...'
+  RETURN 50001
+END
+
+IF (EXISTS (SELECT * FROM Accounts WHERE [id] = @id AND [isdeleted] = 0)) BEGIN
+ UPDATE Accounts SET
+  [name] = @name,
+  [password] = @password,
+  [email] = @email,
+  [phone] = @phone,
+  [isenabled] = @isenabled,
+  [isblocked] = @isblocked,
+  [isprivileged] = @isprivileged, 
+  [privilegedDiscount] = @privilegedDiscount, 
+  [zeroBalance] = @zeroBalance,
+  [memo] = @memotext,
+  [address] = @address,
+  [summary] = @summary,
+  [PeriodOfValidity] = @PeriodOfValidity,
+  [ExpirationDate] = @ExpirationDate,
+  [assigntarif] = @assigntarif,
+  [userlevel] = @userlevel,
+  [force_tariff] = @force_tariff,
+  [referal] = @referal,
+  [username] = @username,
+  [uname] = @uname,
+  [uotch] = @uotch
+  WHERE [id] = @id
+END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[AccountsMoneyBonusPay]') 
+        AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE [dbo].[AccountsMoneyBonusPay]
+GO
+
+CREATE PROCEDURE AccountsMoneyBonusPay
+@id int,
+@summa money,
+@moment datetime,
+@comment nvarchar(200) = N''
+ 
+AS 
+
+/*
+ what = 0 - popolnenie balanca
+ what = 1 - zabiranie deneg s balanca
+*/
+
+declare @idMe int
+select @idMe = [id] from Users where ([name] = system_user) and ([isdelete]=0)
+
+update Accounts set
+ [balance] = [balance] + @summa
+ where [id]= @id and ([isdeleted]=0)
+
+insert into AccountsHistory
+ ([idAccounts], [moment], [what], [summa], [comment], [operator])
+ values
+ (@id, @moment, 4, @summa, @comment, @idMe)
+
+GO
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+GRANT  EXECUTE  ON [dbo].[AccountsMoneyBonusPay]  TO [public]
+GO
+
+
+
+
 /* -----------------------------------------------------------------------------
                                UPDATE Version
 ----------------------------------------------------------------------------- */
-UPDATE Registry SET [value]='3.85.2' WHERE [key]='BaseVersion'
+UPDATE Registry SET [value]='3.85.3' WHERE [key]='BaseVersion'
 GO
 
 

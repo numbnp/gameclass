@@ -73,8 +73,10 @@ uses
 //  Dialogs,
   // project units
   uDebugLog,
-  uY2KCommon,
-  uProtocolTcp;
+{$IFDEF MSWINDOWS}
+  uProtocolTcp,
+{$ENDIF}
+  uY2KCommon;
 
 
 
@@ -132,7 +134,7 @@ end; // TLocalCommandReceiver.StopReceiveProcess
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 // events handlers
-
+{$IFDEF MSWINDOWS}
 procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
 var
 {  strTest: string;
@@ -167,7 +169,39 @@ begin
   end;
 
 end; // TLocalCommandReceiver._TCPServerRead
+{$ENDIF}
+{$IFDEF LINUX}
+procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
+var
+  strTest: string;
+  strLine: string;
+  nLength: integer;
+//  CommBlock: TCommandPakage;
+begin
+  try
+    with AThread.Connection do
+      try
+        strTest := ReadString(4);
+        if strTest = 'sYNc' then
+        begin
+          nLength := ReadInteger();
+          strLine := ReadString(nLength);
+          strTest := ReadString(2);
+        end
+      finally
+        Disconnect();
+      end;
 
+    _SendDataReceiveEvent(strLine);
+
+  except
+    on e: Exception do begin
+      Debug.Trace0('_TCPServerRead error! ' + e.Message);
+    end;
+  end;
+
+end; // TLocalCommandReceiver._TCPServerRead
+{$ENDIF}
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

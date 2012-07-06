@@ -54,12 +54,14 @@ type
     function GetUserLevel: Integer;
     procedure SetUserLevel(Value: Integer);
     function GetForceTariff: Integer;
+    function GetReferal: Integer;
   public
     constructor Create(AAccountsDataSet: TAccountsDataSet);
 //      function GetPhoto:boolean;        // загрузить фоту, если она есть
 
     procedure GenerateSecCodes;
     procedure MoneyPut(AfMoney: Double);
+    procedure MoneyBonusPut(AfMoney: Double);
     procedure MoneyRemove(AfMoney: Double);
     function Opened: Boolean; //баланс больше нуля
     function History: String;
@@ -112,6 +114,8 @@ type
         read GetUserLevel write SetUserLevel;
     property ForceTariff: Integer
         read GetForceTariff;
+    property Referal: Integer
+        read GetReferal;
   end;
 
 
@@ -318,6 +322,11 @@ begin
   FAccountsDataSet.DoUpdateMoneyPut(Id, AfMoney);
 end;
 
+procedure TAccountsRecord.MoneyBonusPut(AfMoney: Double);
+begin
+  FAccountsDataSet.DoUpdateMoneyBonusPut(Id, AfMoney);
+end;
+
 procedure TAccountsRecord.MoneyRemove(AfMoney: Double);
 begin
   FAccountsDataSet.DoUpdateMoneyRemove(Id, AfMoney);
@@ -496,5 +505,11 @@ function TAccountsRecord.GetForceTariff: Integer;
 begin
   Result := FAccountsDataSet.FieldValues['force_tariff'];
 end;
+
+function TAccountsRecord.GetReferal: Integer;
+begin
+  Result := FAccountsDataSet.FieldValues['referal'];
+end;
+
 
 end.
