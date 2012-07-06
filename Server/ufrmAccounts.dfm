@@ -1,11 +1,11 @@
 object frmAccounts: TfrmAccounts
-  Left = 309
-  Top = 195
+  Left = 247
+  Top = 139
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
-  ClientHeight = 521
-  ClientWidth = 660
+  ClientHeight = 552
+  ClientWidth = 772
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,48 +23,40 @@ object frmAccounts: TfrmAccounts
   object gbAccountInfo: TGroupBox
     Left = 264
     Top = 3
-    Width = 388
-    Height = 245
+    Width = 501
+    Height = 282
     Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086#1073' '#1091#1095#1077#1090#1085#1086#1081' '#1079#1072#1087#1080#1089#1080
     TabOrder = 2
     object lblAccountName: TLabel
-      Left = 8
-      Top = 49
+      Left = 120
+      Top = 46
       Width = 31
       Height = 13
       Caption = #1051#1086#1075#1080#1085
     end
     object lblAccountNumber: TLabel
-      Left = 8
-      Top = 23
+      Left = 120
+      Top = 18
       Width = 34
       Height = 13
       Caption = #1053#1086#1084#1077#1088
     end
-    object lblAccountPassword: TLabel
-      Left = 8
-      Top = 75
-      Width = 38
-      Height = 13
-      Caption = #1055#1072#1088#1086#1083#1100
-      Visible = False
-    end
     object lblAccountAddress: TLabel
-      Left = 8
-      Top = 127
+      Left = 120
+      Top = 131
       Width = 31
       Height = 13
       Caption = #1040#1076#1088#1077#1089
     end
     object lblAccountPhone: TLabel
-      Left = 8
-      Top = 75
+      Left = 120
+      Top = 74
       Width = 45
       Height = 13
       Caption = #1058#1077#1083#1077#1092#1086#1085
     end
     object lblAccountPhoto: TLabel
-      Left = 222
+      Left = 14
       Top = 130
       Width = 28
       Height = 13
@@ -72,7 +64,7 @@ object frmAccounts: TfrmAccounts
       Enabled = False
     end
     object imgAccountPhotoBG: TImage
-      Left = 184
+      Left = 12
       Top = 19
       Width = 100
       Height = 100
@@ -506,22 +498,50 @@ object frmAccounts: TfrmAccounts
         E74DEF7ADBFBDEF8CEB7BEF7CDEF7EFBFBDF000FB8C0074EF082EF3B10003B}
     end
     object lblAccountEmail: TLabel
-      Left = 8
-      Top = 101
+      Left = 120
+      Top = 105
       Width = 28
       Height = 13
       Caption = 'E-mail'
     end
     object lblAccountMemo: TLabel
-      Left = 8
-      Top = 189
+      Left = 176
+      Top = 153
       Width = 44
       Height = 13
       Caption = #1047#1072#1084#1077#1090#1082#1080
     end
+    object lblSername: TLabel
+      Left = 284
+      Top = 18
+      Width = 49
+      Height = 13
+      Caption = #1060#1072#1084#1080#1083#1080#1103
+    end
+    object lblName: TLabel
+      Left = 284
+      Top = 46
+      Width = 22
+      Height = 13
+      Caption = #1048#1084#1103
+    end
+    object lblOt: TLabel
+      Left = 284
+      Top = 74
+      Width = 47
+      Height = 13
+      Caption = #1054#1090#1095#1077#1089#1090#1074#1086
+    end
+    object lblReferal: TLabel
+      Left = 8
+      Top = 236
+      Width = 33
+      Height = 13
+      Caption = #1056#1077#1092#1077#1088
+    end
     object editAccountName: TDBEditEh
-      Left = 64
-      Top = 44
+      Left = 176
+      Top = 46
       Width = 100
       Height = 21
       DataField = 'name'
@@ -532,7 +552,7 @@ object frmAccounts: TfrmAccounts
       OnChange = editAccountNameChange
     end
     object editAccountNumber: TDBEditEh
-      Left = 64
+      Left = 176
       Top = 18
       Width = 100
       Height = 21
@@ -543,26 +563,10 @@ object frmAccounts: TfrmAccounts
       TabOrder = 0
       Visible = True
     end
-    object editAccountPass: TDBEditEh
-      Left = 64
-      Top = 70
-      Width = 100
-      Height = 20
-      EditButtons = <>
-      Font.Charset = SYMBOL_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Wingdings'
-      Font.Style = []
-      ParentFont = False
-      PasswordChar = 'l'
-      TabOrder = 9
-      Visible = False
-    end
     object editAccountAddress: TDBEditEh
-      Left = 64
-      Top = 122
-      Width = 145
+      Left = 176
+      Top = 126
+      Width = 313
       Height = 21
       DataField = 'address'
       DataSource = dsrcAccounts
@@ -572,8 +576,8 @@ object frmAccounts: TfrmAccounts
       OnChange = editAccountNameChange
     end
     object editAccountPhone: TDBEditEh
-      Left = 64
-      Top = 70
+      Left = 176
+      Top = 74
       Width = 100
       Height = 21
       DataField = 'phone'
@@ -584,12 +588,12 @@ object frmAccounts: TfrmAccounts
       OnChange = editAccountNameChange
     end
     object butPhoto: TButton
-      Left = 256
+      Left = 80
       Top = 125
-      Width = 28
+      Width = 32
       Height = 20
       Caption = '...'
-      TabOrder = 10
+      TabOrder = 9
       OnClick = butPhotoClick
     end
     object cbAccountDisabled: TDBCheckBoxEh
@@ -606,8 +610,8 @@ object frmAccounts: TfrmAccounts
       OnClick = editAccountNameChange
     end
     object cbAccountBlocked: TDBCheckBoxEh
-      Left = 92
-      Top = 150
+      Left = 8
+      Top = 170
       Width = 157
       Height = 17
       Caption = #1042#1088#1077#1084#1077#1085#1085#1086' '#1079#1072#1073#1083#1086#1082#1080#1088#1086#1074#1072#1085#1072
@@ -618,54 +622,9 @@ object frmAccounts: TfrmAccounts
       ValueUnchecked = '0'
       OnClick = cbAccountBlockedClick
     end
-    object butAccountAdd: TButton
-      Left = 303
-      Top = 17
-      Width = 75
-      Height = 25
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
-      TabOrder = 11
-      OnClick = butAccountAddClick
-    end
-    object butAccountSave: TButton
-      Left = 303
-      Top = 47
-      Width = 75
-      Height = 25
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      TabOrder = 12
-      OnClick = butAccountSaveClick
-    end
-    object butAccountDelete: TButton
-      Left = 303
-      Top = 77
-      Width = 75
-      Height = 25
-      Caption = #1059#1076#1072#1083#1080#1090#1100
-      TabOrder = 13
-      OnClick = butAccountDeleteClick
-    end
-    object butViewSecCodes: TButton
-      Left = 303
-      Top = 181
-      Width = 75
-      Height = 25
-      Caption = #1044#1086#1087'. '#1082#1086#1076#1099
-      TabOrder = 15
-      OnClick = butViewSecCodesClick
-    end
-    object butGenerateSecCodes: TButton
-      Left = 302
-      Top = 211
-      Width = 75
-      Height = 25
-      Caption = #1053#1086#1074#1099#1077' '#1082#1086#1076#1099
-      TabOrder = 17
-      OnClick = butGenerateSecCodesClick
-    end
     object editAccountEmail: TDBEditEh
-      Left = 64
-      Top = 96
+      Left = 176
+      Top = 100
       Width = 100
       Height = 21
       DataField = 'email'
@@ -676,40 +635,31 @@ object frmAccounts: TfrmAccounts
       OnChange = editAccountNameChange
     end
     object memoAccountMemo: TDBMemo
-      Left = 8
-      Top = 204
-      Width = 289
-      Height = 33
+      Left = 176
+      Top = 168
+      Width = 313
+      Height = 105
       DataField = 'memo'
       DataSource = dsrcAccounts
       ScrollBars = ssVertical
       TabOrder = 8
       OnChange = editAccountNameChange
     end
-    object butClearPass: TButton
-      Left = 272
-      Top = 151
-      Width = 107
-      Height = 25
-      Caption = #1057#1073#1088#1086#1089#1080#1090#1100' '#1087#1072#1088#1086#1083#1100
-      TabOrder = 14
-      OnClick = butClearPassClick
-    end
     object imgAccountPhoto: TEDBImage
-      Left = 184
+      Left = 8
       Top = 16
       Width = 105
       Height = 105
       DataField = 'photo'
       DataSource = dsrcAccounts
       ShrinkToFit = True
-      TabOrder = 16
+      TabOrder = 10
       ZoomToFit = True
       OnLoadCustomImage = imgAccountPhotoLoadCustomImage
     end
     object cbxPeriodOfValidity: TDBCheckBox
       Left = 8
-      Top = 168
+      Top = 192
       Width = 115
       Height = 17
       Caption = #1044#1077#1081#1089#1090#1074#1080#1090#1077#1083#1100#1085#1072' '#1076#1086
@@ -721,22 +671,82 @@ object frmAccounts: TfrmAccounts
       OnClick = cbxPeriodOfValidityClick
     end
     object dtpExpirationDate: TDBDateTimeEditEh
-      Left = 128
-      Top = 168
+      Left = 8
+      Top = 212
       Width = 113
       Height = 21
       DataField = 'ExpirationDate'
       DataSource = dsrcAccounts
       EditButtons = <>
       Kind = dtkDateEh
-      TabOrder = 18
+      TabOrder = 11
       Visible = True
+    end
+    object editSername: TDBEditEh
+      Left = 340
+      Top = 18
+      Width = 150
+      Height = 21
+      DataField = 'username'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 12
+      Visible = True
+      OnChange = editSernameChange
+    end
+    object editName: TDBEditEh
+      Left = 340
+      Top = 46
+      Width = 150
+      Height = 21
+      DataField = 'uname'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 13
+      Visible = True
+      OnChange = editNameChange
+    end
+    object editOt: TDBEditEh
+      Left = 340
+      Top = 74
+      Width = 150
+      Height = 21
+      DataField = 'uotch'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 14
+      Visible = True
+      OnChange = editOtChange
+    end
+    object cbReferal: TComboBox
+      Left = 8
+      Top = 252
+      Width = 157
+      Height = 21
+      ItemHeight = 13
+      ItemIndex = 0
+      TabOrder = 15
+      OnChange = cbReferalChange
+      Items.Strings = (
+        '')
+    end
+    object editReferal: TDBEditEh
+      Left = 83
+      Top = 248
+      Width = 73
+      Height = 21
+      DataField = 'referal'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 16
+      Visible = False
+      OnChange = editReferalChange
     end
   end
   object gbBalanceInfo: TGroupBox
     Left = 264
-    Top = 345
-    Width = 388
+    Top = 389
+    Width = 501
     Height = 129
     Caption = #1041#1072#1083#1072#1085#1089' '#1091#1095#1077#1090#1085#1086#1081' '#1079#1072#1087#1080#1089#1080
     TabOrder = 3
@@ -755,7 +765,7 @@ object frmAccounts: TfrmAccounts
       Caption = #1053#1072#1082#1086#1087#1083#1077#1085#1086
     end
     object lblSummaryDiscount: TLabel
-      Left = 264
+      Left = 152
       Top = 101
       Width = 66
       Height = 13
@@ -769,7 +779,7 @@ object frmAccounts: TfrmAccounts
       Caption = #1053#1091#1083#1077#1074#1086#1081' '#1073#1072#1083#1072#1085#1089
     end
     object Label6: TLabel
-      Left = 222
+      Left = 138
       Top = 101
       Width = 8
       Height = 13
@@ -831,7 +841,7 @@ object frmAccounts: TfrmAccounts
       OnChange = editAccountNameChange
     end
     object editPrivelegedDiscount: TDBEditEh
-      Left = 184
+      Left = 100
       Top = 96
       Width = 37
       Height = 21
@@ -844,10 +854,10 @@ object frmAccounts: TfrmAccounts
     end
     object cbAccountPrivileged: TDBCheckBoxEh
       Left = 8
-      Top = 101
-      Width = 169
+      Top = 97
+      Width = 89
       Height = 17
-      Caption = #1055#1088#1080#1074#1080#1083#1077#1075'. '#1082#1083#1080#1077#1085#1090' '#1089#1086' '#1089#1082#1080#1076#1082#1086#1081
+      Caption = #1057#1087#1077#1094'. '#1089#1082#1080#1076#1082#1072
       DataField = 'isprivileged'
       DataSource = dsrcAccounts
       TabOrder = 4
@@ -857,8 +867,8 @@ object frmAccounts: TfrmAccounts
     end
   end
   object butClose: TButton
-    Left = 494
-    Top = 477
+    Left = 609
+    Top = 521
     Width = 75
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -866,8 +876,8 @@ object frmAccounts: TfrmAccounts
     OnClick = butCloseClick
   end
   object butHelp: TButton
-    Left = 574
-    Top = 477
+    Left = 689
+    Top = 521
     Width = 75
     Height = 25
     Caption = #1055#1086#1084#1086#1097#1100
@@ -878,7 +888,7 @@ object frmAccounts: TfrmAccounts
     Left = 8
     Top = 56
     Width = 249
-    Height = 457
+    Height = 461
     AutoFitColWidths = True
     DataSource = dsrcAccounts
     FooterColor = clWindow
@@ -915,28 +925,59 @@ object frmAccounts: TfrmAccounts
   end
   object gbTarifsInfo: TGroupBox
     Left = 264
-    Top = 251
-    Width = 388
-    Height = 78
+    Top = 287
+    Width = 501
+    Height = 102
     Caption = #1041#1077#1079#1086#1087#1072#1089#1085#1086#1089#1090#1100
     TabOrder = 6
     object lblUserLevel: TLabel
-      Left = 211
-      Top = 24
+      Left = 7
+      Top = 73
       Width = 90
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072':'
     end
     object lblForceTariff: TLabel
-      Left = 8
-      Top = 52
+      Left = 196
+      Top = 72
       Width = 123
       Height = 13
       Caption = #1055#1088#1080#1085#1091#1076#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092':'
     end
+    object lblAccountPassword: TLabel
+      Left = 8
+      Top = 21
+      Width = 38
+      Height = 13
+      Caption = #1055#1072#1088#1086#1083#1100
+    end
+    object editUserLevel: TDBEditEh
+      Left = 104
+      Top = 65
+      Width = 73
+      Height = 21
+      DataField = 'userlevel'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 2
+      Visible = False
+      OnChange = editUserLevelChange
+    end
+    object editForceTariff: TDBEditEh
+      Left = 395
+      Top = 48
+      Width = 73
+      Height = 21
+      DataField = 'force_tariff'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      TabOrder = 4
+      Visible = False
+      OnChange = editForceTariffChange
+    end
     object cbTarifsLimit: TDBCheckBoxEh
       Left = 8
-      Top = 16
+      Top = 45
       Width = 153
       Height = 25
       Caption = #1054#1075#1088#1072#1085#1080#1095#1080#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
@@ -948,12 +989,14 @@ object frmAccounts: TfrmAccounts
       OnClick = cbTarifsLimitClick
     end
     object cbUserLevel: TComboBox
-      Left = 304
-      Top = 21
+      Left = 100
+      Top = 70
       Width = 73
       Height = 21
       ItemHeight = 13
+      ItemIndex = 1
       TabOrder = 1
+      Text = '1'
       OnChange = cbUserLevelChange
       Items.Strings = (
         '0'
@@ -968,21 +1011,9 @@ object frmAccounts: TfrmAccounts
         '9'
         '10')
     end
-    object editUserLevel: TDBEditEh
-      Left = 312
-      Top = 8
-      Width = 73
-      Height = 21
-      DataField = 'userlevel'
-      DataSource = dsrcAccounts
-      EditButtons = <>
-      TabOrder = 2
-      Visible = False
-      OnChange = editUserLevelChange
-    end
     object cbForceTariff: TComboBox
-      Left = 208
-      Top = 49
+      Left = 320
+      Top = 69
       Width = 169
       Height = 21
       ItemHeight = 13
@@ -1001,17 +1032,51 @@ object frmAccounts: TfrmAccounts
         '9'
         '10')
     end
-    object editForceTariff: TDBEditEh
-      Left = 315
-      Top = 40
-      Width = 73
-      Height = 21
-      DataField = 'force_tariff'
+    object butGenerateSecCodes: TButton
+      Left = 420
+      Top = 15
+      Width = 70
+      Height = 25
+      Caption = #1053#1086#1074#1099#1077' '#1082#1086#1076#1099
+      TabOrder = 5
+      OnClick = butGenerateSecCodesClick
+    end
+    object butViewSecCodes: TButton
+      Left = 345
+      Top = 15
+      Width = 70
+      Height = 25
+      Caption = #1044#1086#1087'. '#1082#1086#1076#1099
+      TabOrder = 6
+      OnClick = butViewSecCodesClick
+    end
+    object butClearPass: TButton
+      Left = 240
+      Top = 15
+      Width = 100
+      Height = 25
+      Caption = #1057#1073#1088#1086#1089#1080#1090#1100' '#1087#1072#1088#1086#1083#1100
+      TabOrder = 7
+      OnClick = butClearPassClick
+    end
+    object editAccountPass: TDBEditEh
+      Left = 64
+      Top = 17
+      Width = 173
+      Height = 24
+      DataField = 'password'
       DataSource = dsrcAccounts
       EditButtons = <>
-      TabOrder = 4
-      Visible = False
-      OnChange = editForceTariffChange
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = [fsBold]
+      ParentFont = False
+      PasswordChar = '*'
+      TabOrder = 8
+      Visible = True
+      OnChange = editAccountPassChange
     end
   end
   object gbFilter: TGroupBox
@@ -1038,12 +1103,39 @@ object frmAccounts: TfrmAccounts
       OnKeyDown = editFilterKeyDown
     end
   end
+  object butAccountAdd: TButton
+    Left = 8
+    Top = 521
+    Width = 80
+    Height = 25
+    Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+    TabOrder = 7
+    OnClick = butAccountAddClick
+  end
+  object butAccountSave: TButton
+    Left = 176
+    Top = 521
+    Width = 80
+    Height = 25
+    Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+    TabOrder = 8
+    OnClick = butAccountSaveClick
+  end
+  object butAccountDelete: TButton
+    Left = 92
+    Top = 521
+    Width = 80
+    Height = 25
+    Caption = #1059#1076#1072#1083#1080#1090#1100
+    TabOrder = 9
+    OnClick = butAccountDeleteClick
+  end
   object dsrcAccounts: TDataSource
-    Left = 392
-    Top = 488
+    Left = 440
+    Top = 508
   end
   object OpenDialog1: TOpenDialog
-    Left = 428
-    Top = 472
+    Left = 520
+    Top = 508
   end
 end

@@ -404,6 +404,27 @@ begin
   dmo := null;
 end;
 
+
+{function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
+var
+  dmo: OleVariant;
+  frmLogon: TfrmLogon;
+  bRestartNeeded: Boolean;
+  i: Integer;
+  str: String;
+begin
+  frmLogon := TfrmLogon.Create(Nil, Nil, True);
+  if frmLogon.ShowModal = mrOk then begin
+    dbUserName := frmLogon.UserName;
+    dbPassword := frmLogon.Password;
+    AstrServerName := frmLogon.ServerName;
+    Result := True;
+    exit;
+  end;
+  Result := False;
+end; }
+
+
 function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
 var
   dmo: OleVariant;
@@ -432,8 +453,10 @@ begin
         else if bRestartNeeded then begin
           dmo.Stop;
           repeat
-          until dmo.Status = 	3; {SQLDMOSvc_Stopped}
+          until dmo.Status = 	3; //SQLDMOSvc_Stopped
           dmo.Start(False, frmLogon.ServerName);
+          repeat
+          until dmo.Status = 	1;
         end;
         if dmo.Status <> 1 then
           raise Exception.Create('');
@@ -447,14 +470,14 @@ begin
         dmo.LoginSecure := True;
         dmo.Connect(frmLogon.ServerName);
 //        SetSAPassword(dmo);
-        if dmo.IntegratedSecurity.SecurityMode = 2 {SQLDMOSecurity_Mixed} then
+        if dmo.IntegratedSecurity.SecurityMode = 2 then
           dmo.DisConnect
         else begin
-          dmo.IntegratedSecurity.SecurityMode := 2; {SQLDMOSecurity_Mixed}
+          dmo.IntegratedSecurity.SecurityMode := 2;
           dmo.DisConnect;
           dmo.Stop;
           repeat
-          until dmo.Status = 	3; {SQLDMOSvc_Stopped}
+          until dmo.Status = 	3;
           dmo.Start(False, frmLogon.ServerName);
         end;
         dmo.Connect(frmLogon.ServerName,frmLogon.UserName,
@@ -466,10 +489,10 @@ begin
         dmo.Connect(frmLogon.ServerName, frmLogon.UserName,
             frmLogon.Password);
         dbUserName := frmLogon.UserName;
-        dbPassword := frmLogon.Password; 
-{        SetSAPassword(dmo);
-        dmo.DisConnect;
-        dmo.Connect(frmLogon.ServerName, 'sa', '1');}
+        dbPassword := frmLogon.Password;
+//      SetSAPassword(dmo);
+//      dmo.DisConnect;
+//      dmo.Connect(frmLogon.ServerName, 'sa', '1');
         Result := True;
      // except
       end;

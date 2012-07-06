@@ -188,7 +188,10 @@ uses
   ufrmMailSend in 'ufrmMailSend.pas' {frmMailSend},
   frameMail in 'frameMail.pas' {framMail: TFrame},
   frmMail in 'frmMail.pas' {formMail},
-  uRegistryMail in '..\Parts\Registry\uRegistryMail.pas';
+  uRegistryMail in '..\Parts\Registry\uRegistryMail.pas',
+  uAccountsReferalsDataSet in '..\Parts\DataSet\uAccountsReferalsDataSet.pas',
+  uAccountsReferalsRecord in '..\Parts\Accounts\uAccountsReferalsRecord.pas',
+  uAccountsReferals in '..\Parts\Accounts\uAccountsReferals.pas';
 
 {$R *.res}
 

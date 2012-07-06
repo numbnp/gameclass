@@ -56,6 +56,12 @@ type
         ASession: TGCSession): Integer;
     procedure cboComputerNumberChange(Sender: TObject);
     procedure cboComputerIPChange(Sender: TObject);
+    procedure editFilterCodeKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure lvSidelineKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure seQuantityKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure UpdateInformation;
@@ -191,17 +197,17 @@ begin
   lvSideline.Clear;
   noFilter := (editFilterCode.Text = '');
   for i:=0 to (Sideline.count-1) do 
-  if ((noFilter) or (Sideline.goods[i].id = StrToIntDef(editFilterCode.Text,0))) then
+  if ((noFilter) or ((Sideline.goods[i].id = StrToIntDef(editFilterCode.Text,-1)) or (Pos(editFilterCode.Text,Sideline.goods[i].name)>0))) then
   begin
     li := lvSideline.Items.Add;
     li.Caption := Sideline.goods[i].name;
     li.SubItems.Add(AnsiReplaceStr(FormatFloat('0.00',Sideline.goods[i].price),',','.'));
     li.SubItems.Add(IntToStr(Sideline.goods[i].id));
-    if (not noFilter) then begin
+{    if (not noFilter) then begin
       li.Selected := true;
       UpdateInformation;
       break;
-    end;
+    end;}
   end;
   cboComputerNumber.Enabled := (TypeCost = stcSeparate);
   cboComputerIP.Enabled := (TypeCost = stcSeparate);
@@ -287,6 +293,48 @@ begin
   DisableControls;
   cboComputerNumber.ItemIndex := cboComputerIP.ItemIndex;
   EnableControls;
+end;
+
+procedure TformSideline.editFilterCodeKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN Then
+    if lvSideline.Items.Count >0 then
+    begin
+      lvSideline.ItemFocused := lvSideline.Items[0];
+      lvSideline.ItemIndex :=0;
+      lvSideline.SetFocus;
+    end;
+  if Key = VK_RETURN Then
+  begin
+    if lvSideline.Items.Count >0 then
+    begin
+      lvSideline.ItemFocused := lvSideline.Items[0];
+      lvSideline.ItemIndex :=0;
+      lvSideline.SetFocus;
+      UpdateInformation;
+    end;
+    if lvSideline.Items.Count = 1 then
+      seQuantity.SetFocus;
+  end;
+end;
+
+procedure TformSideline.lvSidelineKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case key of
+    VK_UP: UpdateInformation;
+    VK_DOWN: UpdateInformation;
+    VK_RETURN: seQuantity.SetFocus;
+  end;
+end;
+
+procedure TformSideline.seQuantityKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case key of
+    VK_RETURN:butSelClick(sender);
+  end;
 end;
 
 end.

@@ -1,11 +1,11 @@
 object formSideline: TformSideline
-  Left = 430
-  Top = 100
+  Left = 1305
+  Top = 113
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'formSideline'
-  ClientHeight = 448
-  ClientWidth = 633
+  ClientHeight = 491
+  ClientWidth = 628
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,50 +21,50 @@ object formSideline: TformSideline
   PixelsPerInch = 96
   TextHeight = 13
   object lblQuantity: TLabel
-    Left = 411
-    Top = 324
+    Left = 331
+    Top = 368
     Width = 59
     Height = 13
     Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086
   end
   object lblSummary: TLabel
-    Left = 496
-    Top = 324
+    Left = 480
+    Top = 368
     Width = 30
     Height = 13
     Caption = #1048#1090#1086#1075#1086
   end
   object lblFilterCode: TLabel
-    Left = 312
-    Top = 324
-    Width = 81
+    Left = 104
+    Top = 12
+    Width = 40
     Height = 13
-    Caption = #1060#1080#1083#1100#1090#1088' '#1087#1086' '#1082#1086#1076#1091
+    Caption = #1060#1080#1083#1100#1090#1088
   end
   object Label1: TLabel
     Left = 104
-    Top = 324
+    Top = 368
     Width = 58
     Height = 13
     Caption = #1050#1086#1084#1087#1100#1102#1090#1077#1088
   end
   object Label2: TLabel
     Left = 104
-    Top = 368
+    Top = 412
     Width = 73
     Height = 13
     Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
   end
   object Label3: TLabel
     Left = 312
-    Top = 392
+    Top = 436
     Width = 62
     Height = 13
     Caption = #1058#1080#1087' '#1086#1087#1083#1072#1090#1099':'
   end
   object lblTypeCost: TLabel
     Left = 384
-    Top = 392
+    Top = 436
     Width = 200
     Height = 13
     Caption = #1074#1099#1095#1077#1089#1090#1100' '#1080#1079' '#1087#1088#1077#1076#1086#1087#1072#1083#1090#1099' '#1079#1072' '#1089#1077#1072#1085#1089
@@ -77,16 +77,16 @@ object formSideline: TformSideline
   end
   object Label5: TLabel
     Left = 192
-    Top = 324
+    Top = 368
     Width = 43
     Height = 13
     Caption = 'IP-'#1072#1076#1088#1077#1089
   end
   object lvSideline: TListView
-    Left = 104
-    Top = 8
+    Left = 108
+    Top = 40
     Width = 513
-    Height = 305
+    Height = 321
     Columns = <
       item
         Caption = #1059#1089#1083#1091#1075#1072
@@ -106,11 +106,12 @@ object formSideline: TformSideline
     TabOrder = 3
     ViewStyle = vsReport
     OnClick = lvSidelineClick
+    OnKeyDown = lvSidelineKeyDown
   end
   object seQuantity: TSpinEdit
-    Left = 411
-    Top = 340
-    Width = 73
+    Left = 331
+    Top = 384
+    Width = 138
     Height = 43
     AutoSize = False
     Font.Charset = RUSSIAN_CHARSET
@@ -124,11 +125,12 @@ object formSideline: TformSideline
     TabOrder = 1
     Value = 1
     OnChange = seQuantityChange
+    OnKeyDown = seQuantityKeyDown
   end
   object editMoney: TEdit
-    Left = 496
-    Top = 340
-    Width = 121
+    Left = 480
+    Top = 384
+    Width = 138
     Height = 41
     TabStop = False
     AutoSize = False
@@ -143,7 +145,7 @@ object formSideline: TformSideline
   end
   object butCancel: TButton
     Left = 462
-    Top = 413
+    Top = 457
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -152,28 +154,28 @@ object formSideline: TformSideline
   end
   object butSel: TButton
     Left = 332
-    Top = 413
+    Top = 457
     Width = 123
     Height = 25
     Caption = 'butSel'
-    Default = True
     TabOrder = 2
     OnClick = butSelClick
   end
   object editFilterCode: TEdit
-    Left = 312
-    Top = 340
-    Width = 84
-    Height = 41
+    Left = 148
+    Top = 8
+    Width = 469
+    Height = 21
     AutoSize = False
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
-    Font.Height = -27
-    Font.Name = 'Tahoma'
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
     TabOrder = 0
     OnChange = editFilterCodeChange
+    OnKeyDown = editFilterCodeKeyDown
   end
   object Panel1: TPanel
     Left = 0
@@ -1922,7 +1924,7 @@ object formSideline: TformSideline
   end
   object butHelp: TButton
     Left = 543
-    Top = 413
+    Top = 457
     Width = 75
     Height = 25
     HelpType = htKeyword
@@ -1932,7 +1934,7 @@ object formSideline: TformSideline
   end
   object edtAccountName: TEdit
     Left = 104
-    Top = 384
+    Top = 428
     Width = 193
     Height = 21
     ReadOnly = True
@@ -1940,7 +1942,7 @@ object formSideline: TformSideline
   end
   object cboComputerNumber: TComboBox
     Left = 104
-    Top = 340
+    Top = 384
     Width = 73
     Height = 21
     ItemHeight = 13
@@ -1949,7 +1951,7 @@ object formSideline: TformSideline
   end
   object cboComputerIP: TComboBox
     Left = 192
-    Top = 340
+    Top = 384
     Width = 105
     Height = 21
     ItemHeight = 13

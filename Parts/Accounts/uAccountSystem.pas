@@ -5,13 +5,15 @@ interface
 uses
   uAutoUpdate,
   uAccounts,
-  uAccountsDiscounts;
+  uAccountsDiscounts,
+  uAccountsReferals;
 
   type
   TAccountSystem = class(TObject)
   private
     FAccounts: TAccounts;
     FAccountsDiscounts: TAccountsDiscounts;
+    FAccountsReferals: TAccountsReferals;
     function GetEnabled: Boolean;
     procedure SetEnabled(AValue: Boolean);
     function GetUseSecurityCodes: Boolean;
@@ -47,6 +49,9 @@ uses
         read FAccounts;
     property AccountsDiscounts: TAccountsDiscounts
         read FAccountsDiscounts;
+    property AccountsReferals: TAccountsReferals
+        read FAccountsReferals;
+
     property Enabled: Boolean
         read GetEnabled write SetEnabled;
     property UseSecurityCodes: Boolean
@@ -89,10 +94,12 @@ begin
   inherited Create;
   FAccounts := TAccounts.Create(AAutoUpdate);
   FAccountsDiscounts := TAccountsDiscounts.Create(AAutoUpdate);
+  FAccountsReferals := TAccountsReferals.Create(AAutoUpdate);
 end;
 
 destructor TAccountSystem.Destroy;
 begin
+  FreeAndNil(FAccountsReferals);
   FreeAndNil(FAccountsDiscounts);
   FreeAndNil(FAccounts);
   inherited Destroy;

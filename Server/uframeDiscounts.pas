@@ -28,8 +28,16 @@ type
     Button1: TButton;
     Label1: TLabel;
     gbRefers: TGroupBox;
-    vleBonus: TValueListEditor;
     cbxUseRefers: TCheckBox;
+    dsrcReferals: TDataSource;
+    butReferalsUpdate: TButton;
+    butReferalsDel: TButton;
+    editLevel: TEdit;
+    editBonus: TEdit;
+    lblBonus: TLabel;
+    lblLevel: TLabel;
+    butReferalsAdd: TButton;
+    grdReferals: TDBGridEh;
     procedure editSummaChange(Sender: TObject);
     procedure editDiscountChange(Sender: TObject);
     procedure butDiscountAddClick(Sender: TObject);
@@ -41,6 +49,12 @@ type
     procedure cbxDiscountForPacketsEnabledClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure cbxUseRefersClick(Sender: TObject);
+    procedure grdReferalsCellClick(Column: TColumnEh);
+    procedure butReferalsAddClick(Sender: TObject);
+    procedure butReferalsDelClick(Sender: TObject);
+    procedure butReferalsUpdateClick(Sender: TObject);
+    procedure editLevelChange(Sender: TObject);
+    procedure editBonusChange(Sender: TObject);
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
@@ -88,8 +102,11 @@ begin
   cbxDiscountForPacketsEnabled.Checked :=
       GAccountSystem.DiscountForPacketsEnabled;
   cbxUseRefers.Checked := GAccountSystem.RefersSystemEnabled;
+  gbRefers.Enabled := cbxUseRefers.Checked;
   dsrcDiscounts.DataSet := GAccountSystem.AccountsDiscounts;
   grdDiscountsCellClick(Nil);
+  dsrcReferals.DataSet := GAccountSystem.AccountsReferals;
+  grdReferalsCellClick(Nil);
   dtpStart.DateTime := DateOf(IncMonth(Now, -1));
   EnableControls;
 end;
@@ -122,12 +139,27 @@ begin
   grdDiscounts.Enabled := bEnabled;
   editSumma.Enabled := bEnabled;
   editDiscount.Enabled := bEnabled;
+
+  //grdReferals.Enabled := bEnabled;
+  editLevel.Enabled := bEnabled;
+  editBonus.Enabled := bEnabled;
   butGoAccounts.Enabled := bEnabled;
-   butDiscountDel.Enabled := (grdDiscounts.SelectedIndex <> -1) and bEnabled;
+
+  butDiscountDel.Enabled := (grdDiscounts.SelectedIndex <> -1) and bEnabled;
   butDiscountAdd.Enabled := ((editSumma.Text<>'') and (editDiscount.Text<>''))
       and bEnabled;
   butDiscountUpdate.Enabled := (butDiscountDel.Enabled and FbEdited)
       and bEnabled;
+
+  grdReferals.Enabled := cbxUseRefers.Checked;
+  butReferalsDel.Enabled := (grdReferals.SelectedIndex <> -1) and bEnabled and cbxUseRefers.Checked;
+  butReferalsAdd.Enabled := ((editLevel.Text<>'') and (editBonus.Text<>''))
+      and bEnabled and cbxUseRefers.Checked;
+  butReferalsUpdate.Enabled := (butReferalsDel.Enabled and FbEdited)
+      and bEnabled and cbxUseRefers.Checked;
+
+  gbRefers.Enabled := cbxUseRefers.Checked;
+
 //  editSumma.Text := Format('%.*d', ['1.5']);
 end;
 
@@ -279,6 +311,99 @@ begin
   DisableControls;
   GAccountSystem.RefersSystemEnabled  :=
       cbxUseRefers.Checked;
+  DoDesign;
+  EnableControls;
+end;
+
+procedure TframeDiscounts.grdReferalsCellClick(Column: TColumnEh);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  if (GAccountSystem.AccountsReferals.RecordCount > 0) then begin
+    editLevel.Text := IntToStr(
+        GAccountSystem.AccountsReferals.Current.Level );
+    editBonus.Text := IntToStr(
+        GAccountSystem.AccountsReferals.Current.Percent );
+  end;
+  DoDesign;
+  EnableControls;
+
+end;
+
+procedure TframeDiscounts.butReferalsAddClick(Sender: TObject);
+var
+  nId: Integer;
+  nLevel: Integer;
+  nBonus: Integer;
+begin
+  // check level and bonus
+  nLevel := StrToIntDef(editLevel.Text,0);
+  nBonus := StrToIntDef(editBonus.Text, 0);
+  with GAccountSystem.AccountsReferals do begin
+    First;
+    while not Eof do begin
+      if ((Current.Level = nLevel) or
+          (Current.Percent = nBonus)) then begin
+        MessageBox(HWND_TOP,PChar(GClangutils.translate('ReferalWarning')),
+            PChar(GClangutils.translate('Warning')),MB_OK);
+        exit;
+      end;
+      Next;
+    end;
+  end;
+  GAccountSystem.AccountsReferals.Append;
+  GAccountSystem.AccountsReferals.Current.Level := nLevel;
+  GAccountSystem.AccountsReferals.Current.Percent := nBonus;
+  grdReferalsCellClick(Nil);
+end;
+procedure TframeDiscounts.butReferalsDelClick(Sender: TObject);
+begin
+  with GAccountSystem.AccountsReferals do
+    Delete(Current.Id);
+  grdReferalsCellClick(Nil);
+end;
+
+procedure TframeDiscounts.butReferalsUpdateClick(Sender: TObject);
+var
+  nId: Integer;
+  nLevel: Integer;
+  nBonus: Integer;
+begin
+  nLevel := StrToIntDef(editLevel.Text,0);
+  nBonus := StrToIntDef(editBonus.Text, 0);
+  with GAccountSystem.AccountsReferals do begin
+    First;
+    while not Eof do begin
+      if ((Current.Level = nLevel) or
+          (Current.Percent = nBonus)) then begin
+        MessageBox(HWND_TOP,PChar(GClangutils.translate('ReferalWarning')),
+            PChar(GClangutils.translate('Warning')),MB_OK);
+        exit;
+      end;
+      Next;
+    end;
+  end;
+  GAccountSystem.AccountsReferals.LocateById(nId);
+  GAccountSystem.AccountsReferals.Current.Level := nLevel;
+  GAccountSystem.AccountsReferals.Current.Percent := nBonus;
+  DoDesign;
+end;
+
+procedure TframeDiscounts.editLevelChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  FbEdited := true;
+  DoDesign;
+  EnableControls;
+end;
+
+procedure TframeDiscounts.editBonusChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  FbEdited := true;
+  DoDesign;
   EnableControls;
 end;
 
