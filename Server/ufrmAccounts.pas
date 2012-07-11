@@ -79,6 +79,7 @@ type
     lblReferal: TLabel;
     cbReferal: TComboBox;
     editReferal: TDBEditEh;
+    editAccountPassU: TEdit;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -193,7 +194,9 @@ begin
   butPhoto.Enabled :=  bEditPermission;
   editAccountNumber.Enabled :=  bEditPermission;
   editAccountName.Enabled := bEditPermission;
-  editAccountPass.Enabled := bEditPermission;
+//editAccountPass.Enabled := bEditPermission;
+  editAccountPass.Visible := isManager;
+  editAccountPassU.Visible := not isManager;
   editAccountEmail.Enabled := bEditPermission;
   editAccountPhone.Enabled := bEditPermission;
   //butPhoto.Enabled := ManagerMode;
