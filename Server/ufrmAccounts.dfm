@@ -1060,7 +1060,7 @@ object frmAccounts: TfrmAccounts
       OnClick = butClearPassClick
     end
     object editAccountPass: TDBEditEh
-      Left = 64
+      Left = 60
       Top = 17
       Width = 173
       Height = 24
@@ -1073,10 +1073,25 @@ object frmAccounts: TfrmAccounts
       Font.Name = 'Arial'
       Font.Style = [fsBold]
       ParentFont = False
-      PasswordChar = '*'
       TabOrder = 8
-      Visible = True
+      Visible = False
       OnChange = editAccountPassChange
+    end
+    object editAccountPassU: TEdit
+      Left = 60
+      Top = 16
+      Width = 173
+      Height = 24
+      Enabled = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      PasswordChar = '*'
+      TabOrder = 9
+      Text = '1234567890'
     end
   end
   object gbFilter: TGroupBox
