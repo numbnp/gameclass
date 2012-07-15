@@ -1,6 +1,6 @@
 object frmAccounts: TfrmAccounts
-  Left = 247
-  Top = 139
+  Left = 1609
+  Top = 198
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
@@ -1073,6 +1073,7 @@ object frmAccounts: TfrmAccounts
       Font.Name = 'Arial'
       Font.Style = [fsBold]
       ParentFont = False
+      PasswordChar = '*'
       TabOrder = 8
       Visible = False
       OnChange = editAccountPassChange

@@ -1,13 +1,13 @@
 object formMain: TformMain
-  Left = 492
-  Top = 298
+  Left = 2
+  Top = 2
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 567
-  ClientWidth = 951
+  ClientHeight = 405
+  ClientWidth = 630
   Color = clBtnFace
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 951
+    Width = 1272
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 829
+      Width = 1150
       Height = 57
       Align = alClient
       ButtonHeight = 51
@@ -150,7 +150,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 829
+      Left = 1150
       Top = 0
       Width = 122
       Height = 57
@@ -224,8 +224,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 951
-    Height = 510
+    Width = 1272
+    Height = 823
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -234,8 +234,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 350
-        Width = 943
+        Top = 663
+        Width = 1264
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -243,8 +243,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 884
-        Height = 350
+        Width = 1205
+        Height = 663
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -407,8 +407,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 356
-        Width = 943
+        Top = 669
+        Width = 1264
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -416,7 +416,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 943
+          Width = 1264
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -437,7 +437,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 943
+          Left = 1264
           Top = 0
           Width = 0
           Height = 126
@@ -448,10 +448,10 @@ object formMain: TformMain
         end
       end
       object tbRunPad: TToolBar
-        Left = 884
+        Left = 1205
         Top = 0
         Width = 59
-        Height = 350
+        Height = 663
         Align = alRight
         AutoSize = True
         ButtonHeight = 54
@@ -523,36 +523,36 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 943
-        Height = 482
+        Width = 1264
+        Height = 795
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 441
-          Width = 943
+          Top = 754
+          Width = 1264
           DesignSize = (
-            943
+            1264
             41)
           inherited edtMessage: TEdit
-            Width = 832
+            Width = 1153
           end
           inherited btnSend: TButton
-            Left = 854
+            Left = 1175
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 943
-          Height = 441
+          Width = 1264
+          Height = 754
           inherited memMessages: TMemo
-            Width = 781
-            Height = 439
+            Width = 1102
+            Height = 752
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 439
+            Height = 752
             inherited lvUsers: TListView
-              Height = 437
+              Height = 750
             end
           end
         end
