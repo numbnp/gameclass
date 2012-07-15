@@ -1192,6 +1192,8 @@ begin
         end;
         // теперь ставим метку true
         Comps[index].control := true;
+        if Comps[index].strInfoWinver = '...' then
+          if (Not isManager) then UDPSend(Comps[index].ipaddr, STR_CMD_GETEXTENDEDINFO);
       end; // STR_CMD_PINGANSWER
       // ------------------------------
       if (cmd = STR_CMD_RET_RESTARTING) then begin
