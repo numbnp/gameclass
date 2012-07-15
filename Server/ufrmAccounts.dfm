@@ -1,6 +1,6 @@
 object frmAccounts: TfrmAccounts
-  Left = 1609
-  Top = 198
+  Left = 1606
+  Top = 191
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
@@ -920,7 +920,7 @@ object frmAccounts: TfrmAccounts
         FieldName = 'name'
         Footers = <>
         Title.Caption = #1048#1084#1103
-        Width = 190
+        Width = 194
       end>
   end
   object gbTarifsInfo: TGroupBox
