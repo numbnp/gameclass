@@ -62,6 +62,10 @@ type
       Shift: TShiftState);
     procedure seQuantityKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure seQuantityKeyPress(Sender: TObject; var Key: Char);
+    procedure lvSidelineKeyPress(Sender: TObject; var Key: Char);
+    procedure lvSidelineChange(Sender: TObject; Item: TListItem;
+      Change: TItemChange);
   private
     { Private declarations }
     procedure UpdateInformation;
@@ -334,7 +338,58 @@ procedure TformSideline.seQuantityKeyDown(Sender: TObject; var Key: Word;
 begin
   case key of
     VK_RETURN:butSelClick(sender);
+{    VK_ADD:
+      begin
+        seQuantity.Value := seQuantity.Value + 1;
+        key := 0;
+      end;}
   end;
+
+end;
+
+procedure TformSideline.seQuantityKeyPress(Sender: TObject; var Key: Char);
+begin
+  case key of
+    '+':
+      begin
+        seQuantity.Value := seQuantity.Value + 1;
+        key := #0;
+      end;
+    '-':
+      begin
+        if seQuantity.Value>0 then
+          seQuantity.Value := seQuantity.Value - 1;
+        key := #0;
+      end;
+    '0'..'9',#8:
+      begin
+      end;
+    else
+      key := #0;
+  end;
+end;
+
+procedure TformSideline.lvSidelineKeyPress(Sender: TObject; var Key: Char);
+begin
+  case key of
+    '+':
+      begin
+        seQuantity.Value := seQuantity.Value + 1;
+        key := #0;
+      end;
+    '-':
+      begin
+        if seQuantity.Value>0 then
+          seQuantity.Value := seQuantity.Value - 1;
+        key := #0;
+      end;
+  end;
+end;
+
+procedure TformSideline.lvSidelineChange(Sender: TObject; Item: TListItem;
+  Change: TItemChange);
+begin
+  UpdateInformation;
 end;
 
 end.

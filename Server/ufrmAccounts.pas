@@ -277,6 +277,12 @@ begin
   GAccountsCopy.Append;
   GAccountsCopy.Current.GenerateSecCodes;
   GAccountsCopy.AfterScroll := _AfterScroll;
+  EnableControls;
+  cbTarifsLimit.Checked := True;
+  editUserLevel.Text := '1';
+  DisableControls;
+  _OnChange(Sender);
+  butAccountSaveClick(Sender);
   DoDesign;
   EnableControls;
 end;
@@ -684,6 +690,7 @@ end;
 procedure TfrmAccounts.cbTarifsLimitClick(Sender: TObject);
 begin
   _OnChange(Sender);
+  cbUserLevel.Enabled := cbTarifsLimit.Checked; 
 end;
 
 {procedure TfrmAccounts.dsrcAccountsStateChange(Sender: TObject);

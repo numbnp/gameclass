@@ -1,6 +1,6 @@
 object formSideline: TformSideline
-  Left = 1305
-  Top = 113
+  Left = 1656
+  Top = 107
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'formSideline'
@@ -105,8 +105,10 @@ object formSideline: TformSideline
     RowSelect = True
     TabOrder = 3
     ViewStyle = vsReport
+    OnChange = lvSidelineChange
     OnClick = lvSidelineClick
     OnKeyDown = lvSidelineKeyDown
+    OnKeyPress = lvSidelineKeyPress
   end
   object seQuantity: TSpinEdit
     Left = 331
@@ -126,6 +128,7 @@ object formSideline: TformSideline
     Value = 1
     OnChange = seQuantityChange
     OnKeyDown = seQuantityKeyDown
+    OnKeyPress = seQuantityKeyPress
   end
   object editMoney: TEdit
     Left = 480
