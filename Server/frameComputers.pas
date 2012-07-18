@@ -5,7 +5,7 @@ interface
 uses 
   GCConst, GCComputers, GCCommon, ADODB, GCLangUtils,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, ComCtrls, StdCtrls, Buttons;
+  ExtCtrls, ComCtrls, StdCtrls, Buttons, DB, Grids, DBGridEh;
 
 type
   TframComputers = class(TFrame)
@@ -28,6 +28,12 @@ type
     editMAC: TEdit;
     lblMAC: TLabel;
     SpeedButton1: TSpeedButton;
+    pgcComputers: TPageControl;
+    tabOld: TTabSheet;
+    tabComputers: TTabSheet;
+    gridComputers: TDBGridEh;
+    dsComputers: TDataSource;
+    cdsComputers: TADODataSet;
     procedure butAddClick(Sender: TObject);
     procedure editNumberChange(Sender: TObject);
     procedure butDeleteClick(Sender: TObject);
@@ -76,6 +82,7 @@ begin
   lvComps.Clear;
   cbGroups.Items.Clear;
   cbGroup.Items.Clear;
+  gridComputers.Columns[FC_COL_GROUP].PickList.Clear;
   Group := TComputerGroup.Create;
   Group.Id := -1;
   Group.Name := translate('CommonComputers');
@@ -96,6 +103,8 @@ begin
       cbGroups.Items.Objects[i] := Group;
       i := cbGroup.Items.Add(Group.Name);
       cbGroup.Items.Objects[i] := Group;
+      i := gridComputers.Columns[FC_COL_GROUP].PickList.Add(Group.Name);
+      gridComputers.Columns[FC_COL_GROUP].PickList.Objects[i] := Group;
       dts.Recordset.MoveNext;
     end;
     dts.Close;
@@ -125,8 +134,8 @@ begin
       li := lvComps.Items.Add;
       li.Caption := IntToStr(Comp.number);
       li.SubItems.Insert(0, Comp.ipaddr);
-      li.SubItems.Insert(1,Comp.GroupName);
-      li.SubItems.Insert(2,Comp.macaddr);
+      li.SubItems.Insert(1, Comp.GroupName);
+      li.SubItems.Insert(2, Comp.macaddr);
       li.Data := Comp;
       dts.Recordset.MoveNext;
     end;
@@ -138,6 +147,35 @@ begin
     editIPaddr.Text := '';
     editNumber.Text := '';
     editMac.Text := '';
+
+    cdsComputers.Close;
+    cdsComputers.CreateDataSet;
+
+    dts := TADODataSet.Create(nil);
+    dsDoQuery(DS_COMPUTERS_SELECT + ' @idGroup=-1', @dts);
+    while (dts.Recordset.RecordCount > 0) and (not dts.Recordset.EOF) do
+    begin
+      cdsComputers.Append;
+      cdsComputers.FieldValues['id'] := dts.Recordset.Fields.Item['id'].Value;
+      cdsComputers.FieldValues['number'] :=  dts.Recordset.Fields.Item['number'].Value;
+      cdsComputers.FieldValues['ip'] := dts.Recordset.Fields.Item['ipaddress'].Value;
+      cdsComputers.FieldValues['group'] := '';
+      cdsComputers.FieldValues['mac'] := dts.Recordset.Fields.Item['macaddress'].Value;
+      for i:=0 to gridComputers.Columns[FC_COL_GROUP].PickList.Count-1 do
+        if (TComputerGroup(gridComputers.Columns[FC_COL_GROUP].PickList.Objects[i]).Id = dts.Recordset.Fields.Item['idGroup'].Value) then begin
+          cdsComputers.FieldValues['group'] := gridComputers.Columns[FC_COL_GROUP].PickList.Strings[i];
+          break;
+        end;
+
+
+
+      cdsComputers.Post;
+      dts.Recordset.MoveNext;
+    end;
+    dts.Close;
+    dts.Destroy;
+
+
 //    cbVip.Checked := false;
   end;
 end;
@@ -150,6 +188,8 @@ begin
 end;
 
 procedure TframComputers.Activate(ID: integer);
+var
+  i:integer;
 begin
   Visible := (GetID = ID);
   if (not Visible) then exit;
@@ -165,6 +205,8 @@ begin
   lblGroup.Caption := translate('Group');
   lvComps.Column[0].Caption := translate('Number');
   lvComps.Column[1].Caption := translate('IP');
+  for i:= 0 to gridComputers.Columns.Count-1 do
+    gridComputers.Columns[i].Title.Caption := translate(gridComputers.Columns[i].FieldName);
 end;
 
 procedure TframComputers.butAddClick(Sender: TObject);
