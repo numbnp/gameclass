@@ -8,7 +8,7 @@ object framCustomers: TframCustomers
     Left = 0
     Top = 4
     Width = 449
-    Height = 245
+    Height = 273
     Align = alTop
     Caption = 
       '                                                                ' +
@@ -16,7 +16,7 @@ object framCustomers: TframCustomers
     TabOrder = 0
     object gbBalanceOptions: TGroupBox
       Left = 2
-      Top = 129
+      Top = 157
       Width = 445
       Height = 71
       Align = alTop
@@ -58,7 +58,7 @@ object framCustomers: TframCustomers
       Left = 2
       Top = 15
       Width = 445
-      Height = 114
+      Height = 142
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
@@ -68,6 +68,13 @@ object framCustomers: TframCustomers
         Width = 18
         Height = 13
         Caption = #1089#1077#1082
+      end
+      object lblUserLevel: TLabel
+        Left = 269
+        Top = 115
+        Width = 90
+        Height = 13
+        Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072':'
       end
       object cbxAutoLogoff: TCheckBox
         Left = 8
@@ -138,6 +145,41 @@ object framCustomers: TframCustomers
         TabOrder = 6
         OnClick = cbAuthenticationIfReservedClick
       end
+      object cbTarifsLimit: TDBCheckBoxEh
+        Left = 8
+        Top = 109
+        Width = 213
+        Height = 25
+        Caption = #1054#1075#1088#1072#1085#1080#1095#1080#1090#1100' '#1085#1086#1074#1099#1093' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1077#1081
+        State = cbGrayed
+        TabOrder = 7
+        ValueChecked = '1'
+        ValueUnchecked = '0'
+        OnClick = cbTarifsLimitClick
+      end
+      object cbUserLevel: TComboBox
+        Left = 365
+        Top = 112
+        Width = 73
+        Height = 21
+        ItemHeight = 13
+        ItemIndex = 1
+        TabOrder = 8
+        Text = '1'
+        OnChange = cbUserLevelChange
+        Items.Strings = (
+          '0'
+          '1'
+          '2'
+          '3'
+          '4'
+          '5'
+          '6'
+          '7'
+          '8'
+          '9'
+          '10')
+      end
     end
     object cbActive: TCheckBox
       Left = 8
@@ -150,7 +192,7 @@ object framCustomers: TframCustomers
     end
     object pnlCheckAccounts: TGroupBox
       Left = 2
-      Top = 200
+      Top = 228
       Width = 445
       Height = 39
       Align = alTop
@@ -196,9 +238,9 @@ object framCustomers: TframCustomers
   end
   object pnlButtons: TPanel
     Left = 0
-    Top = 249
+    Top = 277
     Width = 449
-    Height = 160
+    Height = 132
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
