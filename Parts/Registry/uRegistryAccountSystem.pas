@@ -12,6 +12,15 @@ type
   private
     FRegistryDataSet: TRegistryDataSet;
     FRegistryRecord: TRegistryRecord;
+    //by numb
+    function LocateKey(Key,DefValue:string): Boolean;
+    function GetKeyAsBoolean(Key:string;DefValue: Boolean):Boolean;
+    procedure SetKeyAsBoolean(Key:string;AValue: Boolean);
+    function GetKeyAsInteger(Key:string;DefValue: Integer):Integer;
+    procedure SetKeyAsInteger(Key:string;AValue: Integer);
+    function GetKeyAsString(Key:string;DefValue: String):String;
+    procedure SetKeyAsString(Key:string;AValue: String);
+
     function LocateEnable: Boolean;
     function GetEnable: Boolean;
     procedure SetEnable(AValue: Boolean);
@@ -53,6 +62,12 @@ type
     function LocatePeriodOfValidityInDays: Boolean;
     function GetPeriodOfValidityInDays: Integer;
     procedure SetPeriodOfValidityInDays(AValue: Integer);
+
+    //numb
+    function GetUseDefaultUserLevel: Boolean;
+    procedure SetUseDefaultUserLevel(AValue: Boolean);
+    function GetDefaultUserLevel: Integer;
+    procedure SetDefaultUserLevel(AValue: Integer);
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
         ARegistryRecord: TRegistryRecord);
@@ -86,7 +101,10 @@ type
       read GetUsePeriodOfValidity write SetUsePeriodOfValidity;
     property PeriodOfValidityInDays: Integer
       read GetPeriodOfValidityInDays write SetPeriodOfValidityInDays;
-
+    property UseDefaultUserLevel: Boolean
+      read GetUseDefaultUserLevel write SetUseDefaultUserLevel;
+    property DefaultUserLevel: Integer
+      read GetDefaultUserLevel write SetDefaultUserLevel;
   end;
 
 implementation
@@ -94,6 +112,9 @@ implementation
 uses
   SysUtils,
   DB, uGCDataSet;
+
+const
+  RegistryPart = 'AccountSystem';
 
 {*******************************************************************************
                       class  TRegistryAccountSystem
@@ -351,6 +372,75 @@ begin
   LocatePeriodOfValidityInDays;
   FRegistryRecord.ValueAsInteger := AValue;
 end;
+
+function TRegistryAccountSystem.GetUseDefaultUserLevel: Boolean;
+begin
+  Result := GetKeyAsBoolean('UseDefaultUserLevel',True);
+end;
+
+procedure TRegistryAccountSystem.SetUseDefaultUserLevel(AValue: Boolean);
+begin
+  SetKeyAsBoolean('UseDefaultUserLevel',AValue);
+end;
+
+function TRegistryAccountSystem.GetDefaultUserLevel: Integer;
+begin
+  Result := GetKeyAsInteger('DefaultUserLevel',1);
+end;
+
+procedure TRegistryAccountSystem.SetDefaultUserLevel(AValue: Integer);
+begin
+  SetKeyAsInteger('DefaultUserLevel',AValue);
+end;
+
+
+
+
+function TRegistryAccountSystem.LocateKey(Key,DefValue:string): Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey(
+      RegistryPart+'\'+Key, DefValue);
+end;
+
+function TRegistryAccountSystem.GetKeyAsBoolean(Key:string;DefValue:Boolean):Boolean;
+begin
+  if DefValue then
+    LocateKey(Key,'1')
+  else
+    LocateKey(Key,'0');
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryAccountSystem.SetKeyAsBoolean(Key:string;AValue: Boolean);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryAccountSystem.GetKeyAsInteger(Key:string;DefValue:Integer):Integer;
+begin
+  LocateKey(Key,IntToStr(DefValue));
+  Result := FRegistryRecord.ValueAsInteger;
+end;
+
+procedure TRegistryAccountSystem.SetKeyAsInteger(Key:string;AValue: Integer);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.ValueAsInteger := AValue;
+end;
+
+function TRegistryAccountSystem.GetKeyAsString(Key:string;DefValue:String):String;
+begin
+  LocateKey(Key,DefValue);
+  Result := FRegistryRecord.Value;
+end;
+
+procedure TRegistryAccountSystem.SetKeyAsString(Key:string;AValue: String);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.Value := AValue;
+end;
+
 
 
 end.

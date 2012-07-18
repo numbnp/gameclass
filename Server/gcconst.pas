@@ -225,7 +225,7 @@ const
   FN_CUSTOMREPORT = 'CustomReports';
   FN_TIMEBONUS = 'TimeBonus';
 
-// колонки в списке
+// колонки в списке - главное окно
   COL_COMPUTER = 0;
   COL_STATE = 1;
   COL_TARIF = 2;
@@ -239,6 +239,14 @@ const
   COL_CLIENT = 10;
   COL_DESCRIPTION = 11;
   COL_GROUP = 12;
+
+// колонки в списке - настройка компов
+
+  FC_COL_NUMBER = 0;
+  FC_COL_IP = 1;
+  FC_COL_GROUP = 2;
+  FC_COL_MAC = 3;
+
 
   // иконки в EVENTS LIST'e
   EVENT_ICON_EMPTY = 0;

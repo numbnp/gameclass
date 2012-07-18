@@ -5,7 +5,7 @@ interface
 uses  
   GCConst, GCLangUtils, GCComputers, ADODB, GCCommon,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, DBGridEh, DB;
+  ExtCtrls, Grids, DBGridEh, DB, DBCtrlsEh;
 
 type
   TframCustomers = class(TFrame)
@@ -33,6 +33,9 @@ type
     edtPeriodOfValidityInDays: TEdit;
     lblDays: TLabel;
     cbAuthenticationIfReserved: TCheckBox;
+    lblUserLevel: TLabel;
+    cbTarifsLimit: TDBCheckBoxEh;
+    cbUserLevel: TComboBox;
     procedure cbActiveClick(Sender: TObject);
     procedure cbAutoBlockCompClick(Sender: TObject);
     procedure cbSecCodesClick(Sender: TObject);
@@ -47,6 +50,8 @@ type
     procedure cbxUsePeriodOfValidityClick(Sender: TObject);
     procedure edtPeriodOfValidityInDaysChange(Sender: TObject);
     procedure cbAuthenticationIfReservedClick(Sender: TObject);
+    procedure cbTarifsLimitClick(Sender: TObject);
+    procedure cbUserLevelChange(Sender: TObject);
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
@@ -104,6 +109,9 @@ begin
   cbxUseCheckAccounts.Checked := GAccountSystem.UseCheckAccounts;
   edtPeriodOfValidityInDays.Text := IntToStr(
       GAccountSystem.PeriodOfValidityInDays);
+  cbTarifsLimit.Checked := GAccountSystem.UseDefaultUserLevel;
+  cbUserLevel.Text := inttostr(GAccountSystem.DefaultUserLevel);
+  cbUserLevel.Enabled := cbTarifsLimit.Checked;
   EnableControls;
 end;
 
@@ -278,6 +286,24 @@ begin
   DisableControls;
   GAccountSystem.AuthenticationIfReserved :=
       cbAuthenticationIfReserved.Checked;
+  EnableControls;
+end;
+
+procedure TframCustomers.cbTarifsLimitClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  GAccountSystem.UseDefaultUserLevel :=
+      cbTarifsLimit.Checked;
+  cbUserLevel.Enabled := GAccountSystem.UseDefaultUserLevel;
+  EnableControls;
+end;
+
+procedure TframCustomers.cbUserLevelChange(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  GAccountSystem.DefaultUserLevel := StrToIntDef(cbUserLevel.Text,1);
   EnableControls;
 end;
 

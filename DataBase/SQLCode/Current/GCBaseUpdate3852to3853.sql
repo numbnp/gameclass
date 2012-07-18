@@ -535,17 +535,17 @@ GO
 
 IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'username' 
   AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
-ALTER TABLE [Accounts] ADD [username] [nvarchar] (80) NOT NULL DEFAULT ''
+ALTER TABLE [Accounts] ADD [username] [nvarchar] (80) NULL DEFAULT ''
 GO
 
 IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'uname' 
   AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
-ALTER TABLE [Accounts] ADD [uname] [nvarchar] (80) NOT NULL DEFAULT ''
+ALTER TABLE [Accounts] ADD [uname] [nvarchar] (80) NULL DEFAULT ''
 GO
 
 IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE name = 'uotch' 
   AND id = object_id(N'[GameClass].[dbo].[Accounts]')) 
-ALTER TABLE [Accounts] ADD [uotch] [nvarchar] (80) NOT NULL DEFAULT ''
+ALTER TABLE [Accounts] ADD [uotch] [nvarchar] (80) NULL DEFAULT ''
 GO
 
 

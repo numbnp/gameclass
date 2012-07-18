@@ -230,12 +230,12 @@ begin
   editAccountAddress.Enabled := bEditPermission;
   memoAccountMemo.Enabled := bEditPermission;
   cbxPeriodOfValidity.Enabled := bEditPermission;
-  butClearPass.Visible := (isManager
+  butClearPass.Enabled := (isManager
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
   cbUserLevel.Enabled:=cbTarifsLimit.Checked and bManagerPermission;
   cbForceTariff.Enabled:=bManagerPermission;
   cbReferal.Enabled := GAccountSystem.RefersSystemEnabled and bEditPermission;
-  editAccountPass.Enabled := isManager; 
+  editAccountPass.Enabled := isManager;
   if cbReferal.Items.Count <> GAccountSystem.Accounts.RecordCount+1 then
   begin
     cbReferal.Items.Clear;
@@ -278,8 +278,8 @@ begin
   GAccountsCopy.Current.GenerateSecCodes;
   GAccountsCopy.AfterScroll := _AfterScroll;
   EnableControls;
-  cbTarifsLimit.Checked := True;
-  editUserLevel.Text := '1';
+  cbTarifsLimit.Checked := GAccountSystem.UseDefaultUserLevel;
+  editUserLevel.Text := IntToStr(GAccountSystem.DefaultUserLevel);
   DisableControls;
   _OnChange(Sender);
   butAccountSaveClick(Sender);

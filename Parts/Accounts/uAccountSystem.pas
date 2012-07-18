@@ -40,6 +40,10 @@ uses
     procedure SetUsePeriodOfValidity(AValue: Boolean);
     function GetPeriodOfValidityInDays: Integer;
     procedure SetPeriodOfValidityInDays(AValue: Integer);
+    function GetUseDefaultUserLevel: Boolean;
+    procedure SetUseDefaultUserLevel(AValue: Boolean);
+    function GetDefaultUserLevel: Integer;
+    procedure SetDefaultUserLevel(AValue: Integer);
 
   public
     constructor Create(AAutoUpdate: TAutoUpdate);
@@ -78,6 +82,11 @@ uses
         read GetUsePeriodOfValidity write SetUsePeriodOfValidity;
     property PeriodOfValidityInDays: Integer
         read GetPeriodOfValidityInDays write SetPeriodOfValidityInDays;
+    property UseDefaultUserLevel: Boolean
+        read GetUseDefaultUserLevel write SetUseDefaultUserLevel;
+    property DefaultUserLevel: Integer
+        read GetDefaultUserLevel write SetDefaultUserLevel;
+
   end;
 
 var
@@ -241,6 +250,25 @@ begin
   GRegistry.AccountSystem.PeriodOfValidityInDays := AValue;
 end;
 
+function TAccountSystem.GetUseDefaultUserLevel: Boolean;
+begin
+  Result := GRegistry.AccountSystem.UseDefaultUserLevel;
+end;
+
+procedure TAccountSystem.SetUseDefaultUserLevel(AValue: Boolean);
+begin
+  GRegistry.AccountSystem.UseDefaultUserLevel := AValue;
+end;
+
+function TAccountSystem.GetDefaultUserLevel: Integer;
+begin
+  Result := GRegistry.AccountSystem.DefaultUserLevel;
+end;
+
+procedure TAccountSystem.SetDefaultUserLevel(AValue: Integer);
+begin
+  GRegistry.AccountSystem.DefaultUserLevel := AValue;
+end;
 
 
 end.
