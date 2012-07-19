@@ -74,35 +74,6 @@ IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[SyncSe
 GO
 
 /* -----------------------------------------------------------------------------
-                  Изменение Select-процедур для скрытия полей sync и guid
------------------------------------------------------------------------------ */
-ALTER PROCEDURE AccountsSelect
-  @id INT = NULL
-/*WITH ENCRYPTION*/
-AS 
-BEGIN
-  SELECT [id], [name], [password], email, phone, photo, seccodes, 
-      isenabled, isblocked, isprivileged, isdeleted, privilegedDiscount, 
-      zeroBalance, balance, summary, address, memo  FROM Accounts 
-      WHERE ([isdeleted] = 0) AND ((Accounts.[id] = @id) OR (@id IS NULL))
-      ORDER BY [id]
-END
-GO
-
-ALTER PROCEDURE AccountsHistorySelect
-@idAccount int = 0
-/*WITH ENCRYPTION*/ 
-AS
-
-if (@idAccount = 0) 
-  select [id], idAccounts, moment, what, summa, comment, operator 
-      from AccountsHistory order by [id]
-else
-  select top 10 [id], idAccounts, moment, what, summa, comment, operator
-      from AccountsHistory where [idAccounts] = @idAccount order by [moment] DESC
-GO
-
-/* -----------------------------------------------------------------------------
                   Новые процедуры для таблицы SyncServers
 ----------------------------------------------------------------------------- */
 
@@ -139,7 +110,7 @@ GO
 
 CREATE PROCEDURE SyncServersSelect
   @id INT = NULL
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   SELECT * FROM SyncServers
@@ -151,7 +122,7 @@ GO
 CREATE PROCEDURE SyncServersInsert
   @Name [varchar] (50),
   @ClubName [varchar] (50)
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   DECLARE @id int
@@ -168,7 +139,7 @@ GO
 
 CREATE PROCEDURE SyncServersDelete
   @id int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DELETE FROM SyncServers WHERE [id] = @id
@@ -179,7 +150,7 @@ CREATE PROCEDURE SyncServersUpdate
   @id int,
   @Name [varchar] (50),
   @ClubName [varchar] (50)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   UPDATE SyncServers SET 
@@ -191,7 +162,7 @@ GO
 
 CREATE FUNCTION [GetSyncServerIdByName] (@Name [varchar] (50))
   RETURNS int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @id int
@@ -203,7 +174,7 @@ GO
 
 CREATE FUNCTION [GetGcsyncUserId] ()
   RETURNS INT
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN 
   DECLARE @id int
@@ -258,7 +229,7 @@ GO
 
 CREATE PROCEDURE AccountsSelectUnsynchronized
 @idSyncServer int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SELECT guid, [name], [password], email, phone, photo, seccodes, 
@@ -288,7 +259,7 @@ CREATE PROCEDURE AccountsInsertUnsynchronized
 @summary money,  
 @address nvarchar(300),  
 @memo nvarchar(2000)
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   IF NOT EXISTS (SELECT * FROM Accounts WHERE [guid] = @guid)
@@ -322,7 +293,7 @@ CREATE PROCEDURE AccountsUpdateUnsynchronized
 @address nvarchar(300),  
 @memo nvarchar(2000),
 @updated datetime 
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   IF NOT EXISTS (SELECT * FROM Accounts WHERE [guid] = @guid)
@@ -348,7 +319,7 @@ GO
 CREATE PROCEDURE AccountsSyncUnsynchronized
 @guid uniqueidentifier,
 @idSyncServer int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   UPDATE Accounts 
@@ -359,7 +330,7 @@ GO
 
 CREATE PROCEDURE AccountsHistorySelectUnsynchronized
 @idSyncServer int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   SELECT AH.guid, A.guid AS guidAccounts, moment, what, summa, comment
@@ -378,7 +349,7 @@ CREATE PROCEDURE AccountsHistoryInsertUnsynchronized
 @summa money,
 @comment nvarchar(200),
 @initialization int
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
   IF NOT EXISTS (SELECT * FROM AccountsHistory WHERE [guid] = @guid)
@@ -401,7 +372,7 @@ GO
 CREATE PROCEDURE AccountsHistorySyncUnsynchronized
 @guid uniqueidentifier,
 @idSyncServer int
-/*WITH ENCRYPTION*/
+
 AS
 BEGIN
   UPDATE AccountsHistory 
@@ -440,7 +411,7 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[AccountsUp
 GO
 
 CREATE TRIGGER AccountsUpdateTrigger ON [dbo].[Accounts]
-/*WITH ENCRYPTION*/
+
 FOR UPDATE
 AS
 BEGIN

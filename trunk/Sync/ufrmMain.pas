@@ -383,12 +383,12 @@ begin
       exit;
     end;
   end;
-  if dmMain.GetUserName(dmMain.cnnDestination)
+{  if dmMain.GetUserName(dmMain.cnnDestination)
       = dmMain.GetUserName(dmMain.cnnMain) then begin
     Result := False;
     Application.MessageBox(PChar(KEY_ALREADY_PRESENT), PChar(ERROR),
         MB_OK or MB_ICONERROR);
-  end;
+  end; }
 end;
 
 procedure TfrmMain._Initialize;
@@ -446,10 +446,12 @@ begin
   with dmMain do begin
     try
       with dstGetSyncServerIdByName do begin
-        Parameters.FindParam('Name').Value := AstrLocalServerName;
+//        Parameters.FindParam('Name').Value := AstrLocalServerName;
+        dstGetSyncServerIdByName.SQL.Clear;
+        dstGetSyncServerIdByName.SQL.Add ('select dbo.GetSyncServerIdByName('''+ AstrLocalServerName +''') as value');
         Connection := AcnnSource;
         Open;
-        nIdSyncServer := FieldValues['value'];
+        nIdSyncServer := dstGetSyncServerIdByName.FieldValues['value'];
         Close;
       end;
       with dstAccountsSelect do begin
@@ -508,6 +510,25 @@ begin
               dstAccountsSelect.FieldValues['memo'];
           dstAccountsInsert.Parameters.FindParam('@balance').Value :=
               dstAccountsSelect.FieldValues['balance'];
+          dstAccountsInsert.Parameters.FindParam('@PeriodOfValidity').Value :=
+              dstAccountsSelect.FieldValues['PeriodOfValidity'];
+          dstAccountsInsert.Parameters.FindParam('@ExpirationDate').Value :=
+              dstAccountsSelect.FieldValues['ExpirationDate'];
+          dstAccountsInsert.Parameters.FindParam('@assigntarif').Value :=
+              dstAccountsSelect.FieldValues['assigntarif'];
+          dstAccountsInsert.Parameters.FindParam('@userlevel').Value :=
+              dstAccountsSelect.FieldValues['userlevel'];
+          dstAccountsInsert.Parameters.FindParam('@force_tariff').Value :=
+              dstAccountsSelect.FieldValues['force_tariff'];
+          dstAccountsInsert.Parameters.FindParam('@referal').Value :=
+              dstAccountsSelect.FieldValues['referal'];
+          dstAccountsInsert.Parameters.FindParam('@username').Value :=
+              dstAccountsSelect.FieldValues['username'];
+          dstAccountsInsert.Parameters.FindParam('@uname').Value :=
+              dstAccountsSelect.FieldValues['uname'];
+          dstAccountsInsert.Parameters.FindParam('@uotch').Value :=
+              dstAccountsSelect.FieldValues['uotch'];
+
           dstAccountsInsert.ExecProc;
           dstAccountsSync.Parameters.FindParam('@idSyncServer').Value :=
               nIdSyncServer;

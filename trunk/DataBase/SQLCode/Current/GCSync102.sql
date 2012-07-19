@@ -9,7 +9,7 @@ DECLARE @SQLCode nvarchar(4000)
 SET @SQLCode = N'
 ALTER PROCEDURE ReportCurrent
 @NewShiftPoint datetime
-/*WITH ENCRYPTION*/
+
 AS 
 BEGIN
 set nocount on
