@@ -1,7 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 524
-  Top = 157
+  Left = 1943
+  Top = 173
   Height = 460
   Width = 499
   object cnnMain: TADOConnection
@@ -326,17 +326,17 @@ object dmMain: TdmMain
         Value = Null
       end
       item
-        Name = '@privilegedDiscount'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 10
-        Value = Null
-      end
-      item
         Name = '@zeroBalance'
         Attributes = [paNullable]
         DataType = ftBCD
         Precision = 19
+        Value = Null
+      end
+      item
+        Name = '@privilegedDiscount'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
         Value = Null
       end
       item
@@ -365,6 +365,70 @@ object dmMain: TdmMain
         Attributes = [paNullable]
         DataType = ftWideString
         Size = 2000
+        Value = Null
+      end
+      item
+        Name = '@PeriodOfValidity'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@ExpirationDate'
+        Attributes = [paNullable]
+        DataType = ftDateTime
+        Precision = 10
+        Size = 20
+        Value = Null
+      end
+      item
+        Name = '@assigntarif'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@userlevel'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@force_tariff'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@referal'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@username'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
+        Value = Null
+      end
+      item
+        Name = '@uname'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
+        Value = Null
+      end
+      item
+        Name = '@uotch'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
         Value = Null
       end>
     Left = 48
@@ -496,6 +560,70 @@ object dmMain: TdmMain
         Name = '@updated'
         Attributes = [paNullable]
         DataType = ftDateTime
+        Value = Null
+      end
+      item
+        Name = '@PeriodOfValidity'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@ExpirationDate'
+        Attributes = [paNullable]
+        DataType = ftDateTime
+        Precision = 10
+        Size = 20
+        Value = Null
+      end
+      item
+        Name = '@assigntarif'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@userlevel'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@force_tariff'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@referal'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        Precision = 10
+        Value = Null
+      end
+      item
+        Name = '@username'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
+        Value = Null
+      end
+      item
+        Name = '@uname'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
+        Value = Null
+      end
+      item
+        Name = '@uotch'
+        Attributes = [paNullable]
+        DataType = ftWideString
+        Size = 80
         Value = Null
       end>
     Left = 160

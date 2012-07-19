@@ -27,7 +27,8 @@ uses
   ufrmLogon in '..\Parts\SQLTools\ufrmLogon.pas' {frmLogon},
   uErrors in '..\Parts\Errors\uErrors.pas',
   uSyncConst in 'uSyncConst.pas',
-  uRegistration in '..\Parts\Registration\uRegistration.pas';
+  uRegistration in '..\Parts\Registration\uRegistration.pas',
+  uCommon in '..\Parts\Common\uCommon.pas';
 
 {$R *.res}
 
@@ -40,7 +41,7 @@ begin
     Application.Title :=
         'Настройки сервиса синхронизации серверов GameClass';
     Application.CreateForm(TdmMain, dmMain);
-    frmLogon := TfrmLogon.Create(frmMain, dmMain.cnnMain);
+  frmLogon := TfrmLogon.Create(frmMain, dmMain.cnnMain);
     frmLogon.ServerName := ReadLocalServerName;
     if (frmLogon.ShowModal = mrOk) then begin
       Application.ProcessMessages;

@@ -11,7 +11,7 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set Version=1.0.2
+set Version=1.0.3
 echo Собирается версия %VERSION%
 rem ToDo need compile GameClass.chm
 
@@ -24,6 +24,7 @@ call copy_packages_files_gcsync.bat
 rem Кодирование sql-файлов в sqp
 call encode_sql_gcsync.bat
 
-cd Install\Src\GI
-"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsync.gpr
+
+cd Install\Src\NSIS
+"c:\Program Files\NSIS\makensis.exe" gcsync.nsi
 cd ..\..\..

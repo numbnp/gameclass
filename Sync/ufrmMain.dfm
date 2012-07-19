@@ -200,7 +200,7 @@ object frmMain: TfrmMain
   end
   object pnlButtons: TPanel
     Left = 0
-    Top = 341
+    Top = 339
     Width = 606
     Height = 39
     Align = alBottom
@@ -292,7 +292,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 57
     Width = 606
-    Height = 284
+    Height = 282
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
@@ -301,7 +301,7 @@ object frmMain: TfrmMain
       Left = 0
       Top = 0
       Width = 249
-      Height = 284
+      Height = 282
       Align = alLeft
       BevelOuter = bvNone
       Caption = 'Panel3'
@@ -444,7 +444,7 @@ object frmMain: TfrmMain
       Left = 249
       Top = 0
       Width = 377
-      Height = 284
+      Height = 282
       Align = alLeft
       Caption = #1057#1077#1088#1074#1077#1088#1072' GameClass'
       TabOrder = 1

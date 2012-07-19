@@ -294,10 +294,30 @@ begin
                 dstAccountsSelect.FieldValues['memo'];
             dstAccountsUpdate.Parameters.FindParam('@updated').Value :=
                 dstAccountsSelect.FieldValues['updated'];
+            dstAccountsUpdate.Parameters.FindParam('@PeriodOfValidity').Value :=
+                dstAccountsSelect.FieldValues['PeriodOfValidity'];
+            dstAccountsUpdate.Parameters.FindParam('@ExpirationDate').Value :=
+                dstAccountsSelect.FieldValues['ExpirationDate'];
+            dstAccountsUpdate.Parameters.FindParam('@assigntarif').Value :=
+                dstAccountsSelect.FieldValues['assigntarif'];
+            dstAccountsUpdate.Parameters.FindParam('@userlevel').Value :=
+                dstAccountsSelect.FieldValues['userlevel'];
+            dstAccountsUpdate.Parameters.FindParam('@force_tariff').Value :=
+                dstAccountsSelect.FieldValues['force_tariff'];
+            dstAccountsUpdate.Parameters.FindParam('@referal').Value :=
+                dstAccountsSelect.FieldValues['referal'];
+            dstAccountsUpdate.Parameters.FindParam('@username').Value :=
+                dstAccountsSelect.FieldValues['username'];
+            dstAccountsUpdate.Parameters.FindParam('@uname').Value :=
+                dstAccountsSelect.FieldValues['uname'];
+            dstAccountsUpdate.Parameters.FindParam('@uotch').Value :=
+                dstAccountsSelect.FieldValues['uotch'];
+
             dstAccountsSync.Parameters.FindParam('@idSyncServer').Value :=
                 AnDestinationServerId;
             dstAccountsSync.Parameters.FindParam('@guid').Value :=
                 dstAccountsSelect.FieldValues['guid'];
+
             except
               on E: Exception do Debug.Trace5('dstAccountsSelect Param E'
                   + E.Message);

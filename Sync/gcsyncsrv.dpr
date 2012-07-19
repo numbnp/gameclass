@@ -24,7 +24,8 @@ uses
   uSyncConst in 'uSyncConst.pas',
   udmMain in 'udmMain.pas' {dmMain: TDataModule},
   uGCDBTools in '..\Parts\SQLTools\uGCDBTools.pas',
-  uRegistration in '..\Parts\Registration\uRegistration.pas';
+  uRegistration in '..\Parts\Registration\uRegistration.pas',
+  uCommon in '..\Parts\Common\uCommon.pas';
 
 {$R *.RES}
 
