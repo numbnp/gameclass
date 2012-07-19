@@ -10,7 +10,6 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[AccountsUp
 GO
 
 CREATE TRIGGER AccountsUpdateTrigger ON [dbo].[Accounts]
-/*WITH ENCRYPTION*/
 FOR UPDATE
 AS
 BEGIN

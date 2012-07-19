@@ -8,29 +8,30 @@
   resources were bound to the produced executable.
 */
 
-#define uSyncConst_FOR_INITIALIZATION 65104
-#define uSyncConst_MSG_SYNC_DISCONNECTED 65105
-#define uSyncConst_ISMANAGER_WARNING 65106
-#define uSyncConst_UNREGISTERED_WARNING 65107
-#define uSyncConst_BASE_SERVER_CAPTION 65108
-#define uSyncConst_INITILIZATION_COMPLETE 65109
-#define uSyncConst_INITILIZATION_NOT_COMPLETE 65110
+#define uSyncConst_MSG_SYNC_CONNECTED 65104
+#define uSyncConst_FOR_INITIALIZATION 65105
+#define uSyncConst_MSG_SYNC_DISCONNECTED 65106
+#define uSyncConst_ISMANAGER_WARNING 65107
+#define uSyncConst_UNREGISTERED_WARNING 65108
+#define uSyncConst_BASE_SERVER_CAPTION 65109
+#define uSyncConst_INITILIZATION_COMPLETE 65110
+#define uSyncConst_INITILIZATION_NOT_COMPLETE 65111
 #define DbUtilsEh_SIncorrectExpressionEh 65120
 #define DbUtilsEh_SUnexpectedANDorOREh 65121
-#define uSyncConst_INSERT 65122
-#define uSyncConst_EDIT 65123
-#define uSyncConst_ERROR 65124
-#define uSyncConst_WARNING 65125
-#define uSyncConst_NAME_ALREADY_PRESENT 65126
-#define uSyncConst_CLUB_NAME_ALREADY_PRESENT 65127
-#define uSyncConst_KEY_ALREADY_PRESENT 65128
-#define uSyncConst_DIFFERING_CLUB_NAMES 65129
-#define uSyncConst_CONNECTED_SUCCESSFULLY 65130
-#define uSyncConst_INITIALIZATION_WARNING 65131
-#define uSyncConst_ALREADY_INITIALIZED 65132
-#define uSyncConst_INITIALIZED_AT 65133
-#define uSyncConst_NOT_INITIALIZED 65134
-#define uSyncConst_MSG_SYNC_CONNECTED 65135
+#define uErrors_ERR_CAPTION 65122
+#define uSQLTools_SQL_TOOLS_NEED_SYSADMIN 65123
+#define uSyncConst_INSERT 65124
+#define uSyncConst_EDIT 65125
+#define uSyncConst_ERROR 65126
+#define uSyncConst_WARNING 65127
+#define uSyncConst_NAME_ALREADY_PRESENT 65128
+#define uSyncConst_CLUB_NAME_ALREADY_PRESENT 65129
+#define uSyncConst_DIFFERING_CLUB_NAMES 65130
+#define uSyncConst_CONNECTED_SUCCESSFULLY 65131
+#define uSyncConst_INITIALIZATION_WARNING 65132
+#define uSyncConst_ALREADY_INITIALIZED 65133
+#define uSyncConst_INITIALIZED_AT 65134
+#define uSyncConst_NOT_INITIALIZED 65135
 #define ADOConst_SNoFilterOptions 65136
 #define ADOConst_SRecordsetNotOpen 65137
 #define ADOConst_sNameAttr 65138
@@ -433,6 +434,7 @@
 #define SysConst_SDiskFull 65535
 STRINGTABLE
 BEGIN
+	uSyncConst_MSG_SYNC_CONNECTED,	"Программа настроек сервиса синхронизации подключилась к базе данных"
 	uSyncConst_FOR_INITIALIZATION,	" для первичной синхронизации"
 	uSyncConst_MSG_SYNC_DISCONNECTED,	"Программа настроек сервиса синхронизации отключилась от базы данных"
 	uSyncConst_ISMANAGER_WARNING,	"Недостаточно прав!\n\rВыполните подключение под пользователем с правами группы manager."
@@ -442,20 +444,20 @@ BEGIN
 	uSyncConst_INITILIZATION_NOT_COMPLETE,	"Первичная синхронизация не выполнена!"
 	DbUtilsEh_SIncorrectExpressionEh,	"Incorrect expression: "
 	DbUtilsEh_SUnexpectedANDorOREh,	"Unexpected AND or OR: "
+	uErrors_ERR_CAPTION,	"Ошибка"
+	uSQLTools_SQL_TOOLS_NEED_SYSADMIN,	"Внимание! Требуется пользователь с полными правами к базе данных!"
 	uSyncConst_INSERT,	"Добавить"
 	uSyncConst_EDIT,	"Изменить"
 	uSyncConst_ERROR,	"Ошибка!"
 	uSyncConst_WARNING,	"Предупреждение"
 	uSyncConst_NAME_ALREADY_PRESENT,	"Сервер с таким IP-адресом или именем уже присутствует в списке!"
 	uSyncConst_CLUB_NAME_ALREADY_PRESENT,	"Сервер с таким названием клуба уже присутствует в списке!\n\rВсе равно добавить его в список?"
-	uSyncConst_KEY_ALREADY_PRESENT,	"Сервер с такимже регистрационным ключем уже присутствует в списке!\n\rДля включения синхронизации каждый сервер должен быть зарегистрирован\n\rоригинальным ключем!"
 	uSyncConst_DIFFERING_CLUB_NAMES,	"Название клуба локального сервера отличается от названия клуба\n\rсервера, указанного в окне подключения! При подключении и в поле\n\rобязательно используйте один и тотже сервер!"
 	uSyncConst_CONNECTED_SUCCESSFULLY,	"Подключение выполнено успешно"
 	uSyncConst_INITIALIZATION_WARNING,	"Первичная синхронизация удаляет все учетные записи на локальном сервере\n\rзаменяя их данными с базового сервера!\n\rПродолжить выполнение первичной синхронизации?"
 	uSyncConst_ALREADY_INITIALIZED,	"Первичная синхронизация для сервера уже была выполнена!\n\rПовторная синхронизация может привести к нарушению синхронности данных.\n\rВсе равно выполнить первичную синхронизацию?"
 	uSyncConst_INITIALIZED_AT,	"Выполнена "
 	uSyncConst_NOT_INITIALIZED,	"Не выполнялась!"
-	uSyncConst_MSG_SYNC_CONNECTED,	"Программа настроек сервиса синхронизации подключилась к базе данных"
 	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
 	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
 	ADOConst_sNameAttr,	"Name"
