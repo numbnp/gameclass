@@ -1586,6 +1586,31 @@ begin
         QueryAuthGoState1(index);
       end; //STR_CMD_AUTH_QUERYLOGOFF
 
+      if (cmd = STR_CMD_GET_SHUTDOWN) then begin
+        i := StrToIntDef(param,0 );
+        case i of
+          1:  begin
+                Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+                  translate('InitShutdown') + ' / ' + translate('Computer')
+                  + ' ' + Comps[index].GetStrNumber);
+                Comps[index].PowerOff;
+              end;
+          2:  begin
+                Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+                  translate('InitReboot') + ' / ' + translate('Computer')
+                  + ' ' + Comps[index].GetStrNumber);
+                Comps[index].Reboot;
+              end;
+          3:  begin
+                Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+                  translate('InitLogoff') + ' / ' + translate('Computer')
+                  + ' ' + Comps[index].GetStrNumber);
+                Comps[index].Logoff; 
+              end;
+        end;
+      end; //STR_CMD_GET_SHUTDOWN
+
+
       if (cmd = STR_CMD_AUTH_QUERYCHANGEPASS) then begin
         aLogin := GetParamFromString(param,0); //OldPass
         aPass :=  GetParamFromString(param,1); //NewPass

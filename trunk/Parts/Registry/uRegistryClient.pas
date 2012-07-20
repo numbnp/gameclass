@@ -32,6 +32,19 @@ type
     function GetShowSumm: Boolean;
     procedure SetShowSumm(AValue: Boolean);
 
+    //by numb
+    function LocateKey(Key,DefValue:string): Boolean;
+    function GetKeyAsBoolean(Key:string;DefValue: Boolean):Boolean;
+    procedure SetKeyAsBoolean(Key:string;AValue: Boolean);
+    function GetKeyAsInteger(Key:string;DefValue: Integer):Integer;
+    procedure SetKeyAsInteger(Key:string;AValue: Integer);
+    function GetKeyAsString(Key:string;DefValue: String):String;
+    procedure SetKeyAsString(Key:string;AValue: String);
+
+    function GetShutdownButton: Boolean;
+    procedure SetShutdownButton(AValue: Boolean);
+
+
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
         ARegistryRecord: TRegistryRecord);
@@ -50,6 +63,9 @@ type
     property ShowSumm: Boolean
         read GetShowSumm write SetShowSumm;
 
+    property ShutdownButton: Boolean
+        read GetShutdownButton write SetShutdownButton;
+
   end;
 
 implementation
@@ -57,7 +73,10 @@ implementation
 uses
   SysUtils,
   DB, uGCDataSet;
-  
+
+const
+  RegistryPart = 'Client';
+
 {*******************************************************************************
                       class  TRegistryClient
 *******************************************************************************}
@@ -72,6 +91,66 @@ destructor TRegistryClient.Destroy;
 begin
   inherited Destroy;
 end;
+
+function TRegistryClient.LocateKey(Key,DefValue:string): Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey(
+      RegistryPart+'\'+Key, DefValue);
+end;
+
+function TRegistryClient.GetKeyAsBoolean(Key:string;DefValue:Boolean):Boolean;
+begin
+  if DefValue then
+    LocateKey(Key,'1')
+  else
+    LocateKey(Key,'0');
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+procedure TRegistryClient.SetKeyAsBoolean(Key:string;AValue: Boolean);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+function TRegistryClient.GetKeyAsInteger(Key:string;DefValue:Integer):Integer;
+begin
+  LocateKey(Key,IntToStr(DefValue));
+  Result := FRegistryRecord.ValueAsInteger;
+end;
+
+procedure TRegistryClient.SetKeyAsInteger(Key:string;AValue: Integer);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.ValueAsInteger := AValue;
+end;
+
+function TRegistryClient.GetKeyAsString(Key:string;DefValue:String):String;
+begin
+  LocateKey(Key,DefValue);
+  Result := FRegistryRecord.Value;
+end;
+
+procedure TRegistryClient.SetKeyAsString(Key:string;AValue: String);
+begin
+  LocateKey(Key,'0');
+  FRegistryRecord.Value := AValue;
+end;
+
+
+
+
+
+function TRegistryClient.GetShutdownButton: Boolean;
+begin
+  Result:=GetKeyAsBoolean('ShutdownButton', False);
+end;
+
+procedure TRegistryClient.SetShutdownButton(AValue: Boolean);
+begin
+  SetKeyAsBoolean('ShutdownButton', AValue);
+end;
+
 
 
 

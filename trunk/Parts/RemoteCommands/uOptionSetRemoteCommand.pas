@@ -232,6 +232,11 @@ try
       then begin
     GClientOptions.GuestSession := StrToBool(FstrOptionValue);
 
+  end else if CompareText(FstrOptionName,'ShutdownButton') = 0
+      then begin
+    GClientOptions.ShutdownButton := StrToBool(FstrOptionValue);
+
+
   end else if CompareText(FstrOptionName,'ServerVersion') = 0
       then begin
 {$IFDEF LINUX}

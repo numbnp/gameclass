@@ -79,6 +79,8 @@ uses
   uPingRemoteCommand,
   uGetExtendedInfoRemoteCommand,
   uExecuteCommandRemoteCommand,
+  uExecuteCommandRemoteCommandByClient,
+
 {$IFDEF LINUX}
   udmMain,
 {$ENDIF}
@@ -229,6 +231,11 @@ begin
   // Запускаем процесс указанный сервером
   end else if CompareText(strCommand, STR_CMD_EXECUTE_COMMAND_SRV) = 0 then begin
     Result := TExecuteCommandRemoteCommand.Create(strParameters)
+
+  // Запускаем процесс указанный сервером от имени клиента
+  end else if CompareText(strCommand, STR_CMD_EXECUTE_COMMAND_CLIENT) = 0 then begin
+    Result := TExecuteCommandRemoteCommandByClient.Create(strParameters)
+
 
   end else if CompareText(strCommand, STR_CMD_RESTART) = 0 then begin
     GClientInfo.AfterStopActionNeeded := False;

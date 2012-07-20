@@ -438,6 +438,16 @@ object frmMain: TfrmMain
           ReadOnly = True
           TabOrder = 1
         end
+        object Button1: TButton
+          Left = 216
+          Top = 60
+          Width = 25
+          Height = 21
+          Caption = 'Button1'
+          TabOrder = 2
+          Visible = False
+          OnClick = Button1Click
+        end
       end
     end
     object pnlSyncServers: TGroupBox

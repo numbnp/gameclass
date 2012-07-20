@@ -190,5 +190,14 @@ object frameClientInterface: TframeClientInterface
       TabOrder = 0
       OnClick = cbxShowSmallInfoClick
     end
+    object cbxShutdownButton: TCheckBox
+      Left = 237
+      Top = 16
+      Width = 180
+      Height = 17
+      Caption = #1050#1085#1086#1087#1082#1072' '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1103
+      TabOrder = 1
+      OnClick = cbxShutdownButtonClick
+    end
   end
 end

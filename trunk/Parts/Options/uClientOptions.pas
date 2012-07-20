@@ -103,6 +103,7 @@ type
     FTaskKillMode: TTaskKillMode;
     FbAutoInstall: Boolean;
     FbGuestSession: Boolean;
+    FbShutdownButton: Boolean;
     FbIsFirstRun: Boolean;
     FstrKDEUser: String;
     FbDebugLog: Boolean;
@@ -320,6 +321,8 @@ type
     // показывать кнпку "Гость"
     property GuestSession: Boolean
         read FbGuestSession write FbGuestSession;
+    property ShutdownButton: Boolean
+        read FbShutdownButton write FbShutdownButton;
     // Пытаться автоматически включить оплаченый компьютер
     property UseWOL: Boolean
         read FbUseWOL write FbUseWOL;
@@ -648,6 +651,9 @@ try
   SetTaskList(GRegistry.TaskKill.Template);
   FTaskKillMode := GRegistry.TaskKill.Mode;
   FbGuestSession := GRegistry.Client.GuestSession;
+
+  FbShutdownButton := GRegistry.Client.ShutdownButton;
+
   FbUseWOL := GRegistry.Client.UseWOL;
 
 
@@ -670,6 +676,9 @@ try
   FbGuestSession := _GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'GuestSession',
       DEF_GUEST_SESSION);
+  FbShutdownButton := _GetBooleanOption(
+      OPTIONS_GENERAL_FOLDER, 'ShutdownButton',
+      DEF_SHUTDOWN_BUTTON);
   FbUseWOL := _GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'UseWOL',
       DEF_USE_WOL);
@@ -741,6 +750,7 @@ try
       SaveOption(OPTIONS_GENERAL_FOLDER, 'Language', FnLanguage);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'TarifNames', FlstTarifNames.Text);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'ShowSmallInfo', FbShowSmallInfo);
+
 {$IFDEF MSWINDOWS}
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadHideTabs',
           FbRunPadHideTabs);
@@ -755,6 +765,7 @@ try
       SaveOption(OPTIONS_GENERAL_FOLDER, 'AutoInstall',
           FbAutoInstall);
 {$IFDEF GC3SERVER}
+      GRegistry.Client.ShutdownButton := FbShutdownButton;
 {$ELSE}
       SaveOption(OPTIONS_GENERAL_FOLDER, 'ClientScriptFileName',
           FstrClientScriptFileName);
@@ -764,6 +775,7 @@ try
           FbClientScriptHideWindow);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'TaskList', FlstTaskList.Text);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'GuestSession', FbGuestSession);
+      SaveOption(OPTIONS_GENERAL_FOLDER, 'ShutdownButton', FbShutdownButton);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'UseWOL', FbUseWOL);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'TaskKillMode',
           Integer(FTaskKillMode));

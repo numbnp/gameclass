@@ -9,16 +9,16 @@ object framComputers: TframComputers
     Top = 0
     Width = 561
     Height = 488
-    ActivePage = tabComputers
+    ActivePage = tabOld
     Align = alClient
     TabOrder = 0
+    TabPosition = tpBottom
     object tabOld: TTabSheet
-      Caption = 'Old'
       object lvComps: TListView
         Left = 0
         Top = 41
         Width = 553
-        Height = 333
+        Height = 335
         Align = alClient
         Columns = <
           item
@@ -94,7 +94,7 @@ object framComputers: TframComputers
       end
       object gbEditor: TGroupBox
         Left = 0
-        Top = 374
+        Top = 376
         Width = 553
         Height = 86
         Align = alBottom
@@ -201,7 +201,7 @@ object framComputers: TframComputers
       end
     end
     object tabComputers: TTabSheet
-      Caption = 'tabComputers'
+      Enabled = False
       ImageIndex = 1
       object gridComputers: TDBGridEh
         Left = 0

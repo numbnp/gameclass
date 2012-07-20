@@ -2,10 +2,10 @@
 <DataBaseConfiguration>
   <Connection Login="" Pssword="" Server="127.0.0.1"/>
   <Scripts Path="">
-          <ScriptSync100 DataBaseVersion="3.85.3" FileName="GCSync100.sqp" Description="Updating database for GCSync v1.0.0 ..."/>
-          <ScriptSync101 DataBaseVersion="3.85.3" FileName="GCSync101.sqp" Description="Updating database for GCSync v1.0.1 ..."/>
-          <ScriptSync102 DataBaseVersion="3.85.3" FileName="GCSync102.sqp" Description="Updating database for GCSync v1.0.2 ..."/>
-          <ScriptSync103 DataBaseVersion="3.85.3" FileName="GCSync103.sqp" Description="Updating database for GCSync v1.0.3 ..."/>
+          <ScriptSync100 DataBaseVersion="3.85.4" FileName="GCSync100.sqp" Description="Updating database for GCSync v1.0.0 ..."/>
+          <ScriptSync101 DataBaseVersion="3.85.4" FileName="GCSync101.sqp" Description="Updating database for GCSync v1.0.1 ..."/>
+          <ScriptSync102 DataBaseVersion="3.85.4" FileName="GCSync102.sqp" Description="Updating database for GCSync v1.0.2 ..."/>
+          <ScriptSync103 DataBaseVersion="3.85.4" FileName="GCSync103.sqp" Description="Updating database for GCSync v1.0.3 ..."/>
   </Scripts>
   <Reports>
   </Reports>

@@ -176,7 +176,8 @@ begin
       or (CompareText(AstrCommand, STR_CMD_SENDMESSAGE) = 0)
 //      or (CompareText(AstrCommand, STR_CMD_RET_GETHARDWARE) = 0)
       or (CompareText(AstrCommand, STR_CMD_CLIENT_INFO_SET) =0)
-      or (CompareText(AstrCommand, STR_CMD_GUESTSESSION) =0);
+      or (CompareText(AstrCommand, STR_CMD_GUESTSESSION) =0)
+      or (CompareText(AstrCommand, STR_CMD_GET_SHUTDOWN) =0);
 
 end; // TRemoteCommandFactory._IsQueryCommand
 

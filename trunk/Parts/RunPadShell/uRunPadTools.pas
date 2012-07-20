@@ -21,6 +21,27 @@ implementation
 var
   LocalRunPadHideTabs: string;
 
+procedure  DoSingleAction_My(Param:Integer);
+var
+  rpShell : IRunpadShell;
+   rpShell2 : IRunpadShell2;
+   rpPro : IRunpadProShell;
+begin
+  try
+    rpShell2 := CoRunpadShell2.Create;
+    rpShell2.DoSingleAction(Param);
+  except
+    Debug.Trace0('DoSingleAction RPS failed');
+  end;
+  try
+    rpPro := CoRunpadProShell.Create;
+    rpPro.DoSingleAction(Param);
+  except
+    Debug.Trace0('DoSingleAction RPP failed');
+  end;
+end;
+
+
 procedure RunPadAction(ARunPadAction: TRunPadAction;
     const AstrParameters: String = '');
 var
@@ -51,17 +72,17 @@ begin
           Debug.Trace0('Hide tabs failed');
         end;
       RunPadAction_RestoreVideoMode:
-        rpShell.DoSingleAction(RSA_RESTOREVMODE);
+        DoSingleAction_My(RSA_RESTOREVMODE);
       RunPadAction_EndVipSession:
-        rpShell.DoSingleAction(RSA_ENDVIPSESSION);
+        DoSingleAction_My(RSA_ENDVIPSESSION);
       RunPadAction_MonitorOn:
-        rpShell.DoSingleAction(RSA_TURNMONITORON);
+        DoSingleAction_My(RSA_TURNMONITORON);
       RunPadAction_MonitorOff:
-        rpShell.DoSingleAction(RSA_TURNMONITOROFF);
+        DoSingleAction_My(RSA_TURNMONITOROFF);
       RunPadAction_LockStation:
-        rpShell.DoSingleAction(RSA_RUNPROGRAMDISABLE);
+        DoSingleAction_My(RSA_RUNPROGRAMDISABLE);
       RunPadAction_UnlockStation:
-        rpShell.DoSingleAction(RSA_RUNPROGRAMENABLE);
+        DoSingleAction_My(RSA_RUNPROGRAMENABLE);
 
 
       RunPadAction_KillTasks:
