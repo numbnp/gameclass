@@ -28,7 +28,8 @@ uses
   uErrors in '..\Parts\Errors\uErrors.pas',
   uSyncConst in 'uSyncConst.pas',
   uRegistration in '..\Parts\Registration\uRegistration.pas',
-  uCommon in '..\Parts\Common\uCommon.pas';
+  uCommon in '..\Parts\Common\uCommon.pas',
+  uSynchronization in 'uSynchronization.pas';
 
 {$R *.res}
 
@@ -61,9 +62,12 @@ begin
       LogInsert(dmMain.cnnMain, 1, MSG_SYNC_DISCONNECTED);
     end;
     FreeAndNil(frmLogon);
+    dmMain.Free;
     Application.Terminate;
+
   end else begin
     Application.MessageBox(PChar(UNREGISTERED_WARNING), PChar(WARNING),
         MB_OK or MB_ICONWARNING);
   end;
+  halt;
 end.

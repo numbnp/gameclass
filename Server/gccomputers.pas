@@ -1487,7 +1487,7 @@ begin
       if GRegistry.ControlCommands.WindowsLogoffCommand = '' then
         UDPSend(ipaddr,STR_CMD_RESTART + '=' + BoolToStr(False))
       else
-        UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_SRV + '=' + GRegistry.ControlCommands.WindowsLogoffCommand);
+        UDPSend(ipaddr,STR_CMD_EXECUTE_COMMAND_CLIENT + '=' + GRegistry.ControlCommands.WindowsLogoffCommand);
     Result_loc := true;
   except
     Debug.Trace1('LogOff error :' + ipaddr);

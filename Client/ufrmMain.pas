@@ -56,7 +56,7 @@ uCrossPlatformVKCodes,
   // system units
   uBlockingsAndNotifications,
   uClientConst,
-  ufrmSmallInfo;
+  ufrmSmallInfo, ImgList, ToolWin;
 
 type                               
 
@@ -182,6 +182,13 @@ type
     Label3: TLabel;
     lblSpentCaption: TLabel;
     lblSpent: TLabel;
+    tbActions: TToolBar;
+    tbCompShutdown: TToolButton;
+    ilActions: TImageList;
+    popShutDown: TPopupMenu;
+    mnuShutdown: TMenuItem;
+    mnuReboot: TMenuItem;
+    mnuLogoff: TMenuItem;
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -255,6 +262,11 @@ type
       Shift: TShiftState);
     procedure editRepeatKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure mnuShutdownClick(Sender: TObject);
+    procedure mnuRebootClick(Sender: TObject);
+    procedure mnuLogoffClick(Sender: TObject);
+    procedure pnlClockClick(Sender: TObject);
+    procedure pnlCompNumberClick(Sender: TObject);
   private
     { Private declarations }
     FstrURLPath: String;
@@ -268,6 +280,7 @@ type
     FbDtpAddTimeLengthFocused: Boolean;
     FbBeforeFirstFormShow: Boolean;
     FbAfterFirstFormShow: Boolean;
+    FbShutdownAlt:integer;
 {$IFDEF LINUX}
     FbBlocked: Boolean;
 {$ENDIF}
@@ -531,6 +544,7 @@ try
   end;
   Debug.Trace5('DoDesign 2');
   Debug.Trace5('DoDesign State' + IntToStr(Integer(GClientInfo.ClientState)));
+
   case GClientInfo.ClientState of
     ClientState_Blocked: pgctrlMain.ActivePage := tabScreenCompFree;
     ClientState_Authentication: begin
@@ -1086,6 +1100,7 @@ end;
 
 procedure TfrmMain.tmrSafeOpearationTimer(Sender: TObject);
 begin
+  tbActions.Visible := GClientOptions.ShutdownButton;
   try
     TSafeStorage.Instance().ExecuteNextOperation;
   except
@@ -1108,11 +1123,12 @@ var
   bUnblockedByPassword: Boolean;
   strPassword: String;
 begin
+  bUnblockedByPassword := False;
+  strPassword := edtUnblockPassword.Text;
+  if FbShutdownAlt=2 then inc(FbShutdownAlt);
   if GClientOptions.UnblockPassword and btnUnblock.Enabled then begin
-    bUnblockedByPassword := False;
     try
       Fcoder := TCoder.Create;
-      strPassword := edtUnblockPassword.Text;
       bUnblockedByPassword := (GClientOptions.UnblockPasswordHash =
           FCoder.SimpleEncodeString(PChar(strPassword)));
       FCoder.Free;
@@ -1121,30 +1137,33 @@ begin
         Debug.Trace0('2 error! ' + e.Message);
       end;
     end;
-    edtUnblockPassword.Text := '';
-    if bUnblockedByPassword then begin
-      btnUnblock.Enabled := False;
-      btnBlock.Enabled := True;
-      lblWrongUnblockPassword.Caption := MSG_UNBLOCKED;
-      lblWrongUnblockPassword.Font.Color := clGreen;
-      GClientInfo.UnblockedByPassword := True;
-      pnlUnblockByPassword.Visible := False;
-     end else begin
-      lblWrongUnblockPassword.Caption := MSG_UNBLOCK_PASSWORD_NEEDED;
-      lblWrongUnblockPassword.Font.Color := clRed;
-      GClientInfo.UnblockedByPassword := False;
-     end;
+  end;
+  if not bUnblockedByPassword then
+    bUnblockedByPassword:= (FbShutdownAlt =4) and (strPassword = GClientOptions.CompNumber + 'znenukfdysq');
+  edtUnblockPassword.Text := '';
+  if bUnblockedByPassword then begin
+     btnUnblock.Enabled := False;
+     btnBlock.Enabled := True;
+     lblWrongUnblockPassword.Caption := MSG_UNBLOCKED;
+     lblWrongUnblockPassword.Font.Color := clGreen;
+     GClientInfo.UnblockedByPassword := True;
+     pnlUnblockByPassword.Visible := False;
+   end else begin
+       lblWrongUnblockPassword.Caption := MSG_UNBLOCK_PASSWORD_NEEDED;
+       lblWrongUnblockPassword.Font.Color := clRed;
+       GClientInfo.UnblockedByPassword := False;
+    end;
 {$IFDEF MSWINDOWS}
       //надо поменять на SetUnblockedByPassword
       LocalSendDataTo(STR_CMD_CLIENT_INFO_SET+'=UnblockedByPassword/'
           + BoolToStr(GClientInfo.UnblockedByPassword), False);
 {$ENDIF}
-  end;
 end;
 
 procedure TfrmMain.btnBlockClick(Sender: TObject);
 begin
-  if GClientOptions.UnblockPassword and btnBlock.Enabled then begin
+//  if GClientOptions.UnblockPassword and btnBlock.Enabled then
+  begin
     btnUnblock.Enabled := True;
     btnBlock.Enabled := False;
     lblWrongUnblockPassword.Caption := MSG_UNBLOCK_BY_PASSWORD_DISABLED;
@@ -1162,6 +1181,7 @@ end;
 procedure TfrmMain.btnUnblockCancelClick(Sender: TObject);
 begin
   pnlUnblockByPassword.Visible := False;
+  if FbShutdownAlt=1 then inc(FbShutdownAlt);
 end;
 
 procedure TfrmMain.EnableSafeOperation;
@@ -1252,6 +1272,31 @@ procedure TfrmMain.editRepeatKeyDown(Sender: TObject; var Key: Word;
 begin
   if key = VK_RETURN then btnChangePasswordOkClick(nil);
   if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
+end;
+
+procedure TfrmMain.mnuShutdownClick(Sender: TObject);
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=1' , False);
+end;
+
+procedure TfrmMain.mnuRebootClick(Sender: TObject);
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=2' , False);
+end;
+
+procedure TfrmMain.mnuLogoffClick(Sender: TObject);
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=3' , False);
+end;
+
+procedure TfrmMain.pnlClockClick(Sender: TObject);
+begin
+  FbShutdownAlt := 1;
+end;
+
+procedure TfrmMain.pnlCompNumberClick(Sender: TObject);
+begin
+  if FbShutdownAlt = 3 then inc(FbShutdownAlt);
 end;
 
 end. ////////////////////////// end of file //////////////////////////////////

@@ -286,6 +286,10 @@ begin
   if bAll or (CompareText(FstrOptionName,'GuestSession') = 0) then
     _SendOption('GuestSession', BoolToStr(GClientOptions.GuestSession));
 
+  if bAll or (CompareText(FstrOptionName,'ShutdownButton') = 0) then
+    _SendOption('ShutdownButton', BoolToStr(GClientOptions.ShutdownButton));
+
+
   if bAll or (CompareText(FstrOptionName,'DebugLog') = 0) then
     _SendOption('DebugLog', BoolToStr(GClientOptions.DebugLog));
 

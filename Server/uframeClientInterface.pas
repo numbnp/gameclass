@@ -31,6 +31,7 @@ type
     lblBracket: TLabel;
     Label1: TLabel;
     edtURLLogonCompFree: TEdit;
+    cbxShutdownButton: TCheckBox;
     procedure edtURLCompFreeChange(Sender: TObject);
     procedure edtURLTopChange(Sender: TObject);
     procedure edtUseTextMessageMinChange(Sender: TObject);
@@ -43,6 +44,7 @@ type
     procedure cbxShowSmallInfoClick(Sender: TObject);
     procedure cbxUseTextMessageBlinkingClick(Sender: TObject);
     procedure edtURLLogonCompFreeChange(Sender: TObject);
+    procedure cbxShutdownButtonClick(Sender: TObject);
   private
     { Private declarations }
 //    FbUnblockPasswordNotChanged: Boolean;
@@ -85,6 +87,7 @@ begin
   GbFormGC3ClientLock := True;
   // Other
   cbxShowSmallInfo.Checked := GClientOptions.ShowSmallInfo;
+  cbxShutdownButton.Checked := GClientOptions.ShutdownButton;
 
   // Оповещения
   cbxUseSounds.Checked := GClientOptions.UseSounds;
@@ -253,6 +256,14 @@ begin
     edtURLLogonCompFree.Text := DEF_URL_LOGON_COMP_FREE;
   GClientOptions.URLLogonCompFree := edtURLLogonCompFree.Text;
   _AfterControlDataChange(True);
+end;
+
+procedure TframeClientInterface.cbxShutdownButtonClick(Sender: TObject);
+begin
+  if GbFormGC3ClientLock then exit;
+  GbFormGC3ClientLock := True;
+  GClientOptions.ShutdownButton :=   cbxShutdownButton.Checked;
+  _AfterControlDataChange;
 end;
 
 end.
