@@ -284,7 +284,7 @@ begin
   FbInAutoUpdate := True;
   bookmark := GetBookmark;
   Result := DoDelete(AnId);
-  if Locate('id', AnId, [loCaseInsensitive]) then begin
+  if Locate('id', AnId, []) then begin
     if AbLocal then
       EnableInheritedInternalMethodsForOneOperation;
     inherited Delete;

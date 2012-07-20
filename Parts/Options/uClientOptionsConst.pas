@@ -65,6 +65,7 @@ const
   DEF_TASKKILLMODE = 0;
   DEF_AUTO_INSTALL = False;
   DEF_GUEST_SESSION = False;
+  DEF_SHUTDOWN_BUTTON = False;
   DEF_USE_WOL = True;
   DEF_RunPadShowInfoOnDesktop = False;
   DEF_RunPadShowInfoOnDesktopText = '№ %MACHINE% Время %TIME% %MODE%';

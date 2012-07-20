@@ -25,6 +25,8 @@ const
   STR_CMD_SETTIME         = 'settime';
   // перегрузиться !!!ИЗВРАТ: параметр True-restart, False-logoff
   STR_CMD_RESTART         = 'restart';
+  // Запрос на выкл./перезагрузку/logoff со стороны клиента
+  STR_CMD_GET_SHUTDOWN = 'get_shutdown';
   // выключить комп
   STR_CMD_SHUTDOWN        = 'shutdown';
   // получить список оборудования
@@ -106,6 +108,7 @@ const
 
   // Запускаем процесс на клиенте (запускается службой)
   STR_CMD_EXECUTE_COMMAND_SRV = 'execute_cmd_srv';
+  STR_CMD_EXECUTE_COMMAND_CLIENT = 'execute_cmd_client';
 
   // звуковые команды
   STR_CMD_PLAY_SOUND = 'play_sound';

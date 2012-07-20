@@ -126,12 +126,12 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.85.2.12
+FileVersion=3.85.4
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass Client Service
-ProductVersion=3.85.2.12 Free
+ProductVersion=3.85.4 Free
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package

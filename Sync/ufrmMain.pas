@@ -62,6 +62,7 @@ type
     edtInitialization: TEdit;
     cbxDebugLog: TCheckBox;
     cbxBeepOnFailedConnect: TCheckBox;
+    Button1: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure btnSaveSettingsClick(Sender: TObject);
@@ -73,6 +74,7 @@ type
     procedure btnDeleteClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnInitializeClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     FOptionsLink: TOptionsLink;
     FbControlsEnabled: Boolean;
@@ -113,7 +115,8 @@ uses
   ufrmLogon,
   uLocalServer,
   uSyncConst,
-  uGCDBTools;
+  uGCDBTools,
+  uSynchronization;
 
 {$R *.dfm}
 
@@ -589,6 +592,14 @@ begin
     end;
     _Initialize;
   end;
+end;
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+var
+  t:TSynchronization;
+begin
+  t:=TSynchronization.Create;
+  t.StartChecking;  
 end;
 
 end.
