@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 277
-  Top = 253
+  Left = 627
+  Top = 145
   Width = 614
   Height = 407
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '
@@ -437,16 +437,6 @@ object frmMain: TfrmMain
           ParentFont = False
           ReadOnly = True
           TabOrder = 1
-        end
-        object Button1: TButton
-          Left = 216
-          Top = 60
-          Width = 25
-          Height = 21
-          Caption = 'Button1'
-          TabOrder = 2
-          Visible = False
-          OnClick = Button1Click
         end
       end
     end

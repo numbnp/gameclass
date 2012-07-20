@@ -28,8 +28,7 @@ uses
   uErrors in '..\Parts\Errors\uErrors.pas',
   uSyncConst in 'uSyncConst.pas',
   uRegistration in '..\Parts\Registration\uRegistration.pas',
-  uCommon in '..\Parts\Common\uCommon.pas',
-  uSynchronization in 'uSynchronization.pas';
+  uCommon in '..\Parts\Common\uCommon.pas';
 
 {$R *.res}
 
