@@ -1,12 +1,12 @@
 object formBossOptions: TformBossOptions
-  Left = 301
-  Top = 268
+  Left = 66
+  Top = 269
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 5
   Caption = 'formBossOptions'
   ClientHeight = 688
-  ClientWidth = 862
+  ClientWidth = 1065
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,7 +25,7 @@ object formBossOptions: TformBossOptions
   object pnlBottom: TPanel
     Left = 0
     Top = 657
-    Width = 862
+    Width = 1065
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
@@ -55,7 +55,7 @@ object formBossOptions: TformBossOptions
   object pnlClient: TPanel
     Left = 161
     Top = 0
-    Width = 701
+    Width = 904
     Height = 650
     Align = alClient
     BevelOuter = bvNone
@@ -63,22 +63,22 @@ object formBossOptions: TformBossOptions
     inline frameSound1: TframeSound
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 0
       Visible = False
       inherited gbSounds: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbAction: TGroupBox
-        Width = 701
+        Width = 904
       end
     end
     inline framHardware1: TframHardware
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 1
@@ -87,189 +87,198 @@ object formBossOptions: TformBossOptions
     inline framRights1: TframRights
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 2
       Visible = False
       inherited lvRights: TListView
-        Width = 701
+        Width = 904
       end
     end
     inline framUsers1: TframUsers
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 3
       Visible = False
       inherited lvUsers: TListView
-        Width = 701
+        Width = 904
       end
     end
     inline framSideline1: TframSideline
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 4
       Visible = False
       inherited gbService: TGroupBox
-        Width = 701
+        Width = 904
         Height = 575
         inherited lvSideline: TListView
-          Width = 697
+          Width = 900
           Height = 474
         end
         inherited panelBottom: TPanel
           Top = 489
-          Width = 697
+          Width = 900
         end
       end
       inherited gbServiceOptions: TGroupBox
         Top = 575
-        Width = 701
+        Width = 904
       end
     end
     inline framComputers1: TframComputers
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 5
-      inherited lvComps: TListView
-        Width = 701
-        Height = 523
-      end
-      inherited gbEditor: TGroupBox
-        Top = 564
-        Width = 701
-      end
-      inherited pnGroups: TPanel
-        Width = 701
+      inherited pgcComputers: TPageControl
+        Width = 904
+        Height = 650
+        inherited tabGroups: TTabSheet
+          inherited pnGroups: TPanel
+            Width = 896
+            Height = 622
+          end
+        end
+        inherited tabComputers: TTabSheet
+          inherited gridComputers: TDBGridEh
+            Width = 896
+            Height = 574
+          end
+          inherited GroupBox1: TGroupBox
+            Top = 574
+            Width = 896
+          end
+        end
       end
     end
     inline frameRunPad1: TframeRunPad
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 6
       Visible = False
       inherited pnlTop2: TPanel
-        Width = 701
+        Width = 904
         inherited gbSessionStop: TGroupBox
-          Width = 701
+          Width = 904
         end
       end
       inherited gbTabs: TGroupBox
-        Width = 701
+        Width = 904
         Height = 554
         inherited Panel1: TPanel
           Top = 519
-          Width = 697
+          Width = 900
         end
       end
       inherited gbInfoOnDesktop: TGroupBox
         Top = 594
-        Width = 701
+        Width = 904
       end
     end
     inline frameScripts1: TframeScripts
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 7
       inherited gbTabs: TGroupBox
-        Width = 701
+        Width = 904
         Height = 393
         inherited Panel1: TPanel
           Top = 358
-          Width = 697
+          Width = 900
         end
       end
       inherited gbExternalScripts: TGroupBox
-        Width = 701
+        Width = 904
         inherited gbSessionScript: TGroupBox
-          Width = 697
+          Width = 900
         end
         inherited GroupBox1: TGroupBox
-          Width = 697
+          Width = 900
         end
       end
       inherited GroupBox2: TGroupBox
-        Width = 701
+        Width = 904
         inherited gbClient: TGroupBox
-          Width = 697
+          Width = 900
         end
       end
     end
     inline frameTraffic1: TframeTraffic
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 8
       inherited gbWindows: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbUnixFree: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbUnixPro: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbModuleSettings: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited pnlBottom: TPanel
-        Width = 701
+        Width = 904
         inherited gbTariffing: TGroupBox
-          Width = 701
+          Width = 904
         end
       end
     end
     inline frameKKM1: TframeKKM
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 9
       inherited gbTabs: TGroupBox
-        Width = 701
+        Width = 904
         Height = 337
         inherited Panel1: TPanel
           Top = 302
-          Width = 697
+          Width = 900
         end
       end
       inherited gbUnixPro: TGroupBox
-        Width = 701
+        Width = 904
       end
     end
     inline frameTaskKill1: TframeTaskKill
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 10
       inherited gbCommon: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited pnlTemplate: TGroupBox
-        Width = 701
+        Width = 904
         Height = 561
         inherited pnlTaskList: TPanel
-          Width = 697
+          Width = 900
           Height = 544
         end
       end
@@ -277,96 +286,96 @@ object formBossOptions: TformBossOptions
     inline frameClientInterface1: TframeClientInterface
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 11
       inherited gbNotofocation: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbMessages: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbOther: TGroupBox
-        Width = 701
+        Width = 904
       end
     end
     inline frameDiscounts1: TframeDiscounts
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 12
       inherited gbOptions: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited pnlDiscountsTable: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited pnlDiscountsRecalc: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbRefers: TGroupBox
-        Width = 701
+        Width = 904
         Height = 378
       end
     end
     inline frameInterface1: TframeInterface
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 13
       inherited gbCommon: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbStartSession: TGroupBox
-        Width = 701
+        Width = 904
       end
     end
     inline frameOptions1: TframeOptions
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 14
       inherited Panel1: TPanel
-        Width = 701
+        Width = 904
         inherited gbGuest: TGroupBox
-          Width = 200
+          Width = 403
         end
         inherited gbOperator: TGroupBox
-          Left = 377
+          Left = 580
         end
       end
       inherited gbOptimize: TGroupBox
-        Width = 701
+        Width = 904
       end
       inherited gbCommandControl: TGroupBox
-        Width = 701
+        Width = 904
         Height = 273
       end
       inherited pnlTopLeft: TPanel
-        Width = 701
+        Width = 904
         inherited Panel2: TPanel
-          Width = 701
+          Width = 904
           inherited gbChange: TGroupBox
-            Width = 268
+            Width = 471
           end
           inherited gbSum: TGroupBox
-            Left = 485
+            Left = 688
           end
         end
         inherited Panel3: TPanel
-          Width = 701
+          Width = 904
           inherited gbCurrency: TGroupBox
-            Left = 485
+            Left = 688
           end
           inherited gbOthers: TGroupBox
-            Width = 485
+            Width = 688
           end
         end
       end
@@ -374,34 +383,34 @@ object formBossOptions: TformBossOptions
     inline framCustomers1: TframCustomers
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 15
       inherited gbOptions: TGroupBox
-        Width = 701
+        Width = 904
         inherited gbBalanceOptions: TGroupBox
-          Width = 697
+          Width = 900
         end
         inherited pnlOptions: TPanel
-          Width = 697
+          Width = 900
         end
         inherited pnlCheckAccounts: TGroupBox
-          Width = 697
+          Width = 900
         end
       end
       inherited pnlButtons: TPanel
-        Width = 701
-        Height = 401
+        Width = 904
+        Height = 373
       end
       inherited panelTop: TPanel
-        Width = 701
+        Width = 904
       end
     end
     inline framTarifs1: TframTarifs
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 16
@@ -409,36 +418,36 @@ object formBossOptions: TformBossOptions
     inline framGC3Client1: TframGC3Client
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 17
       inherited pnlTop2: TPanel
-        Width = 701
+        Width = 904
         inherited pnlTop2RightTop: TPanel
-          Width = 532
+          Width = 735
           inherited gbOther: TGroupBox
-            Width = 532
+            Width = 735
           end
           inherited gbShell: TGroupBox
-            Width = 532
+            Width = 735
           end
         end
       end
       inherited pnlTop1: TPanel
-        Width = 701
+        Width = 904
         inherited gbBlockAction: TGroupBox
-          Width = 476
+          Width = 679
         end
       end
       inherited pnlBottom: TPanel
-        Width = 701
+        Width = 904
         Height = 385
         inherited pnlTop2Right: TPanel
-          Width = 701
+          Width = 904
           Height = 385
           inherited gbSessionScript: TGroupBox
-            Width = 701
+            Width = 904
           end
         end
       end
@@ -446,22 +455,22 @@ object formBossOptions: TformBossOptions
     inline framePrinter1: TframePrinter
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 18
       inherited gbOptions: TGroupBox
-        Width = 701
+        Width = 904
         Height = 577
       end
       inherited pnlTop: TPanel
-        Width = 701
+        Width = 904
       end
     end
     inline framMail1: TframMail
       Left = 0
       Top = 0
-      Width = 701
+      Width = 904
       Height = 650
       Align = alClient
       TabOrder = 19
@@ -480,7 +489,7 @@ object formBossOptions: TformBossOptions
   object GroupBox1: TGroupBox
     Left = 0
     Top = 650
-    Width = 862
+    Width = 1065
     Height = 7
     Align = alBottom
     TabOrder = 3
@@ -528,7 +537,7 @@ object formBossOptions: TformBossOptions
     Left = 104
     Top = 8
     Bitmap = {
-      494C010114001800040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010114001800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006000000001002000000000000060
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1324,6 +1333,7 @@ object formBossOptions: TformBossOptions
       003F007FC007F871200300008003F861000000008003F861800080000003F841
       8000C0010001F003800080030000C00380008001000080070000800100008007
       000080010000800700008001C000800700008101FC0080070000C301FC008007
-      001FFF83FE01800FF87FFFC7FF03C01F}
+      001FFF83FE01800FF87FFFC7FF03C01F00000000000000000000000000000000
+      000000000000}
   end
 end

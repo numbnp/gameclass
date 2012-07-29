@@ -11,8 +11,8 @@ uses QGraphics;
 
 const
   // misc2
-  BASE_VERSION = '3.85.4';
-  APP_VERSION = '3.85.4 Free';
+  BASE_VERSION = '3.85.5';
+  APP_VERSION = '3.85.5 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -242,11 +242,18 @@ const
 
 // колонки в списке - настройка компов
 
-  FC_COL_NUMBER = 0;
-  FC_COL_IP = 1;
+  FC_COL_NUMBER = 1;
   FC_COL_GROUP = 2;
-  FC_COL_MAC = 3;
+  FC_COL_CLIENT_TYPE = 3;
+  FC_COL_IP = 4;
+  FC_COL_MAC = 5;
+  FC_COL_SNMP_PASSWORD = 6;
+  FC_COL_MIB_PORT = 7;
+  FC_COL_IGNORE_OFFLINE = 8;
 
+// Тип клиента
+  CT_GAMECLASS = 0;
+  CT_SNMP = 1;
 
   // иконки в EVENTS LIST'e
   EVENT_ICON_EMPTY = 0;

@@ -51,7 +51,7 @@ uses
   ufrmReports,
   udmMain,
   Graphics, XPMan,
-  ufrmOperatorOpt;
+  ufrmOperatorOpt, IdSNMP;
 
 type
   TformMain = class(TForm)
@@ -212,6 +212,7 @@ type
     tlbStationLock: TToolButton;
     subView: TMenuItem;
     mnuPanelRunPad: TMenuItem;
+    PopupMenu1: TPopupMenu;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
