@@ -253,6 +253,10 @@ begin
       Comps[i].IdGroup := dts.Recordset.Fields.Item['idGroup'].Value;
       Comps[i].macaddr  := dts.Recordset.Fields.Item['macaddress'].Value;
       Comps[i].GroupName := ComputerGroupsGetName(Comps[i].IdGroup);
+      Comps[i].SNMP_Password := dts.Recordset.Fields.Item['snmp_password'].Value;
+      Comps[i].SNMP_MIB_Port := dts.Recordset.Fields.Item['snmp_mib_ports'].Value;
+      Comps[i].IgnoreOffline := dts.Recordset.Fields.Item['ignore_offline'].Value;
+      Comps[i].ClientType := dts.Recordset.Fields.Item['client_type'].Value;
       i := i + 1;
       dts.Recordset.MoveNext;
     end;

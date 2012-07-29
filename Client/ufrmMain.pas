@@ -897,6 +897,7 @@ procedure TfrmMain.tmrClockTimer(Sender: TObject);
 var
   s: THandle;
 begin
+  tbActions.Visible := GClientOptions.ShutdownButton;
   pnlClock.Caption := TimeToStr(Time);
 {$IFDEF MSWINDOWS}
   modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
@@ -905,7 +906,7 @@ begin
 //  modernTrayIcon.Active := true;
 //  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
   if (SecondOf(Time) mod 10) = 0 then
-    GClientInfo.SaveIfNeeded;    
+    GClientInfo.SaveIfNeeded;
 end;
 
 procedure TfrmMain.edtSumEnter(Sender: TObject);
@@ -1100,7 +1101,6 @@ end;
 
 procedure TfrmMain.tmrSafeOpearationTimer(Sender: TObject);
 begin
-  tbActions.Visible := GClientOptions.ShutdownButton;
   try
     TSafeStorage.Instance().ExecuteNextOperation;
   except

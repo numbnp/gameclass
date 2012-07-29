@@ -47,7 +47,10 @@ begin
     begin
       if Terminated then
         exit;
-      Comps[i].IcmpPingable := PingICMP(Comps[i].ipaddr);
+      if Comps[i].IgnoreOffline then
+        Comps[i].IcmpPingable:= true
+      else
+        Comps[i].IcmpPingable := PingICMP(Comps[i].ipaddr);
       Sleep(100);
     end;
 
