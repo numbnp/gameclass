@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 94
-  Top = 126
+  Left = 1434
+  Top = 204
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -5728,5 +5728,9 @@ object formMain: TformMain
       F8003FFFF8007FFFE0007FFFC000FFF0FFE07FFFFF807FFFFF80FFFFFF01FFF0
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000
       000000000000}
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 772
+    Top = 277
   end
 end

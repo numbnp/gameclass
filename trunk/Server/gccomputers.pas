@@ -129,6 +129,7 @@ type
   public
     id: longword;        // id computer
     number: integer;    // number computer
+    ClientType: integer;
     ipaddr: string;     // ip address
     macaddr: string;    // mac address
     control: boolean;   // if controlled;
@@ -146,7 +147,12 @@ type
     strInfoFreespaceC: string; // свободно места на диске С
     strInfoFreespaceD: string; // свободно места на диске D
 
-    IcmpPingable: Boolean; 
+    IcmpPingable: Boolean;
+
+    SNMP_Password: String;
+    SNMP_MIB_Port: String;
+
+    IgnoreOffline: boolean;
 
     // authorize
     a: TAuthorization;
@@ -345,7 +351,7 @@ uses
   uTariffication,
   uRegistration,
   uKKMTools, DBGridEh,
-  uDebugLog;
+  uDebugLog,IdSNMP;
 
 const
   UNREGISTERED_LINUX_CLIENTS_1 =
@@ -870,24 +876,42 @@ var
   sdb, curtime: string;
   cmd: TOptionGetRemoteCommand;
   strParm: string;
+  Snmp: TIdSNMP;
+  ClientState: integer;
 begin
   // Если комп не пингуется то выходим
   if not Comps[index].IcmpPingable then exit;
-
-  if (GClientOptions.SyncTime) then begin
-    dt := GetVirtualTime;
-    curtime := IntToStr(YearOf(dt)) + '/' + IntToStr(MonthOf(dt)) + '/'
-      + IntToStr(DayOf(dt)) + '/' + IntToStr(HourOf(dt)) + '/'
-      + IntToStr(MinuteOf(dt)) + '/' + IntToStr(SecondOf(dt));
-    UDPSend(Comps[index].ipaddr, STR_CMD_SETTIME + '='
-      + curtime);
+  if Comps[index].ClientType = CT_GAMECLASS then
+  begin
+    if (GClientOptions.SyncTime) then begin
+      dt := GetVirtualTime;
+      curtime := IntToStr(YearOf(dt)) + '/' + IntToStr(MonthOf(dt)) + '/'
+        + IntToStr(DayOf(dt)) + '/' + IntToStr(HourOf(dt)) + '/'
+        + IntToStr(MinuteOf(dt)) + '/' + IntToStr(SecondOf(dt));
+      UDPSend(Comps[index].ipaddr, STR_CMD_SETTIME + '='
+        + curtime);
+    end;
+    cmd := TOptionGetRemoteCommand.Create('all',Comps[index].ipaddr);
+    cmd.Execute;
+    SendAccountAndSessionInfoToClient(index);
   end;
-  cmd := TOptionGetRemoteCommand.Create('all',Comps[index].ipaddr);
-  cmd.Execute;
-  SendAccountAndSessionInfoToClient(index);
-
-
-
+  if Comps[index].ClientType = CT_SNMP then
+  begin
+    if  ((Comps[index].busy = true) and (Comps[index].session<>Nil)) then
+      ClientState:=1
+    else
+      ClientState:=0;
+    Snmp := TIdSNMP.Create(nil);
+    Snmp.Query.Clear;
+    Snmp.Query.Version := 0;
+    Snmp.Query.Host := Comps[index].ipaddr ; //insert your host here...
+    Snmp.Query.Port := 161;
+    Snmp.Query.Community := Comps[Index].SNMP_Password;
+    Snmp.Query.PDUType := PDUSetRequest;
+    Snmp.Query.MIBAdd(Comps[Index].SNMP_MIB_Port,inttostr(ClientState),2);
+    Snmp.SendQuery;
+    Snmp.Free;
+  end;
 end;
 
 procedure SendAccountAndSessionInfoToClient(AnComputerIndex: Integer);
@@ -1311,6 +1335,8 @@ begin
 end;
 
 procedure CompStop(AnComputerIndex: Integer);
+var
+  Snmp: TIdSNMP;
 begin
 // стоп для компа (TODO Вынести позже в элемент коллекции TComputer)
   Comps[AnComputerIndex].timeStopSession := GetVirtualTime;
@@ -1318,15 +1344,34 @@ begin
   Comps[AnComputerIndex].session := nil;
   if isManager then exit;
   // traffic
-  if GRegistry.Modules.Internet.SummaryControl then
-    FProxy.IPDisable(Comps[AnComputerIndex].ipaddr);
-  if (Comps[AnComputerIndex].a.state <> ClientState_Session)
-    and (Comps[AnComputerIndex].a.state <> ClientState_Order) then begin
-    QueryAuthGoState1(AnComputerIndex);
+  if Comps[AnComputerIndex].ClientType = CT_GAMECLASS then
+  begin
+    if GRegistry.Modules.Internet.SummaryControl then
+      FProxy.IPDisable(Comps[AnComputerIndex].ipaddr);
+    if (Comps[AnComputerIndex].a.state <> ClientState_Session)
+      and (Comps[AnComputerIndex].a.state <> ClientState_Order) then begin
+      QueryAuthGoState1(AnComputerIndex);
+    end;
+    if (Comps[AnComputerIndex].a.state = ClientState_Session) then
+      // Случай для автоостанова карточек
+      SendAuthGoState2(AnComputerIndex);
   end;
-  if (Comps[AnComputerIndex].a.state = ClientState_Session) then
-    // Случай для автоостанова карточек
-    SendAuthGoState2(AnComputerIndex);
+  if Comps[AnComputerIndex].ClientType = CT_SNMP then
+  begin
+    Comps[AnComputerIndex].a.state := ClientState_Blocked;
+
+    Snmp := TIdSNMP.Create(nil);
+    Snmp.Query.Clear;
+    Snmp.Query.Version := 0;
+    Snmp.Query.Host := Comps[AnComputerIndex].ipaddr ; //insert your host here...
+    Snmp.Query.Port := 161;
+    Snmp.Query.Community := Comps[AnComputerIndex].SNMP_Password;
+    Snmp.Query.PDUType := PDUSetRequest;
+    Snmp.Query.MIBAdd(Comps[AnComputerIndex].SNMP_MIB_Port,'0',2);
+    Snmp.SendQuery;
+    Snmp.Free;
+  end;
+
 end;
 
 function GetClientState(AnComputerIndex: Integer): Integer;
