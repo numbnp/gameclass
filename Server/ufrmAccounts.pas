@@ -395,6 +395,11 @@ begin
     exit;
   end;
   FbDirty := False;
+
+  if editSername.Text = '' then editSername.Text := ' ';
+  if editName.Text = '' then editName.Text := ' ';
+  if editOt.Text = '' then editOt.Text := ' ';
+
   GAccountsCopy.Edit;
   GAccountsCopy.Post;
   //butAccountSave.Enabled := false;
