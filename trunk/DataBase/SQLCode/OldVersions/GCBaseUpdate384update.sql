@@ -4,7 +4,12 @@ GO
 /* -----------------------------------------------------------------------------
             На пакетах при полной сумме аккаунтов не списываются деньги
 ----------------------------------------------------------------------------- */
-ALTER PROCEDURE SessionsStopIt
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[SessionsStopIt]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE SessionsStopIt
+GO
+
+CREATE PROCEDURE SessionsStopIt
 @idSessionsAdd int,
 @newstop datetime,
 @summa money,
@@ -58,8 +63,11 @@ GO
           В текущем отчете сумма, возвращенная с карт клиентов
 					вычиталась из выручки
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ReportCurrent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE ReportCurrent
+GO
 
-ALTER PROCEDURE ReportCurrent
+CREATE PROCEDURE ReportCurrent
 @NewShiftPoint datetime
 
 AS 
@@ -130,8 +138,11 @@ GO
 /* -----------------------------------------------------------------------------
         Нет Jobs и Err 
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ClearStatistics]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE ClearStatistics
+GO
 
-ALTER PROCEDURE ClearStatistics
+CREATE PROCEDURE ClearStatistics
 AS 
 delete from Logs
 delete from JournalOp
@@ -160,7 +171,11 @@ GO
 /* -----------------------------------------------------------------------------
         Неправильно записывает цену распечатки при цифрах после запятой
 ----------------------------------------------------------------------------- */
-ALTER PROCEDURE RegistryUpdate
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[RegistryUpdate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE RegistryUpdate
+GO
+
+CREATE PROCEDURE RegistryUpdate
   @id INT,
   @key VARCHAR(200),
   @value VARCHAR(7000)
@@ -198,7 +213,11 @@ GO
 /* -----------------------------------------------------------------------------
         Исправление Procedure 'TarifsAdd' expect parameter '@BytesInMB'
 ----------------------------------------------------------------------------- */
-ALTER PROCEDURE ComputerGroupsAdd
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ComputerGroupsAdd]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE ComputerGroupsAdd
+GO
+
+CREATE PROCEDURE ComputerGroupsAdd
 @name nvarchar(15)  
 
 AS 

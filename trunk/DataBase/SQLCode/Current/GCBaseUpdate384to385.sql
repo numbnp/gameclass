@@ -18,7 +18,11 @@ GO
 /* -----------------------------------------------------------------------------
         Исправление Procedure 'TarifsAdd' expect parameter '@BytesInMB'
 ----------------------------------------------------------------------------- */
-ALTER PROCEDURE ComputerGroupsAdd
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ComputerGroupsAdd]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE ComputerGroupsAdd
+GO
+
+CREATE PROCEDURE ComputerGroupsAdd
 @name nvarchar(15)  
 AS 
 
@@ -43,12 +47,15 @@ GO
 /* -----------------------------------------------------------------------------
          Удаляем ненужные таблицы pm
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[old_Information]'))
 DROP TABLE old_Information
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[old_errors]'))
 DROP TABLE old_errors
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[old_warnings]'))
 DROP TABLE old_warnings
 GO
 
@@ -56,36 +63,47 @@ GO
 /* -----------------------------------------------------------------------------
          Удаляем ненужные процедуры
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ClearStatistics]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE ClearStatistics
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_Operators]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_Operators]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_Computers]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_Computers]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repGeneral]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repGeneral]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repLogs]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repLogs]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repDetails]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repDetails]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repJournalOp]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repJournalOp]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repRepair]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repRepair]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repUncontrol]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repUncontrol]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repUncontrolClub]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repUncontrolClub]
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spgc_repServices]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE [spgc_repServices]
 GO
 
@@ -126,8 +144,11 @@ GO
 /* -----------------------------------------------------------------------------
          Обновление SessionsAddMoney для правильной работы с УЗ
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[SessionsAddMoney]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE SessionsAddMoney
+GO
 
-ALTER PROCEDURE SessionsAddMoney
+CREATE PROCEDURE SessionsAddMoney
 @IdClient int,
 @IdSessions int,
 @IdSessionsAdd int,
@@ -161,6 +182,10 @@ GO
 /* -----------------------------------------------------------------------------
                   Новые функции
 ----------------------------------------------------------------------------- */
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[GetUserGroup]') )
+DROP FUNCTION [GetUserGroup]
+GO
+
 CREATE FUNCTION [GetUserGroup] ()
   RETURNS int
 
@@ -174,6 +199,10 @@ END
 GO 
 
 GRANT EXEC ON [GetUserGroup] TO public
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[GetUserGroupName]'))
+DROP FUNCTION [GetUserGroupName]
 GO
 
 CREATE FUNCTION [GetUserGroupName] ()
@@ -190,6 +219,10 @@ END
 GO
 
 GRANT EXEC ON [GetUserGroupName] TO public
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[CheckFunctionsRight]') )
+DROP FUNCTION [CheckFunctionsRight]
 GO
 
 CREATE FUNCTION [CheckFunctionsRight] (
@@ -216,8 +249,11 @@ GO
 GRANT EXEC ON [CheckFunctionsRight] TO public
 GO
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[GetLogonInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE GetLogonInfo
+GO
 
-ALTER PROCEDURE GetLogonInfo
+CREATE PROCEDURE GetLogonInfo
 @id int,
 @Value bigint
 
@@ -242,6 +278,7 @@ GO
 /* -----------------------------------------------------------------------------
           Создание таблиц и процедур для учета услуг RunPad
 ----------------------------------------------------------------------------- */
+if not exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ServicesRunpad]'))
 CREATE TABLE [ServicesRunpad] (
         [id] [int] IDENTITY (1, 1) NOT NULL ,
         [idService] [int] NULL ,
@@ -262,6 +299,10 @@ CREATE TABLE [ServicesRunpad] (
                 [id]
         )  ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ServicesRunpadInsert3]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE ServicesRunpadInsert3
 GO
 
 CREATE PROC ServicesRunpadInsert3
@@ -297,6 +338,9 @@ GO
 GRANT EXEC ON [ServicesRunpadInsert3] TO pm_service
 GO
 
+DROP TRIGGER ServicesRunpadAutoUpdate;
+GO
+
 CREATE TRIGGER ServicesRunpadAutoUpdate ON [dbo].[ServicesRunpad]
 
 FOR INSERT, UPDATE, DELETE
@@ -330,8 +374,10 @@ BEGIN
 END
 GO
 
+if not exists (select * from dbo.AutoUpdateTables where id = 5)
 INSERT dbo.AutoUpdateTables VALUES (5, 'ServicesRunpad')
 GO
+
 
 ALTER TRIGGER RegistryAutoUpdate ON [dbo].[Registry]
 
@@ -383,6 +429,7 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[Reports]')
 drop table [dbo].[Reports]
 GO
 
+if not exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[ReportColumns]'))
 CREATE TABLE [dbo].[ReportColumns] (
 	[id] [int] IDENTITY (1, 1) NOT NULL ,
 	[ReportId] [int] NOT NULL ,
@@ -398,6 +445,7 @@ CREATE TABLE [dbo].[ReportColumns] (
 ) ON [PRIMARY]
 GO
 
+if not exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[Reports]'))
 CREATE TABLE [dbo].[Reports] (
 	[id] [int] IDENTITY (1, 1) NOT NULL ,
 	[Name] [varchar] (255) COLLATE Cyrillic_General_CI_AS NOT NULL ,
@@ -460,16 +508,14 @@ ALTER TABLE [dbo].[ReportColumns] ADD
 	) ON DELETE CASCADE 
 GO
 
-INSERT INTO [Functions]([id],[name]) VALUES(35, N'CustomReports')
-GO
 
-INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 1)
-GO
-
-INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 2)
-GO
-
-INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 3)
+IF NOT EXISTS (SELECT * FROM [dbo].[functions] WHERE [id] = 35)
+BEGIN
+	INSERT INTO [Functions]([id],[name]) VALUES(35, N'CustomReports')
+	INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 1)
+	INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 2)
+	INSERT INTO [FunctionsRights]([idFunctions],[idUsersGroup]) VALUES(35, 3)
+END
 GO
 
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[CustomReportsAdd]') 
@@ -495,6 +541,10 @@ GO
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[CustomReportsUpdate]') 
         AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
     DROP PROCEDURE [dbo].[CustomReportsUpdate]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[GetCustomReportParentId]') )
+DROP FUNCTION [GetCustomReportParentId]
 GO
 
 CREATE FUNCTION [GetCustomReportParentId] ()
@@ -531,6 +581,10 @@ END
 GO
 
 GRANT EXEC ON [CustomReportsSelect] TO public
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[CustomReportColumnsSelect]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE CustomReportColumnsSelect
 GO
 
 CREATE PROCEDURE CustomReportColumnsSelect
