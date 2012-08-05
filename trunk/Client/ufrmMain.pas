@@ -267,6 +267,7 @@ type
     procedure mnuLogoffClick(Sender: TObject);
     procedure pnlClockClick(Sender: TObject);
     procedure pnlCompNumberClick(Sender: TObject);
+    procedure tbCompShutdownClick(Sender: TObject);
   private
     { Private declarations }
     FstrURLPath: String;
@@ -897,7 +898,11 @@ procedure TfrmMain.tmrClockTimer(Sender: TObject);
 var
   s: THandle;
 begin
-  tbActions.Visible := GClientOptions.ShutdownButton;
+  tbActions.Visible := GClientOptions.ShutdownButton > -1;
+  if GClientOptions.ShutdownButton >0 then
+    tbCompShutdown.ImageIndex := GClientOptions.ShutdownButton -1
+  else
+    tbCompShutdown.ImageIndex := 0;
   pnlClock.Caption := TimeToStr(Time);
 {$IFDEF MSWINDOWS}
   modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
@@ -1297,6 +1302,12 @@ end;
 procedure TfrmMain.pnlCompNumberClick(Sender: TObject);
 begin
   if FbShutdownAlt = 3 then inc(FbShutdownAlt);
+end;
+
+procedure TfrmMain.tbCompShutdownClick(Sender: TObject);
+begin
+  if GClientOptions.ShutdownButton> 0 then
+    LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=' + inttostr(GClientOptions.ShutdownButton), False);
 end;
 
 end. ////////////////////////// end of file //////////////////////////////////

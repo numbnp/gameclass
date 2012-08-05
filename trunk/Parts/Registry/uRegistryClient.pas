@@ -41,8 +41,8 @@ type
     function GetKeyAsString(Key:string;DefValue: String):String;
     procedure SetKeyAsString(Key:string;AValue: String);
 
-    function GetShutdownButton: Boolean;
-    procedure SetShutdownButton(AValue: Boolean);
+    function GetShutdownButton: Integer;
+    procedure SetShutdownButton(AValue: Integer);
 
 
   public
@@ -63,7 +63,7 @@ type
     property ShowSumm: Boolean
         read GetShowSumm write SetShowSumm;
 
-    property ShutdownButton: Boolean
+    property ShutdownButton: Integer
         read GetShutdownButton write SetShutdownButton;
 
   end;
@@ -141,14 +141,14 @@ end;
 
 
 
-function TRegistryClient.GetShutdownButton: Boolean;
+function TRegistryClient.GetShutdownButton: Integer;
 begin
-  Result:=GetKeyAsBoolean('ShutdownButton', False);
+  Result:=GetKeyAsInteger('ShutdownButton', -1);
 end;
 
-procedure TRegistryClient.SetShutdownButton(AValue: Boolean);
+procedure TRegistryClient.SetShutdownButton(AValue: Integer);
 begin
-  SetKeyAsBoolean('ShutdownButton', AValue);
+  SetKeyAsInteger('ShutdownButton', AValue);
 end;
 
 

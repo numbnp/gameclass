@@ -287,7 +287,7 @@ begin
     _SendOption('GuestSession', BoolToStr(GClientOptions.GuestSession));
 
   if bAll or (CompareText(FstrOptionName,'ShutdownButton') = 0) then
-    _SendOption('ShutdownButton', BoolToStr(GClientOptions.ShutdownButton));
+    _SendOption('ShutdownButton', IntToStr(GClientOptions.ShutdownButton));
 
 
   if bAll or (CompareText(FstrOptionName,'DebugLog') = 0) then

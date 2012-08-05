@@ -2,11 +2,11 @@ object frameClientInterface: TframeClientInterface
   Left = 0
   Top = 0
   Width = 445
-  Height = 405
+  Height = 403
   TabOrder = 0
   object gbNotofocation: TGroupBox
     Left = 0
-    Top = 41
+    Top = 109
     Width = 445
     Height = 70
     Align = alTop
@@ -76,7 +76,7 @@ object frameClientInterface: TframeClientInterface
   end
   object gbMessages: TGroupBox
     Left = 0
-    Top = 111
+    Top = 179
     Width = 445
     Height = 138
     Align = alTop
@@ -177,7 +177,7 @@ object frameClientInterface: TframeClientInterface
     Left = 0
     Top = 0
     Width = 445
-    Height = 41
+    Height = 109
     Align = alTop
     Caption = #1044#1088#1091#1075#1086#1077
     TabOrder = 2
@@ -190,13 +190,42 @@ object frameClientInterface: TframeClientInterface
       TabOrder = 0
       OnClick = cbxShowSmallInfoClick
     end
-    object cbxShutdownButton: TCheckBox
-      Left = 237
-      Top = 16
-      Width = 180
-      Height = 17
-      Caption = #1050#1085#1086#1087#1082#1072' '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1103
+    object gbShutdown: TGroupBox
+      Left = 8
+      Top = 36
+      Width = 429
+      Height = 61
       TabOrder = 1
+      object lblDefAction: TLabel
+        Left = 4
+        Top = 20
+        Width = 124
+        Height = 13
+        Caption = #1044#1077#1081#1089#1090#1074#1080#1077' '#1087#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
+      end
+      object cbDefAction: TComboBox
+        Left = 132
+        Top = 16
+        Width = 145
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+        Text = #1053#1077#1090
+        OnChange = cbDefActionChange
+        Items.Strings = (
+          #1053#1077#1090
+          #1042#1099#1082#1083#1102#1095#1077#1085#1080#1077
+          #1055#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1072
+          #1042#1099#1093#1086#1076' '#1080#1079' '#1089#1080#1089#1090#1077#1084#1099)
+      end
+    end
+    object cbxShutdownButton: TCheckBox
+      Left = 13
+      Top = 33
+      Width = 128
+      Height = 16
+      Caption = #1050#1085#1086#1087#1082#1072' '#1074#1099#1082#1083#1102#1095#1077#1085#1080#1103
+      TabOrder = 2
       OnClick = cbxShutdownButtonClick
     end
   end
