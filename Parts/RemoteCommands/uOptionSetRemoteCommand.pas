@@ -234,7 +234,7 @@ try
 
   end else if CompareText(FstrOptionName,'ShutdownButton') = 0
       then begin
-    GClientOptions.ShutdownButton := StrToBool(FstrOptionValue);
+    GClientOptions.ShutdownButton := StrToIntDef(FstrOptionValue,-1);
 
 
   end else if CompareText(FstrOptionName,'ServerVersion') = 0
