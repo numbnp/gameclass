@@ -31,7 +31,10 @@ type
     lblBracket: TLabel;
     Label1: TLabel;
     edtURLLogonCompFree: TEdit;
+    gbShutdown: TGroupBox;
     cbxShutdownButton: TCheckBox;
+    lblDefAction: TLabel;
+    cbDefAction: TComboBox;
     procedure edtURLCompFreeChange(Sender: TObject);
     procedure edtURLTopChange(Sender: TObject);
     procedure edtUseTextMessageMinChange(Sender: TObject);
@@ -45,6 +48,7 @@ type
     procedure cbxUseTextMessageBlinkingClick(Sender: TObject);
     procedure edtURLLogonCompFreeChange(Sender: TObject);
     procedure cbxShutdownButtonClick(Sender: TObject);
+    procedure cbDefActionChange(Sender: TObject);
   private
     { Private declarations }
 //    FbUnblockPasswordNotChanged: Boolean;
@@ -87,7 +91,10 @@ begin
   GbFormGC3ClientLock := True;
   // Other
   cbxShowSmallInfo.Checked := GClientOptions.ShowSmallInfo;
-  cbxShutdownButton.Checked := GClientOptions.ShutdownButton;
+  cbxShutdownButton.Checked := GClientOptions.ShutdownButton > -1;
+  if GClientOptions.ShutdownButton > -1 then
+    cbDefAction.ItemIndex := GClientOptions.ShutdownButton;
+  cbDefAction.Enabled := cbxShutdownButton.Checked;
 
   // Оповещения
   cbxUseSounds.Checked := GClientOptions.UseSounds;
@@ -262,7 +269,24 @@ procedure TframeClientInterface.cbxShutdownButtonClick(Sender: TObject);
 begin
   if GbFormGC3ClientLock then exit;
   GbFormGC3ClientLock := True;
-  GClientOptions.ShutdownButton :=   cbxShutdownButton.Checked;
+  if not cbxShutdownButton.Checked then
+    GClientOptions.ShutdownButton := -1
+  else
+    GClientOptions.ShutdownButton := 0;
+  cbDefAction.Enabled := cbxShutdownButton.Checked;
+  if cbDefAction.Enabled then
+    cbDefAction.ItemIndex := 0;
+  _AfterControlDataChange;
+end;
+
+procedure TframeClientInterface.cbDefActionChange(Sender: TObject);
+begin
+  if GbFormGC3ClientLock then exit;
+  GbFormGC3ClientLock := True;
+  if not cbxShutdownButton.Checked then
+    GClientOptions.ShutdownButton := -1
+  else
+    GClientOptions.ShutdownButton := cbDefAction.Items.IndexOf(cbDefAction.Text);
   _AfterControlDataChange;
 end;
 

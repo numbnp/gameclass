@@ -103,7 +103,7 @@ type
     FTaskKillMode: TTaskKillMode;
     FbAutoInstall: Boolean;
     FbGuestSession: Boolean;
-    FbShutdownButton: Boolean;
+    FbShutdownButton: Integer;
     FbIsFirstRun: Boolean;
     FstrKDEUser: String;
     FbDebugLog: Boolean;
@@ -321,7 +321,7 @@ type
     // показывать кнпку "Гость"
     property GuestSession: Boolean
         read FbGuestSession write FbGuestSession;
-    property ShutdownButton: Boolean
+    property ShutdownButton: Integer
         read FbShutdownButton write FbShutdownButton;
     // Пытаться автоматически включить оплаченый компьютер
     property UseWOL: Boolean
@@ -676,7 +676,7 @@ try
   FbGuestSession := _GetBooleanOption(
       OPTIONS_GENERAL_FOLDER, 'GuestSession',
       DEF_GUEST_SESSION);
-  FbShutdownButton := _GetBooleanOption(
+  FbShutdownButton := _GetIntegerOption(
       OPTIONS_GENERAL_FOLDER, 'ShutdownButton',
       DEF_SHUTDOWN_BUTTON);
   FbUseWOL := _GetBooleanOption(
