@@ -528,7 +528,7 @@ begin
      a.state := ClientState_Authentication
   else
      a.state := ClientState_Blocked;
-  a.number := 0;
+  a.number := -1;
 //  a.name := asys.GetNameByNumber(0);
 //  a.balance := 0;
   a.secCode := 0;
