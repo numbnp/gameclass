@@ -272,6 +272,10 @@ BEGIN
 END
 GO
 
+GRANT  EXECUTE  ON [dbo].[GetLogonInfo]  TO [public]
+GO
+
+
 /* -----------------------------------------------------------------------------
                           Дефолты для новых опций
 ----------------------------------------------------------------------------- */
@@ -338,8 +342,11 @@ GO
 GRANT EXEC ON [ServicesRunpadInsert3] TO pm_service
 GO
 
-DROP TRIGGER ServicesRunpadAutoUpdate;
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[ServicesRunpadAutoUpdate]') 
+        AND OBJECTPROPERTY(id, N'IsTrigger') = 1)
+    DROP TRIGGER ServicesRunpadAutoUpdate
 GO
+
 
 CREATE TRIGGER ServicesRunpadAutoUpdate ON [dbo].[ServicesRunpad]
 

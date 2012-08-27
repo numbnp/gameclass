@@ -1180,6 +1180,16 @@ begin
     // обрабатываем протокол первой версии
     if (protocol = PROTOCOL_V01) and (index <> -1) then begin
       // -----------------------------
+      // Защита от рассинхронизации состояния клиента на сервере и клиенте
+      if (cmd = STR_CMD_AUTH_QUERYTARIFS_2)
+          or (cmd = STR_CMD_AUTH_QUERYCOSTTIME_2)
+          or  (cmd = STR_CMD_AUTH_QUERYSTATE_3)
+          or (cmd = STR_CMD_AUTH_QUERYCHANGEPASS)
+          then
+        if Comps[index].a.number < 0 then
+          cmd := STR_CMD_AUTH_QUERYLOGOFF;
+
+      // -----------------------------
       if (cmd = STR_CMD_RET_PINGANSWER) then begin
         Comps[index].pings := 0; // если пинг вернулся, то сбрасываем в ноль
         // 1) было true - ничего не делаем
@@ -1583,7 +1593,7 @@ begin
             translate('AuthenticationLogoff') + ' / ' + translate('Computer')
             + ' ' + Comps[index].GetStrNumber + ' / ' + translate('labelUser')
             + ' ' + GetAccountName(Comps[index].a));
-        Comps[index].a.number := 0;
+        Comps[index].a.number := -1; //0;
         QueryAuthGoState1(index);
       end; //STR_CMD_AUTH_QUERYLOGOFF
 
@@ -1799,7 +1809,7 @@ end;
 
 procedure QueryAuthGoState1(AnCompIndex:Integer);
 begin
-  Comps[AnCompIndex].a.number := 0;
+  Comps[AnCompIndex].a.number := -1; //0;
   if GAccountSystem.Enabled
       and GAccountSystem.AlwaysAllowAuthentication
       and not Comps[AnCompIndex].Reserved then begin
@@ -1833,7 +1843,7 @@ end;
 procedure SendAuthGoState2(CompIndex:Integer);
 begin
    // загрузить данные клиента
-   if (Comps[CompIndex].a.number = 0) then exit;
+   if (Comps[CompIndex].a.number < 1) then exit;
 //   asys.accounts[asys.GetIndexByNumber(Comps[CompIndex].a.number)].Load;
    Comps[CompIndex].a.state := ClientState_Order;
    Comps[CompIndex].a.LogonOrStopMoment := GetVirtualTime;

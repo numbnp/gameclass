@@ -1959,7 +1959,7 @@ begin
           + ' ' + Comps[AnComputerIndex].GetStrNumber + ' / '
           + translate('labelUser')
           + ' ' + GetAccountName(Comps[AnComputerIndex].a));
-      Comps[AnComputerIndex].a.number := 0;
+      Comps[AnComputerIndex].a.number := -1;
       QueryAuthGoState1(AnComputerIndex);
     end;
   end;
