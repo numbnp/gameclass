@@ -312,9 +312,13 @@ begin
     FState := FState - [Reserve];
   //Если есть сеанс или бронь нужно выставить начало в конец сеанса плюс минута
   if Comps[ComputersGetIndex(CompsSel[0])].busy then begin
-    dtpStartTime.DateTime :=
+    for i:= 0 to GSessions.Count -1 do
+      if GSessions.Items[i].IdComp = CompsSel[0] then
+        if dtpStartTime.DateTime < GSessions.Items[i].TimeStop then
+          dtpStartTime.DateTime := GSessions.Items[i].TimeStop + EncodeTime(0,1,0,0);
+{    dtpStartTime.DateTime :=
         Comps[ComputersGetIndex(CompsSel[0])].session.TimeStop
-        + EncodeTime(0,1,0,0);
+        + EncodeTime(0,1,0,0);}
   end
   else
     dtpStartTime.DateTime := GetVirtualTime;
