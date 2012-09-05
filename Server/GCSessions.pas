@@ -468,6 +468,7 @@ begin
 end;
 
 
+
 // останавливаем сессию раньше времени!
 procedure TGCSession.StopOnDB(AbAuto: Boolean);
 var

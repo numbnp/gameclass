@@ -620,6 +620,11 @@ object formMain: TformMain
         ShortCut = 46
         OnClick = mnuStopClick
       end
+      object mnuCompBackPartMoney: TMenuItem
+        Caption = #1042#1077#1088#1085#1091#1090#1100' '#1095#1072#1089#1090#1100' '#1089#1076#1072#1095#1080
+        ShortCut = 8238
+        OnClick = mnuCompBackPartMoneyClick
+      end
       object mnuMove: TMenuItem
         Caption = #1055#1077#1088#1077#1089#1072#1076#1080#1090#1100' '#1082#1083#1080#1077#1085#1090#1072
         ShortCut = 16461

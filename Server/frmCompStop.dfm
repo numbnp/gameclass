@@ -17,6 +17,7 @@ object formCompStop: TformCompStop
   OldCreateOrder = False
   Position = poOwnerFormCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
@@ -175,6 +176,19 @@ object formCompStop: TformCompStop
       Font.Style = []
       ParentFont = False
     end
+    object lblCurrency: TLabel
+      Left = 184
+      Top = 32
+      Width = 15
+      Height = 33
+      Caption = '$'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -27
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
     object butCancel: TButton
       Left = 350
       Top = 47
@@ -210,7 +224,8 @@ object formCompStop: TformCompStop
       ParentFont = False
       ReadOnly = True
       TabOrder = 2
-      Text = '1024,24 '#1088#1091#1073
+      Text = '1024,24'
+      OnChange = editResultChange
       Alignment = eaRight
     end
   end
