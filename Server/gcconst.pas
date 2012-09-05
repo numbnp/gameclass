@@ -182,6 +182,7 @@ const
 // Functions
   FN_COMP_START = 'fnCompStart';
   FN_COMP_STOP = 'fnCompStop';
+  FN_COMP_BACK_PART_MONEY = 'fnCompBackPartMoney';
   FN_COMP_MOVE = 'fnCompMove';
   FN_COMP_ADD = 'fnCompAdd';
   FN_REMONT_1 = 'fnRemont1';

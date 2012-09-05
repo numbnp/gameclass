@@ -213,6 +213,7 @@ type
     subView: TMenuItem;
     mnuPanelRunPad: TMenuItem;
     PopupMenu1: TPopupMenu;
+    mnuCompBackPartMoney: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -345,6 +346,7 @@ type
     procedure mnuPanelRunPadClick(Sender: TObject);
     procedure StopUpdate();
     procedure StartUpdate();
+    procedure mnuCompBackPartMoneyClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -2087,7 +2089,7 @@ begin
    if (Key=VK_SUBTRACT) then
     begin
       UpdateSelectedCompList;
-      DoEvent(FN_COMP_STOP);
+      DoEvent(FN_COMP_BACK_PART_MONEY);
     end
 
 
@@ -2616,6 +2618,12 @@ procedure TformMain.mnuPanelRunPadClick(Sender: TObject);
 begin
   tbRunPad.Visible := mnuPanelRunPad.Checked;
   
+end;
+
+procedure TformMain.mnuCompBackPartMoneyClick(Sender: TObject);
+begin
+  UpdateSelectedCompList;
+  DoEvent(FN_COMP_BACK_PART_MONEY);
 end;
 
 end.

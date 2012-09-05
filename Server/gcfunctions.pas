@@ -75,6 +75,7 @@ procedure ehsClearStatistics;
 procedure ehsManualPrint;
 procedure ehsSendMessage;
 procedure ehsRemoteClientsManage;
+procedure ehsCompBackPartMoney;
 // network
 
 procedure ehsVolume;
@@ -113,7 +114,7 @@ type
   TBuf = array [0 .. 4095] of Byte;
 
 // максимальное количество событий в системе
-const MAX_EVENTS = 34;
+const MAX_EVENTS = 35;
 
 var
 events:array[0..MAX_EVENTS] of TUniEvent=
@@ -121,6 +122,7 @@ events:array[0..MAX_EVENTS] of TUniEvent=
  (id:FN_PASS_CHANGE; enabled:true; access:false; proc:ehsPassChange; noclear:false),
  (id:FN_COMP_START; enabled:true; access:false; proc:ehsCompStart; noclear:false),
  (id:FN_COMP_STOP; enabled:true; access:false; proc:ehsCompStop; noclear:false),
+ (id:FN_COMP_BACK_PART_MONEY; enabled:true; access:false; proc:ehsCompBackPartMoney; noclear:false),
  (id:FN_COMP_MOVE; enabled:true; access:false; proc:ehsCompMove; noclear:false),
  (id:FN_COMP_ADD; enabled:true; access:false; proc:ehsCompAdd; noclear:false),
 // (id:FN_MAIN_REPORT; enabled:true; access:false; proc:ehsNothing; noclear:false),
@@ -323,6 +325,9 @@ begin
   result := FunctionAmIRight(FN_COMP_STOP) and (Not isManager);
   formMain.mnuStop.Enabled := result;
   formMain.tbCompStop.Enabled := result;
+    // fnCompBackPartMoney
+  result := FunctionAmIRight(FN_COMP_BACK_PART_MONEY ) and (Not isManager);
+  formMain.mnuCompBackPartMoney.Enabled := result;
   // fnCompMove
   result := FunctionAmIRight(FN_COMP_MOVE) and (Not isManager);
   formMain.mnuMove.Enabled := result;
@@ -502,6 +507,11 @@ begin
         result := False;
   FunctionEnable(FN_RESERVE_ACTIVATE, result);
   FunctionEnable(FN_RESERVE_CANCEL, result);
+  FunctionEnable(FN_COMP_BACK_PART_MONEY , (bOneSelected and
+                                            firstComputer.Busy and
+                                            firstComputer.session.IsGuest and
+                                            not firstComputer.session.PostPay))
+
 end;
 
 // собственно самая главная функция
@@ -1060,16 +1070,67 @@ begin
   end;
 end;
 
+procedure ehsCompBackPartMoney;
+var
+  i: integer;
+  session: TGCSession;
+  bActionCanceled: Boolean;
+  dMoneyBack: double;
+begin
+  if (isManager) then exit;
+  if (not FunctionAmIRight(FN_COMP_STOP)) then exit;
+  if (CompsSelCount <> 1 ) then exit;
+
+  i := ComputersGetIndex(CompsSel[0]);
+  if (formCompStop.ShowModal(caDec,dMoneyBack,
+      Comps[i].session.IdSessionsAdd) = mrOK) then begin
+      formMain.StopUpdate;
+
+      session := Comps[i].session;
+      {if (session <> nil) and (session.Status <> ssFinished) then begin
+        bActionCanceled := False;
+        if GRegistry.Modules.KKM.Active then begin
+          bActionCanceled := not PrintCheckStop(session)
+            and GRegistry.Modules.KKM.DisconnectBlock;
+        end;
+        if bActionCanceled then
+          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+            'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
+        else begin}
+
+ { TODO : Реализовать этот код внутри класса comp }
+          Console.AddEvent(EVENT_ICON_WARNING, LEVEL_1,
+            translate('ActionBackPartMoney') + ' '
+            + Comps[i].GetStrNumber + ' >> '
+            + DateTimeToSql(GetVirtualTime) + ' '
+            + FloatToStr(dMoneyBack) + GRegistry.Options.Currency + '/'
+            + FloatToStr(session.CommonPay - session.CommonCost ) + GRegistry.Options.Currency
+            );
+          session.UpdateOnDB(-dMoneyBack,0, 0, 0, 0, 0, 0, 0);
+
+{          Stop(False);
+          QueryAuthGoState1(ComputersGetIndex(CompsSel[i]));
+          end;
+      end;}
+      formMain.StartUpdate;
+  end;
+  dmActions.actLoadSessions.Execute;
+  DoInterfaceComps;
+  dmActions.actRedrawComps.Execute;
+end;
+
+
 procedure ehsCompStop;
 var
   i: integer;
   session: TGCSession;
   bActionCanceled: Boolean;
+  dMoneyBack: double;
 begin
   if (isManager) then exit;
   if (not FunctionAmIRight(FN_COMP_STOP)) then exit;
   i := ComputersGetIndex(CompsSel[0]);
-  if (formCompStop.ShowModal(caStop,
+  if (formCompStop.ShowModal(caStop,dMoneyBack,
       Comps[i].session.IdSessionsAdd) = mrOK) then begin
       formMain.StopUpdate;
         for i := 0 to CompsSelCount - 1 do begin
@@ -1090,7 +1151,7 @@ begin
           end;
 
         end;
-      formMain.StartUpdate;  
+      formMain.StartUpdate;
   end;
   dmActions.actLoadSessions.Execute;
   DoInterfaceComps;
@@ -1791,12 +1852,13 @@ procedure ReserveCancel(ASession: TGCSession);
 var
   index: integer;
   bActionCanceled: Boolean;
+  dMoneyBack: double;
 begin
   if (isManager) then exit;
   if (not FunctionAvailable(FN_RESERVE_CANCEL)) then exit;
   index := ComputersGetIndex(CompsSel[0]);
   Application.CreateForm(TformCompStop, formCompStop);
-   if (formCompStop.ShowModal(caReserveCancel,
+   if (formCompStop.ShowModal(caReserveCancel, dMoneyBack,
       ASession.IdSessionsAdd) = mrOK) then
   begin
     bActionCanceled := False;
