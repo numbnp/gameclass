@@ -99,7 +99,8 @@ type
     caReserve = 2,
     caStop = 3,
     caAdd = 4,
-    caReserveCancel = 5
+    caReserveCancel = 5,
+    caDec = 6
   );
 
 

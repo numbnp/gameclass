@@ -110,7 +110,7 @@ procedure TfrmComputers.Init(const AAction: TComputerAction;
     const AstrDefault: String = '');
 begin
   FComputerAction := AAction;
-  if (AAction = caReserveCancel) then begin
+  if (AAction = caReserveCancel) or (AAction = caDec) then begin
     btnSelect.Enabled := False;
     lblComputer.Caption := translate('Computer');
     lblNumber.Visible := False;
