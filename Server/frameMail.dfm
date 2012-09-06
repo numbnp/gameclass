@@ -8,7 +8,7 @@ object framMail: TframMail
     Left = 0
     Top = 0
     Width = 425
-    Height = 121
+    Height = 193
     Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' SMTP '#1089#1077#1088#1074#1077#1088#1072
     TabOrder = 0
     object ledHost: TLabeledEdit
@@ -63,6 +63,37 @@ object framMail: TframMail
       EditLabel.Caption = 'ledPassword'
       TabOrder = 4
       OnChange = ledPasswordChange
+    end
+    object ledFrom: TLabeledEdit
+      Left = 8
+      Top = 130
+      Width = 201
+      Height = 21
+      EditLabel.Width = 64
+      EditLabel.Height = 13
+      EditLabel.Caption = 'ledUserName'
+      TabOrder = 5
+      OnChange = ledFromChange
+    end
+    object ledTo: TLabeledEdit
+      Left = 216
+      Top = 130
+      Width = 201
+      Height = 21
+      EditLabel.Width = 60
+      EditLabel.Height = 13
+      EditLabel.Caption = 'ledPassword'
+      TabOrder = 6
+      OnChange = ledToChange
+    end
+    object butTest: TButton
+      Left = 344
+      Top = 160
+      Width = 75
+      Height = 25
+      Caption = 'test'
+      TabOrder = 7
+      OnClick = butTestClick
     end
   end
 end

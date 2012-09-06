@@ -33,6 +33,14 @@ type
     function GetSMTPPassword: String;
     procedure SetSMTPPassword(AValue: String);
 
+    function LocateMailFrom: Boolean;
+    function GetMailFrom: String;
+    procedure SetMailFrom(AValue: String);
+
+    function LocateMailTo: Boolean;
+    function GetMailTo: String;
+    procedure SetMailTo(AValue: String);
+
 
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
@@ -49,6 +57,12 @@ type
       read GetSMTPUserName write SetSMTPUserName;
     property SMTPPassword: String
       read GetSMTPPassword write SetSMTPPassword;
+
+    property MailFrom: String
+      read GetMailFrom write SetMailFrom;
+    property MailTo: String
+      read GetMailTo write SetMailTo;
+
 
   end;
 
@@ -165,5 +179,43 @@ begin
   LocateSMTPPassword;
   FRegistryRecord.Value:= AValue;
 end;
+
+
+//----------------------------MailFrom------------------------------
+function TRegistryMail.LocateMailFrom: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('Mail\From','GameClass@GameClass.ru');
+end;
+
+function TRegistryMail.GetMailFrom: String;
+begin
+  LocateMailFrom;
+  Result := FRegistryRecord.Value ;
+end;
+
+procedure TRegistryMail.SetMailFrom(AValue: String);
+begin
+  LocateMailFrom;
+  FRegistryRecord.Value:= AValue;
+end;
+
+//----------------------------MailTo------------------------------
+function TRegistryMail.LocateMailTo: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('Mail\To','');
+end;
+
+function TRegistryMail.GetMailTo: String;
+begin
+  LocateMailTo;
+  Result := FRegistryRecord.Value ;
+end;
+
+procedure TRegistryMail.SetMailTo(AValue: String);
+begin
+  LocateMailTo;
+  FRegistryRecord.Value:= AValue;
+end;
+
 
 end.

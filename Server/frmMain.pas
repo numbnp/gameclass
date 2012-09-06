@@ -214,6 +214,7 @@ type
     mnuPanelRunPad: TMenuItem;
     PopupMenu1: TPopupMenu;
     mnuCompBackPartMoney: TMenuItem;
+    pnlRep: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -1550,6 +1551,7 @@ begin
                   + '/' + BoolToStr(True));
           dmActions.actLoadSessions.Execute;
           dmActions.actRedrawComps.Execute;
+          SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
           DoInterfaceComps;
           PingComputer(index);
 //          asys.accounts[asys.GetIndexByNumber(Comps[index].a.number)].Load;
@@ -1580,6 +1582,7 @@ begin
          end;
          Comps[index].session.Stop(False);
          dmActions.actLoadSessions.Execute;
+         SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
          DoInterfaceComps;
          dmActions.actRedrawComps.Execute;
          PingComputer(index);
@@ -1755,6 +1758,7 @@ begin
           session.Save;
           dmActions.actLoadSessions.Execute;
           dmActions.actRedrawComps.Execute;
+          SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
           DoInterfaceComps;
           PingComputer(index);
           SendAllOptionsToClient(index);
@@ -2087,6 +2091,7 @@ begin
       end;
 
    if (Key=VK_SUBTRACT) then
+    if mnuCompBackPartMoney.Enabled then
     begin
       UpdateSelectedCompList;
       DoEvent(FN_COMP_BACK_PART_MONEY);

@@ -20,8 +20,9 @@ type
     procedure butCancelClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Button1Click(Sender: TObject);
   private
-    { Private declarations }
+
   public
     { Public declarations }
   end;
@@ -79,6 +80,8 @@ begin
     Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
         'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
   else begin
+    if GRegistry.Options.SendReportAfterClozeChange then
+      MakeAndSendCurrentReportEx;
     dsCloseCurrentShift(curMoney, GetVirtualTime, str);
     RunServerScript(aCloseShift, CurOperatorName + ' ' + FloatToStr(curMoney)
         + ' ' + FloatToStr(fRemovedMoney)
@@ -110,6 +113,11 @@ procedure TformCurrentReport.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if ((key=27) or (key=116)) then ModalResult := mrCancel;
+end;
+
+procedure TformCurrentReport.Button1Click(Sender: TObject);
+begin
+  MakeAndSendCurrentReportEx;
 end;
 
 end.

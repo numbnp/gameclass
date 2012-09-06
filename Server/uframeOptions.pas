@@ -17,9 +17,6 @@ uses
 
 type
   TframeOptions = class(TFrame)
-    gbChange: TGroupBox;
-    cbxDisableChange: TCheckBox;
-    cbxEnableChangeForPackets: TCheckBox;
     lblStartMoneyMin: TLabel;
     lblStartMoneyMax: TLabel;
     gbSum: TGroupBox;
@@ -53,7 +50,6 @@ type
     cbxGuestSession: TCheckBox;
     lblTarif: TLabel;
     cboGuestSessionTarif: TComboBox;
-    cbxEnableChangeForReserveCancel: TCheckBox;
     Panel2: TPanel;
     gbPaymentMode: TGroupBox;
     cbxPrepayOnly: TCheckBox;
@@ -67,7 +63,6 @@ type
     dtpOperatingTimeBegin: TDateTimePicker;
     dtpOperatingTimeEnd: TDateTimePicker;
     cbxOperatingTime: TCheckBox;
-    cbxEnableChangeForSeparateTraffic: TCheckBox;
     cbxDebugLog: TCheckBox;
     cbxReserveAutoActivate: TCheckBox;
     gbOptimize: TGroupBox;
@@ -83,6 +78,15 @@ type
     lblLogoff: TLabel;
     Panel3: TPanel;
     Label1: TLabel;
+    ledMinBetvenReserved: TLabeledEdit;
+    Panel4: TPanel;
+    gbChange: TGroupBox;
+    cbxDisableChange: TCheckBox;
+    cbxEnableChangeForPackets: TCheckBox;
+    cbxEnableChangeForReserveCancel: TCheckBox;
+    cbxEnableChangeForSeparateTraffic: TCheckBox;
+    gbAutomatic: TGroupBox;
+    cbSendReportAfretCloze: TCheckBox;
     procedure cbxPrepayOnlyClick(Sender: TObject);
     procedure rbtnPrepayClick(Sender: TObject);
     procedure rbtnPostpayClick(Sender: TObject);
@@ -116,6 +120,8 @@ type
     procedure edtShutdownChange(Sender: TObject);
     procedure edtRebootChange(Sender: TObject);
     procedure edtLogoffChange(Sender: TObject);
+    procedure cbSendReportAfretClozeClick(Sender: TObject);
+    procedure ledMinBetvenReservedChange(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     { Private declarations }
@@ -144,7 +150,8 @@ uses
   uRegistryOptions,
   uRegistryInterface,
   uY2KString, uRegistryModules, uRegistryInternet,
-  uTariffication, uRegistryControlCommands;
+  uTariffication, uRegistryControlCommands,
+  GClangutils;
 
 procedure TframeOptions.Save;
 begin
@@ -166,6 +173,8 @@ begin
   cbxReserveDisable.Checked := GRegistry.Options.ReserveDisable;
   cbxReserveAutoActivate.Checked := GRegistry.Options.ReserveAutoActivate;
   cbxReserveAutoActivate.Enabled := not cbxReserveDisable.Checked;
+  ledMinBetvenReserved.Enabled := not cbxReserveDisable.Checked;
+  ledMinBetvenReserved.Text := inttostr(GRegistry.Options.MinIntervalBetvenReserved);
   cbxDisableChange.Checked := GRegistry.Options.DisableChange;
   cbxEnableChangeForPackets.Checked := GRegistry.Options.EnableChangeForPackets
       and not cbxDisableChange.Checked;
@@ -208,9 +217,13 @@ begin
   cbxWriteUnControlComp.Checked := GRegistry.Options.WriteUnControlComp;
   cbxWriteUnControlClub.Checked := GRegistry.Options.WriteUnControlClub;
 
+  cbSendReportAfretCloze.Checked := GRegistry.Options.SendReportAfterClozeChange;
+
   edtShutdown.Text := GRegistry.ControlCommands.WindowsShutdownCommand;
   edtReboot.Text := GRegistry.ControlCommands.WindowsRebootCommand;
   edtLogoff.Text := GRegistry.ControlCommands.WindowsLogoffCommand;
+
+
 
   FbControlsEnabled := True;
 end;
@@ -220,6 +233,10 @@ procedure TframeOptions.ResetFrame;
 begin
   GClientOptions.Load;
   RedrawTarifsList;
+
+  gbAutomatic.Caption := translate('Automatics');
+  cbSendReportAfretCloze.Caption := translate('SendReportAfterCloseChange');
+  ledMinBetvenReserved.EditLabel.Caption := translate('MinBetvenReserved');
   DoDesign;
 end;
 
@@ -363,6 +380,7 @@ begin
   if not ControlsEnabled then exit;
   GRegistry.Options.ReserveDisable := cbxReserveDisable.Checked;
   cbxReserveAutoActivate.Enabled := not cbxReserveDisable.Checked;
+  ledMinBetvenReserved.Enabled := not cbxReserveDisable.Checked;
 end;
 
 procedure TframeOptions.edtOperatorIPChange(Sender: TObject);
@@ -483,6 +501,17 @@ procedure TframeOptions.edtLogoffChange(Sender: TObject);
 begin
   if not ControlsEnabled then exit;
   GRegistry.ControlCommands.WindowsLogoffCommand := edtLogoff.Text;
+end;
+
+procedure TframeOptions.cbSendReportAfretClozeClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  GRegistry.Options.SendReportAfterClozeChange := cbSendReportAfretCloze.Checked;
+end;
+
+procedure TframeOptions.ledMinBetvenReservedChange(Sender: TObject);
+begin
+  GRegistry.Options.MinIntervalBetvenReserved := StrToIntDef(ledMinBetvenReserved.Text,60);
 end;
 
 end.
