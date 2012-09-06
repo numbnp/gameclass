@@ -138,7 +138,13 @@ type
     function LocateWriteUnControlClub: Boolean;
     function GetWriteUnControlClub: Boolean;
     procedure SetWriteUnControlClub(AValue: Boolean);
+    function LocateSendReportAfterClozeChange: Boolean;
+    function GetSendReportAfterClozeChange: Boolean;
+    procedure SetSendReportAfterClozeChange(AValue: Boolean);
 
+    function LocateMinIntervalBetvenReserved: Boolean;
+    function GetMinIntervalBetvenReserved: Integer;
+    procedure SetMinIntervalBetvenReserved(AValue: Integer);
 
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
@@ -228,6 +234,12 @@ type
         read GetWriteUnControlComp write SetWriteUnControlComp;
     property WriteUnControlClub : Boolean
         read GetWriteUnControlClub write SetWriteUnControlClub;
+    property SendReportAfterClozeChange : Boolean
+        read GetSendReportAfterClozeChange write SetSendReportAfterClozeChange;
+
+    property MinIntervalBetvenReserved : integer
+        read GetMinIntervalBetvenReserved write SetMinIntervalBetvenReserved;
+
   end;
 
 implementation
@@ -954,4 +966,42 @@ begin
   FRegistryRecord.ValueAsBoolean := AValue;
 end;
 }
+function TRegistryOptions.GetSendReportAfterClozeChange: Boolean;
+begin
+  LocateSendReportAfterClozeChange;
+  Result := FRegistryRecord.ValueAsBoolean;
+end;
+
+function TRegistryOptions.LocateSendReportAfterClozeChange: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('SendReportAfterClozeChange', '0');
+end;
+
+procedure TRegistryOptions.SetSendReportAfterClozeChange(AValue: Boolean);
+begin
+  LocateSendReportAfterClozeChange;
+  FRegistryRecord.ValueAsBoolean := AValue;
+end;
+
+
+function TRegistryOptions.LocateMinIntervalBetvenReserved: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('MinIntervalBetvenReserved', '60');
+end;
+
+function TRegistryOptions.GetMinIntervalBetvenReserved: Integer;
+begin
+  LocateMinIntervalBetvenReserved;
+  Result := FRegistryRecord.ValueAsInteger;
+end;
+
+procedure TRegistryOptions.SetMinIntervalBetvenReserved(AValue: Integer);
+begin
+  LocateMinIntervalBetvenReserved;
+  FRegistryRecord.ValueAsInteger := AValue;
+end;
+
+
+
+
 end.

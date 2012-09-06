@@ -83,7 +83,7 @@ type
     procedure Storage(); override;
 
     procedure EnableAutofilter(const AbEnable: Boolean);
-    procedure SaveTable(const AbIsOpenFilesAfterSave: Boolean);
+    procedure SaveTable(const AbIsOpenFilesAfterSave: Boolean; FileName:string);
     procedure SendTable();
     procedure PrintTable();
 
@@ -171,7 +171,7 @@ begin
 end; // TfrmReportView.EnableAutofilter
 
 
-procedure TfrmReportView.SaveTable(const AbIsOpenFilesAfterSave: Boolean);
+procedure TfrmReportView.SaveTable(const AbIsOpenFilesAfterSave: Boolean; FileName:string);
 var
   ExportClass: TDBGridEhExportClass;
   bSaveAll: Boolean;
@@ -184,6 +184,8 @@ begin
   if not _AskReportSaveAll({out}bSaveAll) then begin
     Exit;
   end;
+
+  strFileName := FileName;
 
   if _AskReportExportClass({out}ExportClass, {out}strFileName) then begin
     SaveDBGridEhToExportFile(ExportClass, grdReport,
@@ -596,46 +598,89 @@ function TfrmReportView._AskReportExportClass(
     var AstrFileName: String): Boolean;
 var
   strExt: string;
+  MyFilterIndex:integer;
 begin
   Result := FALSE;
-  dlgSave.FileName := 'pm_' + FReport.ReportName;
-  if dlgSave.Execute() then begin
-    case dlgSave.FilterIndex of
-      1: begin
-        AExportClass := TDBGridEhExportAsHTML;
-        strExt       := 'htm';
-      end;
-      2: begin
-        AExportClass := TDBGridEhExportAsRTF;
-        strExt       := 'rtf';
-      end;
-      3: begin
-        AExportClass := TDBGridEhExportAsXLS;
-        strExt       := 'xls';
-      end;
-      4: begin
-        AExportClass := TDBGridEhExportAsText;
-        strExt       := 'txt';
-      end;
-      5: begin
-        AExportClass := TDBGridEhExportAsCSV;
-        strExt       := 'csv';
-      end;
-      else begin
-        AExportClass := nil;
-        strExt       := '';
-      end;
-    end; // case
+  if AstrFileName = '' then
+  begin
+    dlgSave.FileName := 'pm_' + FReport.ReportName;
+    if dlgSave.Execute() then begin
+      case dlgSave.FilterIndex of
+        1: begin
+          AExportClass := TDBGridEhExportAsHTML;
+          strExt       := 'htm';
+        end;
+        2: begin
+          AExportClass := TDBGridEhExportAsRTF;
+          strExt       := 'rtf';
+        end;
+        3: begin
+          AExportClass := TDBGridEhExportAsXLS;
+          strExt       := 'xls';
+        end;
+        4: begin
+          AExportClass := TDBGridEhExportAsText;
+          strExt       := 'txt';
+        end;
+        5: begin
+          AExportClass := TDBGridEhExportAsCSV;
+          strExt       := 'csv';
+        end;
+        else begin
+          AExportClass := nil;
+          strExt       := '';
+        end;
+      end; // case
 
-    ASSERT(AExportClass <> nil);
-    if AExportClass <> nil then begin
-      AstrFileName := dlgSave.FileName;
-      if UpperCase(copy(dlgSave.FileName, length(dlgSave.FileName) - 2, 3))
-          <> UpperCase(strExt) then
-        AstrFileName := AstrFileName + '.' + strExt;
-      Result := TRUE;
+      ASSERT(AExportClass <> nil);
+      if AExportClass <> nil then begin
+        AstrFileName := dlgSave.FileName;
+        if UpperCase(copy(dlgSave.FileName, length(dlgSave.FileName) - 2, 3))
+            <> UpperCase(strExt) then
+          AstrFileName := AstrFileName + '.' + strExt;
+        Result := TRUE;
+      end; // if
     end; // if
-  end; // if
+  end
+  else
+  begin
+    if (UpperCase(ExtractFileExt(AstrFileName)) = '.HTML') or
+       (UpperCase(ExtractFileExt(AstrFileName)) = '.HTM') then MyFilterIndex := 1;
+    if (UpperCase(ExtractFileExt(AstrFileName)) = '.RTF') then MyFilterIndex := 2;
+    if (UpperCase(ExtractFileExt(AstrFileName)) = '.XLS') then MyFilterIndex := 3;
+    if (UpperCase(ExtractFileExt(AstrFileName)) = '.TXT') then MyFilterIndex := 4;
+    if (UpperCase(ExtractFileExt(AstrFileName)) = '.CSV') then MyFilterIndex := 5;
+    case MyFilterIndex of
+        1: begin
+          AExportClass := TDBGridEhExportAsHTML;
+          strExt       := 'htm';
+        end;
+        2: begin
+          AExportClass := TDBGridEhExportAsRTF;
+          strExt       := 'rtf';
+        end;
+        3: begin
+          AExportClass := TDBGridEhExportAsXLS;
+          strExt       := 'xls';
+        end;
+        4: begin
+          AExportClass := TDBGridEhExportAsText;
+          strExt       := 'txt';
+        end;
+        5: begin
+          AExportClass := TDBGridEhExportAsCSV;
+          strExt       := 'csv';
+        end;
+        else begin
+          AExportClass := nil;
+          strExt       := '';
+        end;
+      end; // case
+      ASSERT(AExportClass <> nil);
+      if AExportClass <> nil then begin
+        Result := TRUE;
+      end; // if
+  end;
 
 end; // TfrmReportView._AskReportExportClass()
 

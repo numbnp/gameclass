@@ -1,13 +1,13 @@
 object formMain: TformMain
-  Left = 1480
-  Top = 91
+  Left = 99
+  Top = 117
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
   ClientHeight = 696
-  ClientWidth = 1118
+  ClientWidth = 1121
   Color = clBtnFace
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 1118
+    Width = 1121
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 996
+      Width = 999
       Height = 57
       Align = alClient
       ButtonHeight = 51
@@ -150,7 +150,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 996
+      Left = 999
       Top = 0
       Width = 122
       Height = 57
@@ -224,7 +224,7 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 1118
+    Width = 1121
     Height = 639
     ActivePage = tabComputers
     Align = alClient
@@ -235,7 +235,7 @@ object formMain: TformMain
       object splitComps: TSplitter
         Left = 0
         Top = 479
-        Width = 1110
+        Width = 1113
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -243,7 +243,7 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 1051
+        Width = 1054
         Height = 479
         Align = alClient
         AutoFitColWidths = True
@@ -408,7 +408,7 @@ object formMain: TformMain
       object pnlBottom: TPanel
         Left = 0
         Top = 485
-        Width = 1110
+        Width = 1113
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -416,7 +416,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 1110
+          Width = 1113
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -437,7 +437,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 1110
+          Left = 1113
           Top = 0
           Width = 0
           Height = 126
@@ -448,7 +448,7 @@ object formMain: TformMain
         end
       end
       object tbRunPad: TToolBar
-        Left = 1051
+        Left = 1054
         Top = 0
         Width = 59
         Height = 479
@@ -501,6 +501,14 @@ object formMain: TformMain
           OnClick = tlbStationLockClick
         end
       end
+      object pnlRep: TPanel
+        Left = 0
+        Top = 460
+        Width = 17
+        Height = 17
+        TabOrder = 3
+        Visible = False
+      end
     end
     object tabReports: TTabSheet
       Caption = 'Reports'
@@ -508,8 +516,8 @@ object formMain: TformMain
       object pnlReports: TPanel
         Left = 0
         Top = 0
-        Width = 943
-        Height = 482
+        Width = 1113
+        Height = 611
         Align = alClient
         BevelOuter = bvNone
         BiDiMode = bdLeftToRight
@@ -523,29 +531,29 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 1110
+        Width = 1113
         Height = 611
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
           Top = 570
-          Width = 1110
+          Width = 1113
           DesignSize = (
-            1110
+            1113
             41)
           inherited edtMessage: TEdit
-            Width = 1641
+            Width = 1644
           end
           inherited btnSend: TButton
-            Left = 1663
+            Left = 1666
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 1110
+          Width = 1113
           Height = 570
           inherited memMessages: TMemo
-            Width = 948
+            Width = 951
             Height = 568
             Lines.Strings = ()
           end

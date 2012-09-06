@@ -243,6 +243,8 @@ type
     procedure DisableReports;
     procedure SetBackColor(AColor: TColor);
     procedure SetFont(const AFont: TFont);
+    procedure SilentReportSaveToFile(const AnActiveUID: Integer;
+      const AReportParameters: TReportParameters; FileName: string);
 
   end; // TfrmReports
 
@@ -601,7 +603,7 @@ end; // TfrmReports.actImportReportExecute
 
 procedure TfrmReports.actSaveToFileExecute(Sender: TObject);
 begin
-  FReportFormsManager.SaveToFile();
+  FReportFormsManager.SaveToFile(True,'');
 end; // TfrmReports.actSaveTableExecute
 
 
@@ -1251,6 +1253,17 @@ end;
 procedure TfrmReports.actSendMailExecute(Sender: TObject);
 begin
   FReportFormsManager.SendFileByEmail();
+end;
+
+
+
+procedure TfrmReports.SilentReportSaveToFile(const AnActiveUID: Integer;
+  const AReportParameters: TReportParameters; FileName: string);
+begin
+  FReportManager.SetActiveReport(AnActiveUID,AReportParameters);
+  FReportFormsManager.SetActiveReport(FReportManager.GetActiveReport);
+  FReportFormsManager.ShowForm(rftGrid);
+  FReportFormsManager.SaveToFile(False,FileName);
 end;
 
 end.

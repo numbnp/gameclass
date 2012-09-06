@@ -10,7 +10,10 @@ interface
 uses
   // project units
   uY2KCommon,
-  TrafInsp115;
+  OleServer,
+  ActiveX,
+  TrafInsp2TLB;
+//  TrafInsp115;
 
 
 type
@@ -18,11 +21,15 @@ type
   //
   // TTICommonInterface
   //
+//type
+  APIObjectType = TOleEnum;
+  APICounterType = TOleEnum;
 
   TTICommonInterface = class(TObject)
   private
     // fields
-    FTrafInspAdmin: OleVariant;
+    FTrafInspAdmin: Variant;
+    FPerm: Variant;
     FbCreated: Boolean;
     FbConnected: Boolean;
   protected
@@ -33,10 +40,10 @@ type
   public
     // constructor / destructor
     constructor Create(); overload;
-    constructor Create(const AstrPassword: String); overload;
+    constructor Create(const AstrUserName: String; const AstrPassword: String); overload;
     destructor Destroy(); override;
 
-    function Logon(const AstrPassword: String;
+    function Logon(const AstrUserName: String; const AstrPassword: String;
         var AstrErrorMessage: String): Boolean;
 
     function  APIGetBillProp(ObjectType: APIObjectType;
@@ -58,6 +65,9 @@ type
     function  APIAddUser(const UserID: WideString;
         const DisplayName: WideString; const Group: WideString): WideString;
 
+    procedure InsertList(List: APIListType; Index: OleVariant; xml: OleVariant);
+    function GetList(List: APIListType; Param1: OleVariant; Param2: OleVariant; AttrLevel: ConfigAttrLevelType)): OleVariant;
+
     // properties
     property Active: Boolean
       read _GetActive;
@@ -78,7 +88,6 @@ uses
   Windows,
   Forms,
   uGCTIConst,
-  ActiveX,
   uDebugLog,
   Variants,
   ComObj, StrUtils;
@@ -103,17 +112,18 @@ begin
   FbCreated := _CreateTIInterface;
 end; // TTICommonInterface.Create
 
-constructor TTICommonInterface.Create(const AstrPassword: String);
+constructor TTICommonInterface.Create(const AstrUserName: String; const AstrPassword: String);
 var
   strMessage: String;
 begin
   Create();
-  if not Logon(AstrPassword, strMessage) then
+  if not Logon(AstrUserName, AstrPassword, strMessage) then
     Debug.Trace5('TI: '+ strMessage);
 end;
 
 destructor TTICommonInterface.Destroy();
 begin
+  FPerm := null;
   FTrafInspAdmin := null;
   CoUninitialize;
   inherited Destroy();
@@ -126,6 +136,7 @@ begin
   Result := True;
   try
     FTrafInspAdmin := CreateOleObject('TrafInsp.TrafInspAdmin');
+    FPerm := FTrafInspAdmin.QueryPermissions;
   except
     Result := False;
     FTrafInspAdmin := null;
@@ -138,10 +149,11 @@ begin
 end;
 
 /////////////////////////////////////////////////////////////////////
-function TTICommonInterface.Logon(const AstrPassword: String;
+function TTICommonInterface.Logon(const AstrUserName: String; const AstrPassword: String;
     var AstrErrorMessage: String): Boolean;
 var
   varPassword: OleVariant;
+  varUserName: OleVariant;
 begin
   Result := False;
   AstrErrorMessage := 'API: Интерфейс недоступен!';
@@ -150,8 +162,10 @@ begin
   AstrErrorMessage := 'API: Неправильный пароль';
   try
     varPassword := AstrPassword;
-    FTrafInspAdmin.APILogon(varPassword);
-    Result := True;
+    varUserName := AstrUserName;
+    //FTrafInspAdmin.APILogon(varPassword);
+    if FPerm.DoSharedLogon(varUserName,varPassword,'GameClass') = 0 then
+      Result := True;
   except
     on E: Exception do begin
       if Pos(E.Message, 'API') <> 0 then
@@ -225,10 +239,17 @@ end;
 function TTICommonInterface.APIAddUser(const UserID: WideString;
     const DisplayName: WideString; const Group: WideString): WideString;
 begin
-  if not Active then
-    exit;
-  Result := FTrafInspAdmin.APIAddUser(UserID, DisplayName, Group);
 end;
 
+procedure TTICommonInterface.InsertList(List: APIListType; Index: OleVariant; xml: OleVariant);
+begin
+  FTrafInspAdmin.InsertList(List,Index,xml);
+end;
+
+
+function TTICommonInterface.GetList(List: APIListType; Param1: OleVariant; Param2: OleVariant; AttrLevel: ConfigAttrLevelType)): OleVariant;
+begin
+  result := FTrafInspAdmin.GetList(List,Param1,Param2,AttrLevel);
+end;
 
 end.

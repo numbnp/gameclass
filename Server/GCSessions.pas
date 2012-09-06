@@ -1493,7 +1493,7 @@ var
   dtMaxStopTime: TDateTime;
 begin
   dtMaxStopTime := GetVirtualTime() + + EncodeTime(12,0,0,0)*4; //48 часов хватит
-  fInterval := EncodeTime(0,1,0,0);//0.001; //Должно быть 1 минута
+  fInterval := EncodeTime(0,round(GRegistry.Options.MinIntervalBetvenReserved/60),GRegistry.Options.MinIntervalBetvenReserved - (round(GRegistry.Options.MinIntervalBetvenReserved/60)*60),0);//0.001; //Должно быть 1 минута
   for i:=0 to Count-1 do
     if (Items[i].IdComp = AnIdComp) and (Items[i].Status = ssReserve) and
       (dtMaxStopTime > (Items[i].TimeStart + fInterval)) then

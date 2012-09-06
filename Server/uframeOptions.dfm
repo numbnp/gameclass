@@ -6,7 +6,7 @@ object frameOptions: TframeOptions
   TabOrder = 0
   object Panel1: TPanel
     Left = 0
-    Top = 209
+    Top = 237
     Width = 697
     Height = 62
     Align = alTop
@@ -134,7 +134,7 @@ object frameOptions: TframeOptions
   end
   object gbOptimize: TGroupBox
     Left = 0
-    Top = 271
+    Top = 299
     Width = 697
     Height = 80
     Align = alTop
@@ -170,7 +170,7 @@ object frameOptions: TframeOptions
   end
   object gbCommandControl: TGroupBox
     Left = 0
-    Top = 351
+    Top = 379
     Width = 697
     Height = 130
     Align = alTop
@@ -241,7 +241,7 @@ object frameOptions: TframeOptions
     Left = 0
     Top = 0
     Width = 697
-    Height = 209
+    Height = 237
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
@@ -249,7 +249,7 @@ object frameOptions: TframeOptions
       Left = 0
       Top = 0
       Width = 697
-      Height = 145
+      Height = 165
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
@@ -257,7 +257,7 @@ object frameOptions: TframeOptions
         Left = 0
         Top = 0
         Width = 145
-        Height = 145
+        Height = 165
         Align = alLeft
         Caption = #1056#1077#1078#1080#1084' '#1088#1072#1073#1086#1090#1099
         TabOrder = 0
@@ -316,12 +316,23 @@ object frameOptions: TframeOptions
           TabOrder = 3
           OnClick = cbxReserveAutoActivateClick
         end
+        object ledMinBetvenReserved: TLabeledEdit
+          Left = 10
+          Top = 136
+          Width = 123
+          Height = 21
+          EditLabel.Width = 111
+          EditLabel.Height = 13
+          EditLabel.Caption = 'ledMinBetvenReserved'
+          TabOrder = 4
+          OnChange = ledMinBetvenReservedChange
+        end
       end
       object pnlOperatingTime: TGroupBox
         Left = 145
         Top = 0
         Width = 72
-        Height = 145
+        Height = 165
         Align = alLeft
         Caption = '          '
         TabOrder = 1
@@ -373,59 +384,14 @@ object frameOptions: TframeOptions
           OnClick = cbxOperatingTimeClick
         end
       end
-      object gbChange: TGroupBox
-        Left = 217
-        Top = 0
-        Width = 264
-        Height = 145
-        Align = alClient
-        Caption = #1057#1076#1072#1095#1072
-        TabOrder = 2
-        object cbxDisableChange: TCheckBox
-          Left = 8
-          Top = 16
-          Width = 97
-          Height = 17
-          Caption = #1047#1072#1087#1088#1077#1090#1080#1090#1100
-          TabOrder = 0
-          OnClick = cbxDisableChangeClick
-        end
-        object cbxEnableChangeForPackets: TCheckBox
-          Left = 8
-          Top = 48
-          Width = 201
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1087#1072#1082#1077#1090#1085#1099#1093' '#1090#1072#1088#1080#1092#1086#1074
-          TabOrder = 2
-          OnClick = cbxEnableChangeForPacketsClick
-        end
-        object cbxEnableChangeForReserveCancel: TCheckBox
-          Left = 8
-          Top = 64
-          Width = 201
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1084#1077#1085#1099' '#1073#1088#1086#1085#1080
-          TabOrder = 3
-          OnClick = cbxEnableChangeForReserveCancelClick
-        end
-        object cbxEnableChangeForSeparateTraffic: TCheckBox
-          Left = 8
-          Top = 32
-          Width = 209
-          Height = 17
-          Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1076#1077#1083#1100#1085#1086#1075#1086' '#1090#1088#1072#1092#1080#1082#1072
-          TabOrder = 1
-          OnClick = cbxEnableChangeForSeparateTrafficClick
-        end
-      end
       object gbSum: TGroupBox
         Left = 481
         Top = 0
         Width = 216
-        Height = 145
+        Height = 165
         Align = alRight
         Caption = #1057#1091#1084#1084#1099
-        TabOrder = 3
+        TabOrder = 2
         object lblStartMoneyMin: TLabel
           Left = 8
           Top = 16
@@ -507,10 +473,84 @@ object frameOptions: TframeOptions
           OnChange = edtMaximumTrustChange
         end
       end
+      object Panel4: TPanel
+        Left = 217
+        Top = 0
+        Width = 264
+        Height = 165
+        Align = alClient
+        BevelOuter = bvNone
+        Ctl3D = True
+        ParentCtl3D = False
+        TabOrder = 3
+        object gbChange: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 264
+          Height = 117
+          Align = alTop
+          Caption = #1057#1076#1072#1095#1072
+          TabOrder = 0
+          object cbxDisableChange: TCheckBox
+            Left = 8
+            Top = 16
+            Width = 97
+            Height = 17
+            Caption = #1047#1072#1087#1088#1077#1090#1080#1090#1100
+            TabOrder = 0
+            OnClick = cbxDisableChangeClick
+          end
+          object cbxEnableChangeForPackets: TCheckBox
+            Left = 8
+            Top = 48
+            Width = 201
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1087#1072#1082#1077#1090#1085#1099#1093' '#1090#1072#1088#1080#1092#1086#1074
+            TabOrder = 2
+            OnClick = cbxEnableChangeForPacketsClick
+          end
+          object cbxEnableChangeForReserveCancel: TCheckBox
+            Left = 8
+            Top = 64
+            Width = 201
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1084#1077#1085#1099' '#1073#1088#1086#1085#1080
+            TabOrder = 3
+            OnClick = cbxEnableChangeForReserveCancelClick
+          end
+          object cbxEnableChangeForSeparateTraffic: TCheckBox
+            Left = 8
+            Top = 32
+            Width = 209
+            Height = 17
+            Caption = #1056#1072#1079#1088#1077#1096#1080#1090#1100' '#1076#1083#1103' '#1086#1090#1076#1077#1083#1100#1085#1086#1075#1086' '#1090#1088#1072#1092#1080#1082#1072
+            TabOrder = 1
+            OnClick = cbxEnableChangeForSeparateTrafficClick
+          end
+        end
+        object gbAutomatic: TGroupBox
+          Left = 0
+          Top = 117
+          Width = 264
+          Height = 48
+          Align = alClient
+          Caption = 'gbAutomatic'
+          TabOrder = 1
+          object cbSendReportAfretCloze: TCheckBox
+            Left = 8
+            Top = 20
+            Width = 253
+            Height = 17
+            Caption = 'SendReportAfretCloze'
+            TabOrder = 0
+            OnClick = cbSendReportAfretClozeClick
+          end
+        end
+      end
     end
     object Panel3: TPanel
       Left = 0
-      Top = 145
+      Top = 173
       Width = 697
       Height = 64
       Align = alBottom
