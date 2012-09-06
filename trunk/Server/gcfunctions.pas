@@ -34,6 +34,7 @@ procedure DoInterfaceComps; // подстройка интерфеса конкретно под список компов
 procedure EmptyProc; // заглушка для функций, не имеющих код
 
 procedure MakeCurrentReport(strings: TStrings);
+procedure MakeAndSendCurrentReportEx();
 // miscellaneous
 procedure MenuRecursive(Menu: TMenuItem);
 procedure FunctionRightYes(id:string);
@@ -199,7 +200,12 @@ uses
   uRegistration,
   uKKMTools,
   ufrmClearStatistic,
-  uFileInfo, IdSNMP;
+  uFileInfo, IdSNMP,
+  uReportCommon,
+  uReportManager,
+  uReportFormsManager,
+  uMail,
+  IdSMTP;
 
 type
   TMyDBGrid = class(TDBGridEh);
@@ -1683,6 +1689,59 @@ begin
      strings.Add(translate('lblRestMoney')+' = '+strRest);
    end;
 end;
+
+
+procedure MakeAndSendCurrentReportEx();
+var
+
+  FReportParameters:TReportParameters;
+  SendMail:TSendMail;
+begin
+
+
+  FReportParameters.dtCurrent := GetVirtualTime;
+  FReportParameters.dtBegin := 0;
+  FReportParameters.dtEnd  := 0;
+  FReportParameters.dtCurrentShiftBegin   := 0;
+  FReportParameters.dtPrevShiftBegin   := 0;
+  FReportParameters.dtPrevShiftEnd  := 0;
+
+  formMain.FfrmReports.SilentReportSaveToFile(20,FReportParameters,GetEnvironmentVariable('TEMP') + '\report.html' );
+
+  SendMail:= TSendMail.Create;
+// SendMail.AddLog := @AddLog;
+
+  SendMail.SMTP.Host:=GRegistry.Mail.SMTPHost;
+  SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
+  // установка сообщения
+  if GRegistry.Mail.SMTPUseAuth then
+    SendMail.Smtp.AuthenticationType:=atLogin  // atLogin
+  else
+    SendMail.Smtp.AuthenticationType:=atNone; // atNone
+  SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
+  SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
+
+
+  SendMail.MailMessage.From.Name:='GameClass';
+  SendMail.MailMessage.Subject:=AnsiToUtf8('Отчет за смену'); // тема
+  SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
+  SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
+  SendMail.MailMessage.Body.Text:=''; // текст сообщения
+
+  SendMail.AddAttachment(GetEnvironmentVariable('TEMP') + '\report.html');
+
+  if SendMail.Send then
+    Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+          translate('ReportSendedTo') + ' ' + GRegistry.Mail.MailTo)
+  else
+    Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+          translate('ErrorSendedReport'));
+
+
+  SendMail.Destroy;
+
+end;
+
 
 procedure SetBackColor(const AColor: TColor);
 begin

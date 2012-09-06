@@ -81,9 +81,9 @@ type
     procedure AddReportColumn(const AReportColumn: TReportColumn);
     procedure DeleteReportColumn(const AnId: Integer);
     function GetActiveColumnId(): Integer;
-    procedure SaveToFile();
+    procedure SaveToFile(OpenAfterSave:Boolean;FileName:string);
     procedure SendFileByEmail();
-    procedure Print();    
+    procedure Print();
 
     procedure HideAll();
     procedure ShowForm(const Arft: TReportViewType);
@@ -226,12 +226,12 @@ begin
 end; // TReportFormsManager.GetActiveColumnId
 
 
-procedure TReportFormsManager.SaveToFile();
+procedure TReportFormsManager.SaveToFile(OpenAfterSave:Boolean;FileName:string);
 begin
   if FfrmReportView.Visible then begin
-    FfrmReportView.SaveTable(TRUE {open the file after save});
+    FfrmReportView.SaveTable(OpenAfterSave, FileName {open the file after save});
   end else if FfrmReportChart.Visible then begin
-    FfrmReportChart.SaveChart(TRUE {open the file after save});
+    FfrmReportChart.SaveChart(OpenAfterSave {open the file after save});
   end;
 end; // TReportFormsManager.SaveToFile
 

@@ -1,12 +1,12 @@
 object formCompStart: TformCompStart
-  Left = 635
-  Top = 68
+  Left = 383
+  Top = 95
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   BorderWidth = 10
   Caption = 'formCompStartCaption'
   ClientHeight = 400
-  ClientWidth = 628
+  ClientWidth = 696
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,14 +19,14 @@ object formCompStart: TformCompStart
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    628
+    696
     400)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
     Top = 178
-    Width = 628
+    Width = 696
     Height = 222
     Align = alBottom
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formCompStart: TformCompStart
       Caption = 'Description'
     end
     object lblTarif: TLabel
-      Left = 438
+      Left = 502
       Top = 0
       Width = 33
       Height = 13
@@ -58,14 +58,14 @@ object formCompStart: TformCompStart
     object gbStartTime: TGroupBox
       Left = 118
       Top = 11
-      Width = 150
+      Width = 187
       Height = 86
       Caption = ' '#1053#1072#1095#1072#1083#1086' '#1089#1077#1072#1085#1089#1072' '
       TabOrder = 7
       object dtpStartDate: TDateTimePicker
         Left = 10
         Top = 17
-        Width = 90
+        Width = 119
         Height = 21
         Date = 37647.816767893500000000
         Format = 'd MMMM'
@@ -76,10 +76,10 @@ object formCompStart: TformCompStart
       object dtpStartTime: TDateTimePicker
         Left = 10
         Top = 42
-        Width = 90
+        Width = 119
         Height = 37
         Date = 37787.000000000000000000
-        Format = 'HH:mm'
+        Format = 'HH:mm:ss'
         Time = 37787.000000000000000000
         DateMode = dmUpDown
         Font.Charset = DEFAULT_CHARSET
@@ -93,7 +93,7 @@ object formCompStart: TformCompStart
         OnChange = dtpStartTimeChange
       end
       object butStartTimeHours: TButton
-        Left = 100
+        Left = 136
         Top = 42
         Width = 40
         Height = 18
@@ -109,7 +109,7 @@ object formCompStart: TformCompStart
         OnMouseDown = butTimeHoursMouseDown
       end
       object butStartTimeMinutes: TButton
-        Left = 100
+        Left = 136
         Top = 60
         Width = 40
         Height = 18
@@ -120,16 +120,16 @@ object formCompStart: TformCompStart
       end
     end
     object gbEndTime: TGroupBox
-      Left = 277
+      Left = 312
       Top = 11
-      Width = 151
+      Width = 180
       Height = 86
       Caption = '                               '
       TabOrder = 8
       object dtpEndDate: TDateTimePicker
         Left = 11
         Top = 17
-        Width = 90
+        Width = 118
         Height = 21
         Date = 37647.816879976900000000
         Format = 'd MMMM'
@@ -141,10 +141,10 @@ object formCompStart: TformCompStart
       object dtpEndTime: TDateTimePicker
         Left = 11
         Top = 42
-        Width = 90
+        Width = 118
         Height = 37
         Date = 37787.000000000000000000
-        Format = 'HH:mm'
+        Format = 'HH:mm:ss'
         Time = 37787.000000000000000000
         DateMode = dmUpDown
         Enabled = False
@@ -159,9 +159,9 @@ object formCompStart: TformCompStart
         OnChange = dtpEndTimeChange
       end
       object butEndTimeMinutes: TButton
-        Left = 100
+        Left = 134
         Top = 60
-        Width = 40
+        Width = 39
         Height = 18
         Caption = 'min'
         PopupMenu = popupTimeMinuts
@@ -169,9 +169,9 @@ object formCompStart: TformCompStart
         OnMouseDown = butEndTimeMinutesMouseDown
       end
       object butEndTimeHours: TButton
-        Left = 100
+        Left = 134
         Top = 42
-        Width = 40
+        Width = 39
         Height = 18
         Caption = 'hour'
         PopupMenu = popupTimeHours
@@ -180,7 +180,7 @@ object formCompStart: TformCompStart
       end
     end
     object cbEndTimeMode: TCheckBox
-      Left = 289
+      Left = 321
       Top = 9
       Width = 87
       Height = 17
@@ -192,13 +192,13 @@ object formCompStart: TformCompStart
     object editDescription: TEdit
       Left = 0
       Top = 116
-      Width = 428
+      Width = 493
       Height = 21
       TabOrder = 5
       OnChange = editDescriptionChange
     end
     object lvTarifs: TListView
-      Left = 438
+      Left = 502
       Top = 16
       Width = 193
       Height = 121
@@ -217,7 +217,7 @@ object formCompStart: TformCompStart
       OnKeyPress = lvTarifsKeyPress
     end
     object cbPostPay: TCheckBox
-      Left = 438
+      Left = 502
       Top = 143
       Width = 150
       Height = 14
@@ -227,7 +227,7 @@ object formCompStart: TformCompStart
       OnMouseUp = cbPostPayMouseUp
     end
     object butCancel: TButton
-      Left = 539
+      Left = 603
       Top = 197
       Width = 75
       Height = 25
@@ -236,7 +236,7 @@ object formCompStart: TformCompStart
       OnClick = butCancelClick
     end
     object butOk: TButton
-      Left = 456
+      Left = 520
       Top = 197
       Width = 75
       Height = 25
@@ -246,7 +246,7 @@ object formCompStart: TformCompStart
       OnClick = butOkClick
     end
     object cbReserve: TCheckBox
-      Left = 438
+      Left = 502
       Top = 160
       Width = 118
       Height = 17
@@ -258,14 +258,14 @@ object formCompStart: TformCompStart
     object pnlMoney: TPanel
       Left = 0
       Top = 140
-      Width = 428
+      Width = 425
       Height = 81
       BevelOuter = bvNone
       TabOrder = 0
       object gbMoneyTimeLength: TGroupBox
         Left = 0
         Top = 0
-        Width = 294
+        Width = 291
         Height = 81
         Align = alClient
         Caption = ' '#1044#1083#1080#1085#1072' '#1089#1077#1072#1085#1089#1072' '
@@ -273,7 +273,7 @@ object formCompStart: TformCompStart
         object pnlTotalCost: TPanel
           Left = 144
           Top = 15
-          Width = 0
+          Width = 65
           Height = 64
           Align = alClient
           BevelOuter = bvNone
@@ -340,7 +340,7 @@ object formCompStart: TformCompStart
           end
         end
         object pnlTimeLength: TPanel
-          Left = 144
+          Left = 141
           Top = 15
           Width = 148
           Height = 64
@@ -402,7 +402,7 @@ object formCompStart: TformCompStart
         end
       end
       object pnlHideTotalCost: TPanel
-        Left = 294
+        Left = 291
         Top = 0
         Width = 134
         Height = 81
@@ -415,14 +415,14 @@ object formCompStart: TformCompStart
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 628
+    Width = 696
     Height = 178
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
   end
   object pnlScale: TPanel
-    Left = 576
+    Left = 644
     Top = 1
     Width = 36
     Height = 49

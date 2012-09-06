@@ -315,7 +315,9 @@ begin
     for i:= 0 to GSessions.Count -1 do
       if GSessions.Items[i].IdComp = CompsSel[0] then
         if dtpStartTime.DateTime < GSessions.Items[i].TimeStop then
-          dtpStartTime.DateTime := GSessions.Items[i].TimeStop + EncodeTime(0,1,0,0);
+          dtpStartTime.DateTime := GSessions.Items[i].TimeStop
+            + EncodeTime(0,round(GRegistry.Options.MinIntervalBetvenReserved/60),
+                          GRegistry.Options.MinIntervalBetvenReserved - (round(GRegistry.Options.MinIntervalBetvenReserved/60)*60) ,0);
 {    dtpStartTime.DateTime :=
         Comps[ComputersGetIndex(CompsSel[0])].session.TimeStop
         + EncodeTime(0,1,0,0);}
@@ -346,6 +348,7 @@ begin
 //  timerFrmCompStartTimer(Sender);
   timerFrmCompStart.Enabled := true;
   editMoney.Text := '';
+
   EnableControls;
 {  frameSessionsChart1.DoDesign;
   frameSessionsChart1.Activate;
