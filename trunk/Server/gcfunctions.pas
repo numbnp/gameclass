@@ -1399,7 +1399,14 @@ begin
   if (formRemontLong.ShowModal = mrOK) then
   begin
     index := ComputersGetIndex(CompsSel[0]);
-  session := GSessions.Add(0, 0, Comps[index].id, Comps[index].a.number,
+{  session := GSessions.Add(0, 0, Comps[index].id, Comps[index].a.number,
+      GetVirtualTime, GetVirtualTime,
+      IncMinute(GetVirtualTime,GRegistry.Options.MinutsForLongRepair),
+      ID_TARIF_REMONT, 0, False, 0,
+      FilterString(formRemontLong.editRemontReason.Text),
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      ClientState_OperatorSession, ssActive);}
+  session := GSessions.Add(0, 0, Comps[index].id, 0,
       GetVirtualTime, GetVirtualTime,
       IncMinute(GetVirtualTime,GRegistry.Options.MinutsForLongRepair),
       ID_TARIF_REMONT, 0, False, 0,
@@ -1407,7 +1414,9 @@ begin
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ClientState_OperatorSession, ssActive);
 
-    Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, translate('GoRemontLong') + ' >> ' + Comps[ComputersGetIndex(CompsSel[0])].GetStrNumber + ' ' + DateTimeToSql(GetVirtualTime));
+    Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, translate('GoRemontLong') +
+                      ' >> ' + Comps[ComputersGetIndex(CompsSel[0])].GetStrNumber +
+                      ' ' + DateTimeToSql(GetVirtualTime));
     session.Save;
     //session.Destroy; ?????
 

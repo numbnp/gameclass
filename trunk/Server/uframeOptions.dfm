@@ -2,7 +2,7 @@ object frameOptions: TframeOptions
   Left = 0
   Top = 0
   Width = 697
-  Height = 668
+  Height = 544
   TabOrder = 0
   object Panel1: TPanel
     Left = 0
