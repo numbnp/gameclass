@@ -185,7 +185,7 @@ begin
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
   SendMail.MailMessage.From.Name:='GameClass';
-  SendMail.MailMessage.Subject:=AnsiToUtf8('Тест'); // тема
+  SendMail.MailMessage.Subject:=('Тест'); // тема
   SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
   SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
   SendMail.MailMessage.Body.Text:='Это тестовое сообщение.' + #13 + #10 + #13 + #10 + #13 + #10

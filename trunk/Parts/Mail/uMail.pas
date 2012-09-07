@@ -5,7 +5,8 @@ interface
 uses
   IdSMTP,
   IdMessage,
-  SysUtils;
+  SysUtils,
+  IdCoderMIME;
 
 type
   TSendMail = class
@@ -30,6 +31,8 @@ type
 
 
   end;
+
+function EncodeSubj(instr:string):string;
 
 implementation
 
@@ -64,9 +67,10 @@ var
   res:Boolean;
 begin
   res := False;
+  FMessage.Subject := EncodeSubj(FMessage.Subject);
   try
     try
-      FSMTP.Connect(1000);
+      FSMTP.Connect(5000);
       sleep(200);
 
       FSMTP.Send(FMessage);
@@ -91,6 +95,15 @@ procedure TSendMail._AddLog(str: string);
 begin
  if @AddLog <> nil then
     AddLog(str);
+end;
+
+function EncodeSubj(instr:string):string;
+var
+  IdEncoderMIME: TIdEncoderMIME;
+begin
+  IdEncoderMIME := TIdEncoderMIME.Create(nil);
+  Result := '=?Windows-1251?B?' + IdEncoderMIME.Encode(instr) + '?=';
+  IdEncoderMIME.Free;
 end;
 
 end.

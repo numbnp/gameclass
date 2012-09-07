@@ -1,6 +1,6 @@
 object frmMailSend: TfrmMailSend
-  Left = -797
-  Top = 228
+  Left = 464
+  Top = 241
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1054#1090#1087#1088#1072#1074#1082#1072' '#1086#1090#1095#1077#1090#1072'...'

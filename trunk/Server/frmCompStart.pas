@@ -376,13 +376,13 @@ begin
     FfrmSessionsChart.Visible := False;
     pnlTop.Visible := False;
     pnlScale.Visible := False;
-    Width := 660;
+//    Width := 723;
     Height := 273;
   end else begin
     FfrmSessionsChart.Visible := True;
     pnlTop.Visible := True;
     pnlScale.Visible := True;
-    Width := 660;
+//    Width := 723;
     Height := round(Screen.Height*0.9); //90% от высоты экрана
   end;
 end;
