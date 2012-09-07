@@ -61,6 +61,7 @@ object framMail: TframMail
       EditLabel.Width = 60
       EditLabel.Height = 13
       EditLabel.Caption = 'ledPassword'
+      PasswordChar = '*'
       TabOrder = 4
       OnChange = ledPasswordChange
     end
@@ -69,9 +70,9 @@ object framMail: TframMail
       Top = 130
       Width = 201
       Height = 21
-      EditLabel.Width = 64
+      EditLabel.Width = 37
       EditLabel.Height = 13
-      EditLabel.Caption = 'ledUserName'
+      EditLabel.Caption = 'ledFrom'
       TabOrder = 5
       OnChange = ledFromChange
     end
@@ -80,9 +81,9 @@ object framMail: TframMail
       Top = 130
       Width = 201
       Height = 21
-      EditLabel.Width = 60
+      EditLabel.Width = 27
       EditLabel.Height = 13
-      EditLabel.Caption = 'ledPassword'
+      EditLabel.Caption = 'ledTo'
       TabOrder = 6
       OnChange = ledToChange
     end

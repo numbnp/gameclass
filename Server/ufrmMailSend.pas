@@ -5,7 +5,8 @@ interface
 uses
   inifiles, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, IdComponent, IdTCPConnection, IdTCPClient, IdMessageClient,IdCoderHeader,
-  IdSMTP, ComCtrls, StdCtrls, Buttons, ExtCtrls, IdBaseComponent, IdMessage,Registry;
+  IdSMTP, ComCtrls, StdCtrls, Buttons, ExtCtrls, IdBaseComponent, IdMessage,Registry,
+  uMail;
 
 type
   TfrmMailSend = class(TForm)
@@ -165,7 +166,7 @@ begin
 
  MailMessage.Clear;
  MailMessage.From.Name:=cbFrom.Text;
- MailMessage.Subject:=cbSubject.Text; // тема
+ MailMessage.Subject:=EncodeSubj(cbSubject.Text); // тема
  MailMessage.From.Address:=cbFrom.Text; // адрес отправителя
  MailMessage.Recipients.EMailAddresses:=cbTo.Text+','+ledCC.Text; // получатель + копия
  MailMessage.Body.Text:=Memo2.Text; // текст сообщения

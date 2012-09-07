@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 99
-  Top = 117
+  Left = 165
+  Top = 188
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign

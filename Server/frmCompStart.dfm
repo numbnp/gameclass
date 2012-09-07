@@ -6,7 +6,7 @@ object formCompStart: TformCompStart
   BorderWidth = 10
   Caption = 'formCompStartCaption'
   ClientHeight = 400
-  ClientWidth = 696
+  ClientWidth = 695
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,14 +19,14 @@ object formCompStart: TformCompStart
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
-    696
+    695
     400)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlBottom: TPanel
     Left = 0
     Top = 178
-    Width = 696
+    Width = 695
     Height = 222
     Align = alBottom
     BevelOuter = bvNone
@@ -415,14 +415,14 @@ object formCompStart: TformCompStart
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 696
+    Width = 695
     Height = 178
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
   end
   object pnlScale: TPanel
-    Left = 644
+    Left = 643
     Top = 1
     Width = 36
     Height = 49
