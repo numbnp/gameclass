@@ -103,6 +103,8 @@ function IsTimeOff: Boolean;
 
 function SystemErrorMessage: string;
 
+
+
 type
   TUniEvent = record  // универсальный ив≈нт
     id: string;       // им€ функции
@@ -1721,9 +1723,15 @@ begin
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
 
+  SendMail.MailMessage.CharSet := 'UTF-8';
+
+  SendMail.MailMessage.IsEncoded := true;
 
   SendMail.MailMessage.From.Name:='GameClass';
-  SendMail.MailMessage.Subject:=AnsiToUtf8('ќтчет за смену'); // тема
+
+//  SendMail.MailMessage.AddHeader('Subject: ' + EncodeSubj('ќтчет за смену'));
+
+  SendMail.MailMessage.Subject:=('ќтчет за смену'); // тема
   SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправител€
   SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копи€
   SendMail.MailMessage.Body.Text:=''; // текст сообщени€
@@ -2180,6 +2188,8 @@ begin
   else
     Result := '';
 end;
+
+
 
 
 end.
