@@ -65,6 +65,7 @@ type
     pnlOther: TGroupBox;
     cbxShowTime: TCheckBox;
     cbxShowToolBar: TCheckBox;
+    cbxShowBalanceTime: TCheckBox;
     procedure btnFontChangeClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -192,6 +193,8 @@ begin
     Options.General.ShowTime.Value := cbxShowTime.Checked;
   end else if ASender = cbxShowToolBar then begin
     Options.General.ShowToolBar.Value := cbxShowToolBar.Checked;
+  end else if ASender = cbxShowBalanceTime then begin
+    Options.General.ShowBalanceTime.Value := cbxShowBalanceTime.Checked;
   end else begin
     ASSERT(FALSE,
         'TfrmMain.ControlValueChange error! Unknown sender!');
@@ -263,6 +266,7 @@ begin
     rbtnSortByState.Checked := not SortByNumber.Value;
     cbxShowTime.Checked := ShowTime.Value;
     cbxShowToolBar.Checked := ShowToolBar.Value;
+    cbxShowBalanceTime.Checked := ShowBalanceTime.Value;   
   end;
   DoDesign;
   btnOk.Enabled := False;

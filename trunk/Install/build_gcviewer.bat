@@ -11,7 +11,7 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set APP_VERSION=1.0.8
+set APP_VERSION=1.0.9
 Install\src\Batch\gcviewer_replace_versions.vbs "%APP_VERSION%"
 echo Собирается версия %APP_VERSION%
 
@@ -22,6 +22,6 @@ call compile_release_gcviewer.bat
 rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files_gcviewer.bat
 
-cd Install\Src\GI
-"C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcviewer.gpr
+cd Install\Src\NSIS
+"c:\Program Files\NSIS\makensis.exe"  GCView.nsi
 cd ..\..\..
