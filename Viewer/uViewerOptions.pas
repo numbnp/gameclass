@@ -45,6 +45,7 @@ type
     FbSortByNumber: TBooleanOption;
     FbShowTime: TBooleanOption;
     FbShowToolBar: TBooleanOption;
+    FbShowBalanceTime: TBooleanOption;
 
   public
     // constructor / destructor
@@ -77,6 +78,8 @@ type
     property SortByNumber: TBooleanOption read FbSortByNumber;
     property ShowTime: TBooleanOption read FbShowTime;
     property ShowToolBar: TBooleanOption read FbShowToolBar;
+
+    property ShowBalanceTime: TBooleanOption read FbShowBalanceTime;
 
   end; // TGeneralOptionsFolder
 
@@ -173,6 +176,7 @@ begin
   FbSortByNumber := CreateAndAddBooleanOption('SortByNumber', False);
   FbShowTime := CreateAndAddBooleanOption('ShowTime', True);
   FbShowToolBar := CreateAndAddBooleanOption('ShowToolBar', True);
+  FbShowBalanceTime := CreateAndAddBooleanOption('ShowBalanceTime', True);
 end; // TGeneralOptionsFolder.Create
 
 //////////////////////////////////////////////////////////////////////////////

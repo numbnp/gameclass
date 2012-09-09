@@ -172,6 +172,7 @@ procedure TfrmMain._RefreshCompStates;
 var
   nComps, nId :Integer;
   strTime: String;
+  strTimeLimit: String;
   dtLimit: TDateTime;
   cs: TCompState;
   nCompState: Integer;
@@ -222,7 +223,10 @@ begin
           nCompState := Integer(csFree);
         pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['state'] := nCompState;
         if cs <> csFree then
+        begin
           DateTimeToString(strTime , 'HH:mm', dtLimit);
+          DateTimeToString(strTimeLimit , 'HH:mm', dtLimit-Now);
+        end;
         case cs of
           csFree: begin
             Inc(FnFree);
@@ -238,7 +242,11 @@ begin
           end;
           csBusy: begin
             Inc(FnBusy);
-            pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Занят до ' + strTime;
+            if Options.General.ShowBalanceTime.Value then
+              pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Осталось ' + strTimeLimit
+            else
+              pnlLists[0].CompStatesList.dstLocalCompStates.FieldValues['description'] := 'Занят до ' + strTime;
+
           end;
         end;
         pnlLists[0].CompStatesList.dstLocalCompStates.Post;
