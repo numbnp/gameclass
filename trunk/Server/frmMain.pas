@@ -51,7 +51,7 @@ uses
   ufrmReports,
   udmMain,
   Graphics, XPMan,
-  ufrmOperatorOpt, IdSNMP;
+  ufrmOperatorOpt;
 
 type
   TformMain = class(TForm)
