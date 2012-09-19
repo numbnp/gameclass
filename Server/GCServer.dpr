@@ -192,7 +192,8 @@ uses
   uAccountsReferalsDataSet in '..\Parts\DataSet\uAccountsReferalsDataSet.pas',
   uAccountsReferalsRecord in '..\Parts\Accounts\uAccountsReferalsRecord.pas',
   uAccountsReferals in '..\Parts\Accounts\uAccountsReferals.pas',
-  uMail in '..\Parts\Mail\uMail.pas';
+  uMail in '..\Parts\Mail\uMail.pas',
+  uSnmp in '..\Parts\Snmp\uSnmp.pas';
 
 {$R *.res}
 

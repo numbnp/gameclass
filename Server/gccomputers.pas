@@ -352,7 +352,7 @@ uses
   uTariffication,
   uRegistration,
   uKKMTools, DBGridEh,
-  uDebugLog,IdSNMP;
+  uDebugLog, uSnmp;
 
 const
   UNREGISTERED_LINUX_CLIENTS_1 =
@@ -877,7 +877,6 @@ var
   sdb, curtime: string;
   cmd: TOptionGetRemoteCommand;
   strParm: string;
-  Snmp: TIdSNMP;
   ClientState: integer;
 begin
   // Если комп не пингуется то выходим
@@ -902,16 +901,7 @@ begin
       ClientState:=1
     else
       ClientState:=0;
-    Snmp := TIdSNMP.Create(nil);
-    Snmp.Query.Clear;
-    Snmp.Query.Version := 0;
-    Snmp.Query.Host := Comps[index].ipaddr ; //insert your host here...
-    Snmp.Query.Port := 161;
-    Snmp.Query.Community := Comps[Index].SNMP_Password;
-    Snmp.Query.PDUType := PDUSetRequest;
-    Snmp.Query.MIBAdd(Comps[Index].SNMP_MIB_Port,inttostr(ClientState),2);
-    Snmp.SendQuery;
-    Snmp.Free;
+    SetSnmpIntegerValue(Comps[Index],ClientState);
   end;
 end;
 
@@ -1336,8 +1326,6 @@ begin
 end;
 
 procedure CompStop(AnComputerIndex: Integer);
-var
-  Snmp: TIdSNMP;
 begin
 // стоп для компа (TODO Вынести позже в элемент коллекции TComputer)
   Comps[AnComputerIndex].timeStopSession := GetVirtualTime;
@@ -1360,17 +1348,8 @@ begin
   if Comps[AnComputerIndex].ClientType = CT_SNMP then
   begin
     Comps[AnComputerIndex].a.state := ClientState_Blocked;
-
-    Snmp := TIdSNMP.Create(nil);
-    Snmp.Query.Clear;
-    Snmp.Query.Version := 0;
-    Snmp.Query.Host := Comps[AnComputerIndex].ipaddr ; //insert your host here...
-    Snmp.Query.Port := 161;
-    Snmp.Query.Community := Comps[AnComputerIndex].SNMP_Password;
-    Snmp.Query.PDUType := PDUSetRequest;
-    Snmp.Query.MIBAdd(Comps[AnComputerIndex].SNMP_MIB_Port,'0',2);
-    Snmp.SendQuery;
-    Snmp.Free;
+    { TODO : '0' to gccons.pas }
+    SetSnmpIntegerValue(Comps[AnComputerIndex],0);
   end;
 
 end;

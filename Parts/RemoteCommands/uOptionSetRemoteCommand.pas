@@ -236,7 +236,6 @@ try
       then begin
     GClientOptions.ShutdownButton := StrToIntDef(FstrOptionValue,-1);
 
-
   end else if CompareText(FstrOptionName,'ServerVersion') = 0
       then begin
 {$IFDEF LINUX}
