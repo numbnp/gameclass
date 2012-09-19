@@ -329,6 +329,9 @@ const
   FIRST_DATE = 36526.0;// 01.01.2000                  
   LAST_DATE = 401769.0;// 01.01.3000                  
 
+  GUEST_ID = 0; //id Гостя 
+
+
 implementation
 
 end.

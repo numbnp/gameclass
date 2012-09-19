@@ -1333,7 +1333,7 @@ begin
 
   index := ComputersGetIndex(CompsSel[0]);
 
-  session := GSessions.Add(0, 0, Comps[index].id, Comps[index].a.number,
+  session := GSessions.Add(0, 0, Comps[index].id, GUEST_ID,
       GetVirtualTime, GetVirtualTime, IncMinute(GetVirtualTime,1),
       ID_TARIF_REMONT, 0, False, 0, '',
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1407,7 +1407,7 @@ begin
       FilterString(formRemontLong.editRemontReason.Text),
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ClientState_OperatorSession, ssActive);}
-  session := GSessions.Add(0, 0, Comps[index].id, 0,
+  session := GSessions.Add(0, 0, Comps[index].id, GUEST_ID,
       GetVirtualTime, GetVirtualTime,
       IncMinute(GetVirtualTime,GRegistry.Options.MinutsForLongRepair),
       ID_TARIF_REMONT, 0, False, 0,
