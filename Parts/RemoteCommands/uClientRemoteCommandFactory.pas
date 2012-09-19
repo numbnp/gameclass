@@ -104,7 +104,7 @@ begin
     //это история баланса, инфо и инфофулл
     if _IsClientInfoConstrainedCommand(strCommand)
         and not _IsAuthenticationCommand(strCommand) then begin
-      cmd := TClientDoDesignCommand.Create(False, True, False);
+        cmd := TClientDoDesignCommand.Create(False, True, False);
       (Result as TCompositeRemoteCommand).Commands.Add(cmd);
     end;
     if _IsAuthenticationCommand(strCommand) then begin
@@ -120,6 +120,8 @@ begin
     Result := TOptionSetRemoteCommand.Create(
         GetParamFromString(strParameters,0),
         GetParamFromString(strParameters,1));
+    if GetParamFromString(strParameters,0) = 'ShutdownButton' then
+      TSafeStorage.Instance().Push(ThreadSafeOperation_DoDesign,1); 
 
   end else if CompareText(strCommand, STR_CMD_SETVOLUME) = 0 then begin
     Result := TNullRemoteCommand.Create();

@@ -202,7 +202,8 @@ uses
   uRegistration,
   uKKMTools,
   ufrmClearStatistic,
-  uFileInfo, IdSNMP,
+  uFileInfo,
+  uSnmp,
   uReportCommon,
   uReportManager,
   uReportFormsManager,
@@ -2005,7 +2006,7 @@ var
   block_opt: string;
   uncontrol_flag: boolean;
   strParm: String;
-  Snmp: TIdSNMP;
+
   Idx: Integer;
   SnmpResult: integer;
   ClientState: integer;
@@ -2111,37 +2112,9 @@ begin
     uncontrol_flag := not Comps[AnComputerIndex].control;
     if Comps[AnComputerIndex].control then
     begin
-
-      SnmpResult :=-1;
-      Snmp := TIdSNMP.Create(nil);
-      Snmp.Query.Clear;
-      Snmp.Query.Version := 0;
-      Snmp.Query.Host := Comps[AnComputerIndex].ipaddr ; //insert your host here...
-      Snmp.Query.Port := 161;
-      Snmp.Query.Community := Comps[AnComputerIndex].SNMP_Password;
-      Snmp.Query.PDUType := PDUGetRequest;
-      Snmp.Query.MIBAdd(Comps[AnComputerIndex].SNMP_MIB_Port,'');
-      Snmp.SendQuery;
-      if Snmp.Reply.ValueCount>0 then
-      begin
-        for Idx := 0 to Snmp.Reply.ValueCount - 1 do
-          SnmpResult := StrToIntDef(Snmp.Reply.Value[0],0)
-      end;
-      Snmp.Free;
+      SnmpResult :=GetSnmpIntegerValue(Comps[AnComputerIndex]) ;
       if ClientState<>SnmpResult Then
-      begin
-        Snmp := TIdSNMP.Create(nil);
-        Snmp.Query.Clear;
-        Snmp.Query.Version := 0;
-        Snmp.Query.Host := Comps[AnComputerIndex].ipaddr ; //insert your host here...
-        Snmp.Query.Port := 161;
-        Snmp.Query.Community := Comps[AnComputerIndex].SNMP_Password;
-        Snmp.Query.PDUType := PDUSetRequest;
-        Snmp.Query.MIBAdd(Comps[AnComputerIndex].SNMP_MIB_Port,inttostr(ClientState),2);
-        Snmp.SendQuery;
-        Snmp.Free;
-      end;
-     // end;
+      SetSnmpIntegerValue(Comps[AnComputerIndex],SnmpResult);
     end;
   end;
 

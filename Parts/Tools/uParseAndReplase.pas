@@ -8,7 +8,7 @@ function ParseAndReplase(Str:string):string;
 
 implementation
 
-uses SysUtils,uClientInfo, Math;
+uses SysUtils,uClientInfo, Math, ufrmMain, StdCtrls;
 
 function ReplaceWordVariable(Variable:string):string;
 var
@@ -92,7 +92,15 @@ begin
       result := FloatToStr(GClientInfo.InternetUsedInKB/1024)
   // IP-адрес клиентской машины
   else if Tmp_var = '%IPADDRESS%' then
-      result := GClientInfo.IPAddress;
+      result := GClientInfo.IPAddress
+  //Текст при ошибочной авторизации
+  else if Tmp_var = '%WRONGNAMEORPPASSWORD%' then
+    if ufrmMain.frmMain.lblWrongNameOrPassword.Visible then
+      result := ufrmMain.frmMain.lblWrongNameOrPassword.Caption
+    else
+      result := '';
+    
+
 end;
 
 function ParseAndReplase(Str:string):string;
