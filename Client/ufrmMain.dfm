@@ -1,6 +1,7 @@
 object frmMain: TfrmMain
-  Left = 1687
-  Top = 222
+  Left = 355
+  Top = 208
+  BiDiMode = bdLeftToRight
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'GameClass3 Client'
@@ -12,8 +13,10 @@ object frmMain: TfrmMain
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
+  ParentBiDiMode = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
@@ -22,6 +25,20 @@ object frmMain: TfrmMain
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
+  object wbFullScreen: TWebBrowser
+    Left = 0
+    Top = 0
+    Width = 639
+    Height = 451
+    Align = alClient
+    TabOrder = 5
+    ControlData = {
+      4C0000000B4200009D2E00000000000000000000000000000000000000000000
+      000000004C000000000000000000000001000000E0D057007335CF11AE690800
+      2B2E126208000000000000004C0000000114020000000000C000000000000046
+      8000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000100000000000000000000000000000000000000}
+  end
   object pnlOldServerWarning: TPanel
     Left = 5
     Top = 104
@@ -941,20 +958,33 @@ object frmMain: TfrmMain
         TabOrder = 2
         OnClick = pnlClockClick
       end
-      object pnlBlocked: TPanel
-        Left = 264
-        Top = 0
-        Width = 105
-        Height = 25
-        Caption = 'BLOCKED'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
+      object tbActions: TToolBar
+        Left = 579
+        Top = 53
+        Width = 51
+        Height = 37
+        Align = alNone
+        ButtonHeight = 37
+        ButtonWidth = 38
+        Caption = 'tbActions'
+        Color = clBtnFace
+        EdgeBorders = []
+        Flat = True
+        Images = ilActions
+        ParentColor = False
         TabOrder = 3
+        Transparent = True
         Visible = False
+        object tbCompShutdown: TToolButton
+          Left = 0
+          Top = 0
+          AutoSize = True
+          Caption = 'Shutdown'
+          DropdownMenu = popShutDown
+          ImageIndex = 1
+          Style = tbsDropDown
+          OnClick = tbCompShutdownClick
+        end
       end
     end
   end
@@ -1052,34 +1082,6 @@ object frmMain: TfrmMain
       OnClick = btnChangePasswordCancelClick
     end
   end
-  object tbActions: TToolBar
-    Left = 579
-    Top = 53
-    Width = 51
-    Height = 37
-    Align = alNone
-    ButtonHeight = 37
-    ButtonWidth = 38
-    Caption = 'tbActions'
-    Color = clBtnFace
-    EdgeBorders = []
-    Flat = True
-    Images = ilActions
-    ParentColor = False
-    TabOrder = 4
-    Transparent = True
-    Visible = False
-    object tbCompShutdown: TToolButton
-      Left = 0
-      Top = 0
-      AutoSize = True
-      Caption = 'Shutdown'
-      DropdownMenu = popShutDown
-      ImageIndex = 1
-      Style = tbsDropDown
-      OnClick = tbCompShutdownClick
-    end
-  end
   object pnlUnblockByPassword: TPanel
     Left = 144
     Top = 160
@@ -1151,6 +1153,21 @@ object frmMain: TfrmMain
       TabOrder = 3
       OnClick = btnUnblockCancelClick
     end
+  end
+  object pnlBlocked: TPanel
+    Left = 264
+    Top = 0
+    Width = 105
+    Height = 25
+    Caption = 'BLOCKED'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clRed
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+    Visible = False
   end
   object modernTrayIcon: TModernTrayIcon
     Hint = 'GameClass3 Client'
