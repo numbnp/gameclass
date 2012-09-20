@@ -99,7 +99,7 @@ begin
       result := ufrmMain.frmMain.lblWrongNameOrPassword.Caption
     else
       result := '';
-    
+
 
 end;
 

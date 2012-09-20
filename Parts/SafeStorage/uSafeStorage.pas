@@ -557,6 +557,8 @@ begin
 //      Application.MessageBox(PChar(AOperation.Parameters),'Ошибка');
       frmMain.lblWrongNameOrPassword.Caption := AOperation.Parameters;
       frmMain.lblWrongNameOrPassword.Visible := True;
+      frmMain.NavigateWebBrousers;
+      //frmMain.wbFullScreen.Refresh;
     end;
     ThreadSafeOperation_RunPadAction: begin
 {$IFDEF MSWINDOWS}

@@ -56,7 +56,8 @@ uCrossPlatformVKCodes,
   // system units
   uBlockingsAndNotifications,
   uClientConst,
-  ufrmSmallInfo, ImgList, ToolWin;
+  ufrmSmallInfo, ImgList, ToolWin,
+  uClientFunctions;
 
 type                               
 
@@ -189,6 +190,7 @@ type
     mnuShutdown: TMenuItem;
     mnuReboot: TMenuItem;
     mnuLogoff: TMenuItem;
+    wbFullScreen: TWebBrowser;
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -341,6 +343,7 @@ uses
   ActiveX,
   uRunPadTools,
   uClientInstallDirectory,
+  uWebExec,
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics,
@@ -468,43 +471,71 @@ begin
       FstrURLPath + 'Account.bmp');
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  if not wbTop.Busy and (Length(GClientOptions.URLTop)>0) then begin
-    if Pos('\',GClientOptions.URLTop)=0 then
-      wbTop.Navigate(FstrURLPath + GClientOptions.URLTop)
-    else
-      wbTop.Navigate(GClientOptions.URLTop)
-  end;
-  if not wbAgreement.Busy and (Length(GClientOptions.URLAgreement)>0) then begin
-    if Pos('\',GClientOptions.URLAgreement)=0 then
-      wbAgreement.Navigate(FstrURLPath + GClientOptions.URLAgreement)
-    else
-      wbAgreement.Navigate(GClientOptions.URLAgreement);
-  end;
-  if not wbCompFree.Busy and (Length(GClientOptions.URLCompFree)>0) then begin
-    if Pos('\',GClientOptions.URLCompFree)=0 then
-      wbCompFree.Navigate(FstrURLPath + GClientOptions.URLCompFree)
-    else
-      wbCompFree.Navigate(GClientOptions.URLCompFree);
-  end;
-  if not wbAccountCompFree.Busy
-      and (Length(GClientOptions.URLLogonCompFree)>0) then begin
-    if Pos('\',GClientOptions.URLLogonCompFree)=0 then
-      wbAccountCompFree.Navigate(FstrURLPath + GClientOptions.URLLogonCompFree)
-    else
-      wbAccountCompFree.Navigate(GClientOptions.URLLogonCompFree);
-  end;
-  if not wbAccount.Busy and (Length(GClientOptions.URLLogonHelp)>0) then begin
-    if Pos('\',GClientOptions.URLLogonHelp)=0 then
-      wbAccount.Navigate(FstrURLPath + GClientOptions.URLLogonHelp)
-    else
-      wbAccount.Navigate(GClientOptions.URLLogonHelp);
+  if pnlMain.Visible then
+  begin
+    //wbFullScreen.Stop;
+    wbTop.Enabled := True;
+    wbAgreement.Enabled := True;
+    wbCompFree.Enabled := True;
+    wbAccountCompFree.Enabled := True;
+    wbAccount.Enabled := True;
+
+    try
+
+    if not wbTop.Busy and (Length(GClientOptions.URLTop)>0) then begin
+
+      if Pos('\',GClientOptions.URLTop)=0 then
+        wbTop.Navigate(FstrURLPath + GClientOptions.URLTop)
+      else
+        wbTop.Navigate(GClientOptions.URLTop)
+    end;
+    if not wbAgreement.Busy and (Length(GClientOptions.URLAgreement)>0) then begin
+      if Pos('\',GClientOptions.URLAgreement)=0 then
+        wbAgreement.Navigate(FstrURLPath + GClientOptions.URLAgreement)
+      else
+        wbAgreement.Navigate(GClientOptions.URLAgreement);
+    end;
+    if not wbCompFree.Busy and (Length(GClientOptions.URLCompFree)>0) then begin
+      if Pos('\',GClientOptions.URLCompFree)=0 then
+        wbCompFree.Navigate(FstrURLPath + GClientOptions.URLCompFree)
+      else
+        wbCompFree.Navigate(GClientOptions.URLCompFree);
+    end;
+    if not wbAccountCompFree.Busy
+        and (Length(GClientOptions.URLLogonCompFree)>0) then begin
+      if Pos('\',GClientOptions.URLLogonCompFree)=0 then
+        wbAccountCompFree.Navigate(FstrURLPath + GClientOptions.URLLogonCompFree)
+      else
+        wbAccountCompFree.Navigate(GClientOptions.URLLogonCompFree);
+    end;
+    if not wbAccount.Busy and (Length(GClientOptions.URLLogonHelp)>0) then begin
+      if Pos('\',GClientOptions.URLLogonHelp)=0 then
+        wbAccount.Navigate(FstrURLPath + GClientOptions.URLLogonHelp)
+      else
+        wbAccount.Navigate(GClientOptions.URLLogonHelp);
+    end;
+
+    except
+    end;
+
+    wbTop.Enabled := False;
+    wbAgreement.Enabled := False;
+    wbCompFree.Enabled := False;
+    wbAccountCompFree.Enabled := False;
+    wbAccount.Enabled := False;
+
   end;
 
-  wbTop.Enabled := False;
-  wbAgreement.Enabled := False;
-  wbCompFree.Enabled := False;
-  wbAccountCompFree.Enabled := False;
-  wbAccount.Enabled := False;
+  if wbFullScreen.Visible then
+  begin
+    if wbFullScreen.LocationURL = 'http://localhost/' then
+      wbFullScreen.Refresh
+    else
+      wbFullScreen.Navigate('http://localhost/');
+  end;{ else
+ //   wbFullScreen.Navigate('');}
+
+
 {$ENDIF}
 end;
 
@@ -546,8 +577,35 @@ try
   Debug.Trace5('DoDesign 2');
   Debug.Trace5('DoDesign State' + IntToStr(Integer(GClientInfo.ClientState)));
 
+  if (GClientInfo.ClientState = ClientState_Blocked) or (GClientInfo.ClientState = ClientState_Authentication) then
+  begin
+    if pnlMain.Visible then
+    begin
+      pnlMain.Visible := False;
+      frmMain.BorderStyle := bsNone;
+      frmMain.WindowState := wsMaximized;
+      wbFullScreen.Visible := True;
+      NavigateWebBrousers;
+    end;
+  end else begin
+    if wbFullScreen.Visible then
+    begin
+      pnlMain.Visible := True;
+      frmMain.BorderStyle := bsSingle;
+      frmMain.WindowState := wsNormal;
+      frmMain.Width := 647;
+      frmMain.Height := 480;
+      Left := (Screen.Width - Width) div 2;
+      Top := (Screen.Height - Height) div 2;
+      wbFullScreen.Visible := False;
+      NavigateWebBrousers;
+    end;
+  end;
+
   case GClientInfo.ClientState of
-    ClientState_Blocked: pgctrlMain.ActivePage := tabScreenCompFree;
+    ClientState_Blocked: begin
+      pgctrlMain.ActivePage := tabScreenCompFree;
+    end;
     ClientState_Authentication: begin
       Debug.Trace5('DoDesign a1');
       pgctrlMain.ActivePage := tabScreenLogin;
@@ -600,6 +658,14 @@ try
       butNotAgree.Enabled := False;
     end;
   end;
+
+  Debug.Trace5('DoDesign 3');
+  tbActions.Visible := GClientOptions.ShutdownButton > -1;
+  if GClientOptions.ShutdownButton >0 then
+    tbCompShutdown.ImageIndex := GClientOptions.ShutdownButton -1
+  else
+    tbCompShutdown.ImageIndex := 0;
+
 except
   on e: Exception do begin
     Debug.Trace0('DoDesign Error! ' + e.Message);
@@ -670,6 +736,7 @@ begin
 {$IFDEF MSWINDOWS}
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
+  StartWebServer;
 {$ENDIF}
 //{$IFDEF LINUX}                    Убираем всякие триалы
 //  if YearOf(Now) > 2009 then      Из-за этого я ломал голову 2 дня
@@ -697,15 +764,7 @@ var
   bUnblockedByPassword: Boolean;
 begin
   lblWrongNameOrPassword.Visible := False;
-  LocalSendDataTo(STR_CMD_AUTH_QUERYSTATE_2 + '=' + edtLogin.Text
-      + '/' + edtPassword.Text + '/' + edtSecCode.Text, False);
-{$IFDEF MSWINDOWS}
-  if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
-    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
-        Integer(RunPadAction_VipLogon), edtLogin.Text + '/'
-        + edtPassword.Text);
-  end;
-{$ENDIF}
+  ClientLogon(edtLogin.Text, edtPassword.Text, edtPassword.Text);
 end;
 
 procedure TfrmMain.butAgreeClick(Sender: TObject);
@@ -898,11 +957,6 @@ procedure TfrmMain.tmrClockTimer(Sender: TObject);
 var
   s: THandle;
 begin
-  tbActions.Visible := GClientOptions.ShutdownButton > -1;
-  if GClientOptions.ShutdownButton >0 then
-    tbCompShutdown.ImageIndex := GClientOptions.ShutdownButton -1
-  else
-    tbCompShutdown.ImageIndex := 0;
   pnlClock.Caption := TimeToStr(Time);
 {$IFDEF MSWINDOWS}
   modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
