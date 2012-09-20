@@ -64,7 +64,10 @@ uses
   uSetVolumeRemoteCommand in '..\Parts\RemoteCommands\uSetVolumeRemoteCommand.pas',
   MMDevApi_tlb in '..\Parts\ControlVolume\MMDevApi_tlb.pas',
   Mixer in '..\Parts\ControlVolume\Mixer.pas',
-  uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas';
+  uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
+  uWebExec in '..\Parts\Web\uWebExec.pas',
+  uWebServer in '..\Parts\Web\uWebServer.pas',
+  uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas';
 
 {$R *.res}
 const
