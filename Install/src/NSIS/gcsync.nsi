@@ -69,8 +69,8 @@ Section "Модуль синхронизации" SEC01
 
 
 ; Делаем нужные записи в реестре
-  WriteRegStr HKLM "SOFTWARE\GameClass3\GCSync" "InstallDirectory" "$INSTDIR\GCSync"
-  WriteRegStr HKLM "SOFTWARE\GameClass3\GCSync" "CurrentVersion" "${PRODUCT_VERSION}"
+  WriteRegStr HKLM "SOFTWARE\GameClass\GCSync" "InstallDirectory" "$INSTDIR\GCSync"
+  WriteRegStr HKLM "SOFTWARE\GameClass\GCSync" "CurrentVersion" "${PRODUCT_VERSION}"
   
  
 ; Регистрируем службу и запускаем ее
@@ -169,7 +169,7 @@ Section Uninstall
 ;  RMDir "$INSTDIR\Traffic Inspector Plug-In"
 ;  RMDir "$INSTDIR\UserGate Plug-In"
 
-  DeleteRegKey HKLM "SOFTWARE\GameClass3\GCSync"
+  DeleteRegKey HKLM "SOFTWARE\GameClass\GCSync"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   SetAutoClose true

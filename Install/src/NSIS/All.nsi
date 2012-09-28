@@ -75,8 +75,8 @@ Section "Клиентская часть GameClass" SEC01
   SetOutPath "$INSTDIR\Client\Files"
 
 ; Делаем нужные записи в реестре
-  WriteRegStr HKLM "SOFTWARE\GameClass3\Client" "InstallDirectory" "$INSTDIR\Client"
-  WriteRegStr HKLM "SOFTWARE\GameClass3\Client" "CurrentVersion" "${PRODUCT_VERSION}"
+  WriteRegStr HKLM "SOFTWARE\GameClass\Client" "InstallDirectory" "$INSTDIR\Client"
+  WriteRegStr HKLM "SOFTWARE\GameClass\Client" "CurrentVersion" "${PRODUCT_VERSION}"
   
 ; Прописываемся в автозагрузку
   WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "GameClass Client" "$INSTDIR\Client\gccl.exe"
@@ -107,8 +107,8 @@ Section "Сервер GameClass" SEC02
   File "C:\Projects\Free\Install\src\Packages\Server\UserGate Plug-In\*.*"
 
 ; Делаем нужные записи в реестре
-  WriteRegStr HKLM "SOFTWARE\GameClass3\Server" "InstallDirectory" "$INSTDIR"
-  WriteRegStr HKLM "SOFTWARE\GameClass3\Server" "CurrentVersion" "${PRODUCT_VERSION}"
+  WriteRegStr HKLM "SOFTWARE\GameClass\Server" "InstallDirectory" "$INSTDIR"
+  WriteRegStr HKLM "SOFTWARE\GameClass\Server" "CurrentVersion" "${PRODUCT_VERSION}"
 
   SetOutPath "$INSTDIR"
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
@@ -233,7 +233,7 @@ Section Uninstall
 ;  RMDir "$INSTDIR\UserGate Plug-In"
   RMDir /r "$INSTDIR"
 
-  DeleteRegKey HKLM "SOFTWARE\GameClass3"
+  DeleteRegKey HKLM "SOFTWARE\GameClass"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   SetAutoClose true
