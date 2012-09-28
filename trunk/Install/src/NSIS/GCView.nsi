@@ -69,7 +69,7 @@ Section "Модуль GC Viewer" SEC01
   
  
 ; Делаем ярлык
-  CreateShortCut "$SMPROGRAMS\GameClass3\Модуль GC3Viewer.lnk" "$INSTDIR\GCViewer.exe"
+  CreateShortCut "$SMPROGRAMS\GameClass\Модуль GC3Viewer.lnk" "$INSTDIR\GCViewer.exe"
 
   
 SectionEnd
@@ -96,7 +96,7 @@ Section Uninstall
 
   RmDir /r "$INSTDIR"
 
-  DeleteRegKey HKLM "SOFTWARE\GameClass3\Viewer"
+  DeleteRegKey HKLM "SOFTWARE\GameClass\Viewer"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   SetAutoClose true

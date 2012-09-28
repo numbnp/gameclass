@@ -91,7 +91,7 @@ begin
 
   FstrCompanyName := AstrCompanyName;
   FstrProductName := AstrProductName;
-  FstrKey := '\' + 'Software' + '\' + FstrCompanyName + '\' + FstrProductName;
+  FstrKey := '\' + 'Software' + '\' + FstrProductName;
 
 end; // TClientOptionsStorage.Create
 

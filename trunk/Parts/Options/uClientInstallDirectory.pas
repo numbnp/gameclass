@@ -30,7 +30,7 @@ var
   AstrValue: String;
 begin
   Result := '';
-  FstrKey := '\' + 'Software' + '\' + COMPANY_NAME + '\' + PRODUCT_NAME;
+  FstrKey := '\' + 'Software' + '\' + PRODUCT_NAME;
   Reg := TRegIniFile.Create();
   try
     Reg.RootKey := HKEY_LOCAL_MACHINE;
