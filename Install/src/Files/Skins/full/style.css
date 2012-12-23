@@ -1,0 +1,148 @@
+fon {
+	zindex:"1";	
+
+}
+
+.login_div { 
+    font-size:100%; 
+    width: 200px; 
+    height: 200px;  
+    top: 60%;
+    right: 30; 
+    position: absolute; 
+}
+
+.login_title_font {
+    font-family: "Arial";
+    font-size: 12pt; 
+    color: FFFFFF;
+
+}
+
+
+.login_warning_font {
+    font-family: "Arial";
+    font-size: 14pt; 
+    color: FF0000;
+
+}
+
+
+.login_pass_font {
+    font-family: "Arial";
+    font-size: 12pt; 
+    color: FFFFFF;
+    width: 100px;
+}
+
+
+.comp_number { 
+    font-family: "Arial";
+    font-size: 200pt; 
+    color: FFFFFF;
+    text-align: center;
+
+    top: 20%;
+    left: 20%; 
+    position: absolute; 
+}
+
+
+.time { 
+    font-family: "Arial";
+    font-size: 20pt; 
+    color: FFFFFF;
+    text-align: right;
+    bottom: 20 ;
+    right: 10; 
+    position: absolute; 
+}
+
+.shutdown { 
+    font-family: "Arial";
+    font-size: 12pt; 
+    color: FFFFFF;
+    
+    bottom: 20 ;
+    left: 10; 
+    position: absolute; 
+
+}
+
+
+
+
+
+
+
+#cssmenu {
+	background-color:red;
+}
+
+ul { 
+	list-style: none; 
+	margin: 0; 
+	padding: 0; 
+}
+.r {
+	float:left;
+}
+.rollover { 
+	float:left;
+	margin-right: 5px;
+	display:block;
+	width:58px;
+	height:28px;
+	border:solid 0px #777777;
+	background: url(shutdown.jpg) repeat;  /* Путь к кнопке */
+	background-color:#FFFFCC;
+}
+.rollover:hover {
+	background: url(shutdown.jpg) repeat;  /* Путь к кнопке, при наведении */
+}
+ 
+ 
+ul#cssmenu li:hover ul,
+ul#cssmenu ul li:hover ul,
+ul#cssmenu li.iehover ul,
+ul#cssmenu ul li.iehover ul {
+        display: block;
+}
+ 
+ul ul {display:none} // Все списки, вложенные в первый, по умолчанию скрыты
+ 
+ul#cssmenu li:hover ul,
+ul#cssmenu ul li:hover ul,
+ul#cssmenu li.iehover ul,
+ul#cssmenu ul li.iehover ul {
+        display: block;
+}
+ 
+
+.ss { 
+	text-decoration:none; 
+	display: block; 
+	border: solid 1px ;
+	border-color:#FFFFFF;
+ 	color:#3300FF;
+	width:170px; 
+	height:25px;
+}
+.ss:hover { 
+	color:blue; 
+	border: solid 1px; 
+	border-color:blue;
+	height:25px; 
+	background-color:#CCFFFF;
+}
+#vv1, #vv2, #vv3 { 
+	position:absolute; 
+	left:0px; 
+	margin-top:-76px; 
+	width:150px; 
+	border: solid 1px; 
+	background-color:#FFFFFF;
+}
+
+
+

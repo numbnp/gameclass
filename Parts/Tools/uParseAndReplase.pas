@@ -5,15 +5,20 @@ interface
 //uses SysUtils;
 
 function ParseAndReplase(Str:string):string;
+function FileToString(FileName:string):string;
 
 implementation
 
 uses
   SysUtils,
   uClientInfo,
+  uClientOptions,
   Math,
+  Classes,
 {$IFDEF GCCL}
   ufrmMain,
+  uClientInstallDirectory,
+  uClientInfoConst,
 {$ENDIF}
   StdCtrls;
 
@@ -99,8 +104,9 @@ begin
       result := FloatToStr(GClientInfo.InternetUsedInKB/1024)
   // IP-адрес клиентской машины
   else if Tmp_var = '%IPADDRESS%' then
-      result := GClientInfo.IPAddress;
-
+      result := GClientInfo.IPAddress
+  else if Tmp_var = '%COMPNUMBER%' then
+      result := GClientOptions.CompNumber;
 {$IFDEF GCCL}
   //Текст при ошибочной авторизации
   if Tmp_var = '%WRONGNAMEORPPASSWORD%' then
@@ -108,11 +114,16 @@ begin
       result := ufrmMain.frmMain.lblWrongNameOrPassword.Caption
     else
       result := '';
-<<<<<<< .mine
-{$ENDIF}
-=======
->>>>>>> .r164
 
+  if Tmp_var = '%LOGONPART%' then
+    if GClientInfo.ClientState = ClientState_Authentication then
+      result := ParseAndReplase(FileToString(InstallDirectory + '\Skins\full\logon_part.html'));
+
+  if Tmp_var = '%SHUTDOWNPART%' then
+    if GClientOptions.ShutdownButton > -1 then
+      result := ParseAndReplase(FileToString(InstallDirectory + '\Skins\full\shutdown_part.html'));
+
+{$ENDIF}
 
 end;
 
@@ -139,6 +150,20 @@ begin
   end;
   Tmp_result := Tmp_result + loc_str;
   Result := Tmp_result;
+end;
+
+
+// Функция загрузки текстового файла в строку
+function FileToString(FileName:string):string;
+var
+  tmp_stringlist:TStringList;
+  res_text:string;
+begin
+  tmp_stringlist := TStringList.Create;
+  tmp_stringlist.LoadFromFile(FileName);
+  res_text := tmp_stringlist.Text;
+  tmp_stringlist.Free;
+  Result := res_text;
 end;
 
 end.
