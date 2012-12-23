@@ -18,7 +18,6 @@ implementation
 uses
   uParseAndReplase,
   uClientFunctions,
-  ufrmMain,
   uClientInstallDirectory;
 
 procedure StartWebServer;
@@ -46,7 +45,7 @@ function ExecuteClient(Request:HttpRequest):boolean;
 begin
   if Request.Parametrs.Values['action'] = 'logon' then
   begin
-    frmMain.lblWrongNameOrPassword.Visible := False;
+    //lblWrongNameOrPassword.Visible := False;
     ClientLogon(Request.Parametrs.Values['login'],
                 Request.Parametrs.Values['password'],
                 Request.Parametrs.Values['seccode']);

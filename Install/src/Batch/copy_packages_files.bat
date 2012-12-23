@@ -54,6 +54,7 @@ rem Tools\Packer\Packer.exe a Install\Src\Packages\Client\gcclsrv.zip Output\Rel
 copy Output\Release\winhkg.dll Install\Src\Packages\Client >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Install\Src\Files\Client\*.* Install\Src\Packages\Client >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Install\Src\Files\Skins\*.* Install\Src\Packages\Client\Skins >>Install\Src\Logs\CopyPackagesFiles.log| ech .
+copy Install\Src\Files\Skins\full\*.* Install\Src\Packages\Client\Skins\full >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Install\Src\Files\Sounds\*.* Install\Src\Packages\Client\Sounds >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 rem Server
 copy Output\Release\GCServer.exe Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
