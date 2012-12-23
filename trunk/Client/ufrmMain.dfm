@@ -35,7 +35,7 @@ object frmMain: TfrmMain
     ControlData = {
       4C0000000B4200009D2E00000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800
-      2B2E126208000000000000004C0000000114020000000000C000000000000046
+      2B2E12620A000000000000004C0000000114020000000000C000000000000046
       8000000000000000000000000000000000000000000000000000000000000000
       00000000000000000100000000000000000000000000000000000000}
   end
@@ -99,7 +99,7 @@ object frmMain: TfrmMain
       Top = 91
       Width = 637
       Height = 361
-      ActivePage = tabScreenLogin
+      ActivePage = tabScreenClientInfo
       Style = tsFlatButtons
       TabOrder = 0
       object tabScreenAgreement: TTabSheet
@@ -177,7 +177,7 @@ object frmMain: TfrmMain
             Top = 10
             Width = 338
             Height = 331
-            ActivePage = tabAccountInfo
+            ActivePage = tabAdd
             Align = alRight
             MultiLine = True
             TabOrder = 0
@@ -989,8 +989,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlChangePassword: TPanel
-    Left = 176
-    Top = 116
+    Left = 0
+    Top = 104
     Width = 297
     Height = 185
     BevelInner = bvRaised
@@ -1083,8 +1083,8 @@ object frmMain: TfrmMain
     end
   end
   object pnlUnblockByPassword: TPanel
-    Left = 144
-    Top = 160
+    Left = 12
+    Top = 316
     Width = 347
     Height = 121
     BevelInner = bvRaised

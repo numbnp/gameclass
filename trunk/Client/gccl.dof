@@ -126,13 +126,13 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.85.6.1
+FileVersion=3.85.6.2
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass3 Client
-ProductVersion=3.85.6.1 Free
+ProductVersion=3.85.6.2 Alpha
 [HistoryLists\hlConditionals]
 Count=3
 Item0=ASPROTECT, GCCL

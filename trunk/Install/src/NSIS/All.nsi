@@ -1,7 +1,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "GameClass3"
-!define PRODUCT_VERSION "3.85.6.1"
+!define PRODUCT_VERSION "3.85.6.2"
 !define PRODUCT_PUBLISHER "numb"
 !define PRODUCT_WEB_SITE "http://forum.nodasoft.ru"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -69,6 +69,9 @@ Section "Клиентская часть GameClass" SEC01
   SetOutPath "$INSTDIR\Client\Skins"
   SetOverwrite on
   File "c:\Projects\Free\Install\src\Packages\Client\Skins\*.*"
+  SetOutPath "$INSTDIR\Client\Skins\full"
+  SetOverwrite on
+  File "c:\Projects\Free\Install\src\Packages\Client\Skins\full\*.*"
   SetOutPath "$INSTDIR\Client\Sounds"
   SetOverwrite on
   File "c:\Projects\Free\Install\src\Packages\Client\Sounds\*.*"

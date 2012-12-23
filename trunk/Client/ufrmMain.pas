@@ -320,6 +320,7 @@ type
 {$IFDEF LINUX}
     procedure BlockKeyboardAndMouse(AbLock: Boolean);
 {$ENDIF}
+    procedure UpdateFullScreenInterface;
     procedure EnableSafeOperation;
 
   end;        // TformMain
@@ -528,10 +529,7 @@ begin
 
   if wbFullScreen.Visible then
   begin
-    if wbFullScreen.LocationURL = 'http://localhost/' then
-      wbFullScreen.Refresh
-    else
-      wbFullScreen.Navigate('http://localhost/');
+    UpdateFullScreenInterface;
   end;{ else
  //   wbFullScreen.Navigate('');}
 
@@ -576,31 +574,6 @@ try
   end;
   Debug.Trace5('DoDesign 2');
   Debug.Trace5('DoDesign State' + IntToStr(Integer(GClientInfo.ClientState)));
-
-  if (GClientInfo.ClientState = ClientState_Blocked) or (GClientInfo.ClientState = ClientState_Authentication) then
-  begin
-    if pnlMain.Visible then
-    begin
-      pnlMain.Visible := False;
-      frmMain.BorderStyle := bsNone;
-      frmMain.WindowState := wsMaximized;
-      wbFullScreen.Visible := True;
-      NavigateWebBrousers;
-    end;
-  end else begin
-    if wbFullScreen.Visible then
-    begin
-      pnlMain.Visible := True;
-      frmMain.BorderStyle := bsSingle;
-      frmMain.WindowState := wsNormal;
-      frmMain.Width := 647;
-      frmMain.Height := 480;
-      Left := (Screen.Width - Width) div 2;
-      Top := (Screen.Height - Height) div 2;
-      wbFullScreen.Visible := False;
-      NavigateWebBrousers;
-    end;
-  end;
 
   case GClientInfo.ClientState of
     ClientState_Blocked: begin
@@ -658,6 +631,41 @@ try
       butNotAgree.Enabled := False;
     end;
   end;
+
+  if (GClientInfo.ClientState = ClientState_Blocked)
+      or (GClientInfo.ClientState = ClientState_Authentication) then
+  begin
+    //if pnlMain.Visible then
+    begin
+      if False then
+      begin
+        pnlMain.Visible := False;
+        frmMain.BorderStyle := bsNone;
+        frmMain.WindowState := wsMaximized;
+        wbFullScreen.Visible := True;
+      end else begin
+        pnlMain.Visible := True;
+        frmMain.BorderStyle := bsSingle;
+        frmMain.WindowState := wsNormal;
+        wbFullScreen.Visible := False;
+      end;
+        NavigateWebBrousers;
+    end;
+  end else begin
+    if wbFullScreen.Visible then
+    begin
+      pnlMain.Visible := True;
+      frmMain.BorderStyle := bsSingle;
+      frmMain.WindowState := wsNormal;
+      frmMain.Width := 647;
+      frmMain.Height := 480;
+      Left := (Screen.Width - Width) div 2;
+      Top := (Screen.Height - Height) div 2;
+      wbFullScreen.Visible := False;
+      NavigateWebBrousers;
+    end;
+  end;
+
 
   Debug.Trace5('DoDesign 3');
   tbActions.Visible := GClientOptions.ShutdownButton > -1;
@@ -763,7 +771,7 @@ var
   bUnblockPassword: Boolean;
   bUnblockedByPassword: Boolean;
 begin
-  lblWrongNameOrPassword.Visible := False;
+  //lblWrongNameOrPassword.Visible := False;
   ClientLogon(edtLogin.Text, edtPassword.Text, edtPassword.Text);
 end;
 
@@ -1362,6 +1370,17 @@ procedure TfrmMain.tbCompShutdownClick(Sender: TObject);
 begin
   if GClientOptions.ShutdownButton> 0 then
     LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=' + inttostr(GClientOptions.ShutdownButton), False);
+end;
+
+procedure TfrmMain.UpdateFullScreenInterface;
+begin
+  {$IFDEF GCCL}
+  //wbFullScreen.Stop;
+  if wbFullScreen.LocationURL = 'http://localhost/' then
+    wbFullScreen.Refresh
+  else
+    wbFullScreen.Navigate('http://localhost/');
+  {$ENDIF}
 end;
 
 end. ////////////////////////// end of file //////////////////////////////////

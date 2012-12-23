@@ -488,10 +488,12 @@ begin
       if Not frmMain.DtpAddTimeLengthFocused then
         frmMain.dtpAddTimeLength.Time := StrToDateTimeDefWithReplace(
             GetParamFromString(AOperation.Parameters,1), 0);
+      frmMain.DoDesignAdd;
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_UpdateCompNumber: begin
       frmMain.pnlCompNumber.Caption := GClientOptions.CompNumber;
+      frmMain.UpdateFullScreenInterface;
     end;
     ThreadSafeOperation_MainFormAction:
       case AOperation.FormAction of
@@ -557,7 +559,7 @@ begin
 //      Application.MessageBox(PChar(AOperation.Parameters),'Ошибка');
       frmMain.lblWrongNameOrPassword.Caption := AOperation.Parameters;
       frmMain.lblWrongNameOrPassword.Visible := True;
-      frmMain.NavigateWebBrousers;
+      frmMain.UpdateFullScreenInterface;
       //frmMain.wbFullScreen.Refresh;
     end;
     ThreadSafeOperation_RunPadAction: begin
