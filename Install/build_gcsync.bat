@@ -11,7 +11,7 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set Version=1.0.3
+set Version=1.0.4
 echo Собирается версия %VERSION%
 rem ToDo need compile GameClass.chm
 
