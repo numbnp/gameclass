@@ -5,7 +5,8 @@ interface
 uses
   uAutoUpdate,
   uPMJobsDataSet,
-  uPMJobsRecord;
+  uPMJobsRecord,
+  uGCSidelines;
 
 type
   TPMJobs = class(TPMJobsDataSet)

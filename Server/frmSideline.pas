@@ -18,7 +18,8 @@ uses
   Spin,
   ComCtrls,
   GCComputers,
-  GCSessions;
+  GCSessions,
+  uGCSidelines;
 
 type
   TformSideline = class(TForm)
