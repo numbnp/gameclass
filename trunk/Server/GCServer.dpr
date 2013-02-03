@@ -193,7 +193,13 @@ uses
   uAccountsReferalsRecord in '..\Parts\Accounts\uAccountsReferalsRecord.pas',
   uAccountsReferals in '..\Parts\Accounts\uAccountsReferals.pas',
   uMail in '..\Parts\Mail\uMail.pas',
-  uSnmp in '..\Parts\Snmp\uSnmp.pas';
+  uSnmp in '..\Parts\Snmp\uSnmp.pas',
+  uGCCore in 'GC4\uGCCore.pas',
+  uGCDevices in 'GC4\uGCDevices.pas',
+  uGCDevicePC in 'GC4\uGCDevicePC.pas',
+  uGCSendRecieve in 'GC4\uGCSendRecieve.pas',
+  uGCSidelines in 'GC4\uGCSidelines.pas',
+  uGCStrUtils in 'GC4\uGCStrUtils.pas';
 
 {$R *.res}
 

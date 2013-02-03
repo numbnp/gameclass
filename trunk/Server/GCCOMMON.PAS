@@ -125,7 +125,8 @@ Uses
   uTariffication,
   uRegistration,
   uDebugLog,
-  comobj;
+  comobj,
+  uGCSidelines;
 
 // errors
 function ProcessLastError:string;

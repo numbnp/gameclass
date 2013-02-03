@@ -18,7 +18,7 @@ uses
   Menus,ComCtrls, SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
   DateUtils, ADODB, Shlobj, registry, Proxy,
   IdBaseComponent, IdUDPBase, IdUDPServer, IdSocketHandle,
-  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread;
+  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines;
 
 // proxy
 procedure ProxyInitialize;
@@ -208,7 +208,8 @@ uses
   uReportManager,
   uReportFormsManager,
   uMail,
-  IdSMTP;
+  IdSMTP,
+  uGCStrUtils;
 
 type
   TMyDBGrid = class(TDBGridEh);

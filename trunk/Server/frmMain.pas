@@ -51,7 +51,8 @@ uses
   ufrmReports,
   udmMain,
   Graphics, XPMan,
-  ufrmOperatorOpt;
+  ufrmOperatorOpt,
+  uGCSendRecieve;
 
 type
   TformMain = class(TForm)
@@ -376,7 +377,6 @@ type
 type
   TMyDBGrid = class(TDBGridEh);
 
-//procedure UDPSend(const AstrIP: string; const AstrData: string);
 procedure ShowFormKillTasks(listtasks: string; compindex: integer);
 procedure QueryAuthGoState1(AnCompIndex: Integer);
 procedure SendAuthGoState1(nCompIndex:Integer; bNewSecCode:Boolean);
@@ -424,7 +424,8 @@ uses
   gcsystem,
   uY2KString,
   uRegistration,
-  uKKMTools, Variants;
+  uKKMTools, Variants,
+  uGCSidelines;
 
 {$R *.dfm}
 
@@ -544,8 +545,9 @@ begin
   FstrHotNumber := '';
   FdtHotNumberEntered := Now;
   FProxy := nil;
-  udpClient := nil;
-  udpServer := nil;
+  GCSendRecieve :=nil;
+//  udpClient := nil;
+//  udpServer := nil;
   icmpClient := nil;
   OperatorProfile := TOperatorProfile.Create;
   Console := TConsole.Create;
@@ -795,32 +797,6 @@ procedure TformMain.tbCurrentReportClick(Sender: TObject);
 begin
   DoEvent(FN_CURRENT_REPORT);
 end;
-
-{// посылаем UDP пакет с данными data на адрес ip
-procedure UDPSend(const AstrIP: string; const AstrData: string);
-var
-  vport: integer;
-  strData: String;
-begin
-  if (isManager) then exit;
-  if AstrIP = '' then exit;
-  try
-    Debug.Trace1(AstrIP + ' : ' + AstrData);
-    strData := AstrData;
-    vport := SENDPORT;
-    if (AstrIP = GRegistry.Options.UnixServerIP) then
-      vport := SENDPORT_UNIXSERVER;
-    if ((Pos(STR_CMD_INETBLOCK, strData)=0)
-        and (Pos(STR_CMD_INETUNBLOCK, strData) = 0)
-        and (Pos(STR_CMD_INETSETSPEEDFORIP, strData)=0)
-        and (Pos(STR_CMD_GETTRAFFICVALUE, strData) = 0)
-        and (Pos(STR_CMD_INETSETSPEEDFORIP, strData) = 0)
-        and (Pos(STR_CMD_INETSETGROUP, strData) = 0))
-        then strData := WrapProtocol(strData);
-      udpClient.Send(AstrIP,vport,strData)
-  except
-  end;
-end;}
 
 procedure TformMain.mnuSessionLastClick(Sender: TObject);
 begin
@@ -1101,13 +1077,14 @@ function TformMain.EnableSockets: Boolean;
 begin
   Result := False;
   try
-    udpServer := TIdUdpServer.Create(self);
+    {udpServer := TIdUdpServer.Create(self);
     udpServer.DefaultPort := READPORT;
     udpServer.OnUDPRead := udpServer_UDPRead;
     udpServer.Active := True;
     udpClient := TIdUdpClient.Create(self);
     udpClient.Port := READPORT;
-    udpClient.Active := True;
+    udpClient.Active := True;}
+    GCSendRecieve := TGCSendRecieve.Create(udpServer_UDPRead);
     Result := True;
   except
   end;
@@ -1115,8 +1092,8 @@ end;
 
 procedure TformMain.DisableSockets;
 begin
-  FreeAndNil(udpServer);
-  FreeAndNil(udpClient);
+  FreeAndNil(GCSendRecieve);
+//  FreeAndNil(udpClient);
   //tmrIcmpPing.Enabled := False;
   FreeAndNil(icmpClient);
 end;
