@@ -6,7 +6,7 @@ uses
   GCConst, GCLangUtils, GCComputers,
   StrUtils,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls;
+  ExtCtrls, uGCSidelines;
 
 type
   TframSideline = class(TFrame)

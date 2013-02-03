@@ -2,13 +2,13 @@ object framSideline: TframSideline
   Left = 0
   Top = 0
   Width = 449
-  Height = 411
+  Height = 305
   TabOrder = 0
   object gbService: TGroupBox
     Left = 0
     Top = 0
     Width = 449
-    Height = 336
+    Height = 230
     Align = alClient
     Caption = #1057#1087#1080#1089#1086#1082' '#1091#1089#1083#1091#1075
     TabOrder = 0
@@ -16,7 +16,7 @@ object framSideline: TframSideline
       Left = 2
       Top = 15
       Width = 445
-      Height = 235
+      Height = 129
       Align = alClient
       Columns = <
         item
@@ -39,7 +39,7 @@ object framSideline: TframSideline
     end
     object panelBottom: TPanel
       Left = 2
-      Top = 250
+      Top = 144
       Width = 445
       Height = 84
       Align = alBottom
@@ -106,7 +106,7 @@ object framSideline: TframSideline
   end
   object gbServiceOptions: TGroupBox
     Left = 0
-    Top = 336
+    Top = 230
     Width = 449
     Height = 75
     Align = alBottom

@@ -637,7 +637,7 @@ try
   begin
     //if pnlMain.Visible then
     begin
-      if False then
+      if True then
       begin
         pnlMain.Visible := False;
         frmMain.BorderStyle := bsNone;

@@ -5,7 +5,7 @@ interface
 uses
   GCLangutils, GCComputers, GCCommon, GCConst,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls;
+  Dialogs, StdCtrls, ExtCtrls, ComCtrls,uGCStrUtils;
 
 type
   TformCurrentReport = class(TForm)
