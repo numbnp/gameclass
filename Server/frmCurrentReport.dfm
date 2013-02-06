@@ -4,8 +4,8 @@ object formCurrentReport: TformCurrentReport
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'formCurrentReportCaption'
-  ClientHeight = 305
-  ClientWidth = 485
+  ClientHeight = 344
+  ClientWidth = 483
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

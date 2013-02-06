@@ -11,10 +11,10 @@ set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
 
-set BASE_VERSION=3.85.6
-set APP_VERSION=3.85.6.2 Alpha
-set CLIENT_VERSION=3.85.6.2
-set SQL_SCRIPT_VERSION=3856
+set BASE_VERSION=3.85.7
+set APP_VERSION=3.85.7 Alpha
+set CLIENT_VERSION=3.85.7
+set SQL_SCRIPT_VERSION=3857
 
 rem Install\src\Batch\gc_replace_versions.vbs "%BASE_VERSION%" "%APP_VERSION%"
 echo Собирается версия %APP_VERSION%

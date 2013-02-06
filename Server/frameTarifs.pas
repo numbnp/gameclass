@@ -23,56 +23,17 @@ type
     editTarifName: TEdit;
     lblTarifName: TLabel;
     butMoveUp: TButton;
-    lblVariantsName: TLabel;
-    editVariantsName: TEdit;
-    lblVariantsCost: TLabel;
-    editVariantsCost: TEdit;
-    lblStart: TLabel;
-    lblStop: TLabel;
-    dtpVariantsStop: TDateTimePicker;
-    butVariantsAdd: TButton;
-    butVariantsUpdate: TButton;
-    butVariantsDelete: TButton;
-    cbThursday: TCheckBox;
-    cbWednesday: TCheckBox;
-    cbTuesday: TCheckBox;
-    cbMonday: TCheckBox;
-    cbFriday: TCheckBox;
-    cbSaturday: TCheckBox;
-    cbSunday: TCheckBox;
-    lvVariants: TListView;
-    gbCondition: TGroupBox;
-    seQuantityHours: TSpinEdit;
-    lblConditionHours: TLabel;
-    checkCondition: TCheckBox;
-    checkPacket: TCheckBox;
-    dtpVariantsStart: TDateTimePicker;
-    panelFuck: TPanel;
-    cbConditionType: TEdit;
     cbComputerGroup: TComboBox;
     lblComputerGroup: TLabel;
-    editTrafficFree: TEdit;
-    lblTrafficFree: TLabel;
-    lblKB: TLabel;
     editBytesInMB: TEdit;
-    editTrafficCost: TEdit;
-    cbTrafficSeparatePayment: TCheckBox;
     lblBytesInMB: TLabel;
-    lblTrafficCost: TLabel;
-    gbTraffic: TGroupBox;
-    pgctrlDetails: TPageControl;
-    tabNoTarif: TTabSheet;
-    tabTarifSelected: TTabSheet;
     gbInternet: TGroupBox;
     gbTarif: TGroupBox;
     lblSpeedLimitInKB: TLabel;
     editSpeedLimitInKB: TEdit;
     lblPluginGroup: TLabel;
     editPluginGroup: TEdit;
-    gbTarifVariants: TGroupBox;
-    gbTrafficSeparatePayment: TGroupBox;
     gbPlugin: TGroupBox;
-    cbxFreePacket: TCheckBox;
     lblUserLevel: TLabel;
     cbUserLevel: TComboBox;
     gbSum: TGroupBox;
@@ -89,6 +50,48 @@ type
     cbSumm: TCheckBox;
     lblOperatorLevel: TLabel;
     cbOperatorLevel: TComboBox;
+    pgctrlDetails: TPageControl;
+    tabNoTarif: TTabSheet;
+    panelFuck: TPanel;
+    tabTarifSelected: TTabSheet;
+    gbTarifVariants: TGroupBox;
+    lblStart: TLabel;
+    lblVariantsName: TLabel;
+    lblVariantsCost: TLabel;
+    lblStop: TLabel;
+    butVariantsAdd: TButton;
+    butVariantsDelete: TButton;
+    butVariantsUpdate: TButton;
+    cbFriday: TCheckBox;
+    editVariantsName: TEdit;
+    editVariantsCost: TEdit;
+    dtpVariantsStop: TDateTimePicker;
+    dtpVariantsStart: TDateTimePicker;
+    checkPacket: TCheckBox;
+    cbWednesday: TCheckBox;
+    cbTuesday: TCheckBox;
+    cbThursday: TCheckBox;
+    cbSunday: TCheckBox;
+    cbSaturday: TCheckBox;
+    cbMonday: TCheckBox;
+    gbCondition: TGroupBox;
+    lblConditionHours: TLabel;
+    seQuantityHours: TSpinEdit;
+    cbConditionType: TEdit;
+    gbTraffic: TGroupBox;
+    lblTrafficCost: TLabel;
+    gbTrafficSeparatePayment: TGroupBox;
+    lblKB: TLabel;
+    lblTrafficFree: TLabel;
+    editTrafficFree: TEdit;
+    editTrafficCost: TEdit;
+    cbTrafficSeparatePayment: TCheckBox;
+    lvVariants: TListView;
+    checkCondition: TCheckBox;
+    cbxFreePacket: TCheckBox;
+    gbAditionalOptions: TGroupBox;
+    lblForcedVolume: TLabel;
+    cbxForcedVolume: TComboBox;
     procedure lvTarifsClick(Sender: TObject);
     procedure butMoveUpClick(Sender: TObject);
     procedure butTarifAddClick(Sender: TObject);
@@ -303,6 +306,7 @@ begin
       Tarif.addmoneymin := dts.Recordset.Fields.Item['addmoneymin'].Value;
       Tarif.addmoneymax := dts.Recordset.Fields.Item['addmoneymax'].Value;
       Tarif.maximumtrust := dts.Recordset.Fields.Item['maximumtrust'].Value;
+      Tarif.forcedvolume  := dts.Recordset.Fields.Item['forcedvolume'].Value;
 
       li := lvTarifs.Items.Add;
       li.Caption := Tarif.name;
@@ -333,7 +337,7 @@ begin
     edtAddMoneyMax.Text := '';
     edtAddMoneyMin.Text := '';
     edtMaximumTrust.Text := '';
-
+    cbxForcedVolume.Text :='';
 
 
   end;
@@ -510,6 +514,12 @@ begin
    edtAddMoneyMax.Text := IntToStr(Tarif.addmoneymax);
    edtMaximumTrust.Text := IntToStr(Tarif.maximumtrust);
 
+   if Tarif.forcedvolume>=0 then
+    cbxForcedVolume.ItemIndex := round(Tarif.forcedvolume/10)+1
+   else
+    cbxForcedVolume.ItemIndex := 0;
+   cbxForcedVolume.Text := cbxForcedVolume.Items.Strings[cbxForcedVolume.ItemIndex];
+
    UpdateVariantsList;
    locktarif := false;
    pgctrlDetails.ActivePage := tabTarifSelected;
@@ -589,6 +599,10 @@ begin
     if (cbSumm.Checked) then separatesumm := '1' else separatesumm := '0';
     if (cbCalcTraffic.Checked) then calctraffic := '1' else calctraffic := '0';
     Tarif := lvTarifs.Items[lvTarifs.ItemIndex].Data;
+    if cbxForcedVolume.ItemIndex >0 then
+      Tarif.forcedvolume := (cbxForcedVolume.ItemIndex-1)*10
+    else
+      Tarif.forcedvolume := -1;
     dsDoCommand(DS_TARIFS_UPDATE + ' @idTarif='+ IntToStr(Tarif.id)
       + ', @name=''' + editTarifName.Text
       + ''', @internet=' + internet
@@ -607,6 +621,7 @@ begin
       + ', @addmoneymin=' + edtAddMoneyMin.Text
       + ', @addmoneymax=' + edtAddMoneyMax.Text
       + ', @maximumtrust=' + edtMaximumTrust.Text
+      + ', @forcedvolume=' + inttostr(Tarif.forcedvolume)
       );
     UpdateTarifsList;
   end;
