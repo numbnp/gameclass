@@ -209,7 +209,7 @@ uses
   uReportFormsManager,
   uMail,
   IdSMTP,
-  uGCStrUtils;
+  uGCStrUtils, uRegistryVolume;
 
 type
   TMyDBGrid = class(TDBGridEh);
@@ -2011,6 +2011,10 @@ var
   Idx: Integer;
   SnmpResult: integer;
   ClientState: integer;
+
+  CompMainVolume,CompWaveVolume:integer;
+  CompMuteVolume,CompOnlyLimitVolume:Boolean;
+
 begin
 
   if (isManager) then exit;
@@ -2042,17 +2046,38 @@ begin
         strParm := '=0/'
       else
         strParm := '=1/';
+
       if GRegistry.Volume[AnComputerIndex + 1].Custom then
-        strParm := strParm +
-                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Main)+'/'+
-                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Wave)+'/'+
-                 IfThen(GRegistry.Volume[AnComputerIndex + 1].Mute,'1','0')
-      else
-        strParm := strParm +
-                 IntToStr(GRegistry.Volume[0].Main)+'/'+
-                 IntToStr(GRegistry.Volume[0].Wave)+'/'+
-                 IfThen(GRegistry.Volume[0].Mute,'1','0');
-      strParm := strParm + '/' + IfThen(GRegistry.Volume.OnlyLimit,'0','1');
+      begin
+        CompMainVolume := GRegistry.Volume[AnComputerIndex + 1].Main;
+        CompWaveVolume := GRegistry.Volume[AnComputerIndex + 1].Wave;
+        CompMuteVolume := GRegistry.Volume[AnComputerIndex + 1].Mute;
+      end else begin
+        CompMainVolume := GRegistry.Volume[0].Main;
+        CompWaveVolume := GRegistry.Volume[0].Wave;
+        CompMuteVolume := GRegistry.Volume[0].Mute;
+      end;
+      CompOnlyLimitVolume := GRegistry.Volume.OnlyLimit;
+      if Comps[AnComputerIndex].Busy then
+        if Comps[AnComputerIndex].session.Tariff.forcedvolume>=0 then
+        begin
+          CompMainVolume := round((VOLUME_MAX *Comps[AnComputerIndex].session.Tariff.forcedvolume)/100);
+          CompWaveVolume := round((VOLUME_MAX *Comps[AnComputerIndex].session.Tariff.forcedvolume)/100);
+          if CompMainVolume=0 then
+            CompMuteVolume := true
+          else
+            CompMuteVolume := False;
+          CompOnlyLimitVolume := False;
+        end;
+
+      strParm := strParm +
+                 IntToStr(CompMainVolume)+'/'+
+                 IntToStr(CompWaveVolume)+'/'+
+                 IfThen(CompMuteVolume,'1','0');
+
+      strParm := strParm + '/' + IfThen(CompOnlyLimitVolume,'0','1');
+
+
 
       UDPSend(Comps[AnComputerIndex].ipaddr, STR_CMD_PING + strParm);
     end;

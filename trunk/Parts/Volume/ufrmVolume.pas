@@ -6,9 +6,6 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, StdCtrls, ExtCtrls;
 
-const
-  VOLUME_MAX = 65535;
-
 type
   TfrmVolume = class(TForm)
     pnlVolume: TPanel;
@@ -49,7 +46,7 @@ uses
   StrUtils,
   GClangutils,
   gccomputers,
-  uRegistry, uRegistryVolume;
+  uRegistry, uRegistryVolume,gcconst;
 
 {$R *.dfm}
 
