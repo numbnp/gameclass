@@ -385,6 +385,7 @@ begin
       Tarifs[i].addmoneymin := dts.Recordset.Fields.Item['addmoneymin'].Value;
       Tarifs[i].addmoneymax := dts.Recordset.Fields.Item['addmoneymax'].Value;
       Tarifs[i].maximumtrust := dts.Recordset.Fields.Item['maximumtrust'].Value;
+      Tarifs[i].forcedvolume := dts.Recordset.Fields.Item['forcedvolume'].Value;
 
       // подгрузим цельные интервалы TarifsWhole
       Tarifs[i].variantscount := 0;

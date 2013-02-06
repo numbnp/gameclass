@@ -127,6 +127,7 @@ type
     addmoneymin: integer;     // минимальная сумма доплаты тарифа
     addmoneymax: integer;     // максимальная мальная сумма доплаты тарифа
     maximumtrust: integer;    // сумма доверия
+    forcedvolume: integer;    // принудительная громкость
 
     tarifvariants: array[0..(MAX_TARIFS_VARIANTS-1)] of TTarifVariants;
     property BytesInMB: Integer read FnBytesInMB write FnBytesInMB;

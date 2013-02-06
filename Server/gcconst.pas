@@ -11,8 +11,8 @@ uses QGraphics;
 
 const
   // misc2
-  BASE_VERSION = '3.85.6';
-  APP_VERSION = '3.85.6.1 Free';
+  BASE_VERSION = '3.85.7';
+  APP_VERSION = '3.85.7 Free';
   STR_UNREGISTERED_VERSION = 'Unregistered trial version';
   GC_HARDWARE_CONTROL = 'GCHardwareControl';
   GC_PRINTER_CONTROL = 'GCPrinterControl';
@@ -331,6 +331,7 @@ const
 
   GUEST_ID = 0; //id Гостя 
 
+  VOLUME_MAX = 65535;
 
 implementation
 
