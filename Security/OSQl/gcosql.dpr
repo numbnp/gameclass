@@ -46,7 +46,7 @@ var
   frmLogon: TfrmLogon;
   str: String;
   cnnResult: TADOConnection;
-  dbPassword,dbUserName: String;
+  dbPassword,dbUserName,strFileExt: String;
 begin
   ExitCode := 1;
   Application.Initialize;
@@ -94,11 +94,21 @@ begin
       and (ParamCount = 2)) then begin
     cnnResult := TADOConnection.Create(Nil);
     frmLogon := TfrmLogon.Create(Nil, cnnResult);
-    if (frmLogon.ShowModal = mrOk)
-        and GetDatabaseVersion(cnnResult, str)
-        and DecryptAndExecute(cnnResult, ParamStr(2)) then begin
-      ExitCode := 0;
-      FreeAndNil(cnnResult);
+    if (frmLogon.ShowModal = mrOk) and GetDatabaseVersion(cnnResult, str) then
+    begin
+      strFileExt:=UpperCase(ExtractFileExt(ParamStr(2)));
+      if strFileExt='.SQL' then
+        if Execute(cnnResult, ParamStr(2)) then
+        begin
+          ExitCode := 0;
+          FreeAndNil(cnnResult);
+        end;
+      if strFileExt='.SQP' then
+        if DecryptAndExecute(cnnResult, ParamStr(2)) then
+        begin
+          ExitCode := 0;
+          FreeAndNil(cnnResult);
+        end;
     end;
     FreeAndNil(frmLogon);
   end else
