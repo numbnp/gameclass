@@ -10,6 +10,9 @@ const
 
 function DecryptAndExecute(const AcnnMain: TADOConnection;
     const AstrSQPFileName: String): Boolean;
+function Execute(const AcnnMain: TADOConnection;
+    const AstrSQLFileName: String): Boolean;
+
 function EncodeScript(const AstrSQLFileName, AstrSQPFileName: String): Boolean;
 function UpdateCustomReport(const AcnnMain: TADOConnection;
     const AstrXMLFileName: String): Boolean;
@@ -78,6 +81,44 @@ begin
     end;
   end;
 end;
+
+function Execute(const AcnnMain: TADOConnection;
+    const AstrSQLFileName: String): Boolean;
+var
+  fScript: TextFile;
+  rs: String;
+  //Buffer: String[256];
+  strAll: String;
+begin
+  Result := True;
+  try
+    AcnnMain.CommandTimeout := GCOSQL_COMMAND_TIMEOUT;
+    strAll := '';
+    AssignFile(fScript, AstrSQLFileName);
+    Reset(fScript);
+    while not Eof(fScript) do
+    begin
+      Readln(fScript,rs);
+      if rs <> '' then begin
+        If UpperCase(Trim(rs)) = 'GO' then begin
+          AcnnMain.Execute(strAll);
+          strAll := '';
+        end
+        else
+          strAll := strAll + rs + ' ' + Char(13)+ Char(10);
+      end;
+      // ----------------------------------
+    end;
+    CloseFile(fScript);
+    Result := True;
+  except
+    on E: Exception do begin
+      MessageBox(0,PChar(E.Message), PChar(E.HelpContext), MB_OK);
+      Result := False;
+    end;
+  end;
+end;
+
 
 function EncodeScript(const AstrSQLFileName, AstrSQPFileName: String): Boolean;
 var
