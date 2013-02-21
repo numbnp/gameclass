@@ -1,15 +1,15 @@
 object formMain: TformMain
-  Left = 163
-  Top = 139
+  Left = 1396
+  Top = -4
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 764
-  ClientWidth = 1189
+  ClientHeight = 901
+  ClientWidth = 1270
   Color = clBtnFace
-  Constraints.MinHeight = 360
+  Constraints.MinHeight = 332
   Constraints.MinWidth = 480
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 1189
+    Width = 1270
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 1067
+      Width = 1148
       Height = 57
       Align = alClient
       ButtonHeight = 51
@@ -150,7 +150,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 1067
+      Left = 1148
       Top = 0
       Width = 122
       Height = 57
@@ -224,8 +224,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 1189
-    Height = 707
+    Width = 1270
+    Height = 844
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -234,8 +234,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 547
-        Width = 1181
+        Top = 684
+        Width = 1262
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -243,8 +243,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 1122
-        Height = 547
+        Width = 1203
+        Height = 684
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -407,8 +407,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 553
-        Width = 1181
+        Top = 690
+        Width = 1262
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -416,7 +416,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 1181
+          Width = 1262
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -437,7 +437,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 1181
+          Left = 1262
           Top = 0
           Width = 0
           Height = 126
@@ -448,10 +448,10 @@ object formMain: TformMain
         end
       end
       object tbRunPad: TToolBar
-        Left = 1122
+        Left = 1203
         Top = 0
         Width = 59
-        Height = 547
+        Height = 684
         Align = alRight
         AutoSize = True
         ButtonHeight = 54
@@ -531,36 +531,36 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 1181
-        Height = 679
+        Width = 1262
+        Height = 816
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 638
-          Width = 1181
+          Top = 775
+          Width = 1262
           DesignSize = (
-            1181
+            1262
             41)
           inherited edtMessage: TEdit
-            Width = 1712
+            Width = 2370
           end
           inherited btnSend: TButton
-            Left = 1734
+            Left = 2392
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 1181
-          Height = 638
+          Width = 1262
+          Height = 775
           inherited memMessages: TMemo
-            Width = 1019
-            Height = 636
+            Width = 1100
+            Height = 773
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 636
+            Height = 773
             inherited lvUsers: TListView
-              Height = 634
+              Height = 771
             end
           end
         end

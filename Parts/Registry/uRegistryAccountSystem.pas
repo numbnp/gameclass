@@ -12,16 +12,7 @@ type
   private
     FRegistryDataSet: TRegistryDataSet;
     FRegistryRecord: TRegistryRecord;
-    //by numb
-    function LocateKey(Key,DefValue:string): Boolean;
-    function GetKeyAsBoolean(Key:string;DefValue: Boolean):Boolean;
-    procedure SetKeyAsBoolean(Key:string;AValue: Boolean);
-    function GetKeyAsInteger(Key:string;DefValue: Integer):Integer;
-    procedure SetKeyAsInteger(Key:string;AValue: Integer);
-    function GetKeyAsString(Key:string;DefValue: String):String;
-    procedure SetKeyAsString(Key:string;AValue: String);
 
-    function LocateEnable: Boolean;
     function GetEnable: Boolean;
     procedure SetEnable(AValue: Boolean);
     function LocateUseSecurityCodes: Boolean;
@@ -68,6 +59,12 @@ type
     procedure SetUseDefaultUserLevel(AValue: Boolean);
     function GetDefaultUserLevel: Integer;
     procedure SetDefaultUserLevel(AValue: Integer);
+    function GetBlockAccountAfterTime: Boolean;
+    procedure SetBlockAccountAfterTime(AValue: Boolean);
+
+    function GetTimeForBlock: Integer;
+    procedure SetTimeForBlock(AValue: Integer);
+
   public
     constructor Create(ARegistryDataSet: TRegistryDataSet;
         ARegistryRecord: TRegistryRecord);
@@ -105,6 +102,11 @@ type
       read GetUseDefaultUserLevel write SetUseDefaultUserLevel;
     property DefaultUserLevel: Integer
       read GetDefaultUserLevel write SetDefaultUserLevel;
+    property BlockAccountAfterTime: Boolean
+      read GetBlockAccountAfterTime write SetBlockAccountAfterTime;
+    property TimeForBlock: Integer
+      read GetTimeForBlock write SetTimeForBlock;
+
   end;
 
 implementation
@@ -131,16 +133,10 @@ begin
   inherited Destroy;
 end;
 
-function TRegistryAccountSystem.LocateEnable: Boolean;
-begin
-  Result := FRegistryDataSet.LocateByKey('AccountSystem\bEnabled', '0');
-end;
-
 function TRegistryAccountSystem.GetEnable: Boolean;
 begin
   try
-    LocateEnable;
-    Result := FRegistryRecord.ValueAsBoolean;
+    Result := FRegistryRecord.GetValueAsBooleanEx('AccountSystem\bEnabled', false)
   except
     Result := False;
   end;
@@ -148,8 +144,7 @@ end;
 
 procedure TRegistryAccountSystem.SetEnable(AValue: Boolean);
 begin
-  LocateEnable;
-  FRegistryRecord.ValueAsBoolean := AValue;
+  FRegistryRecord.SetValueAsBooleanEx('AccountSystem\bEnabled',AValue,false)
 end;
 
 function TRegistryAccountSystem.LocateUseSecurityCodes: Boolean;
@@ -375,72 +370,42 @@ end;
 
 function TRegistryAccountSystem.GetUseDefaultUserLevel: Boolean;
 begin
-  Result := GetKeyAsBoolean('UseDefaultUserLevel',True);
+  Result := FRegistryRecord.GetValueAsBooleanEx('AccountSystem\UseDefaultUserLevel',True);
 end;
 
 procedure TRegistryAccountSystem.SetUseDefaultUserLevel(AValue: Boolean);
 begin
-  SetKeyAsBoolean('UseDefaultUserLevel',AValue);
+  FRegistryRecord.SetValueAsBooleanEx('AccountSystem\UseDefaultUserLevel',AValue,true);
 end;
 
 function TRegistryAccountSystem.GetDefaultUserLevel: Integer;
 begin
-  Result := GetKeyAsInteger('DefaultUserLevel',1);
+  Result := FRegistryRecord.GetValueAsIntegerEx('AccountSystem\DefaultUserLevel',1);
 end;
 
 procedure TRegistryAccountSystem.SetDefaultUserLevel(AValue: Integer);
 begin
-  SetKeyAsInteger('DefaultUserLevel',AValue);
+  FRegistryRecord.SetValueAsIntegerEx('AccountSystem\DefaultUserLevel',AValue,1);
 end;
 
-
-
-
-function TRegistryAccountSystem.LocateKey(Key,DefValue:string): Boolean;
+function TRegistryAccountSystem.GetBlockAccountAfterTime: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey(
-      RegistryPart+'\'+Key, DefValue);
+  Result := FRegistryRecord.GetValueAsBooleanEx('AccountSystem\BlockAccountAfterTime',False);
 end;
 
-function TRegistryAccountSystem.GetKeyAsBoolean(Key:string;DefValue:Boolean):Boolean;
+procedure TRegistryAccountSystem.SetBlockAccountAfterTime(AValue: Boolean);
 begin
-  if DefValue then
-    LocateKey(Key,'1')
-  else
-    LocateKey(Key,'0');
-  Result := FRegistryRecord.ValueAsBoolean;
+  FRegistryRecord.SetValueAsBooleanEx('AccountSystem\BlockAccountAfterTime',AValue,False);
 end;
 
-procedure TRegistryAccountSystem.SetKeyAsBoolean(Key:string;AValue: Boolean);
+function TRegistryAccountSystem.GetTimeForBlock: Integer;
 begin
-  LocateKey(Key,'0');
-  FRegistryRecord.ValueAsBoolean := AValue;
+  Result := FRegistryRecord.GetValueAsIntegerEx('AccountSystem\TimeForBlock',15);
 end;
 
-function TRegistryAccountSystem.GetKeyAsInteger(Key:string;DefValue:Integer):Integer;
+procedure TRegistryAccountSystem.SetTimeForBlock(AValue: Integer);
 begin
-  LocateKey(Key,IntToStr(DefValue));
-  Result := FRegistryRecord.ValueAsInteger;
+  FRegistryRecord.SetValueAsIntegerEx('AccountSystem\TimeForBlock',AValue,15);
 end;
-
-procedure TRegistryAccountSystem.SetKeyAsInteger(Key:string;AValue: Integer);
-begin
-  LocateKey(Key,'0');
-  FRegistryRecord.ValueAsInteger := AValue;
-end;
-
-function TRegistryAccountSystem.GetKeyAsString(Key:string;DefValue:String):String;
-begin
-  LocateKey(Key,DefValue);
-  Result := FRegistryRecord.Value;
-end;
-
-procedure TRegistryAccountSystem.SetKeyAsString(Key:string;AValue: String);
-begin
-  LocateKey(Key,'0');
-  FRegistryRecord.Value := AValue;
-end;
-
-
 
 end.

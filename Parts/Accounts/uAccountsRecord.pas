@@ -55,6 +55,13 @@ type
     procedure SetUserLevel(Value: Integer);
     function GetForceTariff: Integer;
     function GetReferal: Integer;
+
+    function GetMomentLastUsed: TDateTime;
+    procedure SetMomentLastUsed(Value:TDateTime);
+    //    procedure SetUserLevel(Value: Integer);
+    function GetIgnoreHardCode: Boolean;
+    procedure SetIgnoreHardCode(Value:Boolean);
+
   public
     constructor Create(AAccountsDataSet: TAccountsDataSet);
 //      function GetPhoto:boolean;        // загрузить фоту, если она есть
@@ -116,6 +123,11 @@ type
         read GetForceTariff;
     property Referal: Integer
         read GetReferal;
+    property MomentLastUsed: TDateTime
+        read GetMomentLastUsed write SetMomentLastUsed;
+    property IgnoreHardCode: Boolean
+        read GetIgnoreHardCode write SetIgnoreHardCode;
+
   end;
 
 
@@ -511,5 +523,47 @@ begin
   Result := FAccountsDataSet.FieldValues['referal'];
 end;
 
+
+function TAccountsRecord.GetMomentLastUsed: TDateTime;
+var
+  dts: TADODataSet;
+  dsQuery: string;
+begin
+    dts := TADODataSet.Create(nil);
+    dsQuery :='exec AccountsGetLastUsed @id='+inttostr(GetId);
+    dsDoQuery(FAccountsDataSet.Connection, dts, dsQuery);
+    if (not dts.Recordset.EOF) then
+    begin
+      Result := dts.Recordset.Fields.Item['moment'].Value;
+    end;
+    dts.Close;
+    dts.Destroy;
+end;
+
+procedure TAccountsRecord.SetMomentLastUsed(Value:TDateTime);
+var
+  dsQuery: string;
+begin
+    dsQuery :='exec AccountsHistoryInsert '
+      + '@idAccount=' + inttostr(GetId)
+      + ', @moment=''' + DateTimeToSQLStr(Value)
+      + ''', @what = 5'
+      + ', @summa = 0'
+      + ', @comment = ''update''';
+    dsDoCommand(FAccountsDataSet.Connection, dsQuery);
+end;
+
+
+function TAccountsRecord.GetIgnoreHardCode: Boolean;
+begin
+  result := StrToBool(FAccountsDataSet.FieldValues['ignorehardcode'])
+end;
+
+procedure TAccountsRecord.SetIgnoreHardCode(Value: Boolean);
+begin
+  FAccountsDataSet.Edit;
+  FAccountsDataSet.FieldValues['ignorehardcode'] := BoolToStr(Value);
+  FAccountsDataSet.Post;
+end;
 
 end.

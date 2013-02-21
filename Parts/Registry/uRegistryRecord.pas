@@ -41,6 +41,28 @@ type
         read GetValueAsInt64 write SetValueAsInt64;
     property ValueAsDouble: Double
         read GetValueAsDouble write SetValueAsDouble;
+
+    function GetValueStringEx(AstrKey: String;
+        AstrDefaultValue: String): String;
+    procedure SetValueStringEx(AstrKey: String; AValue: String;
+        AstrDefaultValue: String);
+    function GetValueAsBooleanEx(AstrKey: String;
+        AstrDefaultValue: Boolean): Boolean;
+    procedure SetValueAsBooleanEx(AstrKey: String; AValue: Boolean;
+        AstrDefaultValue: Boolean);
+    function GetValueAsIntegerEx(AstrKey: String;
+        AstrDefaultValue: Integer): Integer;
+    procedure SetValueAsIntegerEx(AstrKey: String; AValue: Integer;
+        AstrDefaultValue: Integer);
+    function GetValueAsInt64Ex(AstrKey: String;
+        AstrDefaultValue: Int64): Int64;
+    procedure SetValueAsInt64Ex(AstrKey: String; AValue: Int64;
+        AstrDefaultValue: Int64);
+    function GetValueAsDoubleEx(AstrKey: String;
+        AstrDefaultValue: Double): Double;
+    procedure SetValueAsDoubleEx(AstrKey: String; AValue: Double;
+        AstrDefaultValue: Double);
+
   end;
 
 implementation
@@ -124,4 +146,75 @@ procedure TRegistryRecord.SetValueAsDouble(AValue: Double);
 begin
   SetValue(FloatToStr(AValue));
 end;
+// By Napad
+function TRegistryRecord.GetValueAsBooleanEx(AstrKey: String;
+  AstrDefaultValue: Boolean): Boolean;
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, BoolToStr(AstrDefaultValue));
+  Result := GetValueAsBoolean;
+end;
+
+function TRegistryRecord.GetValueAsDoubleEx(AstrKey: String;
+  AstrDefaultValue: Double): Double;
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, FloatToStr(AstrDefaultValue));
+  Result := GetValueAsDouble;
+end;
+
+function TRegistryRecord.GetValueAsInt64Ex(AstrKey: String;
+  AstrDefaultValue: Int64): Int64;
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, IntToStr(AstrDefaultValue));
+  Result := GetValueAsInt64;
+end;
+
+function TRegistryRecord.GetValueAsIntegerEx(AstrKey: String;
+  AstrDefaultValue: Integer): Integer;
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, IntToStr(AstrDefaultValue));
+  Result := GetValueAsInteger;
+end;
+
+function TRegistryRecord.GetValueStringEx(AstrKey,
+  AstrDefaultValue: String): String;
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, AstrDefaultValue);
+  Result := GetValue;
+end;
+
+procedure TRegistryRecord.SetValueAsBooleanEx(AstrKey: String; AValue,
+  AstrDefaultValue: Boolean);
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, BoolToStr(AstrDefaultValue));
+  SetValueAsBoolean(AValue);
+end;
+
+procedure TRegistryRecord.SetValueAsDoubleEx(AstrKey: String; AValue,
+  AstrDefaultValue: Double);
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, FloatToStr(AstrDefaultValue));
+  SetValueAsDouble(AValue);
+end;
+
+procedure TRegistryRecord.SetValueAsInt64Ex(AstrKey: String; AValue,
+  AstrDefaultValue: Int64);
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, IntToStr(AstrDefaultValue));
+  SetValueAsInt64 (AValue);
+end;
+
+procedure TRegistryRecord.SetValueAsIntegerEx(AstrKey: String; AValue,
+  AstrDefaultValue: Integer);
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, IntToStr(AstrDefaultValue));
+  SetValueAsInteger(AValue);
+end;
+
+procedure TRegistryRecord.SetValueStringEx(AstrKey, AValue,
+  AstrDefaultValue: String);
+begin
+  FRegistryDataSet.LocateByKey(AstrKey, AstrDefaultValue);
+  SetValue(AValue);
+end;
+
 end.

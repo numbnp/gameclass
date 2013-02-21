@@ -18,7 +18,8 @@ uses
   Menus,ComCtrls, SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
   DateUtils, ADODB, Shlobj, registry, Proxy,
   IdBaseComponent, IdUDPBase, IdUDPServer, IdSocketHandle,
-  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines;
+  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines,
+  uCardReader;
 
 // proxy
 procedure ProxyInitialize;
@@ -45,6 +46,9 @@ procedure FunctionEnable(id:string; value: boolean);
 
 procedure SetBackColor(const AColor: TColor);
 procedure SetTableFont(const AFont: TFont);
+
+// ¬вели код  физической карты
+procedure EnterHardCode(code:string); stdcall;
 
 procedure ehsEvent5Minutes;
 procedure ehsAutoKillTasksAfterStop;
@@ -209,7 +213,8 @@ uses
   uReportFormsManager,
   uMail,
   IdSMTP,
-  uGCStrUtils, uRegistryVolume;
+  uGCStrUtils, uRegistryVolume,
+  uAccountsRecord;
 
 type
   TMyDBGrid = class(TDBGridEh);
@@ -650,6 +655,10 @@ begin
     KKMPluginStart;
     Application.ProcessMessages;
     dsLoadTarifs;
+    Application.ProcessMessages;
+    if not isManager then
+      if GRegistry.CardReader.Enabled then
+        dsStartCardReader;
     Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2, translate('dsLoadClientsOk')
         +' ['+IntToStr(GAccountSystem.Accounts.RecordCount)+']');
     GSessions := TGCSessions.Create;
@@ -810,6 +819,7 @@ begin
   formMain.mnuFont.Enabled := False;
   formMain.mnuTableOpt.Enabled := False;
   KKMPluginStop;
+  dsStopCardReader;
 end;
 
 // logout
@@ -888,6 +898,19 @@ begin
      subMenu.Items[i].Caption := translate(subMenu.Items[i].Name);
    if subMenu.Items[i].Tag = 1 then MenuRecursive(subMenu.Items[i]);
  end;
+end;
+
+// ¬вели код  физической карты
+procedure EnterHardCode(code:string);
+var
+  LocalAccount:TAccountsRecord;
+begin
+  LocalAccount:= GAccountSystem.Accounts.GetAccountsByHardCode(code);
+  if LocalAccount<>nil then
+  begin
+      LocalAccount.MomentLastUsed := Now - IntTimeShift;
+      Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2, 'User '+LocalAccount.Name + ' unblocked');
+  end;
 end;
 
 // выбрали русский €зык

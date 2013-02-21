@@ -69,6 +69,7 @@ const
   DEF_USE_WOL = True;
   DEF_RunPadShowInfoOnDesktop = False;
   DEF_RunPadShowInfoOnDesktopText = '№ %MACHINE% Время %TIME% %MODE%';
+  DEF_FULL_SCREEN_INTERFACE = False;
   DEF_IS_FIRST_RUN = True;
   DEF_KDE_USER = '';
   DEF_DEBUG = False;

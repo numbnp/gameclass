@@ -155,6 +155,7 @@ const
   DS_ACCOUNTS_UPDATECODES = 'AccountsUpdateCodes';
   DS_ACCOUNTS_UNBLOCK = 'AccountsUnblock';
   DS_ACCOUNTS_UPDATE = 'AccountsUpdate';
+  DS_ACCOUNTS_ID_BY_HARDCODE = 'AccountsGetIdByHardCode';
   DS_DISCOUNTS_SELECT = 'AccountsDiscountSelect';
   DS_DISCOUNTS_INSERT = 'AccountsDiscountInsert';
   DS_DISCOUNTS_DELETE = 'AccountsDiscountDelete';
@@ -291,6 +292,7 @@ const
   FRAME_TASKKILL = 17;
   FRAME_DISCOUNTS = 18;
   FRAME_MAIL = 19;
+  FRAME_ADITIONALHARDWARE = 20;
   //всякая муть
   READ_UNCONTROLSTATE_TIMEOUT = GLOBAL_TIMER + 1; //задержка в сек. для того чтобы процедура у менеджера
                                    //успевала читать данные записанные оператором

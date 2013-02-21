@@ -119,22 +119,4 @@ begin
 end;
 
 
-
-{function TRegistryOptions.Locate: Boolean;
-begin
-  Result := FRegistryDataSet.LocateByKey('', '0');
-end;
-
-function TRegistryOptions.Get: Boolean;
-begin
-  Locate;
-  Result := FRegistryRecord.ValueAsBoolean;
-end;
-
-procedure TRegistryOptions.Set(AValue: Boolean);
-begin
-  Locate;
-  FRegistryRecord.ValueAsBoolean := AValue;
-end;
-}
 end.
