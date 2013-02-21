@@ -740,6 +740,7 @@ begin
     SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
     DoInterfaceComps;
   end;
+
   dmActions.actRedrawComps.Execute;
 end;
 
@@ -1897,33 +1898,6 @@ begin
     SyncFile(GnFileSynchronizationCounter);
     Inc(GnFileSynchronizationCounter);
   end;
-
-
-{  GCInstallCl := TGCInstall.Create;
-  if isManager then
-    exit;
-  if ( not GClientOptions.bRemoteInstallClient) then
-    exit;
-
-  if not GCInstallCl.IsTrueVersion(FULL_APP_VERSION) then exit;
-
-  try
-  NameComps := TStringList.Create;
-
-  for i := 0 to CompsCount-1 do
-  begin
-    if Comps[i].pingable and ((Comps[i].strInfoClientver <> FULL_APP_VERSION) or Not Comps[i].control) then begin
-      UDPSend(Comps[i].ipaddr, STR_CMD_CLOSECLIENT]);
-      NameComps.Add(Comps[i].ipaddr);
-    end;
-  end;
-  GCInstallCl.LoadAutoLogin();
-  GCInstallCl.Install(NameComps, self.Handle);
-
-  finally  NameComps.Free;
-  end;
-  GCInstallCl.Free;
-}
 end;
 
 procedure TformMain.gridCompsCellClick(Column: TColumnEh);
@@ -2074,9 +2048,6 @@ begin
       DoEvent(FN_COMP_BACK_PART_MONEY);
     end
 
-
-{  if (Shift=[ssCtrl]) and (Key=Ord('U')) then
-    mnuInstallClick(Sender);}
 end;
 
 procedure TformMain.tmrCyclicCompActionTimer(Sender: TObject);
@@ -2172,27 +2143,6 @@ procedure TformMain.tbCompResetClick(Sender: TObject);
 begin
   mnuRestartClick(Sender);
 end;
-
-{procedure IcmpPing; //старый код
-begin
-    Comps[GnCyclicCompActionCounter].IcmpPings := Comps[GnCyclicCompActionCounter].IcmpPings + 1;
-    if (Comps[GnCyclicCompActionCounter].IcmpPings > MAXIMUM_LOST_PINGS) then
-      Comps[GnCyclicCompActionCounter].Pingable := False;
-    icmpClient.Host := Comps[GnCyclicCompActionCounter].ipaddr;
-    try
-      icmpClient.Ping;
-    except
-      if not GRegistry.UserInterface.DontShow.RawSocketWarning then begin
-        formGCMessageBox.memoInfo.Text := translate('RawSocketWarning');
-        formGCMessageBox.SetDontShowAgain(true);
-        formGCMessageBox.ShowModal;
-        GCHelp(HELP_ACCOUNTS);
-        GRegistry.UserInterface.DontShow.RawSocketWarning :=
-            formGCMessageBox.cbNotShowAgain.Checked;
-      end;
-//      tmrIcmpPing.Enabled := False;
-    end;
-end;}
 
 procedure TformMain.mnuServiceClick(Sender: TObject);
 var

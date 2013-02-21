@@ -27,6 +27,7 @@ type
     function CheckFreeName(AstrName: String): Boolean;
     function CheckLogon(const AstrNameOrId, AstrPassword, AstrCode: String;
         const AnCodeIndex: Integer; var AnId: Integer): Boolean;
+    function GetAccountsByHardCode(AstrHardCode: String): TAccountsRecord;
   end;
 
 var
@@ -41,7 +42,11 @@ uses
   DateUtils,
   uVirtualTime,
   uGCDataSet,
-  uAccountSystem;
+  uAccountSystem,
+  ADODB,
+  uSQLTools,
+  gcconst,
+  gccomputers;
 
 constructor TAccounts.Create(AAutoUpdate: TAutoUpdate);
 begin
@@ -110,6 +115,11 @@ begin
         and (FAccountsRecord.SecCodes[AnCodeIndex] = AstrCode))) then begin
       AnId := FAccountsRecord.Id;
       Result := not FAccountsRecord.SecurityBlocked;
+      if GAccountSystem.BlockAccountAfterTime then
+        if not FAccountsRecord.IgnoreHardCode then
+          if MinuteOf((Now - IntTimeShift)-FAccountsRecord.MomentLastUsed)> GAccountSystem.TimeForBlock then
+             Result := false;
+
     end;
   end;
   try
@@ -118,6 +128,31 @@ begin
   end;
   FreeBookmark(bookmark);
   FbInAutoUpdate := False;
+end;
+
+//Получаем аккаунт по коду
+function TAccounts.GetAccountsByHardCode(
+  AstrHardCode: String): TAccountsRecord;
+var
+  dts: TADODataSet;
+  dsQuery: string;
+  ResultId: integer;
+begin
+    ResultId := -1;
+    dts := TADODataSet.Create(nil);
+    dsQuery :='exec ' + DS_ACCOUNTS_ID_BY_HARDCODE + ' @hardcode='+AstrHardCode;
+    dsDoQuery(Connection, dts, dsQuery);
+    if (not dts.Recordset.EOF) then
+    begin
+      ResultId := dts.Recordset.Fields.Item['id'].Value;
+    end;
+    dts.Close;
+    dts.Destroy;
+
+    if ResultId>0 then
+      Result := Items[ResultId]
+    else
+      Result := nil;
 end;
 
 end.

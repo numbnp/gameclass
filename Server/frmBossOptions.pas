@@ -9,7 +9,8 @@ uses
   frameTarifs, StdCtrls, frameRights, frameCustomers,
   frameSideline, frameGC3Client, frameHardware, frameSound, frameTraffic,
   framePrinter, uframeRunPad, uframeScripts, uframeOptions, uframeInterface,
-  uframeKKM, uframeTaskKill, uframeClientInterface, uframeDiscounts,frameMail;
+  uframeKKM, uframeTaskKill, uframeClientInterface, uframeDiscounts,frameMail,
+  uframeAditionalHardware;
 
 type
   TformBossOptions = class(TForm)
@@ -41,6 +42,7 @@ type
     framGC3Client1: TframGC3Client;
     framePrinter1: TframePrinter;
     framMail1: TframMail;
+    frameAditionalHardware1: TframeAditionalHardware;
     procedure FormActivate(Sender: TObject);
     procedure tvBossOptionsChange(Sender: TObject; Node: TTreeNode);
     procedure butOkClick(Sender: TObject);
@@ -101,6 +103,7 @@ begin
   frameClientInterface1.Activate(curFrame);
   frameDiscounts1.Activate(curFrame);
   framMail1.Activate(curFrame);
+  frameAditionalHardware1.Activate(curFrame);
 end;
 
 procedure TformBossOptions.tvBossOptionsChange(Sender: TObject;

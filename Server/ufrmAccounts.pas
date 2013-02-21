@@ -7,7 +7,7 @@ uses
   Dialogs, ComCtrls, ExtCtrls, StdCtrls,
   GCLangUtils, Grids, DBGridEh, DB, Mask, DBCtrlsEh, DBCtrls,
   ADODB, EDBImage, RxGIF, ToolEdit, RXDBCtrl,
-  uTariffication;
+  uTariffication, uCardReader;
 
 type
   TfrmAccounts = class(TForm)
@@ -80,6 +80,10 @@ type
     cbReferal: TComboBox;
     editReferal: TDBEditEh;
     editAccountPassU: TEdit;
+    lblHardCode: TLabel;
+    editHardCode: TDBEditEh;
+    cbIgnoreHardCode: TDBCheckBoxEh;
+    butGetCode: TButton;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -120,11 +124,15 @@ type
     procedure cbReferalChange(Sender: TObject);
     procedure editReferalChange(Sender: TObject);
     procedure editAccountPassChange(Sender: TObject);
+    procedure cbIgnoreHardCodeClick(Sender: TObject);
+    procedure butGetCodeClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FbDirty: Boolean;
     FbControlsEnabled: Boolean;
     FbUpdateDuringEditing: Boolean;
+    bClearCardReaderAfterCosing:Boolean; 
     procedure SetDirty(AbValue: Boolean);
     procedure UpdateDiscount;
     procedure UpdateFilter;
@@ -141,6 +149,7 @@ type
     procedure DisableControls;
     property ControlsEnabled: Boolean
         read FbControlsEnabled write FbControlsEnabled;
+    
   public
     { Public declarations }
 //    ManagerMode: boolean; // если false - то режим оператора, если true - то менеджера (все функции)
@@ -148,6 +157,11 @@ type
 
 var
   frmAccounts: TfrmAccounts;
+
+  bCardReaderHook:Boolean;
+
+
+  Procedure EnterHardCodeLocal(code:string); stdcall;
 
 implementation
 
@@ -164,7 +178,8 @@ uses
   uY2KString,
   uKKMTools,
   uRegistry,
-  uAccountSystem, uAccountsReferals;
+  uAccountSystem,
+  uAccountsReferals;
 
 {$R *.dfm}
 
@@ -232,6 +247,9 @@ begin
   cbxPeriodOfValidity.Enabled := bEditPermission;
   butClearPass.Enabled := (isManager
       or FunctionAmIRight(FN_ACCOUNTS_CLEAR_PASSWORD)) and bRecordSelected;
+  cbIgnoreHardCode.Enabled := isManager;
+  editHardCode.Enabled := bEditPermission;
+  butGetCode.Enabled := editHardCode.Enabled;
   cbUserLevel.Enabled:=cbTarifsLimit.Checked and bManagerPermission;
   cbForceTariff.Enabled:=bManagerPermission;
   cbReferal.Enabled := GAccountSystem.RefersSystemEnabled and bEditPermission;
@@ -607,6 +625,13 @@ end;
 procedure TfrmAccounts.FormCreate(Sender: TObject);
 var i: Integer;
 begin
+  if CardReader=nil then
+  begin
+    CardReader := TCardReader.Create;
+    bClearCardReaderAfterCosing := True;
+  end else
+    bClearCardReaderAfterCosing:= false;
+    
   FbUpdateDuringEditing := False;
   FbControlsEnabled := False;
   dsrcAccounts.DataSet := GAccountsCopy;
@@ -803,6 +828,62 @@ end;
 procedure TfrmAccounts.editAccountPassChange(Sender: TObject);
 begin
   _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.cbIgnoreHardCodeClick(Sender: TObject);
+begin
+  _OnChange(Sender);
+end;
+
+procedure TfrmAccounts.butGetCodeClick(Sender: TObject);
+begin
+  if not GRegistry.CardReader.Enabled then
+  begin
+    ShowMessage('Card reader is disabled');
+    exit;
+  end;
+  if CardReader.Runing then
+  begin
+    bCardReaderHook := true;
+    CardReader.CallBackReadCodeProc := @EnterHardCodeLocal;
+  end else begin
+    try
+      CardReader:= TCardReader.Create;
+      CardReader.PortName := GRegistry.CardReader.ComPort;
+      CardReader.StopAfterReadCode := true;
+      CardReader.CallBackReadCodeProc := @EnterHardCodeLocal;
+      CardReader.Start;
+    except
+      on E : Exception do
+        ShowMessage(E.Message);
+    end;
+  end;
+end;
+
+Procedure EnterHardCodeLocal(code:string);
+begin
+  frmAccounts.editHardCode.Text := code;
+  if CardReader.StopAfterReadCode then
+  begin
+
+  end else begin
+    CardReader.CallBackReadCodeProc := @EnterHardCode;
+    bCardReaderHook := false;
+  end;
+
+end;
+
+
+procedure TfrmAccounts.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if bCardReaderHook then
+    CardReader.CallBackReadCodeProc := @EnterHardCode;
+  if bClearCardReaderAfterCosing Then
+  begin
+    FreeAndNil(CardReader);
+    bClearCardReaderAfterCosing := false;
+  end;
 end;
 
 end.

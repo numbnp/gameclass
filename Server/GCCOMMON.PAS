@@ -4,10 +4,9 @@ interface
 
 uses
   GCConst, frmGCMessageBox, StrUtils,
-  DB, ADODB, SysUtils, ShellAPI;
+  DB, ADODB, SysUtils, ShellAPI, uDsTools;
 
 type
-  PTADODataSet = ^TADODataSet;
   PTDateTime = ^TDateTime;
   PTDouble = ^double;
   pstring = ^string;
@@ -76,6 +75,9 @@ function DateTimeToTimeString(AdtTime: TDateTime; AbShowSeconds: Boolean): Strin
 
 function dsGetVarBySqlQuery(Query: string):string;
 
+procedure dsStartCardReader;
+procedure dsStopCardReader;
+
 //ф-ии состояния клуба в HTML
 procedure GenerateClubInfoName;
 procedure GenerateClubInfoState;
@@ -126,7 +128,8 @@ Uses
   uRegistration,
   uDebugLog,
   comobj,
-  uGCSidelines;
+  uGCSidelines,
+  uCardReader;
 
 // errors
 function ProcessLastError:string;
@@ -317,6 +320,34 @@ begin
   end;
   TarifsCount := 0;
 end;
+
+//Инициализируем кардридер и запускаем
+procedure dsStartCardReader;
+begin
+  try
+    CardReader:= TCardReader.Create;
+    CardReader.PortName := GRegistry.CardReader.ComPort;
+    CardReader.StopAfterReadCode := false;
+    CardReader.CallBackReadCodeProc := @EnterHardCode;
+    CardReader.Start;
+    Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2, 'Card reader start');
+  except
+    on E: Exception do
+      Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2,'CardReader: '+E.Message );
+  end;
+end;
+
+//Останавливаем кардридер
+procedure dsStopCardReader;
+begin
+  if CardReader<>nil then
+  begin
+    CardReader.Stop;
+    FreeAndNil(CardReader);
+  end;
+  Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2, 'Card reader start');
+end;
+
 
 procedure dsLoadTarifs;
 var
@@ -619,7 +650,7 @@ var
   cmd: TADOCommand;
 begin
   if (dsConnected) then
-  begin    
+  begin
     cmd := TADOCommand.Create(nil);
     cmd.Connection := dmMain.cnnMain;
     cmd.CommandTimeout := 10;//5;
@@ -637,13 +668,14 @@ begin
   try
     if (dsConnected) then
     begin
-      pdts^.Connection := dmMain.cnnMain;
+      dsDoQueryEx(dmMain.cnnMain,str,pdts);
+{      pdts^.Connection := dmMain.cnnMain;
       pdts^.LockType := ltOptimistic;
       pdts^.CursorLocation := clUseClient;
       pdts^.CursorType := ctStatic;
       pdts^.CommandText := str;
       pdts^.ParamCheck := false;
-      pdts^.Open;
+      pdts^.Open;}
     end;
   except
     // сперва остановим таймер, чтобы бардака не было

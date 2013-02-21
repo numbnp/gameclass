@@ -228,5 +228,14 @@ object frameClientInterface: TframeClientInterface
       TabOrder = 2
       OnClick = cbxShutdownButtonClick
     end
+    object cbxFullScreenMainWindow: TCheckBox
+      Left = 140
+      Top = 16
+      Width = 145
+      Height = 17
+      Caption = 'Full screen main window'
+      TabOrder = 3
+      OnClick = cbxShowSmallInfoClick
+    end
   end
 end

@@ -36,6 +36,9 @@ type
     lblUserLevel: TLabel;
     cbTarifsLimit: TDBCheckBoxEh;
     cbUserLevel: TComboBox;
+    cbBlockAfterTime: TCheckBox;
+    editBlockAfterTimeSec: TEdit;
+    lblMin1: TLabel;
     procedure cbActiveClick(Sender: TObject);
     procedure cbAutoBlockCompClick(Sender: TObject);
     procedure cbSecCodesClick(Sender: TObject);
@@ -52,6 +55,8 @@ type
     procedure cbAuthenticationIfReservedClick(Sender: TObject);
     procedure cbTarifsLimitClick(Sender: TObject);
     procedure cbUserLevelChange(Sender: TObject);
+    procedure cbBlockAfterTimeClick(Sender: TObject);
+    procedure editBlockAfterTimeSecChange(Sender: TObject);
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
@@ -112,6 +117,8 @@ begin
   cbTarifsLimit.Checked := GAccountSystem.UseDefaultUserLevel;
   cbUserLevel.Text := inttostr(GAccountSystem.DefaultUserLevel);
   cbUserLevel.Enabled := cbTarifsLimit.Checked;
+  cbBlockAfterTime.Checked := GAccountSystem.BlockAccountAfterTime;
+  editBlockAfterTimeSec.Text := IntToStr(GAccountSystem.TimeForBlock);
   EnableControls;
 end;
 
@@ -172,26 +179,24 @@ end;
 procedure TframCustomers.DoDesign;
 var
   bEnabled: Boolean;
+  i:integer;
 begin
   bEnabled := GAccountSystem.Enabled;
-  cbAutoBlockComp.Enabled := bEnabled;
-  cbSecCodes.Enabled := bEnabled;
-  cbAlwaysAllowAuthentication.Enabled := bEnabled;
-  cbxBlockDisplayByStandby.Enabled := bEnabled;
-  cbxAutoLogoff.Enabled := bEnabled;
+  for i:=0 to pnlOptions.ControlCount -1 do
+  begin
+    pnlOptions.Controls[i].Enabled := bEnabled;
+  end;
+  
   edtAutoLogoffSec.Enabled := cbxAutoLogoff.Checked and bEnabled;
-  editMinAddedSumma.Enabled := bEnabled;
-  editWarningAddedSumma.Enabled := bEnabled;
-  butGoAccounts.Enabled := bEnabled;
   cbxUseCheckAccounts.Enabled := bEnabled;
   editWarningAddedSumma.Enabled := bEnabled;
   editMinAddedSumma.Enabled := bEnabled;
   lblMinAddedSumma.Enabled := bEnabled;
   lblWarningAddedSumma.Enabled := bEnabled;
-  lblSec1.Enabled := bEnabled;
+
   cbxUsePeriodOfValidity.Enabled := bEnabled and cbxUseCheckAccounts.Checked;
   edtPeriodOfValidityInDays.Enabled := bEnabled and cbxUseCheckAccounts.Checked;
-  lblDays.Enabled := bEnabled;
+  editBlockAfterTimeSec.Enabled := bEnabled and cbBlockAfterTime.Checked;
 
 end;
 
@@ -304,6 +309,26 @@ begin
   if not ControlsEnabled then exit;
   DisableControls;
   GAccountSystem.DefaultUserLevel := StrToIntDef(cbUserLevel.Text,1);
+  EnableControls;
+end;
+
+procedure TframCustomers.cbBlockAfterTimeClick(Sender: TObject);
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  GAccountSystem.BlockAccountAfterTime := cbBlockAfterTime.Checked;
+  EnableControls;
+  DoDesign;
+end;
+
+procedure TframCustomers.editBlockAfterTimeSecChange(Sender: TObject);
+var
+  intTime:integer;
+begin
+  if not ControlsEnabled then exit;
+  DisableControls;
+  TryStrToInt( editBlockAfterTimeSec.Text ,intTime);
+  GAccountSystem.TimeForBlock := intTime;
   EnableControls;
 end;
 
