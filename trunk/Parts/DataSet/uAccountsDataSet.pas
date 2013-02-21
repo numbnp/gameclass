@@ -99,7 +99,10 @@ begin
       + ', @referal='+ IntToStr(FieldValues['referal'])
       + ', @username=N''' + FieldValues['username']
       + ''', @uname=N''' + FieldValues['uname']
-      + ''', @uotch=N''' + FieldValues['uotch'] + '''');
+      + ''', @uotch=N''' + FieldValues['uotch']
+      + ''', @hardcode=N''' + FieldValues['hardcode']
+      + ''', @ignorehardcode='+IntToStr(FieldValues['ignorehardcode'])
+      );
 
 
   Result := Result and dsDoCommand(Connection, 'exec ' + DS_ACCOUNTS_UPDATECODES

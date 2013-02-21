@@ -199,7 +199,12 @@ uses
   uGCDevicePC in 'GC4\uGCDevicePC.pas',
   uGCSendRecieve in 'GC4\uGCSendRecieve.pas',
   uGCSidelines in 'GC4\uGCSidelines.pas',
-  uGCStrUtils in 'GC4\uGCStrUtils.pas';
+  uGCStrUtils in 'GC4\uGCStrUtils.pas',
+  uDsTools in '..\Parts\DsTools\uDsTools.pas',
+  uComPort in '..\Parts\ComPort\uComPort.pas',
+  uCardReader in '..\Parts\CardReader\uCardReader.pas',
+  uframeAditionalHardware in 'uframeAditionalHardware.pas' {frameAditionalHardware: TFrame},
+  uRegistryCardReader in '..\Parts\Registry\uRegistryCardReader.pas';
 
 {$R *.res}
 

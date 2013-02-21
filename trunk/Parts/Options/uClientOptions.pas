@@ -112,6 +112,7 @@ type
     FbRunPadShowInfoOnDesktopText: String;
     FnRunPadMonitorOff: Boolean;
     FnRunPadLockStation: Boolean;
+    FnFullScreenInterface: Boolean;
 
     // private helper methods
     function _GetStringOption(const AstrFolder: String;
@@ -160,6 +161,8 @@ type
 
     procedure SetRunPadMonitorOff(const AbRunPadMonitorOff: Boolean);
     procedure SetRunPadLockStation(const AbRunPadLockStation: Boolean);
+
+    procedure SetFullScreenInterface(const AbFullScreenInterface: Boolean);
 
     procedure SetTaskList(const AlstTaskList: TStringList);
     procedure SetDebugLog(const AValue: Boolean);
@@ -338,6 +341,8 @@ type
     property RunPadLockStation: Boolean
         read FnRunPadLockStation  write SetRunPadLockStation;
 
+    property FullScreenInterface: Boolean
+        read FnFullScreenInterface write SetFullScreenInterface; 
 
 
 {    // еще не используется
@@ -635,6 +640,11 @@ try
       OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktopText',
       DEF_RunPadShowInfoOnDesktopText);
 
+  FnFullScreenInterface := _GetBooleanOption(
+      OPTIONS_GENERAL_FOLDER, 'FullScreenInterface',
+      DEF_FULL_SCREEN_INTERFACE);
+
+
 {$ENDIF}
 
   FbRestoreClientInfo := _GetBooleanOption(
@@ -759,6 +769,8 @@ try
           FbRunPadInternetControl);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktop', FbRunPadShowInfoOnDesktop);
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RunPadShowInfoOnDesktopText', FbRunPadShowInfoOnDesktopText );
+      SaveOption(OPTIONS_GENERAL_FOLDER, 'FullScreenInterface', FnFullScreenInterface );
+
 {$ENDIF}
       SaveOption(OPTIONS_GENERAL_FOLDER, 'RestoreClientInfo',
           FbRestoreClientInfo);
@@ -948,6 +960,19 @@ begin
 {$ENDIF}
   end;
 end; // TClientOptions.SetRunPadMonitorOff
+
+
+procedure TClientOptions.SetFullScreenInterface(
+    const AbFullScreenInterface: Boolean);
+begin
+  if FnFullScreenInterface <> AbFullScreenInterface then begin
+//    FbDirty := True;
+    FnFullScreenInterface := AbFullScreenInterface;
+{$IFDEF GCCL}
+
+{$ENDIF}
+  end;
+end; // TClientOptions.SetFullScreenInterface
 
 procedure TClientOptions.SetCompNumber(
     const AstrCompNumber: String);

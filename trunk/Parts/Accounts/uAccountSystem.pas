@@ -45,6 +45,11 @@ uses
     function GetDefaultUserLevel: Integer;
     procedure SetDefaultUserLevel(AValue: Integer);
 
+    function GetBlockAccountAfterTime: Boolean;
+    procedure SetBlockAccountAfterTime(AValue: Boolean);
+    function GetTimeForBlock: Integer;
+    procedure SetTimeForBlock(AValue: Integer);
+
   public
     constructor Create(AAutoUpdate: TAutoUpdate);
     destructor Destroy; override;
@@ -87,6 +92,10 @@ uses
     property DefaultUserLevel: Integer
         read GetDefaultUserLevel write SetDefaultUserLevel;
 
+    property BlockAccountAfterTime: Boolean
+        read GetBlockAccountAfterTime write SetBlockAccountAfterTime;
+    property TimeForBlock: Integer
+        read GetTimeForBlock write SetTimeForBlock;
   end;
 
 var
@@ -270,5 +279,25 @@ begin
   GRegistry.AccountSystem.DefaultUserLevel := AValue;
 end;
 
+
+function TAccountSystem.GetBlockAccountAfterTime: Boolean;
+begin
+  Result := GRegistry.AccountSystem.BlockAccountAfterTime;
+end;
+
+function TAccountSystem.GetTimeForBlock: Integer;
+begin
+  Result := GRegistry.AccountSystem.TimeForBlock;
+end;
+
+procedure TAccountSystem.SetBlockAccountAfterTime(AValue: Boolean);
+begin
+  GRegistry.AccountSystem.BlockAccountAfterTime := AValue;
+end;
+
+procedure TAccountSystem.SetTimeForBlock(AValue: Integer);
+begin
+  GRegistry.AccountSystem.TimeForBlock := AValue;
+end;
 
 end.

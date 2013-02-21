@@ -35,6 +35,7 @@ type
     cbxShutdownButton: TCheckBox;
     lblDefAction: TLabel;
     cbDefAction: TComboBox;
+    cbxFullScreenMainWindow: TCheckBox;
     procedure edtURLCompFreeChange(Sender: TObject);
     procedure edtURLTopChange(Sender: TObject);
     procedure edtUseTextMessageMinChange(Sender: TObject);

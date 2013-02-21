@@ -1,11 +1,11 @@
 object frmAccounts: TfrmAccounts
-  Left = 1561
-  Top = 94
+  Left = 315
+  Top = 192
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
-  ClientHeight = 552
-  ClientWidth = 769
+  ClientHeight = 575
+  ClientWidth = 774
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,6 +15,7 @@ object frmAccounts: TfrmAccounts
   KeyPreview = True
   OldCreateOrder = False
   Position = poOwnerFormCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
@@ -745,7 +746,7 @@ object frmAccounts: TfrmAccounts
   end
   object gbBalanceInfo: TGroupBox
     Left = 264
-    Top = 389
+    Top = 414
     Width = 501
     Height = 129
     Caption = #1041#1072#1083#1072#1085#1089' '#1091#1095#1077#1090#1085#1086#1081' '#1079#1072#1087#1080#1089#1080
@@ -868,7 +869,7 @@ object frmAccounts: TfrmAccounts
   end
   object butClose: TButton
     Left = 609
-    Top = 521
+    Top = 546
     Width = 75
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -877,7 +878,7 @@ object frmAccounts: TfrmAccounts
   end
   object butHelp: TButton
     Left = 689
-    Top = 521
+    Top = 546
     Width = 75
     Height = 25
     Caption = #1055#1086#1084#1086#1097#1100
@@ -885,10 +886,10 @@ object frmAccounts: TfrmAccounts
     OnClick = butHelpClick
   end
   object grdAccounts: TDBGridEh
-    Left = 8
+    Left = 12
     Top = 56
     Width = 249
-    Height = 461
+    Height = 485
     AutoFitColWidths = True
     DataSource = dsrcAccounts
     FooterColor = clWindow
@@ -927,19 +928,19 @@ object frmAccounts: TfrmAccounts
     Left = 264
     Top = 287
     Width = 501
-    Height = 102
+    Height = 126
     Caption = #1041#1077#1079#1086#1087#1072#1089#1085#1086#1089#1090#1100
     TabOrder = 6
     object lblUserLevel: TLabel
       Left = 7
-      Top = 73
+      Top = 97
       Width = 90
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072':'
     end
     object lblForceTariff: TLabel
       Left = 196
-      Top = 72
+      Top = 96
       Width = 123
       Height = 13
       Caption = #1055#1088#1080#1085#1091#1076#1080#1090#1077#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092':'
@@ -951,9 +952,16 @@ object frmAccounts: TfrmAccounts
       Height = 13
       Caption = #1055#1072#1088#1086#1083#1100
     end
+    object lblHardCode: TLabel
+      Left = 8
+      Top = 49
+      Width = 50
+      Height = 13
+      Caption = 'Hard code'
+    end
     object editUserLevel: TDBEditEh
       Left = 104
-      Top = 65
+      Top = 89
       Width = 73
       Height = 21
       DataField = 'userlevel'
@@ -965,7 +973,7 @@ object frmAccounts: TfrmAccounts
     end
     object editForceTariff: TDBEditEh
       Left = 395
-      Top = 48
+      Top = 72
       Width = 73
       Height = 21
       DataField = 'force_tariff'
@@ -977,9 +985,9 @@ object frmAccounts: TfrmAccounts
     end
     object cbTarifsLimit: TDBCheckBoxEh
       Left = 8
-      Top = 45
+      Top = 69
       Width = 153
-      Height = 25
+      Height = 28
       Caption = #1054#1075#1088#1072#1085#1080#1095#1080#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
       DataField = 'assigntarif'
       DataSource = dsrcAccounts
@@ -990,7 +998,7 @@ object frmAccounts: TfrmAccounts
     end
     object cbUserLevel: TComboBox
       Left = 100
-      Top = 70
+      Top = 94
       Width = 73
       Height = 21
       ItemHeight = 13
@@ -1013,7 +1021,7 @@ object frmAccounts: TfrmAccounts
     end
     object cbForceTariff: TComboBox
       Left = 320
-      Top = 69
+      Top = 93
       Width = 169
       Height = 21
       ItemHeight = 13
@@ -1094,6 +1102,46 @@ object frmAccounts: TfrmAccounts
       TabOrder = 9
       Text = '1234567890'
     end
+    object editHardCode: TDBEditEh
+      Left = 60
+      Top = 45
+      Width = 141
+      Height = 21
+      DataField = 'hardcode'
+      DataSource = dsrcAccounts
+      EditButtons = <>
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 10
+      Visible = True
+      OnChange = editAccountPassChange
+    end
+    object cbIgnoreHardCode: TDBCheckBoxEh
+      Left = 240
+      Top = 44
+      Width = 105
+      Height = 25
+      Caption = 'Ignore hard code'
+      DataField = 'ignorehardcode'
+      DataSource = dsrcAccounts
+      TabOrder = 11
+      ValueChecked = '1'
+      ValueUnchecked = '0'
+      OnClick = cbIgnoreHardCodeClick
+    end
+    object butGetCode: TButton
+      Left = 200
+      Top = 44
+      Width = 33
+      Height = 25
+      Caption = 'Get'
+      TabOrder = 12
+      OnClick = butGetCodeClick
+    end
   end
   object gbFilter: TGroupBox
     Left = 8
@@ -1121,7 +1169,7 @@ object frmAccounts: TfrmAccounts
   end
   object butAccountAdd: TButton
     Left = 8
-    Top = 521
+    Top = 547
     Width = 80
     Height = 25
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
@@ -1130,7 +1178,7 @@ object frmAccounts: TfrmAccounts
   end
   object butAccountSave: TButton
     Left = 176
-    Top = 521
+    Top = 547
     Width = 80
     Height = 25
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
@@ -1139,7 +1187,7 @@ object frmAccounts: TfrmAccounts
   end
   object butAccountDelete: TButton
     Left = 92
-    Top = 521
+    Top = 547
     Width = 80
     Height = 25
     Caption = #1059#1076#1072#1083#1080#1090#1100

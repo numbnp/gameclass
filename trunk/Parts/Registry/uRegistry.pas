@@ -17,7 +17,8 @@ uses
   uRegistryInfo,
   uRegistryReportStrings,
   uRegistryControlCommands,
-  uRegistryMail;
+  uRegistryMail,
+  uRegistryCardReader;
 
 type
   TGCRegistry = class(TRegistryDataSet)
@@ -35,6 +36,7 @@ type
     FRegistryReportStrings: TRegistryReportStrings;
     FRegistryControlCommands: TRegistryControlCommands;
     FRegistryMail: TRegistryMail;
+    FRegistryCardReader: TRegistryCardReader;
 
     function GetBaseVersion: String;
     function GetItem(AstrValue: String): TRegistryRecord;
@@ -78,6 +80,9 @@ type
         read FRegistryControlCommands;
     property Mail: TRegistryMail
         read FRegistryMail;
+    property CardReader: TRegistryCardReader
+        read FRegistryCardReader;
+
   end;
 
 var
@@ -109,6 +114,7 @@ begin
   FRegistryControlCommands := TRegistryControlCommands.Create(Self,
       FRegistryRecord);
   FRegistryMail := TRegistryMail.Create(Self, FRegistryRecord);
+  FRegistryCardReader := TRegistryCardReader.Create(Self, FRegistryRecord);
 
 end;
 
