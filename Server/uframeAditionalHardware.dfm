@@ -40,6 +40,7 @@ object frameAditionalHardware: TframeAditionalHardware
         ItemHeight = 13
         ItemIndex = 0
         TabOrder = 0
+        Text = 'COM1'
         OnChange = cbPortChange
         Items.Strings = (
           'COM1')
