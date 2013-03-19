@@ -46,7 +46,7 @@ uses
   uRegistryInterface,
   uY2KString,
   uTariffication, uRegistryControlCommands, uRegistryCardReader,
-  GClangutils,StdConvs, uComPort, uCardReader;
+  GClangutils,StdConvs, uComPort, uCardReader, uZ2CardReader;
 
 { TframeAditionalHardware }
 
@@ -122,9 +122,9 @@ end;
 procedure TframeAditionalHardware.butTestClick(Sender: TObject);
 begin
   try
-    CardReader:= TCardReader.Create;
+    CardReader:= TZ2CardReader.Create;
     CardReader.PortName := GRegistry.CardReader.ComPort;
-    CardReader.StopAfterReadCode := false;
+    CardReader.StopAfterReadCode := true;
     CardReader.CallBackReadCodeProc := @EnterHardCodeLocal;
     CardReader.Start;
   except

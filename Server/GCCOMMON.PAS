@@ -129,7 +129,8 @@ Uses
   uDebugLog,
   comobj,
   uGCSidelines,
-  uCardReader;
+  uCardReader,
+  uZ2CardReader;
 
 // errors
 function ProcessLastError:string;
@@ -325,7 +326,7 @@ end;
 procedure dsStartCardReader;
 begin
   try
-    CardReader:= TCardReader.Create;
+    CardReader:= TZ2CardReader.Create;
     CardReader.PortName := GRegistry.CardReader.ComPort;
     CardReader.StopAfterReadCode := false;
     CardReader.CallBackReadCodeProc := @EnterHardCode;

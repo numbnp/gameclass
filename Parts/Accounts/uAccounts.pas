@@ -140,7 +140,7 @@ var
 begin
     ResultId := -1;
     dts := TADODataSet.Create(nil);
-    dsQuery :='exec ' + DS_ACCOUNTS_ID_BY_HARDCODE + ' @hardcode='+AstrHardCode;
+    dsQuery :='exec ' + DS_ACCOUNTS_ID_BY_HARDCODE + ' @hardcode='''+AstrHardCode + '''';
     dsDoQuery(Connection, dts, dsQuery);
     if (not dts.Recordset.EOF) then
     begin

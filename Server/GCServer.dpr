@@ -204,7 +204,9 @@ uses
   uComPort in '..\Parts\ComPort\uComPort.pas',
   uCardReader in '..\Parts\CardReader\uCardReader.pas',
   uframeAditionalHardware in 'uframeAditionalHardware.pas' {frameAditionalHardware: TFrame},
-  uRegistryCardReader in '..\Parts\Registry\uRegistryCardReader.pas';
+  uRegistryCardReader in '..\Parts\Registry\uRegistryCardReader.pas',
+  uPercoCardReader in '..\Parts\CardReader\uPercoCardReader.pas',
+  uZ2CardReader in '..\Parts\CardReader\uZ2CardReader.pas';
 
 {$R *.res}
 
