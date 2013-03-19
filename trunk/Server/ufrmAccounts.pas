@@ -7,7 +7,7 @@ uses
   Dialogs, ComCtrls, ExtCtrls, StdCtrls,
   GCLangUtils, Grids, DBGridEh, DB, Mask, DBCtrlsEh, DBCtrls,
   ADODB, EDBImage, RxGIF, ToolEdit, RXDBCtrl,
-  uTariffication, uCardReader;
+  uTariffication, uCardReader, uZ2CardReader;
 
 type
   TfrmAccounts = class(TForm)
@@ -627,7 +627,7 @@ var i: Integer;
 begin
   if CardReader=nil then
   begin
-    CardReader := TCardReader.Create;
+    CardReader := TZ2CardReader.Create;
     bClearCardReaderAfterCosing := True;
   end else
     bClearCardReaderAfterCosing:= false;
@@ -848,7 +848,7 @@ begin
     CardReader.CallBackReadCodeProc := @EnterHardCodeLocal;
   end else begin
     try
-      CardReader:= TCardReader.Create;
+      CardReader:= TZ2CardReader.Create;
       CardReader.PortName := GRegistry.CardReader.ComPort;
       CardReader.StopAfterReadCode := true;
       CardReader.CallBackReadCodeProc := @EnterHardCodeLocal;

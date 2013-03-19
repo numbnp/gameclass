@@ -18,8 +18,7 @@ uses
   Menus,ComCtrls, SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
   DateUtils, ADODB, Shlobj, registry, Proxy,
   IdBaseComponent, IdUDPBase, IdUDPServer, IdSocketHandle,
-  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines,
-  uCardReader;
+  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines;
 
 // proxy
 procedure ProxyInitialize;
@@ -666,7 +665,6 @@ begin
     Application.ProcessMessages;
 {    if not isManager then
       dsSendOptionsToClients;}
-    Application.ProcessMessages;
     if (not FunctionAmIRight(FN_REMOTE_CONTROL)) then
       dsControlClubStart
     else
