@@ -1,6 +1,6 @@
 object frmAccounts: TfrmAccounts
-  Left = 315
-  Top = 192
+  Left = 346
+  Top = 325
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #1059#1095#1077#1090#1085#1099#1077' '#1079#1072#1087#1080#1089#1080' ( '#1073#1072#1079#1072' '#1082#1083#1080#1077#1085#1090#1086#1074' )'
@@ -551,6 +551,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 1
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object editAccountNumber: TDBEditEh
       Left = 176
@@ -563,6 +564,7 @@ object frmAccounts: TfrmAccounts
       ReadOnly = True
       TabOrder = 0
       Visible = True
+      OnEnter = editAccountNumberEnter
     end
     object editAccountAddress: TDBEditEh
       Left = 176
@@ -575,6 +577,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 4
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object editAccountPhone: TDBEditEh
       Left = 176
@@ -587,6 +590,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 2
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object butPhoto: TButton
       Left = 80
@@ -609,6 +613,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '0'
       ValueUnchecked = '1;-1'
       OnClick = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object cbAccountBlocked: TDBCheckBoxEh
       Left = 8
@@ -622,6 +627,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '1;-1'
       ValueUnchecked = '0'
       OnClick = cbAccountBlockedClick
+      OnEnter = editAccountNumberEnter
     end
     object editAccountEmail: TDBEditEh
       Left = 176
@@ -634,6 +640,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 3
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object memoAccountMemo: TDBMemo
       Left = 176
@@ -645,6 +652,7 @@ object frmAccounts: TfrmAccounts
       ScrollBars = ssVertical
       TabOrder = 8
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object imgAccountPhoto: TEDBImage
       Left = 8
@@ -670,6 +678,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '1;-1'
       ValueUnchecked = '0'
       OnClick = cbxPeriodOfValidityClick
+      OnEnter = editAccountNumberEnter
     end
     object dtpExpirationDate: TDBDateTimeEditEh
       Left = 8
@@ -682,6 +691,7 @@ object frmAccounts: TfrmAccounts
       Kind = dtkDateEh
       TabOrder = 11
       Visible = True
+      OnEnter = editAccountNumberEnter
     end
     object editSername: TDBEditEh
       Left = 340
@@ -694,6 +704,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 12
       Visible = True
       OnChange = editSernameChange
+      OnEnter = editAccountNumberEnter
     end
     object editName: TDBEditEh
       Left = 340
@@ -706,6 +717,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 13
       Visible = True
       OnChange = editNameChange
+      OnEnter = editAccountNumberEnter
     end
     object editOt: TDBEditEh
       Left = 340
@@ -718,6 +730,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 14
       Visible = True
       OnChange = editOtChange
+      OnEnter = editAccountNumberEnter
     end
     object cbReferal: TComboBox
       Left = 8
@@ -728,6 +741,7 @@ object frmAccounts: TfrmAccounts
       ItemIndex = 0
       TabOrder = 15
       OnChange = cbReferalChange
+      OnEnter = editAccountNumberEnter
       Items.Strings = (
         '')
     end
@@ -797,6 +811,7 @@ object frmAccounts: TfrmAccounts
       ReadOnly = True
       TabOrder = 6
       Visible = True
+      OnEnter = editAccountNumberEnter
     end
     object editSummary: TDBEditEh
       Left = 82
@@ -810,6 +825,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 2
       Visible = True
       OnChange = editSummaryChange
+      OnEnter = editAccountNumberEnter
     end
     object butBalanceAdd: TButton
       Left = 218
@@ -840,6 +856,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 3
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object editPrivelegedDiscount: TDBEditEh
       Left = 100
@@ -852,6 +869,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 5
       Visible = True
       OnChange = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
     object cbAccountPrivileged: TDBCheckBoxEh
       Left = 8
@@ -865,6 +883,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '1'
       ValueUnchecked = '0'
       OnClick = editAccountNameChange
+      OnEnter = editAccountNumberEnter
     end
   end
   object butClose: TButton
@@ -995,6 +1014,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '1'
       ValueUnchecked = '0'
       OnClick = cbTarifsLimitClick
+      OnEnter = editAccountNumberEnter
     end
     object cbUserLevel: TComboBox
       Left = 100
@@ -1006,6 +1026,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 1
       Text = '1'
       OnChange = cbUserLevelChange
+      OnEnter = editAccountNumberEnter
       Items.Strings = (
         '0'
         '1'
@@ -1027,6 +1048,7 @@ object frmAccounts: TfrmAccounts
       ItemHeight = 13
       TabOrder = 3
       OnChange = cbForceTariffChange
+      OnEnter = editAccountNumberEnter
       Items.Strings = (
         '0'
         '1'
@@ -1048,6 +1070,7 @@ object frmAccounts: TfrmAccounts
       Caption = #1053#1086#1074#1099#1077' '#1082#1086#1076#1099
       TabOrder = 5
       OnClick = butGenerateSecCodesClick
+      OnEnter = editAccountNumberEnter
     end
     object butViewSecCodes: TButton
       Left = 345
@@ -1057,6 +1080,7 @@ object frmAccounts: TfrmAccounts
       Caption = #1044#1086#1087'. '#1082#1086#1076#1099
       TabOrder = 6
       OnClick = butViewSecCodesClick
+      OnEnter = editAccountNumberEnter
     end
     object butClearPass: TButton
       Left = 240
@@ -1066,6 +1090,7 @@ object frmAccounts: TfrmAccounts
       Caption = #1057#1073#1088#1086#1089#1080#1090#1100' '#1087#1072#1088#1086#1083#1100
       TabOrder = 7
       OnClick = butClearPassClick
+      OnEnter = editAccountNumberEnter
     end
     object editAccountPass: TDBEditEh
       Left = 60
@@ -1101,6 +1126,7 @@ object frmAccounts: TfrmAccounts
       PasswordChar = '*'
       TabOrder = 9
       Text = '1234567890'
+      OnEnter = editAccountNumberEnter
     end
     object editHardCode: TDBEditEh
       Left = 60
@@ -1119,6 +1145,7 @@ object frmAccounts: TfrmAccounts
       TabOrder = 10
       Visible = True
       OnChange = editAccountPassChange
+      OnEnter = editAccountNumberEnter
     end
     object cbIgnoreHardCode: TDBCheckBoxEh
       Left = 240
@@ -1132,6 +1159,7 @@ object frmAccounts: TfrmAccounts
       ValueChecked = '1'
       ValueUnchecked = '0'
       OnClick = cbIgnoreHardCodeClick
+      OnEnter = editAccountNumberEnter
     end
     object butGetCode: TButton
       Left = 200

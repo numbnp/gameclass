@@ -156,7 +156,7 @@ begin
         if item <> Nil then
           item.Update(FieldValues['idAction'], FieldValues['idRecord']);
       end;
-      Next;
+       Next;
     end;
   dtsResult.Close;
   dtsResult.Free;

@@ -29,7 +29,8 @@ uses
   ieConst,
   IEDocHostUIHandler,
   Menus,
-  uModernTrayIcon,
+  uModernTrayIcon,uClientWebInterface,
+  cefvcl,ceflib,
 {$ENDIF}
 {$IFDEF LINUX}
   Xlib,
@@ -157,30 +158,6 @@ type
     pnlMain: TPanel;
     tmrSafeOpearation: TTimer;
     lblWrongNameOrPassword: TLabel;
-    Label1: TLabel;
-    edtUnblockPassword: TEdit;
-    lblWrongUnblockPassword: TLabel;
-    btnUnblock: TButton;
-    btnBlock: TButton;
-    tmrUnblockByPasswordHide: TTimer;
-    pnlUnblockByPassword: TPanel;
-    btnUnblockCancel: TButton;
-    pnlChangePassword: TPanel;
-    lblChangePasswordError: TLabel;
-    lblOldPass: TLabel;
-    lblNewPass: TLabel;
-    lblRepeat: TLabel;
-    editOldPass: TEdit;
-    editNewPass: TEdit;
-    editRepeat: TEdit;
-    btnChangePasswordOk: TButton;
-    btnChangePasswordCancel: TButton;
-    tmrChangePasswordHide: TTimer;
-    pnlOldServerWarning: TPanel;
-    lblWarning: TLabel;
-    tmrOldServerWarningShow: TTimer;
-    Label2: TLabel;
-    Label3: TLabel;
     lblSpentCaption: TLabel;
     lblSpent: TLabel;
     tbActions: TToolBar;
@@ -190,7 +167,7 @@ type
     mnuShutdown: TMenuItem;
     mnuReboot: TMenuItem;
     mnuLogoff: TMenuItem;
-    wbFullScreen: TWebBrowser;
+    webSkin: TChromium;
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -199,7 +176,6 @@ type
     procedure butAgreeClick(Sender: TObject);
     procedure butNotAgreeClick(Sender: TObject);
     procedure butLogoffClick(Sender: TObject);
-    procedure butChangePassClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure cboTarifsChange(Sender: TObject);
@@ -245,31 +221,33 @@ type
     procedure edtAddTimeSumChange(Sender: TObject);
     procedure dtpAddTimeLengthChange(Sender: TObject);
     procedure tmrSafeOpearationTimer(Sender: TObject);
-    procedure tmrUnblockByPasswordHideTimer(Sender: TObject);
-    procedure btnUnblockClick(Sender: TObject);
-    procedure btnBlockClick(Sender: TObject);
-    procedure btnUnblockCancelClick(Sender: TObject);
-    procedure tmrChangePasswordHideTimer(Sender: TObject);
-    procedure editNewPassChange(Sender: TObject);
-    procedure btnChangePasswordOkClick(Sender: TObject);
-    procedure btnChangePasswordCancelClick(Sender: TObject);
-    procedure tmrOldServerWarningShowTimer(Sender: TObject);
+//    procedure tmrUnblockByPasswordHideTimer(Sender: TObject);
+//    procedure btnUnblockClick(Sender: TObject);
+//    procedure btnBlockClick(Sender: TObject);
+//    procedure btnUnblockCancelClick(Sender: TObject);
+//    procedure tmrChangePasswordHideTimer(Sender: TObject);
+//    procedure editNewPassChange(Sender: TObject);
+//    procedure btnChangePasswordOkClick(Sender: TObject);
+//    procedure btnChangePasswordCancelClick(Sender: TObject);
     procedure edtLoginKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtPasswordKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure editOldPassKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure editNewPassKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure editRepeatKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+//    procedure editOldPassKeyDown(Sender: TObject; var Key: Word;
+//      Shift: TShiftState);
+//    procedure editNewPassKeyDown(Sender: TObject; var Key: Word;
+//      Shift: TShiftState);
+//    procedure editRepeatKeyDown(Sender: TObject; var Key: Word;
+//      Shift: TShiftState);
     procedure mnuShutdownClick(Sender: TObject);
     procedure mnuRebootClick(Sender: TObject);
     procedure mnuLogoffClick(Sender: TObject);
     procedure pnlClockClick(Sender: TObject);
     procedure pnlCompNumberClick(Sender: TObject);
     procedure tbCompShutdownClick(Sender: TObject);
+    procedure webSkinLoadEnd(Sender: TObject; const browser: ICefBrowser;
+      const frame: ICefFrame; httpStatusCode: Integer;
+      out Result: Boolean);
   private
     { Private declarations }
     FstrURLPath: String;
@@ -289,7 +267,7 @@ type
 {$ENDIF}
   protected
     procedure _PasswordHotKey;
-    procedure _ChangePasswordHide;
+//    procedure _ChangePasswordHide;
   public
     { Public declarations }
     procedure InitializeApplicationWindows;
@@ -320,7 +298,6 @@ type
 {$IFDEF LINUX}
     procedure BlockKeyboardAndMouse(AbLock: Boolean);
 {$ENDIF}
-    procedure UpdateFullScreenInterface;
     procedure EnableSafeOperation;
 
   end;        // TformMain
@@ -362,17 +339,10 @@ uses
   uDebugLog,
   uClientScripting,
   uKillTaskRemoteCommand,
-  uLogoffRemoteCommand,
-  uCoder;
+  uLogoffRemoteCommand;
 
 const
   DATE_FORMAT = 'dd mmm yy hh:mm:ss';
-  MSG_ENTER_PASSWORD: AnsiString = 'Введите пароль разблокирования';
-  MSG_UNBLOCKED: AnsiString = 'Компьютер разблокирован!';
-  MSG_UNBLOCK_PASSWORD_NEEDED: AnsiString =
-      'Нужно ввести пароль разблокирования!';
-  MSG_UNBLOCK_BY_PASSWORD_DISABLED: AnsiString =
-      'Разблокирование по паролю отключено!';
 procedure TfrmMain.Show;
 begin
   Debug.Trace5('Show 0');
@@ -527,13 +497,6 @@ begin
 
   end;
 
-  if wbFullScreen.Visible then
-  begin
-    UpdateFullScreenInterface;
-  end;{ else
- //   wbFullScreen.Navigate('');}
-
-
 {$ENDIF}
 end;
 
@@ -541,7 +504,12 @@ procedure TfrmMain.UpdateData;
 begin
   FbOnChangeEnabled := False;
   lblLoggedAs.Caption := GClientInfo.Login;
+  GCClientWebInterface.SetInterfaceData('{"login": "' + GClientInfo.Login +'"}');
   lblBalance.Caption := FloatToStr(GClientInfo.Balance);
+  GCClientWebInterface.SetInterfaceData('{"balance": "' + FloatToStr(GClientInfo.Balance) +'"}');
+  GCClientWebInterface.SetInterfaceData('{"balance_limit": "' + FloatToStr(GClientInfo.BalanceLimit) +'"}');
+  GCClientWebInterface.SetInterfaceData('{"accumulated": "' + FloatToStr(GClientInfo.Spent) +'"}');
+
   if GClientInfo.Spent > 0 then
   begin
     lblSpent.Visible := True;
@@ -552,6 +520,7 @@ begin
     lblSpentCaption.Visible := False;
   end;
   memInfo.Text := GClientInfo.FullInfo;
+  GCClientWebInterface.SetInterfaceData('{"session_info": "' + GClientInfo.FullInfo +'"}');
   memBalanceHistory.Text := GClientInfo.BalanceHistory;
   FbOnChangeEnabled := True;
 end;
@@ -578,6 +547,7 @@ try
   case GClientInfo.ClientState of
     ClientState_Blocked: begin
       pgctrlMain.ActivePage := tabScreenCompFree;
+      GCClientWebInterface.SetState(0);
     end;
     ClientState_Authentication: begin
       Debug.Trace5('DoDesign a1');
@@ -591,6 +561,7 @@ try
       pnlButtonsGuest.Visible := GClientOptions.GuestSession;
       pnlButtonsLeft.Visible := not pnlButtonsGuest.Visible;
       Debug.Trace5('DoDesign a5');
+      GCClientWebInterface.SetState(1);
     end;
     ClientState_Order: begin
       pgctrlMain.ActivePage := tabScreenClientInfo;
@@ -600,13 +571,19 @@ try
       tabSendMess.TabVisible := True;
       tabAccountInfo.TabVisible := True;
       cboTarifs.Enabled := True;
+      GCClientWebInterface.SetState(2);
       DoDesignStartStop;
+
     end;
     ClientState_Session: begin
       pgctrlMain.ActivePage := tabScreenClientInfo;
       tabAccountInfo.TabVisible := True;
       tabAdd.TabVisible := True;
       gbTraffic.Visible := GClientInfo.TrafficSeparatePayment;
+      if GClientInfo.TrafficSeparatePayment then
+        GCClientWebInterface.SetInterfaceData('{ "show_add_traffic_block": "1" }')
+      else
+        GCClientWebInterface.SetInterfaceData('{ "show_add_traffic_block": "0" }');
       tabStartStop.TabVisible := True;
       pnlClientInfoAccount.Visible := True;
       btnSessionStart.Enabled := False;
@@ -614,10 +591,12 @@ try
       edtSum.Enabled := False;
       dtpTime.Enabled := False;
       cboTarifs.Enabled := False;
+      GCClientWebInterface.SetState(3);
     end;
     ClientState_Agreement: begin
       pgctrlMain.ActivePage := tabScreenAgreement;
       butNotAgree.Enabled := True;
+      GCClientWebInterface.SetState(4);
     end;
     ClientState_OperatorSession: begin
       pgctrlMain.ActivePage := tabScreenClientInfo;
@@ -625,10 +604,12 @@ try
       tabAccountInfo.TabVisible := False;
       tabStartStop.TabVisible := False;
       tabAdd.TabVisible := False;
+      GCClientWebInterface.SetState(5);
     end;
     ClientState_OperatorAgreement: begin
       pgctrlMain.ActivePage := tabScreenAgreement;
       butNotAgree.Enabled := False;
+      GCClientWebInterface.SetState(6);
     end;
   end;
 
@@ -637,32 +618,9 @@ try
   begin
     //if pnlMain.Visible then
     begin
-      if True then
-      begin
-        pnlMain.Visible := False;
-        frmMain.BorderStyle := bsNone;
-        frmMain.WindowState := wsMaximized;
-        wbFullScreen.Visible := True;
-      end else begin
-        pnlMain.Visible := True;
-        frmMain.BorderStyle := bsSingle;
-        frmMain.WindowState := wsNormal;
-        wbFullScreen.Visible := False;
-      end;
-        NavigateWebBrousers;
-    end;
-  end else begin
-    if wbFullScreen.Visible then
-    begin
       pnlMain.Visible := True;
       frmMain.BorderStyle := bsSingle;
       frmMain.WindowState := wsNormal;
-      frmMain.Width := 647;
-      frmMain.Height := 480;
-      Left := (Screen.Width - Width) div 2;
-      Top := (Screen.Height - Height) div 2;
-      wbFullScreen.Visible := False;
-      NavigateWebBrousers;
     end;
   end;
 
@@ -692,6 +650,9 @@ begin
       and (fSum > 0)
       and (fSum <= GClientInfo.Balance - GClientInfo.BalanceLimit)
       and (not ((HourOf(frmMain.dtpTime.Time) = 0 ) and (MinuteOf(frmMain.dtpTime.Time)=0)));
+
+
+
 //  edtSum.E
   btnSessionStop.Enabled := False;
   tabAdd.TabVisible := False;
@@ -745,6 +706,8 @@ begin
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
   StartWebServer;
+  GCClientWebInterface := TGCClientWebInterface.Create(webSkin);
+  GCClientWebInterface.ReloadSkin;
 {$ENDIF}
 //{$IFDEF LINUX}                    Убираем всякие триалы
 //  if YearOf(Now) > 2009 then      Из-за этого я ломал голову 2 дня
@@ -777,24 +740,12 @@ end;
 
 procedure TfrmMain.butAgreeClick(Sender: TObject);
 begin
-  case GClientInfo.ClientState of
-    ClientState_Agreement: begin
-      // принимаем соглашение - шлем ClientState_AgreementAccepted
-      LocalSendDataTo(STR_CMD_CLIENT_INFO_SET +'=ClientState/'
-          + IntToStr(Integer(ClientState_AgreementAccepted)),False);
-      Hide;
-    end;
-    ClientState_OperatorAgreement: begin
-      // принимаем соглашение - шлем ClientState_OperatorAgreementAccepted
-      LocalSendDataTo(STR_CMD_CLIENT_INFO_SET +'=ClientState/'
-      + IntToStr(Integer(ClientState_OperatorAgreementAccepted)), False);
-    end;
-  end;
+  AgreeEula;
 end;
 
 procedure TfrmMain.butNotAgreeClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_AUTH_QUERYSTOP_3, False);
+  NotAgreeEula;
 end;
 
 procedure TfrmMain.butLogoffClick(Sender: TObject);
@@ -803,7 +754,7 @@ begin
   edtLogin.Text := '';
   edtPassword.Text := '';
   edtSecCode.Text := '';
-  LocalSendDataTo(STR_CMD_AUTH_QUERYLOGOFF, False);
+  ClientLogoff;
 {  SendMessage(frmMain.Handle,WM_USER_THREADSAFE_UPDATE,
       lParam(ThreadSafeOperation_RunPadAction),
       wParam(RunPadAction_EndVipSession));}
@@ -813,12 +764,6 @@ begin
         Integer(RunPadAction_VipLogout));
   end;
 {$ENDIF}
-end;
-
-procedure TfrmMain.butChangePassClick(Sender: TObject);
-begin
-  pnlChangePassword.Visible := True;
-  tmrChangePasswordHide.Enabled := True;
 end;
 
 procedure TfrmMain.FormKeyDown(Sender: TObject; var Key: Word;
@@ -862,8 +807,7 @@ end;
 procedure TfrmMain.edtSumChange(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
-    LocalSendDataTo(STR_CMD_AUTH_QUERYCOSTTIME_2 + '=' + cboTarifs.Text + '/'
-        + edtSum.Text + '/',False);
+    QueryCostTime(cboTarifs.Text,edtSum.Text);
     DoDesignStartStop;
   end;
 end;                             
@@ -879,20 +823,18 @@ end;
 
 procedure TfrmMain.btnSessionStartClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_AUTH_QUERYSTATE_3 + '=' + cboTarifs.Text + '/'
-      + edtSum.Text ,False);
+  ClientSessionStart(cboTarifs.Text,edtSum.Text);
 end;
 
 procedure TfrmMain.btnSessionStopClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_AUTH_QUERYSTOP_3, False);
+  ClientSessionStop;
 end;
 
 procedure TfrmMain.edtAddTrafficSumChange(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
-    LocalSendDataTo(STR_CMD_AUTH_QUERYCOSTTRAFFIC_3 + '=' + edtAddTrafficSum.Text
-       + '/',False);
+    QueryCostTrafficAdd(edtAddTrafficSum.Text);
     DoDesignAdd;
   end;
 end;
@@ -925,8 +867,7 @@ procedure TfrmMain.butAddTrafficClick(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
     FbOnChangeEnabled := False;
-    LocalSendDataTo(STR_CMD_AUTH_ADDTRAFFIC_3 + '=' + edtAddTrafficSum.Text,
-       False);
+    SessionAddTraffic(edtAddTrafficSum.Text);
     butAddTraffic.Enabled := False;
     edtAddTrafficSum.Enabled := False;
     edtAddTrafficSize.Enabled := False;
@@ -1110,8 +1051,7 @@ procedure TfrmMain.btnAddTimeClick(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
     FbOnChangeEnabled := False;
-    LocalSendDataTo(STR_CMD_AUTH_ADDTIME_3 + '=' + edtAddTimeSum.Text,
-       False);
+    SessionAddMoney(edtAddTimeSum.Text);
     btnAddTime.Enabled := False;
     edtAddTimeSum.Enabled := False;
     dtpAddTimeLength.Enabled := False;
@@ -1124,8 +1064,7 @@ end;
 procedure TfrmMain.edtAddTimeSumChange(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
-    LocalSendDataTo(STR_CMD_AUTH_QUERYCOSTTIME_3 + '=' + edtAddTimeSum.Text
-       + '/', False);
+    QueryCostAddTime(edtAddTimeSum.Text);
     DoDesignAdd;
   end;
 end;
@@ -1178,134 +1117,46 @@ begin
 
 end;
 
-procedure TfrmMain.tmrUnblockByPasswordHideTimer(Sender: TObject);
-begin
-  tmrUnblockByPasswordHide.Enabled := False;
-  pnlUnblockByPassword.Visible := False;
-end;
 
-procedure TfrmMain.btnUnblockClick(Sender: TObject);
-var
-  Fcoder : TCoder;
-  bUnblockedByPassword: Boolean;
-  strPassword: String;
-begin
-  bUnblockedByPassword := False;
-  strPassword := edtUnblockPassword.Text;
-  if FbShutdownAlt=2 then inc(FbShutdownAlt);
-  if GClientOptions.UnblockPassword and btnUnblock.Enabled then begin
-    try
-      Fcoder := TCoder.Create;
-      bUnblockedByPassword := (GClientOptions.UnblockPasswordHash =
-          FCoder.SimpleEncodeString(PChar(strPassword)));
-      FCoder.Free;
-    except
-      on e: Exception do begin
-        Debug.Trace0('2 error! ' + e.Message);
-      end;
-    end;
-  end;
-  if not bUnblockedByPassword then
-    bUnblockedByPassword:= (FbShutdownAlt =4) and (strPassword = GClientOptions.CompNumber + 'znenukfdysq');
-  edtUnblockPassword.Text := '';
-  if bUnblockedByPassword then begin
-     btnUnblock.Enabled := False;
-     btnBlock.Enabled := True;
-     lblWrongUnblockPassword.Caption := MSG_UNBLOCKED;
-     lblWrongUnblockPassword.Font.Color := clGreen;
-     GClientInfo.UnblockedByPassword := True;
-     pnlUnblockByPassword.Visible := False;
-   end else begin
-       lblWrongUnblockPassword.Caption := MSG_UNBLOCK_PASSWORD_NEEDED;
-       lblWrongUnblockPassword.Font.Color := clRed;
-       GClientInfo.UnblockedByPassword := False;
-    end;
-{$IFDEF MSWINDOWS}
-      //надо поменять на SetUnblockedByPassword
-      LocalSendDataTo(STR_CMD_CLIENT_INFO_SET+'=UnblockedByPassword/'
-          + BoolToStr(GClientInfo.UnblockedByPassword), False);
-{$ENDIF}
-end;
+{
 
 procedure TfrmMain.btnBlockClick(Sender: TObject);
 begin
 //  if GClientOptions.UnblockPassword and btnBlock.Enabled then
   begin
-    btnUnblock.Enabled := True;
-    btnBlock.Enabled := False;
-    lblWrongUnblockPassword.Caption := MSG_UNBLOCK_BY_PASSWORD_DISABLED;
-    lblWrongUnblockPassword.Font.Color := clGreen;
-    GClientInfo.UnblockedByPassword := False;
-{$IFDEF MSWINDOWS}
-    //надо поменять на SetUnblockedByPassword
-    LocalSendDataTo(STR_CMD_CLIENT_INFO_SET+'=UnblockedByPassword/'
-        + BoolToStr(GClientInfo.UnblockedByPassword), False);
-{$ENDIF}
-    pnlUnblockByPassword.Visible := False;
+
+
+
+    BlockedByPassword();
+
   end;
 end;
-
-procedure TfrmMain.btnUnblockCancelClick(Sender: TObject);
-begin
-  pnlUnblockByPassword.Visible := False;
-  if FbShutdownAlt=1 then inc(FbShutdownAlt);
-end;
+ }
 
 procedure TfrmMain.EnableSafeOperation;
 begin
   tmrSafeOpearation.Enabled := True;
 end;
 
-procedure TfrmMain._ChangePasswordHide;
-begin
-  tmrChangePasswordHide.Enabled := False;
-  pnlChangePassword.Visible := False;
-end;
 
-procedure TfrmMain.tmrChangePasswordHideTimer(Sender: TObject);
-begin
-  _ChangePasswordHide;
-end;
 
-procedure TfrmMain.editNewPassChange(Sender: TObject);
-begin
-   if (editNewPass.Text <> editRepeat.Text) then
-      btnChangePasswordOk.Enabled := False
-   else
-      btnChangePasswordOk.Enabled := True;
-end;
 
-procedure TfrmMain.btnChangePasswordOkClick(Sender: TObject);
-begin
-  LocalSendDataTo(STR_CMD_AUTH_QUERYCHANGEPASS + '='
-      + editOldPass.Text+'/'+editNewPass.Text,
-      False);
-  editNewPass.Text := '';
-  editOldPass.Text := '';
-  editRepeat.Text := '';
-  _ChangePasswordHide;
-end;
 
-procedure TfrmMain.btnChangePasswordCancelClick(Sender: TObject);
-begin
-  _ChangePasswordHide;
-end;
 
-procedure TfrmMain.tmrOldServerWarningShowTimer(Sender: TObject);
-begin
-  pnlOldServerWarning.Visible := True;
-end;
+
+
+
+
 
 procedure TfrmMain._PasswordHotKey;
 begin
   if GClientInfo.UnblockedByPassword then
-    lblWrongUnblockPassword.Caption := ''
-  else
-    lblWrongUnblockPassword.Caption := MSG_ENTER_PASSWORD;
-  lblWrongUnblockPassword.Font.Color := clWindowText;
-  edtUnblockPassword.Text := '';
-  pnlUnblockByPassword.Visible := True;
-  tmrUnblockByPasswordHide.Enabled := True;
+  begin
+    BlockedByPassword();
+  end else begin
+    GCClientWebInterface.ShowUnblock;
+  end;
+
 end;
 
 procedure TfrmMain.edtLoginKeyDown(Sender: TObject; var Key: Word;
@@ -1320,26 +1171,11 @@ begin
   if key = VK_RETURN then butLogonClick(nil);
 end;
 
-procedure TfrmMain.editOldPassKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if key = VK_RETURN then  editNewPass.SetFocus;
-  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
-end;
 
-procedure TfrmMain.editNewPassKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if key = VK_RETURN then  editRepeat.SetFocus;
-  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
-end;
 
-procedure TfrmMain.editRepeatKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if key = VK_RETURN then btnChangePasswordOkClick(nil);
-  if key = VK_ESCAPE then  btnChangePasswordCancelClick(nil);
-end;
+
+
+
 
 procedure TfrmMain.mnuShutdownClick(Sender: TObject);
 begin
@@ -1372,15 +1208,12 @@ begin
     LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=' + inttostr(GClientOptions.ShutdownButton), False);
 end;
 
-procedure TfrmMain.UpdateFullScreenInterface;
+
+procedure TfrmMain.webSkinLoadEnd(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame;
+  httpStatusCode: Integer; out Result: Boolean);
 begin
-  {$IFDEF GCCL}
-  //wbFullScreen.Stop;
-  if wbFullScreen.LocationURL = 'http://localhost/' then
-    wbFullScreen.Refresh
-  else
-    wbFullScreen.Navigate('http://localhost/');
-  {$ENDIF}
+  GCClientWebInterface.Loaded := True;
 end;
 
 end. ////////////////////////// end of file //////////////////////////////////

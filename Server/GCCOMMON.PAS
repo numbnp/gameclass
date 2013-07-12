@@ -130,7 +130,8 @@ Uses
   comobj,
   uGCSidelines,
   uCardReader,
-  uZ2CardReader;
+  uZ2CardReader,
+  uPingThread;
 
 // errors
 function ProcessLastError:string;
@@ -230,28 +231,11 @@ begin
     dts := TADODataSet.Create(nil);
     dsDoQuery(DS_COMPUTERS_SELECT + ' @idGroup=-1', @dts);
     CompsCount := dts.Recordset.RecordCount;
-    if (CompsCount>Registration.CompsRegs) then
-    begin
-      //info проверка на регистрацию
-      str := translate('WarningLimitComps')+IntToStr(Registration.CompsRegs)+' '+translate('computers') + '. ' + translate('WarningLimitComps2');
-      Console.AddEvent(EVENT_ICON_WARNING, LEVEL_0, str);
-      CompsCount := Registration.CompsRegs;
-      bLimit := True;
-    end;
-    if (CompsCount>MAX_COMPUTERS) then
-    begin
-      //info проверка максимально возможное кол-во компов
-      str := translate('WarningLimitComps3')+IntToStr(MAX_COMPUTERS);
-      Console.AddEvent(EVENT_ICON_WARNING, LEVEL_0, str);
-      CompsCount := MAX_COMPUTERS;
-      bLimit := True;
-    end;
     i := 0;
-    while (CompsCount > 0) and (not dts.Recordset.EOF)
-      and (i<Registration.CompsRegs)
-      and (i<MAX_COMPUTERS) do
+    while (CompsCount > 0) and (not dts.Recordset.EOF) do
     begin
       Comps[i] := TComputer.Create;
+      Comps[i].IndexInSystem := i;
       Comps[i].id := dts.Recordset.Fields.Item['id'].Value;
       Comps[i].number := dts.Recordset.Fields.Item['number'].Value;
       Comps[i].ipaddr := dts.Recordset.Fields.Item['ipaddress'].Value;
@@ -262,6 +246,7 @@ begin
       Comps[i].SNMP_MIB_Port := dts.Recordset.Fields.Item['snmp_mib_ports'].Value;
       Comps[i].IgnoreOffline := dts.Recordset.Fields.Item['ignore_offline'].Value;
       Comps[i].ClientType := dts.Recordset.Fields.Item['client_type'].Value;
+      Comps[i].InitDev;
       i := i + 1;
       dts.Recordset.MoveNext;
     end;
@@ -553,7 +538,8 @@ begin
     on E: EOleException do
       Case E.ErrorCode Of
         -2147467259: begin
-                        formMain.tmrCyclicCompAction.Enabled := false;
+                        StopPingThread;
+//                        formMain.tmrCyclicCompAction.Enabled := false;
                         formMain.timerCompsList.Enabled := false;
                         formMain.tmrFileSynchronization.Enabled := false;
                         formMain.timerGSessionsLoad.Enabled := false;
@@ -561,7 +547,8 @@ begin
                         formMain.gridComps.Enabled := False;
                         MessageBox(HWND_TOP, PChar(translate('msgBaseConnectLost')),
                           PChar('GameClass Error'),MB_OK or MB_ICONERROR);
-                        formMain.tmrCyclicCompAction.Enabled := true;
+
+                        //formMain.tmrCyclicCompAction.Enabled := true;
                         formMain.timerCompsList.Enabled := true;
                         ehsExit;
                      end;

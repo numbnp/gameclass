@@ -11,7 +11,8 @@ uses
   Dialogs, ComCtrls, DateUtils, frmGCMessageBox, Proxy,
   SysUtils, DB, ADODB, StrUtils, IdSocketHandle,
   IdUDPServer, IdUDPClient, IdICMPClient,
-  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2, Graphics, uGCSendRecieve;{,
+  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2, Graphics, uGCSendRecieve,
+  uGCDevices;{,
   IdBaseComponent,IdComponent,IdUDPBase,IdGlobal;}
 
 
@@ -114,6 +115,8 @@ type
     FnScriptCheckSumm: Int64;  //контрольная сумма скрипт-файла
     FnInstallCheckSumm: Int64;  //контрольная сумма инсталляхи клиента
     FbLinuxClient: Boolean;
+    Device:IGCDevice;
+
     function GetBusy: Boolean;
     function GetReserved: Boolean;
     function GetRealyPingable: Boolean;
@@ -128,6 +131,8 @@ type
   public
     id: longword;        // id computer
     number: integer;    // number computer
+
+    IndexInSystem:integer; //Индекс в системе       { TODO : Удалить позже }
     ClientType: integer;
     ipaddr: string;     // ip address
     macaddr: string;    // mac address
@@ -147,6 +152,7 @@ type
     strInfoFreespaceD: string; // свободно места на диске D
 
     IcmpPingable: Boolean;
+    RealIcmpPingable: Boolean;
 
     SNMP_Password: String;
     SNMP_MIB_Port: String;
@@ -179,6 +185,10 @@ type
     function PowerOn: Boolean;
     function Reboot: Boolean;
     function Logoff: Boolean;
+
+    function InitDev:Boolean;
+
+    procedure CheckState();
 
     procedure RunPadMonitorOff (state:Boolean);
     procedure RunPadLockStation (state:Boolean);
@@ -317,7 +327,8 @@ uses
   uTariffication,
   uRegistration,
   uKKMTools, DBGridEh,
-  uDebugLog, uSnmp;
+  uDebugLog, uSnmp,
+  gcsystem;
 
 const
   UNREGISTERED_LINUX_CLIENTS_1 =
@@ -746,18 +757,6 @@ begin
               IfThen(CompMuteVolume,'1','0');
 
    strParm := strParm + '/' + IfThen(CompOnlyLimitVolume,'0','1');
-
- { if GRegistry.Volume[AnComputerIndex + 1].Custom then
-      strParm := strParm +
-                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Main)+'/'+
-                 IntToStr(GRegistry.Volume[AnComputerIndex + 1].Wave)+'/'+
-                 IfThen(GRegistry.Volume[AnComputerIndex + 1].Mute,'1','0')
-    else
-      strParm := strParm +
-                 IntToStr(GRegistry.Volume[0].Main)+'/'+
-                 IntToStr(GRegistry.Volume[0].Wave)+'/'+
-                 IfThen(GRegistry.Volume[0].Mute,'1','0');
-    strParm := strParm + '/' + IfThen(GRegistry.Volume.OnlyLimit,'0','1');}
 
   UDPSend(Comps[AnComputerIndex].ipaddr,STR_CMD_SETVOLUME + '=' + strParm);
 
@@ -1462,6 +1461,163 @@ begin
 
   except
   end;
+end;
+
+function TComputer.InitDev: Boolean;
+begin
+  InitDev:= true;
+end;
+
+procedure TComputer.CheckState;
+var
+  n: integer;
+  block_opt: string;
+  uncontrol_flag: boolean;
+  strParm: String;
+
+  Idx: Integer;
+  SnmpResult: integer;
+  ClientState: integer;
+
+  CompMainVolume,CompWaveVolume:integer;
+  CompMuteVolume,CompOnlyLimitVolume:Boolean;
+
+begin
+
+  if (isManager) then exit;
+  uncontrol_flag := false;
+  // считаем количество отправленных пингов
+
+  if Self.ClientType = CT_GAMECLASS then
+  begin
+    Self.pings := Self.pings + 1;
+    // если уже отправили пакетов больше чем максимум, то считаем что комп
+    // НЕ КОНТРОЛИРУЕТСЯ
+    if (Self.pings > MAXIMUM_LOST_PINGS) or
+      (not Self.IcmpPingable) then
+    begin
+      // 1) было false - gccommon::dsControlCompTimer
+      // 2) было true - gccommon::dsControlCompStart
+      if (Self.control = false) then
+        dsControlCompTimer(Self.id)
+      else begin
+        uncontrol_flag := true;
+        dsControlCompStart(Self.id);
+      end;
+      // сбрасываем метку в false
+      Self.control := false;
+    end;
+
+    //if Self.control then
+    //begin
+      if (not FunctionAmIRight(FN_REMOTE_CONTROL)) then begin
+        if ((Self.busy = true) and (Self.session<>Nil) and (Tarifs[TarifsGetIndex(Self.session.IdTarif)].internet = 1))
+        then
+          strParm := '=0/'
+        else
+          strParm := '=1/';
+
+        if GRegistry.Volume[Self.IndexInSystem + 1].Custom then
+        begin
+          CompMainVolume := GRegistry.Volume[Self.IndexInSystem + 1].Main;
+          CompWaveVolume := GRegistry.Volume[Self.IndexInSystem + 1].Wave;
+          CompMuteVolume := GRegistry.Volume[Self.IndexInSystem + 1].Mute;
+        end else begin
+          CompMainVolume := GRegistry.Volume[0].Main;
+          CompWaveVolume := GRegistry.Volume[0].Wave;
+          CompMuteVolume := GRegistry.Volume[0].Mute;
+        end;
+        CompOnlyLimitVolume := GRegistry.Volume.OnlyLimit;
+        if Self.Busy then
+          if Self.session.Tariff.forcedvolume>=0 then
+          begin
+            CompMainVolume := round((VOLUME_MAX *Self.session.Tariff.forcedvolume)/100);
+            CompWaveVolume := round((VOLUME_MAX *Self.session.Tariff.forcedvolume)/100);
+            if CompMainVolume=0 then
+              CompMuteVolume := true
+            else
+              CompMuteVolume := False;
+            CompOnlyLimitVolume := False;
+          end;
+
+        strParm := strParm +
+                   IntToStr(CompMainVolume)+'/'+
+                   IntToStr(CompWaveVolume)+'/'+
+                   IfThen(CompMuteVolume,'1','0');
+
+        strParm := strParm + '/' + IfThen(CompOnlyLimitVolume,'0','1');
+
+
+
+        UDPSend(Self.ipaddr, STR_CMD_PING + strParm);
+      end;
+      // компу надо послать инфу на клиента
+      SendAccountAndSessionInfoToClient(Self.IndexInSystem);
+
+      if Self.Busy
+          and not Self.Agreement then
+      begin
+        UDPSend(Self.ipaddr, STR_CMD_BLOCKED);
+      end else begin
+        // если комп свободен, то блокируем его
+        // берем настройки блокировок для клиента
+        block_opt := '=';
+        if (GClientOptions.BlockKeyboard) then block_opt := block_opt + 'k';
+        if (GClientOptions.BlockMouse) then block_opt := block_opt + 'm';
+        if (GClientOptions.BLockTasks) then block_opt := block_opt + 't';
+        if (GClientOptions.BlockDisplay) then block_opt := block_opt + 'd';
+        if (block_opt = '=') then block_opt := '=km';
+        //При авторизации, блокируем что угодно, но не выключаем экран
+        n := Pos('d',block_opt);
+        if (Self.a.state <> ClientState_Blocked) and (n <> 0) then
+          Delete(block_opt,n,1);
+        //блокируем всегда, когда не занят
+        UDPSend(Self.ipaddr,
+            STR_CMD_BLOCKED + block_opt);
+        // всегда блокируем инет, если комп свободен
+        //if (Registration.GCInternetControlLinux = 1) then
+        if GRegistry.Modules.Internet.OuterPlugin
+            or GRegistry.Modules.Internet.LinuxPro
+            or GRegistry.Modules.Internet.LinuxFree then
+          UDPSend(GRegistry.Options.UnixServerIP,
+              STR_CMD_INETBLOCK
+              + Self.ipaddr);
+      //end;
+    end;
+    //Афвтологофф
+    if GClientOptions.AutoLogoff
+        and (Self.a.state = ClientState_Order)
+        and (GetVirtualTime >= IncSecond(
+        Self.a.LogonOrStopMoment,
+        GClientOptions.AutoLogoffSec)) then begin
+      Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
+          translate('AuthenticationLogoff') + ' / ' + translate('Computer')
+          + ' ' + Self.GetStrNumber + ' / '
+          + translate('labelUser')
+          + ' ' + GetAccountName(Self.a));
+      Self.a.number := -1;
+      QueryAuthGoState1(Self.IndexInSystem);
+    end;
+  end;
+  if Self.ClientType = CT_SNMP then
+  begin
+    if  ((Self.busy = true) and (Self.session<>Nil)) then
+      ClientState:=1
+    else
+      ClientState:=0;
+    Self.control := Self.IcmpPingable;
+    uncontrol_flag := not Self.control;
+    if Self.control and Self.RealIcmpPingable then
+    begin
+      SnmpResult :=GetSnmpIntegerValue(Self) ;
+      if ClientState<>SnmpResult Then
+        SetSnmpIntegerValue(Self,ClientState);
+    end;
+  end;
+
+  if (GRegistry.UserInterface.SoundLostLink
+      and uncontrol_flag) then
+    DoSound([NotifyLostLink]);
 end;
 
 initialization
