@@ -30,9 +30,9 @@ type
     _Client :TSocket;
     DocumentRoot :String;
     DirectoryIndex :String;
-    AddLog:procedure (str:string);
-    ExecuteClient:function (Request:HttpRequest):boolean;
-    ParceAndReplaceLine:procedure (var Str:string);
+    AddLog:procedure (str:string); stdcall;
+    ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
+    ParceAndReplaceLine:procedure (var Str:string); stdcall;
   protected
     procedure AddToLog(str:string);
     procedure Execute; override;
@@ -46,9 +46,9 @@ type
     ListenPort:integer;
     DocumentRoot:String;
     DirectoryIndex:String;
-    AddLog:procedure (str:string);
-    ExecuteClient:function (Request:HttpRequest):boolean;
-    ParceAndReplaceLine:procedure (var Str:string);
+    AddLog:procedure (str:string); stdcall;
+    ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
+    ParceAndReplaceLine:procedure (var Str:string); stdcall;
   protected
       procedure Execute; override;
   end;
@@ -62,9 +62,9 @@ type
     Port: integer;
     IndexPageName: string;
 
-    AddLog:procedure (str:string);
-    ExecuteClient:function (Request:HttpRequest):boolean;
-    ParceAndReplaceLine:procedure (var Str:string);
+    AddLog:procedure (str:string);  stdcall;
+    ExecuteClient:function (Request:HttpRequest):boolean;  stdcall;
+    ParceAndReplaceLine:procedure (var Str:string); stdcall;
 
     constructor Create();
     procedure start();
@@ -74,7 +74,7 @@ type
 Var
   MyWebServer: TMyWebServer;
 
-function HexToInt(HexStr : string) : Int64;
+//function HexToInt(HexStr : string) : Int64;
 procedure StrBreakApart(const Source, Delimeter: string; Parts: TStrings);
 function UnpackKeyValue(const Str:string; var Key,Value:string):boolean;
 
@@ -87,7 +87,7 @@ function ReplaceWebCode(Str: string): string;
 
 implementation
 
-uses StrUtils;
+uses StrUtils, DzURL;
 
 constructor TMyWebServer.Create();
 var
@@ -216,8 +216,6 @@ begin
       exit;
     end;
 
-  AddToLog(_httpRequest.Parametrs.Values['action']);
-  AddToLog(_httpRequest.Parametrs.Values['login']);
   AddToLog('-----------------------------------------------');
 
   _path := _httpRequest.FilePath;
@@ -347,6 +345,7 @@ var
   parametrs:string;
   Key,Value:string;
   CurrentRequestLineNumber: integer;
+  Content_Length:integer;
 begin
   // Разбиваем запрос на строки
   tmp_slist := TStringList.Create;
@@ -375,6 +374,8 @@ begin
   While (CurrentRequestLineNumber <= tmp_slist.Count) and (tmp_slist.Strings[CurrentRequestLineNumber]<>'') do
   begin
     Res.Headers.Add(tmp_slist.Strings[CurrentRequestLineNumber]);
+    if pos('Content-Length:',tmp_slist.Strings[CurrentRequestLineNumber])>0 then
+      Content_Length := strtoint(copy(tmp_slist.Strings[CurrentRequestLineNumber],17,length(tmp_slist.Strings[CurrentRequestLineNumber])-16));
     inc(CurrentRequestLineNumber);
   end;
 
@@ -386,9 +387,9 @@ begin
     for i:=CurrentRequestLineNumber to tmp_slist.Count -1 do
     if pos('=', tmp_slist.Strings[i])>0 then
       if length(parametrs)>0 then
-        parametrs := parametrs + '&' + tmp_slist.Strings[i]
+        parametrs := parametrs + '&' + LeftStr(tmp_slist.Strings[i],Content_Length)
       else
-        parametrs := tmp_slist.Strings[i];
+        parametrs := LeftStr(tmp_slist.Strings[i],Content_Length);
 
   tmp_slist1 := TStringList.Create;
   if length(parametrs)>0 then
@@ -436,7 +437,7 @@ begin
   ReplaceStr := Buffer;
 end;
 
-function HexToInt(HexStr : string) : Int64;
+{function HexToInt(HexStr : string) : Int64;
 var RetVar : Int64;
     i : byte;
 begin
@@ -444,7 +445,7 @@ begin
   if HexStr[length(HexStr)] = 'H' then
      Delete(HexStr,length(HexStr),1);
   RetVar := 0;
-   
+
   for i := 1 to length(HexStr) do begin
       RetVar := RetVar shl 4;
       if HexStr[i] in ['0'..'9'] then
@@ -459,13 +460,21 @@ begin
   end;
 
   Result := RetVar;
-end;
+end;}
 
 
 function ReplaceWebCode(Str: string): string;
+var ss: string;
+begin
+  ss:= Str;
+  Result:=Utf8ToAnsi(dzurl.UrlDecode(ss));
+  Result:=StringReplace(Result,'&lt;','<',[rfReplaceAll]);
+  Result:=StringReplace(Result,'&gt;','>',[rfReplaceAll]);
+end;
+
 {Str - строка, в которой будет производиться замена.
 }
-
+{
 var
   buf1, buf2, buffer: string;
 
@@ -482,7 +491,7 @@ begin
   end;
   Buffer := ReplaceStr(Buffer, '+', ' ');
   ReplaceWebCode := Buffer;
-end;
+end;    }
 
 Function TClientThread.PrepareFile(FilePath:String): TMemoryStream;
 var

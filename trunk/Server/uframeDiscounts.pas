@@ -9,26 +9,8 @@ uses
 
 type
   TframeDiscounts = class(TFrame)
-    gbOptions: TGroupBox;
-    butDiscountAdd: TButton;
-    butDiscountUpdate: TButton;
-    butDiscountDel: TButton;
-    editSumma: TEdit;
-    editDiscount: TEdit;
-    lblSumma: TLabel;
-    lblDiscount: TLabel;
-    butGoAccounts: TButton;
-    grdDiscounts: TDBGridEh;
     dsrcDiscounts: TDataSource;
-    cbxDiscountAfterLimitDisabled: TCheckBox;
-    cbxDiscountForPacketsEnabled: TCheckBox;
-    pnlDiscountsTable: TGroupBox;
-    pnlDiscountsRecalc: TGroupBox;
-    dtpStart: TDateTimePicker;
-    Button1: TButton;
-    Label1: TLabel;
     gbRefers: TGroupBox;
-    cbxUseRefers: TCheckBox;
     dsrcReferals: TDataSource;
     butReferalsUpdate: TButton;
     butReferalsDel: TButton;
@@ -38,6 +20,27 @@ type
     lblLevel: TLabel;
     butReferalsAdd: TButton;
     grdReferals: TDBGridEh;
+    pcDiscounts: TPageControl;
+    tabDiscount: TTabSheet;
+    gbOptions: TGroupBox;
+    butGoAccounts: TButton;
+    cbxDiscountAfterLimitDisabled: TCheckBox;
+    cbxDiscountForPacketsEnabled: TCheckBox;
+    pnlDiscountsTable: TGroupBox;
+    lblDiscount: TLabel;
+    lblSumma: TLabel;
+    editDiscount: TEdit;
+    grdDiscounts: TDBGridEh;
+    editSumma: TEdit;
+    butDiscountAdd: TButton;
+    butDiscountUpdate: TButton;
+    butDiscountDel: TButton;
+    pnlDiscountsRecalc: TGroupBox;
+    Label1: TLabel;
+    dtpStart: TDateTimePicker;
+    Button1: TButton;
+    tabRefers: TTabSheet;
+    cbxUseRefers: TCheckBox;
     procedure editSummaChange(Sender: TObject);
     procedure editDiscountChange(Sender: TObject);
     procedure butDiscountAddClick(Sender: TObject);
@@ -132,6 +135,7 @@ end;
 procedure TframeDiscounts.DoDesign;
 var
   bEnabled: Boolean;
+  bReferalsEnabled: Boolean;
 begin
   bEnabled := GAccountSystem.Enabled;
   cbxDiscountAfterLimitDisabled.Enabled := bEnabled;
@@ -140,25 +144,25 @@ begin
   editSumma.Enabled := bEnabled;
   editDiscount.Enabled := bEnabled;
 
-  //grdReferals.Enabled := bEnabled;
-  editLevel.Enabled := bEnabled;
-  editBonus.Enabled := bEnabled;
-  butGoAccounts.Enabled := bEnabled;
-
-  butDiscountDel.Enabled := (grdDiscounts.SelectedIndex <> -1) and bEnabled;
-  butDiscountAdd.Enabled := ((editSumma.Text<>'') and (editDiscount.Text<>''))
-      and bEnabled;
-  butDiscountUpdate.Enabled := (butDiscountDel.Enabled and FbEdited)
-      and bEnabled;
-
-  grdReferals.Enabled := cbxUseRefers.Checked;
-  butReferalsDel.Enabled := (grdReferals.SelectedIndex <> -1) and bEnabled and cbxUseRefers.Checked;
-  butReferalsAdd.Enabled := ((editLevel.Text<>'') and (editBonus.Text<>''))
-      and bEnabled and cbxUseRefers.Checked;
-  butReferalsUpdate.Enabled := (butReferalsDel.Enabled and FbEdited)
-      and bEnabled and cbxUseRefers.Checked;
-
+  bReferalsEnabled := GAccountSystem.RefersSystemEnabled;
   gbRefers.Enabled := cbxUseRefers.Checked;
+  grdReferals.Enabled := bReferalsEnabled;
+  editLevel.Enabled := bReferalsEnabled;
+  editBonus.Enabled := bReferalsEnabled;
+  butGoAccounts.Enabled := bReferalsEnabled;
+{
+  butDiscountDel.Enabled := (grdDiscounts.SelectedIndex <> -1) and bEnabled and bReferalsEnabled;
+  butDiscountAdd.Enabled := ((editSumma.Text<>'') and (editDiscount.Text<>''))
+      and bReferalsEnabled;
+  butDiscountUpdate.Enabled := (butDiscountDel.Enabled and FbEdited)
+      and bReferalsEnabled;
+}
+  butReferalsDel.Enabled := (grdReferals.SelectedIndex <> -1) and bEnabled and bReferalsEnabled;
+  butReferalsAdd.Enabled := ((editLevel.Text<>'') and (editBonus.Text<>''))
+      and bEnabled and bReferalsEnabled;
+  butReferalsUpdate.Enabled := (butReferalsDel.Enabled and FbEdited)
+      and bEnabled and bReferalsEnabled;
+
 
 //  editSumma.Text := Format('%.*d', ['1.5']);
 end;
@@ -374,16 +378,16 @@ begin
   with GAccountSystem.AccountsReferals do begin
     First;
     while not Eof do begin
-      if ((Current.Level = nLevel) or
+      if ((Current.Level <> nLevel) and
           (Current.Percent = nBonus)) then begin
-        MessageBox(HWND_TOP,PChar(GClangutils.translate('ReferalWarning')),
+        MessageBox(HWND_TOP,PChar(GClangutils.translate('BonusInOtherLevel')),
             PChar(GClangutils.translate('Warning')),MB_OK);
         exit;
       end;
       Next;
     end;
   end;
-  GAccountSystem.AccountsReferals.LocateById(nId);
+  GAccountSystem.AccountsReferals.LocateByLevel(nLevel);
   GAccountSystem.AccountsReferals.Current.Level := nLevel;
   GAccountSystem.AccountsReferals.Current.Percent := nBonus;
   DoDesign;

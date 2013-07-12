@@ -1,13 +1,13 @@
 object formMain: TformMain
-  Left = 4
-  Top = 0
+  Left = 246
+  Top = 136
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 299
-  ClientWidth = 620
+  ClientHeight = 894
+  ClientWidth = 979
   Color = clBtnFace
   Constraints.MinHeight = 332
   Constraints.MinWidth = 480
@@ -32,7 +32,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 620
+    Width = 979
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -40,7 +40,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 498
+      Width = 857
       Height = 57
       Align = alClient
       ButtonHeight = 51
@@ -82,17 +82,16 @@ object formMain: TformMain
         OnClick = tbCompMoveClick
       end
       object ToolButton2: TToolButton
-        Left = 0
+        Left = 220
         Top = 0
         Width = 8
         Caption = 'ToolButton2'
         ImageIndex = 6
-        Wrap = True
         Style = tbsSeparator
       end
       object tbCompLogoff: TToolButton
-        Left = 0
-        Top = 59
+        Left = 228
+        Top = 0
         Caption = 'Logoff'
         DropdownMenu = PopupMenuLogoff
         ImageIndex = 10
@@ -100,8 +99,8 @@ object formMain: TformMain
         OnClick = tbCompLogoffClick
       end
       object tbCompReset: TToolButton
-        Left = 68
-        Top = 59
+        Left = 296
+        Top = 0
         Caption = 'Reset'
         DropdownMenu = PopupMenuReset
         ImageIndex = 7
@@ -109,8 +108,8 @@ object formMain: TformMain
         OnClick = tbCompResetClick
       end
       object tbCompShutdown: TToolButton
-        Left = 136
-        Top = 59
+        Left = 364
+        Top = 0
         Caption = 'Shutdown'
         DropdownMenu = PopupMenuShutdown
         ImageIndex = 8
@@ -118,8 +117,8 @@ object formMain: TformMain
         OnClick = tbCompShutdownClick
       end
       object tbCompWakeUp: TToolButton
-        Left = 204
-        Top = 59
+        Left = 432
+        Top = 0
         Caption = 'Wakeup'
         DropdownMenu = PopupMenuWakeup
         ImageIndex = 9
@@ -127,23 +126,23 @@ object formMain: TformMain
         OnClick = tbCompWakeUpClick
       end
       object ToolButton9: TToolButton
-        Left = 272
-        Top = 59
+        Left = 500
+        Top = 0
         Width = 8
         Caption = 'ToolButton9'
         ImageIndex = 8
         Style = tbsSeparator
       end
       object tbSideline: TToolButton
-        Left = 280
-        Top = 59
+        Left = 508
+        Top = 0
         Caption = #1059#1089#1083#1091#1075#1080
         ImageIndex = 6
         OnClick = tbSidelineClick
       end
       object ToolButton1: TToolButton
-        Left = 335
-        Top = 59
+        Left = 563
+        Top = 0
         Width = 8
         Caption = 'ToolButton1'
         ImageIndex = 5
@@ -151,7 +150,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 498
+      Left = 857
       Top = 0
       Width = 122
       Height = 57
@@ -225,8 +224,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 620
-    Height = 242
+    Width = 979
+    Height = 837
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -235,8 +234,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 82
-        Width = 612
+        Top = 677
+        Width = 971
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -244,8 +243,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 388
-        Height = 82
+        Width = 912
+        Height = 677
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -408,8 +407,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 88
-        Width = 612
+        Top = 683
+        Width = 971
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -417,7 +416,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 612
+          Width = 971
           Height = 126
           Align = alClient
           BiDiMode = bdRightToLeftNoAlign
@@ -438,7 +437,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 612
+          Left = 971
           Top = 0
           Width = 0
           Height = 126
@@ -449,10 +448,10 @@ object formMain: TformMain
         end
       end
       object tbRunPad: TToolBar
-        Left = 388
+        Left = 912
         Top = 0
-        Width = 224
-        Height = 82
+        Width = 59
+        Height = 677
         Align = alRight
         AutoSize = True
         ButtonHeight = 54
@@ -468,30 +467,33 @@ object formMain: TformMain
           Hint = #1042#1082#1083#1102#1095#1080#1090#1100' '#1084#1086#1085#1080#1090#1086#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
           ImageIndex = 0
           ParentShowHint = False
+          Wrap = True
           ShowHint = True
           OnClick = tlbMonOnClick
         end
         object tlbMonOff: TToolButton
-          Left = 55
-          Top = 0
+          Left = 0
+          Top = 54
           Hint = #1042#1099#1082#1083#1102#1095#1080#1090#1100' '#1084#1086#1085#1080#1090#1086#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
           ImageIndex = 1
           ParentShowHint = False
+          Wrap = True
           ShowHint = True
           OnClick = tlbMonOffClick
         end
         object tlbStationUnlock: TToolButton
-          Left = 110
-          Top = 0
+          Left = 0
+          Top = 108
           Hint = #1056#1072#1079#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1082#1086#1084#1087#1100#1102#1090#1077#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080'RunPad'
           ImageIndex = 2
           ParentShowHint = False
+          Wrap = True
           ShowHint = True
           OnClick = tlbStationUnlockClick
         end
         object tlbStationLock: TToolButton
-          Left = 165
-          Top = 0
+          Left = 0
+          Top = 162
           Hint = #1047#1072#1073#1083#1086#1082#1080#1088#1086#1074#1072#1090#1100' '#1082#1086#1084#1087#1100#1102#1090#1077#1088' '#1089#1088#1077#1076#1089#1090#1074#1072#1084#1080' RunPad'
           ImageIndex = 3
           ParentShowHint = False
@@ -529,36 +531,36 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 612
-        Height = 214
+        Width = 971
+        Height = 809
         Align = alClient
         TabOrder = 0
         inherited Panel1: TPanel
-          Top = 173
-          Width = 612
+          Top = 768
+          Width = 971
           DesignSize = (
-            612
+            971
             41)
           inherited edtMessage: TEdit
-            Width = 1720
+            Width = 2079
           end
           inherited btnSend: TButton
-            Left = 1742
+            Left = 2101
             OnClick = frameMessagesbtnSendClick
           end
         end
         inherited Panel2: TPanel
-          Width = 612
-          Height = 173
+          Width = 971
+          Height = 768
           inherited memMessages: TMemo
-            Width = 450
-            Height = 171
+            Width = 809
+            Height = 766
             Lines.Strings = ()
           end
           inherited Panel3: TPanel
-            Height = 171
+            Height = 766
             inherited lvUsers: TListView
-              Height = 169
+              Height = 764
             end
           end
         end
@@ -4156,13 +4158,6 @@ object formMain: TformMain
     OnTimer = tmrFileSynchronizationTimer
     Left = 672
     Top = 168
-  end
-  object tmrCyclicCompAction: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = tmrCyclicCompActionTimer
-    Left = 672
-    Top = 200
   end
   object timerGSessionsLoad: TTimer
     Interval = 17000

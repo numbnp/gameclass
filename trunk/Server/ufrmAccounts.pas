@@ -127,12 +127,15 @@ type
     procedure cbIgnoreHardCodeClick(Sender: TObject);
     procedure butGetCodeClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure editAccountNumberEnter(Sender: TObject);
+
   private
     { Private declarations }
     FbDirty: Boolean;
     FbControlsEnabled: Boolean;
     FbUpdateDuringEditing: Boolean;
-    bClearCardReaderAfterCosing:Boolean; 
+    bClearCardReaderAfterCosing:Boolean;
+    intCurentId:String;
     procedure SetDirty(AbValue: Boolean);
     procedure UpdateDiscount;
     procedure UpdateFilter;
@@ -254,6 +257,10 @@ begin
   cbForceTariff.Enabled:=bManagerPermission;
   cbReferal.Enabled := GAccountSystem.RefersSystemEnabled and bEditPermission;
   editAccountPass.Enabled := isManager;
+
+  editName.Enabled := bEditPermission;
+  editSername.Enabled := bEditPermission;
+  editOt.Enabled := bEditPermission;
   if cbReferal.Items.Count <> GAccountSystem.Accounts.RecordCount+1 then
   begin
     cbReferal.Items.Clear;
@@ -299,6 +306,7 @@ begin
   cbTarifsLimit.Checked := GAccountSystem.UseDefaultUserLevel;
   editUserLevel.Text := IntToStr(GAccountSystem.DefaultUserLevel);
   DisableControls;
+  intCurentId := editAccountNumber.Text;
   _OnChange(Sender);
   butAccountSaveClick(Sender);
   DoDesign;
@@ -619,7 +627,8 @@ end;
 procedure TfrmAccounts._OnChange(Sender: TObject);
 begin
   if ControlsEnabled then
-    Dirty := True;
+    if editAccountNumber.Text = intCurentId then
+      Dirty := True;
 end;
 
 procedure TfrmAccounts.FormCreate(Sender: TObject);
@@ -697,6 +706,7 @@ end;
 
 procedure TfrmAccounts.editAccountNameChange(Sender: TObject);
 begin
+//  if GAccountsCopy.FieldByName(editAccountName.DataField).Value <> editAccountName.Text then
   _OnChange(Sender);
 end;
 
@@ -884,6 +894,14 @@ begin
     FreeAndNil(CardReader);
     bClearCardReaderAfterCosing := false;
   end;
+end;
+
+
+
+
+procedure TfrmAccounts.editAccountNumberEnter(Sender: TObject);
+begin
+  intCurentId := editAccountNumber.Text;
 end;
 
 end.
