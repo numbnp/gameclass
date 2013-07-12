@@ -67,7 +67,9 @@ uses
   uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
   uWebExec in '..\Parts\Web\uWebExec.pas',
   uWebServer in '..\Parts\Web\uWebServer.pas',
-  uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas';
+  uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas',
+  uClientWebInterface in '..\Parts\ClientWebInterface\uClientWebInterface.pas',
+  DzURL in '..\Parts\Web\dzurl.pas';
 
 {$R *.res}
 const

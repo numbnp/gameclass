@@ -98,7 +98,7 @@ procedure ReserveCancel(ASession: TGCSession);
 procedure ehsSessionTrafficPayment;
 function GetSize: Cardinal;
 
-procedure PingComputer(const AnComputerIndex: Integer);
+{procedure PingComputer(const AnComputerIndex: Integer);}
 
 function WrapProtocol(sdata: string): string;
 procedure UnWrapProtocol(sdata: string; protocol, cmd, param: pstring);
@@ -563,12 +563,8 @@ var
 begin
 //  bNeedShowTrial := False;
   // если же дни еще есть, то подсчет трафа еще работает
-  if ((StrLen(Registration.UserName) = 0)
-      and (Registration.TrialDaysLeft<>0) and (Registration.TrialExLeft<>0))
-      then Registration.InternetControlLinux := True;
-  if ((StrLen(Registration.UserName) = 0)
-      and (Registration.TrialDaysLeft<>0) and (Registration.TrialExLeft<>0))
-      then Registration.InternetControl := True;
+  Registration.InternetControlLinux := True;
+  Registration.InternetControl := True;
   frmLogon := TfrmLogon.Create(formMain, dmMain.cnnMain);
   frmLogon.OnError := formMain.Error;
   if (frmLogon.ShowModal = mrOk) then begin
@@ -727,12 +723,13 @@ begin
     GSessions.Load;
     GSessions.Check;
     Application.ProcessMessages;
-    StartPingThread;
+
 
     if (CompsCount > 0) then begin
-      formMain.tmrCyclicCompAction.Interval := Round
-          (GRegistry.Options.ClientQueryTime * 1000 / CompsCount);
-      formMain.tmrCyclicCompAction.Enabled := True;
+      StartPingThread(Round(GRegistry.Options.ClientQueryTime * 1000 / CompsCount));
+//      formMain.tmrCyclicCompAction.Interval := Round
+//          (GRegistry.Options.ClientQueryTime * 1000 / CompsCount);
+      //formMain.tmrCyclicCompAction.Enabled := True;
       formMain.tmrFileSynchronization.Interval := Round
           (GRegistry.Options.ClientQueryTime * 1000 * 20 / CompsCount);
       formMain.tmrFileSynchronization.Enabled := True;
@@ -773,7 +770,7 @@ end;
 procedure ehsLogout;
 begin
   StopPingThread;
-  formMain.tmrCyclicCompAction.Enabled := False;
+//  formMain.tmrCyclicCompAction.Enabled := False;
   formMain.tmrFileSynchronization.Enabled := False;
   formMain.timerCompsList.Enabled := false;
   formMain.DisableSockets();
@@ -823,7 +820,8 @@ end;
 // logout
 procedure ehsExit;
 begin
-  formMain.tmrCyclicCompAction.Enabled := False;
+  StopPingThread;
+//  formMain.tmrCyclicCompAction.Enabled := False;
   formMain.tmrFileSynchronization.Enabled := False;
   formMain.timerCompsList.Enabled := false;
   formMain.DisableSockets();
@@ -1261,8 +1259,10 @@ begin
     // ------------ authorization ------------
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
-    PingComputer(index0);
-    PingComputer(index1);
+    Comps[index0].CheckState;
+    Comps[index1].CheckState;
+//    PingComputer(index0);
+//    PingComputer(index1);
     SendAllOptionsToClient(index0);
     SendAllOptionsToClient(index1);
     Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
@@ -1367,7 +1367,8 @@ begin
   DoInterfaceComps;
   dmActions.actLoadSessions.Execute;
   dmActions.actRedrawComps.Execute;
-  PingComputer(index);
+  Comps[index].CheckState;
+//  PingComputer(index);
   SendAllOptionsToClient(index);
 end;
 
@@ -1446,7 +1447,8 @@ begin
     DoInterfaceComps;
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
-    PingComputer(index);
+    Comps[index].CheckState;
+//    PingComputer(index);
     SendAllOptionsToClient(index);
   end;
   formRemontLong.Destroy;
@@ -1854,7 +1856,8 @@ begin
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
     DoInterfaceComps;
-    PingComputer(index);
+    Comps[index].CheckState;
+//    PingComputer(index);
     SendAllOptionsToClient(index);
     Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
         translate('ActionChangeTariff') + ' '
@@ -1974,7 +1977,8 @@ begin
       dmActions.actLoadSessions.Execute;
       DoInterfaceComps;
       dmActions.actRedrawComps.Execute;
-      PingComputer(index);
+      Comps[index].CheckState;
+//      PingComputer(index);
     end;
   end;
 //  formCompStop.Destroy;
@@ -2021,7 +2025,7 @@ begin
   if FileExists(Application.ExeName) then
     Result := FileSizeByName(Application.ExeName);
 end;
-
+{
 procedure PingComputer(const AnComputerIndex: Integer);
 var
   n: integer;
@@ -2157,11 +2161,11 @@ begin
       ClientState:=0;
     Comps[AnComputerIndex].control := Comps[AnComputerIndex].IcmpPingable;
     uncontrol_flag := not Comps[AnComputerIndex].control;
-    if Comps[AnComputerIndex].control then
+    if Comps[AnComputerIndex].control and Comps[AnComputerIndex].RealIcmpPingable then
     begin
       SnmpResult :=GetSnmpIntegerValue(Comps[AnComputerIndex]) ;
       if ClientState<>SnmpResult Then
-      SetSnmpIntegerValue(Comps[AnComputerIndex],SnmpResult);
+        SetSnmpIntegerValue(Comps[AnComputerIndex],ClientState);
     end;
   end;
 
@@ -2169,7 +2173,7 @@ begin
       and uncontrol_flag) then
     DoSound([NotifyLostLink]);
 end;
-
+}
 
 
 // процедура обертки данных протоколом

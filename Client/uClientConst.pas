@@ -19,6 +19,14 @@ const
   FIRST_DATE = 36526.0;// 01.01.2000
   DATE_FORMAT = 'dd mmm yy hh:mm:ss';
 
+  MSG_ENTER_PASSWORD: AnsiString = 'Введите пароль разблокирования';
+  MSG_UNBLOCKED: AnsiString = 'Компьютер разблокирован!';
+  MSG_UNBLOCK_PASSWORD_NEEDED: AnsiString =
+      'Нужно ввести пароль разблокирования!';
+  MSG_UNBLOCK_BY_PASSWORD_DISABLED: AnsiString =
+      'Разблокирование по паролю отключено!';
+
+
 implementation
 
 end.

@@ -3,8 +3,8 @@ Version=7.0
 [Compiler]
 A=8
 B=0
-C=0
-D=0
+C=1
+D=1
 E=0
 F=0
 G=1
@@ -12,7 +12,7 @@ H=1
 I=1
 J=0
 K=0
-L=0
+L=1
 M=0
 N=1
 O=0
@@ -25,7 +25,7 @@ U=0
 V=1
 W=0
 X=1
-Y=0
+Y=1
 Z=1
 ShowHints=1
 ShowWarnings=1
@@ -94,7 +94,7 @@ OutputDir=..\Output\debug
 UnitOutputDir=..\Output\dcu\debug
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=
+SearchPath=$(DELPHI)\Lib\Debug
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Y2KControls;EhLib70;dclbsPolyglotD7;bsPolyglotD7
 Conditionals=GCCLSRV
 DebugSourceDirs=
@@ -126,12 +126,27 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.85.6.2
+FileVersion=3.85.2.12
 InternalName=
 LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb
 LegalTrademarks=
 OriginalFilename=
 ProductName=GameClass Client Service
-ProductVersion=3.85.6.2 Free
+ProductVersion=3.85.2.12 Free
 [Excluded Packages]
 c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
+[HistoryLists\hlConditionals]
+Count=1
+Item0=GCCLSRV
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=1
+Item0=$(DELPHI)\Lib\Debug
+[HistoryLists\hlUnitOutputDirectory]
+Count=1
+Item0=..\Output\dcu\debug
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=..\Output\debug

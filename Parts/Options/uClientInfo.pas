@@ -120,6 +120,9 @@ type
     procedure SetRunPadHidedTabs(const AlstRunPadHidedTabs: TStringList);
 
   public
+    BookingSum: integer;
+    BookingAddSum: integer;
+    BookingTariff: string;
     // constructor / destructor
     constructor Create();
     destructor Destroy(); override;
@@ -286,6 +289,7 @@ uses
     ActiveX,
     RS_APILib_TLB,
   {$ENDIF}
+  uClientFunctions,
 {$ENDIF}
 {$IFDEF GCCLSRV}
   uClientInfoGetRemoteCommand,
@@ -506,7 +510,7 @@ begin
       //Только тут, так как закладка активируется только при изменении
       TSafeStorage.Instance().Push(ThreadSafeOperation_ActivateTabStartStop,0);
       TSafeStorage.Instance().Push(ThreadSafeOperation_ClearMessages,0);
-      LocalSendDataTo(STR_CMD_AUTH_QUERYTARIFS_2,False);
+      QueryTariffs;
     end;
     if AClientState = ClientState_Session then begin
       if GClientOptions.ShowSmallInfo then

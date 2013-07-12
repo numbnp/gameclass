@@ -123,6 +123,12 @@ begin
     if GClientOptions.ShutdownButton > -1 then
       result := ParseAndReplase(FileToString(InstallDirectory + '\Skins\full\shutdown_part.html'));
 
+  if Tmp_var = '%EULA%' then
+    try
+      result := (ParseAndReplase(FileToString(InstallDirectory + '\Skins\' + GClientOptions.URLAgreement)));
+    except
+      result := '';
+    end;
 {$ENDIF}
 
 end;

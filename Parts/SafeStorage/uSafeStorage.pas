@@ -49,7 +49,7 @@ type
       ThreadSafeOperation_RunPadAction = 18,
       ThreadSafeOperation_CtrAltU = 19,
       ThreadSafeOperation_MinimizeWindows = 20,
-      ThreadSafeOperation_OldServerWarning = 21,
+
       ThreadSafeOperation_UpdateControlFromClientInfo = 22,
       ThreadSafeOperation_SetVolume = 23
   );
@@ -205,6 +205,7 @@ uses
   Forms,
   uRunPadTools,
   Controls,
+  uClientWebInterface,
 {$ENDIF}
 {$IFDEF LINUX}
   Types,
@@ -434,7 +435,7 @@ begin
     end;
     ThreadSafeOperation_UpdateTarifs: begin
       if frmMain.IsOnChangeEnabled then begin
-        frmMain.DisableOnChange;
+        {frmMain.DisableOnChange;
         str := frmMain.cboTarifs.Text;
         frmMain.cboTarifs.Clear;
         for i:=0 to GetParamCountFromString(AOperation.Parameters)-1 do
@@ -442,7 +443,13 @@ begin
               GetParamFromString(AOperation.Parameters,i));
         frmMain.EnableOnChange;
         frmMain.cboTarifs.ItemIndex := frmMain.cboTarifs.Items.IndexOf(str);
-        frmMain.cboTarifsChange(Nil);
+        frmMain.cboTarifsChange(Nil);}
+        frmMain.DisableOnChange;
+        str :='';
+        for i:=0 to GetParamCountFromString(AOperation.Parameters)-1 do
+          str := str + '"' + inttostr(i) +'": "' + GetParamFromString(AOperation.Parameters,i) +'",';
+        GCClientWebInterface.SetInterfaceData('{tariffs:{' + str +'}}');
+        frmMain.EnableOnChange
       end;
     end;
     ThreadSafeOperation_RecalcCostTime: begin
@@ -455,11 +462,24 @@ begin
           AOperation.Parameters, 2));
       DateTimeToString(str, DATE_FORMAT, dtStart);
       frmMain.edtStart.Text := str;
+      GCClientWebInterface.SetInterfaceData('{ "booking_time_start": "' + str + '" }');
       DateTimeToString(str, DATE_FORMAT, dtStop);
       frmMain.edtStop.Text := str;
+      GCClientWebInterface.SetInterfaceData('{ "booking_time_stop": "' + str + '" }');
       if Not frmMain.DtpTimeFocused then
+      begin
         frmMain.dtpTime.Time := TimeOf(dtStop - dtStart);
+        DateTimeToString(str, 'hh:mm', dtStop - dtStart);
+        GCClientWebInterface.SetInterfaceData('{ "booking_time": "' + str + '" }');
+      end;
 
+      if (Length(GClientInfo.BookingTariff)>0)
+        and (GClientInfo.BookingSum > 0)
+        and (GClientInfo.BookingSum <= GClientInfo.Balance - GClientInfo.BalanceLimit)
+        and (not ((HourOf(frmMain.dtpTime.Time) = 0 ) and (MinuteOf(frmMain.dtpTime.Time)=0))) then
+        GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "1" }')
+      else
+        GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "0" }');
       if StrToBool(GetParamFromString(AOperation.Parameters, 3)) then begin
         frmMain.edtSum.Enabled := False;
         frmMain.dtpTime.Enabled := False;
@@ -478,22 +498,36 @@ begin
       if Not frmMain.EdtAddTrafficSizeFocused then
         frmMain.edtAddTrafficSize.Text := GetParamFromString(
             AOperation.Parameters,1);
+        GCClientWebInterface.SetInterfaceData('{ "booking_add_traffic": "' + GetParamFromString(AOperation.Parameters,1) + '" }');
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_RecalcCostAddTime: begin
       frmMain.DisableOnChange;
+{
       if Not frmMain.EdtAddTimeSumFocused then
         frmMain.edtAddTimeSum.Text := GetParamFromString(
             AOperation.Parameters,0);
       if Not frmMain.DtpAddTimeLengthFocused then
         frmMain.dtpAddTimeLength.Time := StrToDateTimeDefWithReplace(
             GetParamFromString(AOperation.Parameters,1), 0);
+}
+      DateTimeToString(str, 'hh:mm', StrToDateTimeDefWithReplace(GetParamFromString(AOperation.Parameters,1)));
+
+      GCClientWebInterface.SetInterfaceData('{ "booking_add_time": "' + str + '" }');
+
+      if (GClientInfo.BookingAddSum> 0) and (GClientInfo.BookingAddSum <= GClientInfo.Balance - GClientInfo.BalanceLimit) then
+        GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "1" }')
+      else
+        GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "0" }');
+
+
       frmMain.DoDesignAdd;
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_UpdateCompNumber: begin
       frmMain.pnlCompNumber.Caption := GClientOptions.CompNumber;
-      frmMain.UpdateFullScreenInterface;
+      GCClientWebInterface.SetInterfaceData('{ "comp_num": "' + GClientOptions.CompNumber+ '" }');
+
     end;
     ThreadSafeOperation_MainFormAction:
       case AOperation.FormAction of
@@ -559,8 +593,7 @@ begin
 //      Application.MessageBox(PChar(AOperation.Parameters),'Îøèáêà');
       frmMain.lblWrongNameOrPassword.Caption := AOperation.Parameters;
       frmMain.lblWrongNameOrPassword.Visible := True;
-      frmMain.UpdateFullScreenInterface;
-      //frmMain.wbFullScreen.Refresh;
+      GCClientWebInterface.ShowMessages(AOperation.Parameters);
     end;
     ThreadSafeOperation_RunPadAction: begin
 {$IFDEF MSWINDOWS}
@@ -578,17 +611,6 @@ begin
     end;
     ThreadSafeOperation_MinimizeWindows: begin
       MinimizeWindows;
-    end;
-    ThreadSafeOperation_OldServerWarning: begin
-      case AOperation.FormAction of
-        FormAction_Show: begin
-          frmMain.tmrOldServerWarningShow.Enabled := True;
-        end;
-        FormAction_Hide: begin
-          frmMain.tmrOldServerWarningShow.Enabled := False;
-          frmMain.pnlOldServerWarning.Visible := False;
-        end;
-      end;
     end;
     ThreadSafeOperation_UpdateControlFromClientInfo: begin
       case AOperation.UpdatedControl of

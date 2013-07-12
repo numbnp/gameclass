@@ -156,7 +156,6 @@ type
     mnuChangeTarif: TMenuItem;
     mnuInstall: TMenuItem;
     tmrFileSynchronization: TTimer;
-    tmrCyclicCompAction: TTimer;
     timerGSessionsLoad: TTimer;
     N12: TMenuItem;
     mnuActivateReserve: TMenuItem;
@@ -294,7 +293,7 @@ type
     procedure tmrFileSynchronizationTimer(Sender: TObject);
     procedure gridCompsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure tmrCyclicCompActionTimer(Sender: TObject);
+
     procedure gridCompsMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure timerGSessionsLoadTimer(Sender: TObject);
@@ -1531,7 +1530,8 @@ begin
           dmActions.actRedrawComps.Execute;
           SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
           DoInterfaceComps;
-          PingComputer(index);
+          Comps[index].CheckState;
+//          PingComputer(index);
 //          asys.accounts[asys.GetIndexByNumber(Comps[index].a.number)].Load;
           SendAllOptionsToClient(index);
         end;
@@ -1563,7 +1563,8 @@ begin
          SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
          DoInterfaceComps;
          dmActions.actRedrawComps.Execute;
-         PingComputer(index);
+         Comps[index].CheckState;
+//         PingComputer(index);
 //         asys.accounts[asys.GetIndexByNumber(Comps[index].a.number)].Load;
          UDPSend(Comps[index].ipaddr,
              STR_CMD_CLIENT_INFO_SET + '='
@@ -1738,7 +1739,8 @@ begin
           dmActions.actRedrawComps.Execute;
           SendMessage(PopupList.Window, WM_CANCELMODE, 0, 0);
           DoInterfaceComps;
-          PingComputer(index);
+          Comps[index].CheckState;
+//          PingComputer(index);
           SendAllOptionsToClient(index);
         end else
           Comps[index].a.state := ClientState_Authentication;
@@ -2048,27 +2050,6 @@ begin
       DoEvent(FN_COMP_BACK_PART_MONEY);
     end
 
-end;
-
-procedure TformMain.tmrCyclicCompActionTimer(Sender: TObject);
-begin
-  if (isManager) then exit;
-  if CompsCount > 0 then begin
-    if GnCyclicCompActionCounter >= CompsCount then begin
-      GnCyclicCompActionCounter := 0;
-      if GRegistry.Options.OperatorTrafficControl
-          and GRegistry.Modules.Internet.SummaryAccounting then begin
-        GRegistry.Options.OperatorTrafficInbound :=
-            GRegistry.Options.OperatorTrafficInbound
-            + FProxy.IPTrafficGetIn(GRegistry.Options.OperatorIP);
-        GRegistry.Options.OperatorTrafficOutbound :=
-            GRegistry.Options.OperatorTrafficOutbound
-            + FProxy.IPTrafficGetOut(GRegistry.Options.OperatorIP);
-      end;
-    end;
-    PingComputer(GnCyclicCompActionCounter);
-    Inc(GnCyclicCompActionCounter);
-  end;
 end;
 
 procedure TformMain.gridCompsMouseUp(Sender: TObject; Button: TMouseButton;

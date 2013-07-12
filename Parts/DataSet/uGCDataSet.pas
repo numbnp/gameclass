@@ -247,6 +247,7 @@ begin
     for i:=0 to dtsResult.FieldCount - 1 do
       Fields[i].Value := dtsResult.Fields[i].Value;
     EnableInheritedInternalMethodsForOneOperation;
+
     Post;
     Result := True;
     if bInsert then
@@ -283,7 +284,10 @@ var
 begin
   FbInAutoUpdate := True;
   bookmark := GetBookmark;
-  Result := DoDelete(AnId);
+  if AbLocal then
+    Result := True
+  else
+    Result := DoDelete(AnId);
   if Locate('id', AnId, []) then begin
     if AbLocal then
       EnableInheritedInternalMethodsForOneOperation;
