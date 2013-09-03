@@ -8,9 +8,13 @@ uses
 type
   TPingThread = class(TThread)
   private
+    ClientPingable:Boolean;
+    ClientIndex:Integer;
     { Private declarations }
   protected
     procedure Execute; override;
+    procedure SyncClient;
+    procedure SyncAll;
   public
     Interval:integer;
     constructor Create(Suspended:Boolean);
@@ -39,6 +43,7 @@ end;
 procedure TPingThread.Execute;
 var
   i:integer;
+  ip : string;
 begin
   while True do
   begin
@@ -46,29 +51,42 @@ begin
     begin
       if Terminated then
         exit;
-        Comps[i].RealIcmpPingable := PingICMP(Comps[i].ipaddr);
-      if Comps[i].IgnoreOffline then
-        Comps[i].IcmpPingable:= true
-      else
-        Comps[i].IcmpPingable := Comps[i].RealIcmpPingable;
-      if Comps[i].RealIcmpPingable then
-        Comps[i].CheckState;
+      ClientPingable := false;
+      ClientIndex := i;
+
+      ClientPingable := PingICMP(Comps[i].ipaddr);
+      Synchronize(Self,SyncClient);
       Sleep(Interval);
     end;
 
-    if GRegistry.Options.OperatorTrafficControl
-          and GRegistry.Modules.Internet.SummaryAccounting then begin
-        GRegistry.Options.OperatorTrafficInbound :=
-            GRegistry.Options.OperatorTrafficInbound
-            + FProxy.IPTrafficGetIn(GRegistry.Options.OperatorIP);
-        GRegistry.Options.OperatorTrafficOutbound :=
-            GRegistry.Options.OperatorTrafficOutbound
-            + FProxy.IPTrafficGetOut(GRegistry.Options.OperatorIP);
-    end;
-
-
-
+    Synchronize(Self, SyncAll);
   end;
+end;
+
+procedure TPingThread.SyncAll;
+begin
+  if GRegistry.Options.OperatorTrafficControl
+      and GRegistry.Modules.Internet.SummaryAccounting then begin
+    GRegistry.Options.OperatorTrafficInbound :=
+      GRegistry.Options.OperatorTrafficInbound
+        + FProxy.IPTrafficGetIn(GRegistry.Options.OperatorIP);
+      GRegistry.Options.OperatorTrafficOutbound :=
+        GRegistry.Options.OperatorTrafficOutbound
+          + FProxy.IPTrafficGetOut(GRegistry.Options.OperatorIP);
+  end;
+end;
+
+procedure TPingThread.SyncClient;
+begin
+  Comps[ClientIndex].RealIcmpPingable := ClientPingable;
+  if Comps[ClientIndex].IgnoreOffline then
+  begin
+    Comps[ClientIndex].IcmpPingable:= true;
+    Comps[ClientIndex].control := true;
+  end else
+    Comps[ClientIndex].IcmpPingable := Comps[ClientIndex].RealIcmpPingable;
+  if Comps[ClientIndex].RealIcmpPingable then
+    Comps[ClientIndex].CheckState;
 end;
 
 procedure StartPingThread(Interval:integer);
