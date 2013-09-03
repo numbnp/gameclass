@@ -1,7 +1,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "GC3 Sync"
-!define PRODUCT_VERSION "1.0.4"
+!define PRODUCT_VERSION "1.0.5"
 !define PRODUCT_PUBLISHER "numb"
 !define PRODUCT_WEB_SITE "http://forum.nodasoft.ru"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
