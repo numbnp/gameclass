@@ -1,6 +1,6 @@
 object formMain: TformMain
-  Left = 246
-  Top = 136
+  Left = 232
+  Top = 123
   AlphaBlendValue = 0
   AutoScroll = False
   BiDiMode = bdRightToLeftNoAlign
@@ -4173,11 +4173,6 @@ object formMain: TformMain
     Font.Style = []
     Left = 438
     Top = 200
-  end
-  object bsPolyglotTranslator1: TbsPolyglotTranslator
-    Manager = dmMain.bsPolyglotManager
-    Left = 352
-    Top = 168
   end
   object PopupMenuShutdown: TPopupMenu
     Left = 408

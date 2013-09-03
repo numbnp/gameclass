@@ -7,7 +7,7 @@ uses
   Menus, ExtCtrls, StdCtrls, Controls, ComCtrls, Classes,
   StrUtils, Windows, Messages, SysUtils, Variants, Graphics, Forms,
   Dialogs, Grids, ValEdit, Mask, TeEngine, Series, TeeProcs, Chart,
-  TeeFunci, OleCtrls, Chartfx3, VCFI, DB, ADODB, DbChart, GCSessions,
+  TeeFunci, OleCtrls, {Chartfx3, VCFI,} DB, ADODB, DbChart, GCSessions,
   ToolEdit, CurrEdit,
   ufrmComputers,
   ufrmSessionsChart;

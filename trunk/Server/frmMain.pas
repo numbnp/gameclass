@@ -173,7 +173,6 @@ type
     mnuFont: TMenuItem;
     tabReports: TTabSheet;
     pnlReports: TPanel;
-    bsPolyglotTranslator1: TbsPolyglotTranslator;
     N15: TMenuItem;
     mnuXReport: TMenuItem;
     mnuZReport: TMenuItem;
