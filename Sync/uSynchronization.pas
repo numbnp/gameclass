@@ -312,6 +312,10 @@ begin
                 dstAccountsSelect.FieldValues['uname'];
             dstAccountsUpdate.Parameters.FindParam('@uotch').Value :=
                 dstAccountsSelect.FieldValues['uotch'];
+            dstAccountsUpdate.Parameters.FindParam('@hardcode').Value :=
+                dstAccountsSelect.FieldValues['hardcode'];
+            dstAccountsUpdate.Parameters.FindParam('@ignorehardcode').Value :=
+                dstAccountsSelect.FieldValues['ignorehardcode'];
 
             dstAccountsSync.Parameters.FindParam('@idSyncServer').Value :=
                 AnDestinationServerId;

@@ -13,7 +13,7 @@ BEGIN
       isenabled, isblocked, isprivileged, isdeleted, privilegedDiscount, 
       zeroBalance, balance, summary, address, memo, PeriodOfValidity, 
       ExpirationDate, assigntarif, userlevel, force_tariff, referal, username, 
-      uname, uotch FROM Accounts 
+      uname, uotch, hardcode ,ignorehardcode  FROM Accounts 
       WHERE ([isdeleted] = 0) AND ((Accounts.[id] = @id) OR (@id IS NULL))
       ORDER BY [id]
 END
@@ -62,7 +62,7 @@ BEGIN
       isenabled, isblocked, isprivileged, isdeleted, privilegedDiscount, 
       zeroBalance, balance, summary, address, memo, updated, PeriodOfValidity, 
 	ExpirationDate, assigntarif, userlevel, force_tariff, referal, username, 
-	uname, uotch FROM Accounts 
+	uname, uotch, hardcode ,ignorehardcode  FROM Accounts 
       WHERE (sync & CAST(POWER(2.0, @idSyncServer - 1) AS bigint)) = 0
       AND [id] <> 0
       ORDER BY [id]
@@ -95,7 +95,9 @@ CREATE PROCEDURE AccountsInsertUnsynchronized
 @referal int,
 @username nvarchar(80),
 @uname  nvarchar(80),
-@uotch nvarchar(80)
+@uotch nvarchar(80),
+@hardcode nvarchar(50), 
+@ignorehardcode int 
 
 AS 
 BEGIN
@@ -105,12 +107,12 @@ BEGIN
         [isenabled], [isblocked], [isprivileged], [isdeleted], [privilegedDiscount], 
         [zeroBalance], [balance], [summary], [address], [memo], [sync], [PeriodOfValidity], 
 	[ExpirationDate], [assigntarif], [userlevel], [force_tariff], [referal], [username], 
-	[uname], [uotch])
+	[uname], [uotch], [hardcode], [ignorehardcode])
         VALUES(@guid, @name, @password, @email, @phone, @photo, @seccodes,
         @isenabled, @isblocked, @isprivileged, @isdeleted, @privilegedDiscount,
         @zeroBalance, @balance, @summary, @address, @memo, 9223372036854775807,
 	@PeriodOfValidity, @ExpirationDate, @assigntarif, @userlevel, @force_tariff, @referal, 
-	@username, @uname, @uotch)
+	@username, @uname, @uotch, @hardcode, @ignorehardcode)
 
 END
 GO
@@ -142,7 +144,9 @@ CREATE PROCEDURE AccountsUpdateUnsynchronized
 @referal int,
 @username nvarchar(80),
 @uname  nvarchar(80),
-@uotch nvarchar(80)
+@uotch nvarchar(80),
+@hardcode nvarchar(50), 
+@ignorehardcode int 
 
 AS 
 BEGIN
@@ -152,12 +156,12 @@ BEGIN
         [isenabled], [isblocked], [isprivileged], [isdeleted], [privilegedDiscount], 
         [zeroBalance], [balance], [summary], [address], [memo], [sync], [PeriodOfValidity], 
 	[ExpirationDate], [assigntarif], [userlevel], [force_tariff], [referal], [username], 
-	[uname], [uotch])
+	[uname], [uotch], [hardcode], [ignorehardcode])
         VALUES(@guid, @name, @password, @email, @phone, @photo, @seccodes,
         @isenabled, @isblocked, @isprivileged, @isdeleted, @privilegedDiscount,
         @zeroBalance, 0.00, @summary, @address, @memo, 9223372036854775807,
 	@PeriodOfValidity, @ExpirationDate, @assigntarif, @userlevel, @force_tariff, @referal, 
-	@username, @uname, @uotch)
+	@username, @uname, @uotch, @hardcode, @ignorehardcode)
   ELSE
     UPDATE [Accounts] SET
         [name] = @name, [password] = @password, [email] = @email, [phone] = @phone,
@@ -167,7 +171,7 @@ BEGIN
         [summary] = @summary, [address] = @address, [memo] = @memo, 
 	[sync] = 9223372036854775807, [updated] = @updated, [PeriodOfValidity] = @PeriodOfValidity, [ExpirationDate] = @ExpirationDate,
 	[assigntarif] = @assigntarif, [userlevel] = @userlevel, [force_tariff] = @force_tariff, [referal] = @referal, [username] = @username, 
-	[uname] = @uname, [uotch] = @uotch
+	[uname] = @uname, [uotch] = @uotch, [hardcode] = @hardcode, [ignorehardcode] = @ignorehardcode 
         WHERE [guid] = @guid AND [updated] <= @updated
 END
 GO
@@ -186,6 +190,6 @@ GO
 /* -----------------------------------------------------------------------------
                                UPDATE Version
 ----------------------------------------------------------------------------- */
-UPDATE Registry SET [value] = '1.0.3', [Public] = 0 WHERE [key]='SyncOptions\Version'
+UPDATE Registry SET [value] = '1.0.5', [Public] = 0 WHERE [key]='SyncOptions\Version'
 GO
 

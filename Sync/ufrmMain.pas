@@ -529,6 +529,10 @@ begin
               dstAccountsSelect.FieldValues['uname'];
           dstAccountsInsert.Parameters.FindParam('@uotch').Value :=
               dstAccountsSelect.FieldValues['uotch'];
+          dstAccountsInsert.Parameters.FindParam('@hardcode').Value :=
+              dstAccountsSelect.FieldValues['hardcode'];
+          dstAccountsInsert.Parameters.FindParam('@ignorehardcode').Value :=
+              dstAccountsSelect.FieldValues['ignorehardcode'];    
 
           dstAccountsInsert.ExecProc;
           dstAccountsSync.Parameters.FindParam('@idSyncServer').Value :=
