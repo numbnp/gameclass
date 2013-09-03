@@ -36,7 +36,7 @@
           <Script3854 DataBaseVersion="3.85.3" FileName="GCBaseUpdate3853to3854.sqp" Description="Updating database for v3.85.4 ..."/>
           <Script3855 DataBaseVersion="3.85.4" FileName="GCBaseUpdate3854to3855.sqp" Description="Updating database for v3.85.5 ..."/>
           <Script3856 DataBaseVersion="3.85.5" FileName="GCBaseUpdate3855to3856.sqp" Description="Updating database for v3.85.6 ..."/>
-          <Script3857 DataBaseVersion="3.85.6" FileName="GCBaseUpdate3856to3857.sqp" Description="Updating database for v3.85.6 ..."/>
+          <Script3857 DataBaseVersion="3.85.6" FileName="GCBaseUpdate3856to3857.sqp" Description="Updating database for v3.85.7 ..."/>
   </Scripts>
   <Reports>
           <Report FileName="Важные сообщения.xml" Description="Обновление отчета Важные сообщения.xml ..."/>
