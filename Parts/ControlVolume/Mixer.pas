@@ -338,10 +338,10 @@ end;
 // ---------------------------------------------------------------------------
 
 procedure TvistaMixer.setMute(Value: boolean);
-var 
-  locValue: boolean;
+{var
+  locValue: boolean;}
 begin
-  locValue := Value;
+//  locValue := Value;
 //  FmmEndpoint.SetMute(locValue, nil);
 end;
 

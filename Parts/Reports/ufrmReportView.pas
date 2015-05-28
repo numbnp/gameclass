@@ -21,7 +21,8 @@ uses
 //  uLanguagesManager,
   ufrmReport,
   uReport,
-  ufrmMailSend;
+  ufrmMailSend, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh,
+  DBAxisGridsEh;
 
 
 type
@@ -601,6 +602,7 @@ var
   MyFilterIndex:integer;
 begin
   Result := FALSE;
+  MyFilterIndex := 0;
   if AstrFileName = '' then
   begin
     dlgSave.FileName := 'pm_' + FReport.ReportName;

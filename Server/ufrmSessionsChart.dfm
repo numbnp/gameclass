@@ -18,7 +18,6 @@ object frmSessionsChart: TfrmSessionsChart
     Top = 0
     Width = 423
     Height = 250
-    AllowZoom = False
     BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     MarginBottom = 0
@@ -29,8 +28,8 @@ object frmSessionsChart: TfrmSessionsChart
     Title.Text.Strings = (
       'TDBChart')
     Title.Visible = False
-    OnClickSeries = chartCompsClickSeries
     OnClickBackground = chartCompsClickBackground
+    OnClickSeries = chartCompsClickSeries
     BottomAxis.Automatic = False
     BottomAxis.AutomaticMaximum = False
     BottomAxis.AutomaticMinimum = False
@@ -63,40 +62,35 @@ object frmSessionsChart: TfrmSessionsChart
     View3DOptions.Elevation = 340
     View3DOptions.Perspective = 62
     View3DWalls = False
+    Zoom.Allow = False
     OnGetAxisLabel = chartCompsGetAxisLabel
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     OnMouseMove = chartCompsMouseMove
     OnMouseUp = chartCompsMouseUp
+    ColorPaletteIndex = 13
     object Series1: TGanttSeries
-      ColorEachPoint = True
-      Marks.ArrowLength = 0
+      Marks.Arrow.Visible = True
+      Marks.Callout.Brush.Color = clBlack
+      Marks.Callout.Arrow.Visible = True
+      Marks.ShapeStyle = fosRoundRectangle
       Marks.Visible = False
       SeriesColor = clRed
       Title = 'Series'
+      ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = True
-      XValues.DateTime = True
       XValues.Name = 'Start'
-      XValues.Multiplier = 1.000000000000000000
       XValues.Order = loAscending
-      YValues.DateTime = False
       YValues.Name = 'Y'
-      YValues.Multiplier = 1.000000000000000000
       YValues.Order = loNone
-      StartValues.DateTime = True
       StartValues.Name = 'Start'
-      StartValues.Multiplier = 1.000000000000000000
       StartValues.Order = loAscending
-      EndValues.DateTime = True
       EndValues.Name = 'End'
-      EndValues.Multiplier = 1.000000000000000000
       EndValues.Order = loNone
-      NextTask.DateTime = False
       NextTask.Name = 'NextTask'
-      NextTask.Multiplier = 1.000000000000000000
       NextTask.Order = loNone
     end
   end

@@ -7,7 +7,7 @@
 
 unit ufrmMain;
                          
-interface                                                     
+interface
 
 uses
 {$IFDEF MSWINDOWS}
@@ -24,12 +24,12 @@ uses
   ExtCtrls,
   Buttons,
   Mask,
-  ToolEdit,
-  CurrEdit,
+  {ToolEdit,
+  CurrEdit,}
   ieConst,
-  IEDocHostUIHandler,
+//  IEDocHostUIHandler,
   Menus,
-  uModernTrayIcon,uClientWebInterface,
+  uClientWebInterface,
   cefvcl,ceflib,
 {$ENDIF}
 {$IFDEF LINUX}
@@ -68,11 +68,8 @@ type
 
   TfrmMain = class(TForm)
     pnlTop: TPanel;
-    pnlCompNumber: TPanel;
     pnlScreenLogin: TPanel;
-{$IFDEF MSWINDOWS}
-    modernTrayIcon: TModernTrayIcon;
-{$ENDIF}
+
     wbTop: TWebBrowser;
     wbAccountCompFree: TWebBrowser;
     wbAgreement: TWebBrowser;
@@ -119,7 +116,6 @@ type
     pnlAccountInfoClient: TPanel;
     memBalanceHistory: TMemo;
     dtpTime: TDateTimePicker;
-    edtSum: TCurrencyEdit;
     lblStart: TLabel;
     lblStop: TLabel;
     lblTrafficSum: TLabel;
@@ -130,8 +126,6 @@ type
     pnlClientInfoMiddle: TPanel;
     pnlClientInfoAccount: TPanel;
     pnlBlocked: TPanel;
-    edtAddTrafficSum: TCurrencyEdit;
-    edtAddTrafficSize: TCurrencyEdit;
     tmrClock: TTimer;
     pgctrlMain: TPageControl;
     tabScreenAgreement: TTabSheet;
@@ -147,7 +141,6 @@ type
     gbTraffic: TGroupBox;
     lblTimeSum: TLabel;
     lblTimeLength: TLabel;
-    edtAddTimeSum: TCurrencyEdit;
     btnAddTime: TButton;
     dtpAddTimeLength: TDateTimePicker;
     edtStart: TEdit;
@@ -168,6 +161,10 @@ type
     mnuReboot: TMenuItem;
     mnuLogoff: TMenuItem;
     webSkin: TChromium;
+    edtSum: TEdit;
+    edtAddTimeSum: TEdit;
+    edtAddTrafficSum: TEdit;
+    edtAddTrafficSize: TEdit;
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -201,7 +198,7 @@ type
     procedure edtAddTrafficSizeExit(Sender: TObject);
     procedure memInfoChange(Sender: TObject);
 {$IFDEF MSWINDOWS}
-    procedure wbAccountNavigateComplete2(Sender: TObject;
+   { procedure wbAccountNavigateComplete2(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure wbAccountCompFreeNavigateComplete2(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
@@ -210,7 +207,7 @@ type
     procedure wbAgreementNavigateComplete2(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure wbCompFreeNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);
+      const pDisp: IDispatch; var URL: OleVariant);}
 {$ENDIF}
     procedure btnGuestClick(Sender: TObject);
     procedure btnAddTimeClick(Sender: TObject);
@@ -246,8 +243,8 @@ type
     procedure pnlCompNumberClick(Sender: TObject);
     procedure tbCompShutdownClick(Sender: TObject);
     procedure webSkinLoadEnd(Sender: TObject; const browser: ICefBrowser;
-      const frame: ICefFrame; httpStatusCode: Integer;
-      out Result: Boolean);
+      const frame: ICefFrame; httpStatusCode: Integer);
+    procedure pnlBlockedClick(Sender: TObject);
   private
     { Private declarations }
     FstrURLPath: String;
@@ -305,7 +302,7 @@ type
 var
   frmMain: TfrmMain;
 {$IFDEF MSWINDOWS}
-  GDocHostUIHandler: TDocHostUIHandler;
+//  GDocHostUIHandler: TDocHostUIHandler;
 {$ENDIF}
 
 implementation
@@ -679,8 +676,6 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
-var                                       
-  size: TSize;
 begin
   //PixelsPerInch := Screen.PixelsPerInch;
 //  PixelsPerInch := 75;
@@ -693,7 +688,7 @@ begin
   FbBeforeFirstFormShow := True;
   FbAfterFirstFormShow := False;
 {$IFDEF MSWINDOWS}
-  GDocHostUIHandler := TDocHostUIHandler.Create;
+//  GDocHostUIHandler := TDocHostUIHandler.Create;
 {$ENDIF}
   FbOnChangeEnabled := True;
 {$IFDEF MSWINDOWS}
@@ -730,9 +725,6 @@ begin
 end;
 
 procedure TfrmMain.butLogonClick(Sender: TObject);
-var
-  bUnblockPassword: Boolean;
-  bUnblockedByPassword: Boolean;
 begin
   //lblWrongNameOrPassword.Visible := False;
   ClientLogon(edtLogin.Text, edtPassword.Text, edtPassword.Text);
@@ -891,7 +883,7 @@ begin
 {$IFDEF LINUX}
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  GDocHostUIHandler.Free;
+//  GDocHostUIHandler.Free;
 {$ENDIF}
 end;
 
@@ -903,12 +895,11 @@ begin
 end;
 
 procedure TfrmMain.tmrClockTimer(Sender: TObject);
-var
-  s: THandle;
+
 begin
   pnlClock.Caption := TimeToStr(Time);
 {$IFDEF MSWINDOWS}
-  modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
+  //modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
 {$ENDIF}
 //  modernTrayIcon.Active := false;
 //  modernTrayIcon.Active := true;
@@ -922,7 +913,7 @@ begin
   //“ака€ ботва нужна из-за тридов, т.к. Focused порет чушь
   FbEdtSumFocused := True;
 end;
-                                  
+
 procedure TfrmMain.edtSumExit(Sender: TObject);
 begin
   FbEdtSumFocused := False;
@@ -990,14 +981,14 @@ end;
 
 
 {$IFDEF MSWINDOWS}
-procedure TfrmMain.wbAccountNavigateComplete2(Sender: TObject;
+{procedure TfrmMain.wbAccountNavigateComplete2(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
 var
   hr: HResult;
   CustDoc: ICustomDoc;
 begin
   hr := wbAccount.Document.QueryInterface(ICustomDoc, CustDoc);
-  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
 end;
 
 procedure TfrmMain.wbAccountCompFreeNavigateComplete2(Sender: TObject;
@@ -1007,7 +998,7 @@ var
   CustDoc: ICustomDoc;
 begin
   hr := wbAccountCompFree.Document.QueryInterface(ICustomDoc, CustDoc);
-  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
 end;
 
 procedure TfrmMain.wbTopNavigateComplete2(Sender: TObject;
@@ -1017,8 +1008,10 @@ var
   CustDoc: ICustomDoc;
 begin
   hr := wbTop.Document.QueryInterface(ICustomDoc, CustDoc);
-  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
 end;
+
+
 
 procedure TfrmMain.wbAgreementNavigateComplete2(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
@@ -1027,7 +1020,7 @@ var
   CustDoc: ICustomDoc;
 begin
   hr := wbAgreement.Document.QueryInterface(ICustomDoc, CustDoc);
-  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
 end;
 
 procedure TfrmMain.wbCompFreeNavigateComplete2(Sender: TObject;
@@ -1037,7 +1030,14 @@ var
   CustDoc: ICustomDoc;
 begin
   hr := wbCompFree.Document.QueryInterface(ICustomDoc, CustDoc);
-  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
+end;
+}
+procedure TfrmMain.webSkinLoadEnd(Sender: TObject; const browser: ICefBrowser;
+  const frame: ICefFrame; httpStatusCode: Integer);
+begin
+  GCClientWebInterface.Loaded := True;
+  //Design;
 end;
 {$ENDIF}
 
@@ -1192,6 +1192,12 @@ begin
   LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=3' , False);
 end;
 
+procedure TfrmMain.pnlBlockedClick(Sender: TObject);
+begin
+//GCClientWebInterface.ReloadSkin;
+//Chromium1.Load('http://127.0.0.1:5068/main.html');
+end;
+
 procedure TfrmMain.pnlClockClick(Sender: TObject);
 begin
   FbShutdownAlt := 1;
@@ -1209,12 +1215,6 @@ begin
 end;
 
 
-procedure TfrmMain.webSkinLoadEnd(Sender: TObject;
-  const browser: ICefBrowser; const frame: ICefFrame;
-  httpStatusCode: Integer; out Result: Boolean);
-begin
-  GCClientWebInterface.Loaded := True;
-end;
 
 end. ////////////////////////// end of file //////////////////////////////////
 

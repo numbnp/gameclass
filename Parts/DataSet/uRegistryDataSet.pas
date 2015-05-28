@@ -44,8 +44,7 @@ begin
 end;
 
 function TRegistryDataSet.DoUpdate(const AnId: Integer): Boolean;
-var
-  cmd: TADOCommand;
+
 begin
   Result := dsDoCommand(Connection,
       'exec RegistryUpdate @id='+ IntToStr(FieldValues['id'])
@@ -59,8 +58,7 @@ begin
 end;
 
 function TRegistryDataSet.DoInsert(var AdtsResult: TADODataSet): Boolean;
-var
-  str: String;
+
 begin
 {  str :=       'exec RegistryInsert @key=''' + FieldValues['key']
       + ''', @value=''' + FieldValues['value'] + '''';
@@ -83,29 +81,17 @@ begin
       FieldValues['value'] := AstrDefaultValue;
       Post;
     end;
-{
-//    FbEnableInheritedInternalMethods := True;
-    //Append;      //переделать инсерт и сделать апдейт
-    FieldValues['key'] := AstrKey;
-    FieldValues['value'] := AstrDefaultValue;
-    Post;
- } end;
+  end;
   Result := True;
 end;
 
 function TRegistryDataSet.LocateByKeyWithUserName(AstrKey: String;
     AstrDefaultValue: String): Boolean;
 var
-  nId: Integer;
   strKey: String;
 begin
   strKey := CurOperatorName + '\'+ AstrKey;
   if Not(Locate('key', strKey, [loCaseInsensitive])) then begin
-{    if Insert(nId) then begin
-      FRegistryRecord.Key := AstrKey;
-      FRegistryRecord.Value := AstrDefaultValue;
-    end;
-}
     Append;
     if State <> dsInsert then
       Edit;	

@@ -6,7 +6,8 @@ uses
   inifiles, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, IdComponent, IdTCPConnection, IdTCPClient, IdMessageClient,IdCoderHeader,
   IdSMTP, ComCtrls, StdCtrls, Buttons, ExtCtrls, IdBaseComponent, IdMessage,Registry,
-  uMail;
+  uMail, IdExplicitTLSClientServerBase, IdSMTPBase,IdGlobal,IdEMailAddress, IdAttachment,
+  IdAttachmentFile;
 
 type
   TfrmMailSend = class(TForm)
@@ -35,8 +36,9 @@ type
     procedure MRUListsLoad();
     procedure MRUListsSave();
     procedure FormCreate(Sender: TObject);
-    procedure MailMessageInitializeISO(var VTransferHeader: TTransfer;
-      var VHeaderEncoding: Char; var VCharSet: String);
+    procedure FormDestroy(Sender: TObject);
+{    procedure MailMessageInitializeISO(var VTransferHeader: TTransfer;
+      var VHeaderEncoding: Char; var VCharSet: String);}
   private
     FlstFrom: TStringList;
     FlstTo: TStringList;
@@ -158,9 +160,9 @@ begin
  SMTP.Port:=GRegistry.Mail.SMTPPort;
  // установка сообщения
  If GRegistry.Mail.SMTPUseAuth then
-   Smtp.AuthenticationType:=atLogin
+   Smtp.AuthType:=satDefault
  else
-   Smtp.AuthenticationType:=atNone;
+   Smtp.AuthType:=satNone;
  Smtp.Username:=GRegistry.Mail.SMTPUserName;
  Smtp.Password:=GRegistry.Mail.SMTPPassword;
 
@@ -172,12 +174,12 @@ begin
  MailMessage.Body.Text:=Memo2.Text; // текст сообщения
 
  if FileExists(ledAttachment.Text) then
-    TIdAttachment.Create(MailMessage.MessageParts,ledAttachment.Text);
+    TIdAttachmentFile.Create(MailMessage.MessageParts,ledAttachment.Text);
 
  // отправка почты
  try
   try
-   SMTP.Connect(1000);
+   SMTP.Connect;
    sleep(200);
    Application.ProcessMessages;
    SMTP.Send(MailMessage);
@@ -193,6 +195,7 @@ begin
   if SMTP.Connected then SMTP.Disconnect;
  end;
  MRUListsSave();
+
 end;
 
 procedure TfrmMailSend.SMTPStatus(ASender: TObject; const AStatus: TIdStatus;
@@ -229,11 +232,18 @@ begin
   FlstSubject := TStringList.Create;
 end;
 
-procedure TfrmMailSend.MailMessageInitializeISO(
+procedure TfrmMailSend.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FlstFrom);
+  FreeAndNil(FlstTo);
+  FreeAndNil( FlstSubject);
+end;
+
+{procedure TfrmMailSend.MailMessageInitializeISO(
   var VTransferHeader: TTransfer; var VHeaderEncoding: Char;
   var VCharSet: String);
 begin
   VCharSet := 'windows-1251';
 end;
-
+}
 end.

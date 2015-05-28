@@ -36,7 +36,7 @@ procedure RunSessionScript(const ASessionAction: TSessionAction;
     const ASession: TGCSession);
 var
   strParameters: String;
-  strDateTime: String;
+//  strDateTime: String;
 begin
   if GRegistry.Scripts.OnSession then begin
     case ASessionAction of

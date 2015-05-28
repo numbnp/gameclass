@@ -73,7 +73,7 @@ procedure SystemLogoff;
 // выполнить произвольную команду
 procedure ExecuteCommandLine (eCommandLine: string);
 
-function ExecAndWait(const FileName, Params: ShortString;
+function ExecAndWait(const FileName, Params: String;
     const WinState: Word): boolean; export;
 
 function EnablePrivilege(const AstrEnabledPrivilege: string;
@@ -217,7 +217,7 @@ end;
 // выполнить произвольную команду
 procedure ExecuteCommandLine (eCommandLine: string);
 begin
-  WinExec(PChar( eCommandLine), SW_SHOWNORMAL);
+  WinExec(PAnsiChar(Ansistring(eCommandLine)), SW_SHOWNORMAL);
 end;
 
 function EnablePrivilege(const AstrEnabledPrivilege: string;
@@ -272,12 +272,12 @@ begin
 end; // EnablePrivilege
 
 
-function ExecAndWait(const FileName, Params: ShortString;
+function ExecAndWait(const FileName, Params: String;
     const WinState: Word): boolean; export;
 var
   StartInfo: TStartupInfo;
   ProcInfo: TProcessInformation;
-  CmdLine: ShortString;
+  CmdLine: String;
 begin
   { Помещаем имя файла между кавычками,
   с соблюдением всех пробелов в именах Win9x }
@@ -304,9 +304,9 @@ end; //ExecAndWait
 
 function GetTempDir: String;
 var
-  Buf: array[0..1023] of Char;
+  Buf: array[0..1023] of AnsiChar;
 begin
-  SetString(Result, Buf, GetTempPath(Sizeof(Buf)-1, Buf));
+  SetString(Result, Buf, GetTempPathA(Sizeof(Buf)-1, Buf));
 end;
 {$ENDIF}
 

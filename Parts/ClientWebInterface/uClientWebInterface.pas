@@ -2,7 +2,7 @@ unit uClientWebInterface;
 
 interface
 
-uses Classes,cefvcl,ceflib, uWebServer, Forms;
+uses Classes,cefvcl,ceflib, uWebServer, Forms,StrUtils;
 
 type
 
@@ -44,7 +44,7 @@ end;
 procedure TGCClientWebInterface.ReloadSkin;
 begin
   Loaded:= False;
-  _MainFrame.LoadUrl('http://127.0.0.1:5060/main.html');
+  _MainFrame.LoadUrl('http://127.0.0.1:5068/main.html');
 
   while Not Loaded do
     Application.ProcessMessages;
@@ -70,7 +70,7 @@ var
   buffer :string;
 begin
   buffer := ReplaceStr(str,#$D#$A,'<br>');
-  _MainFrame.ExecuteJavaScript('update_info(' + buffer + ');','http://127.0.0.1:5060/main.html',0);
+  _MainFrame.ExecuteJavaScript('update_info(' + buffer + ');','http://127.0.0.1:5068/main.html',0);
 
 end;
 

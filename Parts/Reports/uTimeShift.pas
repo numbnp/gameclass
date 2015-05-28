@@ -17,16 +17,16 @@ uses
 
 function GetCurrentShiftBegin(NowTime:Tdatetime):tdatetime;
 var
-  FormatSettings: TFormatSettings;
+  MyFormatSettings: TFormatSettings;
   sDate:string;
   sQuery:string;
   sResultQuery:string;
 begin
-  GetLocaleFormatSettings(LANG_ENGLISH, FormatSettings);
-  DateTimeToString(sDate,'dd-mmm-yyyy hh:nn:ss',NowTime,FormatSettings);
+  GetLocaleFormatSettings(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),0)  , MyFormatSettings);
+  DateTimeToString(sDate,'dd-mmm-yyyy hh:nn:ss',NowTime,MyFormatSettings);
   sQuery :='EXEC '+DS_SHIFT_TIME + ' ' +QuotedStr (sDate);
   sResultQuery:=dsGetVarBySqlQuery( sQuery );
-  if sResultQuery = '' then 
+  if sResultQuery = '' then
     Result := NowTime
   else
     Result := strtodatetime(sResultQuery);

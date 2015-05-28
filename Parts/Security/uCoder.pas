@@ -2,7 +2,49 @@ unit uCoder;
 
 interface
 
-const
+type
+  //
+  // TCoder
+  //
+
+  TCoder = class(TObject)
+  private
+  public
+    function SimpleEncodeString(const AstrData : String): String;
+//    function SimpleDecodeString(const AstrData : String): String;
+
+  end; // TCoder
+
+implementation
+
+uses
+  StrUtils,
+  IdCoderMIME,
+  IdGlobal;
+
+function TCoder.SimpleEncodeString(const AstrData : String): String;
+var
+  strResult: String;
+  Base:string;
+begin
+  Base := AstrData;
+  strResult :=TIdEncoderMIME.EncodeBytes(ToBytes(Base));
+  Result := strResult;
+end; // TCoder.SimpleEncodeString
+{
+function TCoder.SimpleDecodeString(const AstrData : String): String;
+var
+  strResult: String;
+begin
+  strResult := AstrData;
+  DecodeString(TKeyArray(SimpleKey), strResult);
+  Result := strResult;
+end; // TCoder.SimpleEncodeString
+}
+
+
+
+{const
 DecryptIndex : array[0..31] of longword =
      ( 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7,
        0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0 );
@@ -141,7 +183,7 @@ uses
   StrUtils,
   SysUtils;
 
-{$OVERFLOWCHECKS OFF}
+{$OVERFLOWCHECKS OFF}{
 procedure TCoder._Decrypt32 ( var Key:TKeyArray;
                  InN1:longword;
                  InN2:longword;
@@ -408,7 +450,7 @@ begin
 end; // TCoder.SimpleEncodeString
 
 
-function TCoder._Base64Decode(const S: string): string;
+function TCoder._Base64Decode(const S: string): AnsiString;
 var
   i: Integer;
   a: Integer;
@@ -439,7 +481,7 @@ begin
   end;
 end;
 
-function TCoder._Base64Encode(const S: string): string;
+function TCoder._Base64Encode(const S: string): AnsiString;
 var
   i: Integer;
   a: Integer;
@@ -468,7 +510,7 @@ begin
     Result := Result + Codes64[x + 1];
   end;
 end;
-
+}
 end.
 
 

@@ -86,8 +86,8 @@ begin
 end;
 
 function TAccounts.GetItem(AnId: Integer): TAccountsRecord;
-var
-  bookmark: Pointer;
+//var
+//  bookmark: Pointer;
 begin
   Result := Nil;
   if (AnId = 0) then exit;

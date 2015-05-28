@@ -5,7 +5,8 @@ interface
 uses 
   GCConst, GCComputers, GCCommon, ADODB, GCLangUtils,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, ComCtrls, StdCtrls, Buttons, DB, Grids, DBGridEh;
+  ExtCtrls, ComCtrls, StdCtrls, Buttons, DB, Grids, DBGridEh, DBGridEhGrouping,
+  ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DynVarsEh, EhLibVCL;
 
 type
   TframComputers = class(TFrame)
@@ -53,6 +54,7 @@ type
     procedure EnableControls;
     procedure DisableControls;
     procedure UpdateInDB(id:integer);
+    procedure FreeData;
     { Public declarations }
   end;
 
@@ -64,6 +66,20 @@ implementation
 procedure TframComputers.EnableControls;
 begin
   FbControlsEnabled := True;
+end;
+
+procedure TframComputers.FreeData;
+var
+  i:integer;
+  Group: TComputerGroup;
+begin
+  for i:= 0 to lbGroups.Items.Count -1 do
+  begin
+    Group := TComputerGroup(lbGroups.Items.Objects[i]);
+    FreeAndNil(Group);
+  end;
+  lbGroups.Items.Clear;
+
 end;
 
 procedure TframComputers.DisableControls;
@@ -79,14 +95,19 @@ end;
 procedure TframComputers.UpdateCompsList;
 var
   i: integer;
-  li: TListItem;
-  Comp: TComputer;
   Group: TComputerGroup;
   dts: TADODataSet;
 begin
   DisableControls;
 
+  for i:= 0 to lbGroups.Items.Count -1 do
+  begin
+    Group := TComputerGroup(lbGroups.Items.Objects[i]);
+    FreeAndNil(Group);
+  end;
   lbGroups.Items.Clear;
+
+
   gridComputers.Columns[FC_COL_GROUP].PickList.Clear;
 
   if (dsConnected) then
@@ -127,6 +148,9 @@ begin
       cdsComputers.FieldValues['mac'] := dts.Recordset.Fields.Item['macaddress'].Value;
       cdsComputers.FieldValues['snmp_password'] := dts.Recordset.Fields.Item['snmp_password'].Value;
       cdsComputers.FieldValues['mib_port'] := dts.Recordset.Fields.Item['snmp_mib_ports'].Value;
+      cdsComputers.FieldValues['on_val'] := dts.Recordset.Fields.Item['on_val'].Value;
+      cdsComputers.FieldValues['off_val'] := dts.Recordset.Fields.Item['off_val'].Value;
+
       cdsComputers.FieldValues['ignore_offline'] := dts.Recordset.Fields.Item['ignore_offline'].Value;
       cdsComputers.FieldValues['client_type'] := gridComputers.Columns[FC_COL_CLIENT_TYPE].PickList.Strings[dts.Recordset.Fields.Item['client_type'].Value];
 
@@ -162,7 +186,10 @@ var
   i:integer;
 begin
   Visible := (GetID = ID);
-  if (not Visible) then exit;
+  if (not Visible) then
+  begin
+    exit;
+  end;
   ResetFrame;
   butAdd1.Caption := translate('Add');
   butDelete1.Caption := translate('Delete');
@@ -173,7 +200,11 @@ begin
 
   for i:= 0 to gridComputers.Columns.Count-1 do
     if gridComputers.Columns[i].FieldName<>'' then
+    begin
       gridComputers.Columns[i].Title.Caption := translate(gridComputers.Columns[i].FieldName);
+      if gridComputers.Columns[i].Title.Caption='' then
+        gridComputers.Columns[i].Title.Caption := gridComputers.Columns[i].FieldName;
+    end;
 end;
 
 procedure TframComputers.butGroupAddClick(Sender: TObject);
@@ -226,8 +257,7 @@ begin
 end;
 
 procedure TframComputers.gridComputersColExit(Sender: TObject);
-var
-  a:integer;
+
 begin
   if not FbControlsEnabled then exit;
   if FbUpdateInDB then
@@ -239,7 +269,7 @@ end;
 procedure TframComputers.UpdateInDB(id:integer);
 var
   Comp:TComputer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
   i:integer;
   DoUpdate:Boolean;
 begin
@@ -260,6 +290,8 @@ begin
       Comp.macaddr := cdsComputers.FieldValues['mac'];
       Comp.SNMP_Password := cdsComputers.FieldValues['snmp_password'];
       Comp.SNMP_MIB_Port := cdsComputers.FieldValues['mib_port'];
+      Comp.SNMP_ON_Value := cdsComputers.FieldValues['on_val'];
+      Comp.SNMP_OFF_Value := cdsComputers.FieldValues['off_val'];
       Comp.IgnoreOffline := cdsComputers.FieldValues['ignore_offline'];
 
       for i:=0 to gridComputers.Columns[FC_COL_GROUP].PickList.Count-1 do
@@ -287,7 +319,9 @@ begin
               ', @macaddress=''' + UpperCase(Comp.macaddr) + '''' +
               ', @snmp_password=''' + Comp.SNMP_Password + '''' +
               ', @mib_port=''' + Comp.SNMP_MIB_Port + '''' +
-              ', @ignore_offline=' + BoolToStr(Comp.IgnoreOffline));
+              ', @ignore_offline=' + BoolToStr(Comp.IgnoreOffline) +
+              ', @on_val=' + IntToStr(Comp.SNMP_ON_Value) +
+              ', @off_val=' + IntToStr(Comp.SNMP_OFF_Value));
   except
     DoUpdate := True;
   end;
@@ -308,7 +342,7 @@ begin
   if (cdsComputers.FieldValues['ip']<>'') then
   begin
     ipaddr:=cdsComputers.FieldValues['ip'];
-    l_ipaddr:=pchar(ipaddr);
+    l_ipaddr:=pansichar(Ansistring(ipaddr));
     cdsComputers.Edit;
     cdsComputers.FieldValues['mac']:= GetMacFromIP( l_ipaddr);
     FbUpdateInDB:=True;
@@ -339,14 +373,11 @@ begin
 end;
 
 procedure TframComputers.butDelete1Click(Sender: TObject);
-var
-  i:integer;
 begin
   if not FbControlsEnabled then exit;
   DisableControls;
   cdsComputers.First;
   while (not cdsComputers.Eof) do begin
-    i:= cdsComputers.FieldValues['chek'];
     if cdsComputers.FieldValues['chek'] = -1 then
       dsDoCommand(DS_COMPUTERS_DELETE + ' @idComp=' + inttostr(cdsComputers.FieldValues['id']));
     cdsComputers.Next;

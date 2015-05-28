@@ -82,8 +82,8 @@ end; // TKillTaskRemoteCommand.Create
 // public methods
 
 procedure TKillTaskRemoteCommand.Execute();
-var
-  i: Integer;
+{var
+  i: Integer;}
 begin
   if Length(FstrExeFileName) > 0 then
     KillTask(FstrExeFileName)

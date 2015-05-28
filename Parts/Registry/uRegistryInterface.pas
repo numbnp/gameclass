@@ -160,6 +160,7 @@ end;
 
 destructor TRegistryInterface.Destroy;
 begin
+  FreeAndNil(FRegistryDontShow);
   inherited Destroy;
 end;
 

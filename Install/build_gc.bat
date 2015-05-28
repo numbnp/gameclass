@@ -26,11 +26,11 @@ call compile_release_gc.bat
 rem Пересборка Russion.lng
 echo Пересборка Russion.lng
 copy Docs\Russian.lng Output\Release\
-Tools\LngRecoder\LngRecoder.exe Output\Release\Russian.lng Server\GCServer.drc
+Tools\LngRecoder\LngRecoder.exe Output\Release\Russian.lng Server\GCServer.lng
 
 rem Подготовка файлов для создания дистрибутива:
 call copy_packages_files.bat
-
+pause
 rem Кодирование sql-файлов в sqp
 call encode_sql.bat
 
@@ -42,7 +42,8 @@ rem cd ..\..\..
 rem cd Install\Src\GI
 rem "C:\Program Files\Ethalone\Ghost Installer\Bin\GIBuild.exe" gcsetup.gpr
 rem cd ..\..\..
-
+pause
 cd Install\Src\NSIS
 "c:\Program Files\NSIS\makensis.exe" All.nsi
 
+pause

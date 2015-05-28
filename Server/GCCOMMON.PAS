@@ -48,6 +48,7 @@ procedure dsClearStatistics;
 procedure dsLoadFunctionsRights;
 procedure dsLoadComputers;
 procedure dsLoadComputerGroups;
+procedure dsUnLoadComputerGroups;
 procedure dsUnloadComputers;
 procedure dsLoadTarifs;
 procedure dsUnloadTarifs;
@@ -125,7 +126,6 @@ Uses
   udmActions,
   udmMain,
   uTariffication,
-  uRegistration,
   uDebugLog,
   comobj,
   uGCSidelines,
@@ -203,15 +203,6 @@ begin
     end;
     dts.Close;
     dts.Destroy;
-    if (StrLen(Registration.UserName) = 0) then begin
-      FunctionEnable(FN_CLEAR_STATISTICS, false);
-    end;
-    if (StrLen(Registration.UserName) = 0) and ((Registration.TrialDaysLeft=0) or (Registration.TrialExLeft=0)) then
-    begin
-      FunctionEnable(FN_CURRENT_REPORT,false);
-      FunctionEnable(FN_CLOSE_SHIFT,false);
-      Console.AddEvent(EVENT_ICON_MAIL, LEVEL_2, translate('TrialEnd'));
-    end;
     Console.AddEvent(EVENT_ICON_EMPTY, LEVEL_2, translate('dsLoadFunctions')+' ['+IntToStr(i)+']');
     DoInterface;
     DoInterfaceComps;
@@ -240,10 +231,12 @@ begin
       Comps[i].number := dts.Recordset.Fields.Item['number'].Value;
       Comps[i].ipaddr := dts.Recordset.Fields.Item['ipaddress'].Value;
       Comps[i].IdGroup := dts.Recordset.Fields.Item['idGroup'].Value;
-      Comps[i].macaddr  := dts.Recordset.Fields.Item['macaddress'].Value;
+      Comps[i].macaddr  := string(dts.Recordset.Fields.Item['macaddress'].Value);
       Comps[i].GroupName := ComputerGroupsGetName(Comps[i].IdGroup);
-      Comps[i].SNMP_Password := dts.Recordset.Fields.Item['snmp_password'].Value;
-      Comps[i].SNMP_MIB_Port := dts.Recordset.Fields.Item['snmp_mib_ports'].Value;
+      Comps[i].SNMP_Password := string(dts.Recordset.Fields.Item['snmp_password'].Value);
+      Comps[i].SNMP_MIB_Port := string(dts.Recordset.Fields.Item['snmp_mib_ports'].Value);
+      Comps[i].SNMP_ON_Value := integer(dts.Recordset.Fields.Item['on_val'].Value);
+      Comps[i].SNMP_OFF_Value := integer(dts.Recordset.Fields.Item['off_val'].Value);
       Comps[i].IgnoreOffline := dts.Recordset.Fields.Item['ignore_offline'].Value;
       Comps[i].ClientType := dts.Recordset.Fields.Item['client_type'].Value;
       Comps[i].InitDev;
@@ -262,7 +255,6 @@ procedure dsLoadComputerGroups;
 var
   dts: TADODataSet;
   i: integer;
-  str: string;
 begin
   if (dsConnected) then
   begin
@@ -274,7 +266,7 @@ begin
     begin
       CompGroups[i] := TComputerGroup.Create;
       CompGroups[i].Id := dts.Recordset.Fields.Item['id'].Value;
-      CompGroups[i].Name := dts.Recordset.Fields.Item['name'].Value;
+      CompGroups[i].Name := string (dts.Recordset.Fields.Item['name'].Value);
       i := i + 1;
       dts.Recordset.MoveNext;
     end;
@@ -284,13 +276,25 @@ begin
   end;
 end;
 
+procedure dsUnLoadComputerGroups;
+var
+  i: integer;
+begin
+  for i:=0 to CompGroupsCount-1 do
+  begin
+    CompGroups[i].Destroy;
+  end;
+  CompGroupsCount :=0;
+end;
+
 procedure dsUnloadComputers;
 var
   i: integer;
 begin
   for i:=1 to CompsCount do
   begin
-    Comps[i-1].Destroy;
+    if Comps[i-1]<> nil then
+      Comps[i-1].Destroy;
   end;
   CompsCount := 0;
   CompsSelCount := 0;
@@ -779,9 +783,7 @@ end;
 function dsGetCurrentShiftTotal(var AfTime, AfService, AfTraffic, AfPrinted,
     AfAccountsAdded, AfAccountsPayed, AfAccountsReturned: Double;
     var AdtLastShift: TDateTime): Double;
-var
-  dts: TADODataSet;
-  query: string;
+
 begin
   dsGetCurrentShiftTotal := 0;
   dmMain.dstCurrentReport.Parameters.ParamValues['@NewShiftPoint']
@@ -978,7 +980,6 @@ end;
 function dsGetVarBySqlQuery(Query: string):string;
 var
   dts: TADODataSet;
-  tm: TDateTime;
 begin
   Result := '';
   if (dsConnected) then

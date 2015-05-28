@@ -9,12 +9,16 @@ object framComputers: TframComputers
     Top = 0
     Width = 561
     Height = 488
-    ActivePage = tabGroups
+    ActivePage = tabComputers
     Align = alClient
     MultiLine = True
     TabOrder = 0
     object tabGroups: TTabSheet
       Caption = #1043#1088#1091#1087#1087#1099
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pnGroups: TPanel
         Left = 0
         Top = 0
@@ -79,35 +83,26 @@ object framComputers: TframComputers
         Height = 412
         Align = alClient
         AutoFitColWidths = True
-        BiDiMode = bdRightToLeftNoAlign
         DataSource = dsComputers
+        DynProps = <>
         Flat = True
-        FooterColor = clWindow
-        FooterFont.Charset = DEFAULT_CHARSET
-        FooterFont.Color = clWindowText
-        FooterFont.Height = -11
-        FooterFont.Name = 'MS Sans Serif'
-        FooterFont.Style = []
+        FooterParams.Color = clWindow
+        IndicatorOptions = []
         Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-        ParentBiDiMode = False
         TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = []
-        FilterStringColor = clWindow
         OnColExit = gridComputersColExit
         OnExit = gridComputersExit
         Columns = <
           item
             Checkboxes = True
+            DynProps = <>
             EditButtons = <>
             FieldName = 'chek'
             Footers = <>
             Width = 16
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'number'
             Footers = <>
@@ -115,6 +110,7 @@ object framComputers: TframComputers
             Width = 45
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'group'
             Footers = <>
@@ -122,6 +118,7 @@ object framComputers: TframComputers
             Width = 88
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'client_type'
             Footers = <>
@@ -130,6 +127,7 @@ object framComputers: TframComputers
               'SNMP')
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'ip'
             Footers = <>
@@ -138,6 +136,9 @@ object framComputers: TframComputers
           end
           item
             ButtonStyle = cbsEllipsis
+            DynProps = <>
+            EditButton.Style = ebsEllipsisEh
+            EditButton.Visible = True
             EditButtons = <>
             FieldName = 'mac'
             Footers = <>
@@ -146,21 +147,39 @@ object framComputers: TframComputers
             OnEditButtonClick = gridComputersColumns3EditButtonClick
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'snmp_password'
             Footers = <>
           end
           item
+            DynProps = <>
             EditButtons = <>
             FieldName = 'mib_port'
             Footers = <>
           end
           item
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'on_val'
+            Footers = <>
+            Width = 30
+          end
+          item
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'off_val'
+            Footers = <>
+          end
+          item
             Checkboxes = True
+            DynProps = <>
             EditButtons = <>
             FieldName = 'ignore_offline'
             Footers = <>
           end>
+        object RowDetailData: TRowDetailPanelControlEh
+        end
       end
       object GroupBox1: TGroupBox
         Left = 0
@@ -244,6 +263,14 @@ object framComputers: TframComputers
       item
         Name = 'ignore_offline'
         DataType = ftBoolean
+      end
+      item
+        Name = 'on_val'
+        DataType = ftInteger
+      end
+      item
+        Name = 'off_val'
+        DataType = ftInteger
       end>
     Parameters = <>
     StoreDefs = True

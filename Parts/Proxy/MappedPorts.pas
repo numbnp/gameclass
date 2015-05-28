@@ -4,7 +4,7 @@ interface
 
 uses Classes, IPInfo, IdControlledMappedPortTCP;
 
-type
+{type
    TMappedPort = class(TCollectionItem)
    public
       FPort: TIdControlledMappedPortTCP;
@@ -28,13 +28,13 @@ type
       procedure DisconnectAll;
    private
       property Items[Index: Integer]:TMappedPort read GetItem write SetItem; default;
-   end;
+   end;}
 
 implementation
 ////////////////////////////////////////////////////////////////////////////////
 //                               TMappedPort
 ////////////////////////////////////////////////////////////////////////////////
-constructor TMappedPort.Create(Collection: TCollection);
+{constructor TMappedPort.Create(Collection: TCollection);
 begin
    inherited Create(Collection);
    FPort := TIdControlledMappedPortTCP.Create(Nil,TMappedPorts(Collection).FIPList);
@@ -43,12 +43,12 @@ destructor TMappedPort.Destroy;
 begin
    FPort.Free;
    inherited Destroy;
-end;
+end;}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               TMappedPorts
 ////////////////////////////////////////////////////////////////////////////////
-constructor TMappedPorts.Create(IPList:TIPInfoList);
+{constructor TMappedPorts.Create(IPList:TIPInfoList);
 begin
    inherited Create(TMappedPort);
    FIPList := IPList;
@@ -103,6 +103,6 @@ begin
    for i:=0 to Count-1 do
       Items[i].FPort.DisconnectAll;
 end;
-
+}
 
 end.

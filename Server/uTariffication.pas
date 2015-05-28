@@ -105,7 +105,6 @@ type
     // функци€ подсчета денег исход€ из времени
     function MegaFunctionCalcCostByTime(start,stop: TDateTime):double;
   private
-    rc: integer;    // index of r
     FnBytesInMB: Integer;
     FnSpeedLimitInKB: Integer;
     FstrPluginGroupName: String;
@@ -414,10 +413,14 @@ end;
 function TTarif.CalculateTimeLength(start: TDateTime; money: double; vip: Integer; discount:integer):TDateTime;
 var
   new_stop, new_length: TDateTime;
-  n : Integer;
+//  n : Integer;
 begin
   //ƒл€ ремонта нельз€ рассчитатьт врем€
-  if (id = ID_TARIF_REMONT) then exit;
+  if (id = ID_TARIF_REMONT) then
+  begin
+    CalculateTimeLength := 0;
+    exit;
+  end;
   //дл€ пакетов
 //  start := RecodeSecond(RecodeMilliSecond(start, 0),0);
   if (discount = 100) then begin
@@ -461,7 +464,7 @@ begin
  // теперь можем применить округление по времени в меньшую сторону
  //if ( not ((HourOf(new_stop) = 23) and (MinuteOf(new_stop)=59)) ) then
  new_length := fnRoundTime(new_stop-start, roundtime, -1);
- n := MinutesBetween(start,start+new_length);
+// n := MinutesBetween(start,start+new_length);
  CalculateTimeLength := new_length;
 end;
 
@@ -472,7 +475,7 @@ function TTarif.CalculateCost(start,stop: TDateTime; vip: Integer;
 var
   new_stop: TDateTime;
   summa: double;
-  n: Integer;
+//  n: Integer;
 begin
   Result := 0;
   //ƒл€ ремонта стоимость 0
@@ -485,7 +488,7 @@ begin
     stop := RecodeSecond(RecodeMilliSecond(stop, 0),0);
   end;
   new_stop := stop;
-  n := MinutesBetween(start,new_stop);
+//  n := MinutesBetween(start,new_stop);
  //вычислили оплату (посекундно, поминутно ... в зависимости от параметра)
  summa := MegaFunctionCalcCostByTime(start,new_stop);
 
@@ -559,9 +562,9 @@ end;
 // функци€ округл€ени€ денег вперед или назад по заданному шагу
 function TTarif.fnRoundMoney(money: double; stepmoney: double; direction: integer): double;
 var
-  oldmoney, roundmoney, newmoney: double;
-  i1: longword;
-  range:integer;
+//  oldmoney, roundmoney, newmoney: double;
+//  i1: longword;
+//  range:integer;
   nPartCount: Integer;
   fRoundedMoney: Double;
 begin
@@ -612,9 +615,9 @@ function TTarif.MegaFunctionCalcTimeByCost(start: TDateTime;
 var
   moment: TDateTime;
   summa: double;
-  bExit: Boolean;
+//  bExit: Boolean;
   nMin: Integer; //количество минут
-  nSec: Integer; //количество секунд
+//  nSec: Integer; //количество секунд
   fConst: Double;
 begin
   summa := cost;
@@ -721,11 +724,13 @@ begin
           and AbCalcByTime)
           or (((AfMoney/TarifVariants[i].cost*60 >= TarifVariants[i].ConditionValue)
           and not AbCalcByTime))))
-          or not TarifVariants[i].bCondition then begin
-        min_index := MinutesBetween(0,AdtLength);
-        min_index := i;
-        minimum := TarifVariants[i].cost;
-      end;
+          or not TarifVariants[i].bCondition then
+          begin
+           { TODO : ѕроверить след строку }
+//            min_index := MinutesBetween(0,AdtLength);
+            min_index := i;
+            minimum := TarifVariants[i].cost;
+          end;
     end;
   if (min_index = -1) then begin
     if not GbInexpensiveTarifVariantNotExistsMessageShowed then begin
@@ -776,7 +781,7 @@ begin
     Result := GetInexpensiveTarifVariantByTime(AdtMoment, AdtLength)
   else
     for i:=0 to variantscount-1 do
-      if TarifVariants[i].id = AnWhole then
+      if TarifVariants[i].id = cardinal(AnWhole) then
         Result := TarifVariants[i];
 end;
 

@@ -133,6 +133,7 @@ begin
   FreeAndNil(FRegistryReportStrings);
   FreeAndNil(FRegistryControlCommands);
   FreeAndNil(FRegistryMail);
+  FreeAndNil(FRegistryCardReader);
   inherited Destroy;
 end;
 

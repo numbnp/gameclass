@@ -16,6 +16,7 @@ object formCompStart: TformCompStart
   KeyPreview = True
   OldCreateOrder = False
   Position = poOwnerFormCenter
+  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignSize = (
@@ -290,6 +291,8 @@ object formCompStart: TformCompStart
             Top = 20
             Width = 126
             Height = 41
+            Margins.Left = 8
+            Margins.Top = 1
             AutoSize = False
             DisplayFormat = ',0.00;-,0.00'
             Enabled = False
@@ -325,6 +328,8 @@ object formCompStart: TformCompStart
             Top = 20
             Width = 126
             Height = 41
+            Margins.Left = 8
+            Margins.Top = 1
             AutoSize = False
             DisplayFormat = ',0.00;-,0.00'
             Font.Charset = DEFAULT_CHARSET

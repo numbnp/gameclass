@@ -179,9 +179,9 @@ begin
   SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
   // установка сообщения
   if GRegistry.Mail.SMTPUseAuth then
-    SendMail.Smtp.AuthenticationType:=atLogin  // atLogin
+    SendMail.Smtp.AuthType:=satDefault  // atLogin
   else
-    SendMail.Smtp.AuthenticationType:=atNone; // atNone
+    SendMail.Smtp.AuthType:=satNone; // atNone
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
   SendMail.MailMessage.From.Name:='GameClass';

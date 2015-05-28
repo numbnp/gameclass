@@ -95,10 +95,14 @@ end;
 procedure TfrmTaskList.UpdateTemplateList;
 var
   i: Integer;
+  tmpStringList:TStringList;
 begin
+
   lbTasksTemplate.Clear;
-  for i:=0 to ( GRegistry.TaskKill.Template.Count-1) do
-    lbTasksTemplate.Items.Add( GRegistry.TaskKill.Template.Strings[i]);
+  tmpStringList := GRegistry.TaskKill.Template;
+  for i:=0 to ( tmpStringList.Count-1) do
+    lbTasksTemplate.Items.Add( tmpStringList.Strings[i] );
+  FreeAndNil(tmpStringList);
 end;
 
 procedure TfrmTaskList.butRemoveFromTemplateClick(Sender: TObject);

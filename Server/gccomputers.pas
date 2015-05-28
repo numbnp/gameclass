@@ -11,7 +11,13 @@ uses
   Dialogs, ComCtrls, DateUtils, frmGCMessageBox, Proxy,
   SysUtils, DB, ADODB, StrUtils, IdSocketHandle,
   IdUDPServer, IdUDPClient, IdICMPClient,
-  GCSessions, uClientInfoConst, JwaIpHlpApi, JwaWinsock2, Graphics, uGCSendRecieve,
+  GCSessions, uClientInfoConst,
+  //JwaIpHlpApi,
+  //JwaWinsock2,
+  Winapi.IpHlpApi,
+  IdGlobal,
+  IdWinsock2,
+  Graphics, uGCSendRecieve,
   uGCDevices;{,
   IdBaseComponent,IdComponent,IdUDPBase,IdGlobal;}
 
@@ -74,8 +80,7 @@ type
     used: boolean; //flag
   end;
 
-  TMapping
-   = record
+  TMapping = record
     id: word;
     listenport: word;
     mappedip: string;
@@ -123,6 +128,7 @@ type
 
   public
     constructor Create;
+    destructor Destroy; override;
     function GetStrNumber:string;
     function GetInfo:string; // выдача краткой инфы на табло клиента на время когда комп свободен
     function GetInfoFull:string; // выдача полной инфы на табло клиента в первые 10 сек после завершения и в систрее во время работы
@@ -156,6 +162,8 @@ type
 
     SNMP_Password: String;
     SNMP_MIB_Port: String;
+    SNMP_ON_Value: Integer;
+    SNMP_OFF_Value: Integer;
 
     IgnoreOffline: boolean;
 
@@ -218,6 +226,8 @@ type
 
   // настройки конкретного оператора
   TOperatorProfile = class
+  private
+    Procedure ChekAndFreeFont(Obj,Parrent:TFont);
   public
     constructor Create;
     procedure Reset;
@@ -232,6 +242,8 @@ type
     ComputerListReserveFont: TFont;
     ComputerListAccupiedFont: TFont;
     ComputerListPreventedFont: TFont;
+    BackColor:TColor;
+    TableFont: TFont;
   end;
 
 
@@ -325,7 +337,6 @@ uses
   udmActions,
   uProtocol,
   uTariffication,
-  uRegistration,
   uKKMTools, DBGridEh,
   uDebugLog, uSnmp,
   gcsystem;
@@ -340,6 +351,12 @@ const
       + 'Вам необходима лицензия на большее количество компьютеров.'#13#10
       + 'Более подробная информация находится на сайте http://www.gameclass.ru';
 
+
+procedure TOperatorProfile.ChekAndFreeFont(Obj, Parrent: TFont);
+begin
+    if (Obj<>nil) And (Obj <> Parrent)  then
+    FreeAndNil(Obj);
+end;
 
 constructor TOperatorProfile.Create;
 begin
@@ -405,8 +422,30 @@ begin
   formMain.gridComps.Columns.Items[12].Width := 150;
 //  formMain.gridComps.Columns.Items[11].AutoFitColWidth := True;
   formMain.mnuPanelRunPad.Checked := False;
-  SetBackColor(clWindow);
-  SetTableFont(formMain.Font);
+
+  BackColor:=clWindow;
+  SetBackColor(BackColor);
+  if (TableFont<>nil) And (TableFont <> formMain.Font)  then
+    FreeAndNil(TableFont);
+  TableFont := formMain.Font;
+  SetTableFont(TableFont);
+
+{  FreeAndNilWithAssert(ComputerListBlockedFont);
+  FreeAndNilWithAssert(ComputerListNotBusyFont);
+  FreeAndNilWithAssert(ComputerListAuthenticatedFont);
+  FreeAndNilWithAssert(ComputerListReserveFont);
+  FreeAndNilWithAssert(ComputerListAccupiedFont);
+  FreeAndNilWithAssert(ComputerListPreventedFont);}
+
+
+
+  ChekAndFreeFont(ComputerListBlockedFont,formMain.Font);
+  ChekAndFreeFont(ComputerListNotBusyFont,formMain.Font);
+  ChekAndFreeFont(ComputerListAuthenticatedFont,formMain.Font);
+  ChekAndFreeFont(ComputerListReserveFont,formMain.Font);
+  ChekAndFreeFont(ComputerListAccupiedFont,formMain.Font);
+  ChekAndFreeFont(ComputerListPreventedFont,formMain.Font);
+
   ComputerListBlockedFont := formMain.Font;
   ComputerListNotBusyFont := formMain.Font;
   ComputerListAuthenticatedFont := formMain.Font;
@@ -443,16 +482,16 @@ begin
       formMain.gridComps.Columns.Items[ColumnId].Index := i;
     end;
   end;
-
-  SetBackColor(GRegistry.UserInterface.BackColor);
-  SetTableFont(GRegistry.UserInterface.TableFont);
+  BackColor:=GRegistry.UserInterface.BackColor;
+  SetBackColor(BackColor);
+  TableFont:= GRegistry.UserInterface.TableFont;
+  SetTableFont(TableFont);
   DoInterface; // TOperatorProfile.
 end;
 
 // сохраняем опции оператора в базе
 procedure TOperatorProfile.Save;
 var
-   s: string;
    i: Integer;
 begin
   GRegistry.UserInterface.ShowRunPadPanel := formMain.mnuPanelRunPad.Checked;
@@ -513,6 +552,12 @@ begin
   a.nFailedAuthentication := 0;
 end;
 
+
+destructor TComputer.Destroy;
+begin
+  FreeAndNil(st);
+  inherited;
+end;
 
 function TComputer.GetStrNumber:string;
 var
@@ -604,17 +649,18 @@ end;
 function TComputer.GetBusy: Boolean;
 begin
   Result := False;
-  if (session <> Nil) and (session.Status = ssActive) then
-    Result := True;
+  if (session <> Nil) then
+    if  (session.Status = ssActive) then
+      Result := True;
 end; //function TComputer.GetBusy: Boolean;
 
 function TComputer.IsGuestSession: Boolean;
 begin
   Result := False;
-  if (session <> Nil)
-      and (session.Status = ssActive)
-      and (session.IsGuest) then
-    Result := True;
+  if (session <> Nil) then
+      if (session.Status = ssActive)
+        and (session.IsGuest) then
+          Result := True;
 end; //function TComputer.IsOperatorSession: Boolean;
 
 function TComputer.IsFree: Boolean;
@@ -625,8 +671,9 @@ end;
 function TComputer.GetReserved: Boolean;
 begin
   Result := False;
-  if (session <> Nil) and (session.Status = ssReserve) then
-    Result := True;
+  if (session <> Nil) then
+    if (session.Status = ssReserve) then
+      Result := True;
 end; //function TComputer.GetReserved: Boolean;
 
 
@@ -689,9 +736,8 @@ end;
 procedure SendAllOptionsToClient(index: integer);
 var
   dt: TDateTime;
-  sdb, curtime: string;
+   curtime: string;
   cmd: TOptionGetRemoteCommand;
-  strParm: string;
   ClientState: integer;
 begin
   // Если комп не пингуется то выходим
@@ -708,23 +754,29 @@ begin
     end;
     cmd := TOptionGetRemoteCommand.Create('all',Comps[index].ipaddr);
     cmd.Execute;
+    cmd.Free;
     SendAccountAndSessionInfoToClient(index);
   end;
   if Comps[index].ClientType = CT_SNMP then
   begin
-    if  ((Comps[index].busy = true) and (Comps[index].session<>Nil)) then
-      ClientState:=1
-    else
-      ClientState:=0;
-    SetSnmpIntegerValue(Comps[Index],ClientState);
+  { TODO : Разобраться с дубликацией кода. }
+    if Comps[index].control and Comps[index].RealIcmpPingable then
+    begin
+      if  ((Comps[index].busy = true) and (Comps[index].session<>Nil)) then
+        ClientState:=Comps[Index].SNMP_ON_Value
+      else
+        ClientState:=Comps[Index].SNMP_OFF_Value;
+      SetSnmpIntegerValue(Comps[Index],ClientState);
+    end;
   end;
 end;
 
 procedure SendAccountAndSessionInfoToClient(AnComputerIndex: Integer);
 var
-  sdb, curtime, strParm: string;
+  strParm: string;
   CompMainVolume,CompWaveVolume:integer;
   CompMuteVolume,CompOnlyLimitVolume:Boolean;
+  tmpStringList:TStringList;
 begin
   strParm := '';
 
@@ -820,9 +872,11 @@ begin
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'InternetUsedInKB'
           + '/' + IntToStr(Round(session.CurrentTraffic / 1024)));
+      tmpStringList := GClientOptions.GetRunPadHidedTabs(session.ShortTarifName);
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'RunPadHidedTabs' + '/'
-          + GClientOptions.GetRunPadHidedTabs(session.ShortTarifName).Text);
+          + tmpStringList.Text);
+      FreeAndNil(tmpStringList);
     end else begin
       UDPSend(ipaddr, STR_CMD_CLIENT_INFO_SET + '='
           + 'Stop'
@@ -853,9 +907,9 @@ begin
       dsDoCommand(strSQLCode);
     except
     end;
-    if dsConnected and (GRegistry<>Nil)
-        and GRegistry.UserInterface.SwitchToGC3Win then
-      formMain.RestoreMainForm;
+    if dsConnected and (GRegistry<>Nil) then
+      if GRegistry.UserInterface.SwitchToGC3Win then
+        formMain.RestoreMainForm;
   end;
   formMain.lvConsole.Scroll(0,100);
   Application.ProcessMessages;
@@ -1074,20 +1128,19 @@ begin
       ComputersGetIndexByIp := i;
       break;
     end;
- { if (res = false) then
+  if (res = false) then
   begin
     Console.AddEvent(EVENT_ICON_ERROR, LEVEL_ERROR, 'ComputersGetIndexByIp: unknown sender-ip ('+ip+')!');
-    //formGCMessageBox.memoInfo.Text := translate('HighCryticalError');
-    //formGCMessageBox.SetDontShowAgain(false);
-    //formGCMessageBox.ShowModal;
-    //DoEvent(FN_EXIT);
-  end;}
+    formGCMessageBox.memoInfo.Text := translate('HighCryticalError');
+    formGCMessageBox.SetDontShowAgain(false);
+    formGCMessageBox.ShowModal;
+//    DoEvent(FN_EXIT);
+  end;
 end;
 
 function ComputerGroupsGetName(AnId: Integer):String;
 var
   i: integer;
-  res: boolean;
 begin
   ComputerGroupsGetName := '';
   if (AnId = -1) then
@@ -1109,7 +1162,6 @@ var
   i,j: integer;
   lstTarifNames: TStringList;
 begin
-  Result := Nil;
   lstTarifNames := TStringList.Create;
   for i:=1 to (TarifsCount-1) do
   begin
@@ -1172,17 +1224,15 @@ begin
   if Comps[AnComputerIndex].ClientType = CT_SNMP then
   begin
     Comps[AnComputerIndex].a.state := ClientState_Blocked;
-    { TODO : '0' to gccons.pas }
-    SetSnmpIntegerValue(Comps[AnComputerIndex],0);
+    SendAllOptionsToClient(AnComputerIndex);
+    //SetSnmpIntegerValue(Comps[AnComputerIndex],Comps[AnComputerIndex].SNMP_OFF_Value);
   end;
 
 end;
 
 function GetClientState(AnComputerIndex: Integer): Integer;
-var
-  nClientState :Integer;
 begin
-  nClientState := 0; //Blocked
+//  nClientState := 0; //Blocked
   if (Comps[AnComputerIndex].a.state = ClientState_Authentication)
       and Comps[AnComputerIndex].Reserved then
     Comps[AnComputerIndex].a.state := ClientState_Blocked;
@@ -1376,7 +1426,7 @@ end;
 // Получение Mac адреса по свойсву ip
 function GetMacFromIP(IPAddr:PAnsichar):string;
 var
-  DestIP, SrcIP: ULONG;
+  DestIP: ULONG;
   pMacAddr: TMacAddress;
   PhyAddrLen: ULONG;
 begin
@@ -1401,33 +1451,36 @@ var i : integer;
     MacAddress : TMacAddress;
     UDP : TIdUDPClient;
     sData : string;
+    Buf: TIdBytes;
 begin
   // Convert MAC string into MAC array
-  fillchar(MacAddress,SizeOf(TMacAddress),0); 
+  fillchar(MacAddress,SizeOf(TMacAddress),0);
   sData := trim(AMacAddress);
 
-  if length(sData) = 17 then begin 
-    for i := 1 to 6 do begin 
-      MacAddress[i] := StrToIntDef('$' + copy(sData,1,2),0); 
-      sData := copy(sData,4,17); 
+  if length(sData) = 17 then begin
+    for i := 1 to 6 do begin
+      MacAddress[i] := StrToIntDef('$' + copy(sData,1,2),0);
+      sData := copy(sData,4,17);
     end;
-  end; 
+  end;
 
-  for i := 1 To 6 do WR.Waker[i] := $FF; 
-  for i := 0 to 15 do WR.MAC[i] := MacAddress; 
+  for i := 1 To 6 do WR.Waker[i] := $FF;
+  for i := 0 to 15 do WR.MAC[i] := MacAddress;
+  Buf :=RawToBytes(WR,sizeof(TWakeRecord));
   // Create UDP and Broadcast data structure
   try
+
     UDP := TIdUDPClient.Create(nil);
     UDP.Host := '255.255.255.255';
     UDP.Port := 32767;
     UDP.BroadCastEnabled := true;
-    UDP.SendBuffer(WR,SizeOf(TWakeRecord));
+    UDP.SendBuffer(UDP.Host,UDP.Port, Buf);
+    UDP.BroadcastEnabled := false;
+    UDP.Free;
   except
     Console.AddEvent(EVENT_ICON_ERROR, LEVEL_ERROR,SystemErrorMessage + ' >> ' +
       aMacAddress );
   end;
-    UDP.BroadcastEnabled := false;
-    UDP.Free;
 end;
 
 // посылаем UDP пакет с данными data на адрес ip
@@ -1466,6 +1519,8 @@ end;
 function TComputer.InitDev: Boolean;
 begin
   InitDev:= true;
+  Device := TGCDevice.Create;
+
 end;
 
 procedure TComputer.CheckState;
@@ -1475,7 +1530,6 @@ var
   uncontrol_flag: boolean;
   strParm: String;
 
-  Idx: Integer;
   SnmpResult: integer;
   ClientState: integer;
 
@@ -1602,9 +1656,9 @@ begin
   if Self.ClientType = CT_SNMP then
   begin
     if  ((Self.busy = true) and (Self.session<>Nil)) then
-      ClientState:=1
+      ClientState:=Self.SNMP_ON_Value
     else
-      ClientState:=0;
+      ClientState:=Self.SNMP_OFF_Value;
     Self.control := Self.IcmpPingable;
     uncontrol_flag := not Self.control;
     if Self.control and Self.RealIcmpPingable then

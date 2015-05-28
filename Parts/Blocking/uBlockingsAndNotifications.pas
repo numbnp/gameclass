@@ -245,6 +245,9 @@ var
   i: Integer;
 {$ENDIF}
 begin
+{$IFDEF GCCLSRV}
+  cmd := nil;
+{$ENDIF}
   while(TRUE) do begin
   try
 //if(False) then begin
@@ -354,8 +357,8 @@ begin
           FbIsBaloonsUsed := True;
           //Show Baloons
   {$IFDEF MSWINDOWS}
-          frmMain.modernTrayIcon.ShowBalloonHint('Предупреждение',
-              'Через 5 минут Ваше время истекает!');
+          {frmMain.modernTrayIcon.ShowBalloonHint('Предупреждение',
+              'Через 5 минут Ваше время истекает!'); }
   {$ENDIF}
   {$IFDEF LINUX}
     cmd := TExecuteCommandRemoteCommand.Create('./scripts/warn5');

@@ -40,7 +40,7 @@ end;
 procedure SetSnmpIntegerValue(Comp:TComputer; Value:integer);
 var
   SNMP:TIdSNMP;
-  iResult:integer;
+//  iResult:integer;
 begin
   Snmp := TIdSNMP.Create(nil);
   Snmp.Query.Clear;

@@ -1,0 +1,120 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0B26F6B9-52FF-4C7B-A96C-3FA158330920}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ClientService\gcclsrv.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ClientService\gcclsrv_dev.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Client\gccl.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\GCServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Parts\Winhkg\winhkg.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Security\OSQl\gcosql.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BackupRestore\GCBackupRestore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Parts\ProcessSupervisor\ProcUtils.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="gcclsrv">
+        <MSBuild Projects="ClientService\gcclsrv.dproj"/>
+    </Target>
+    <Target Name="gcclsrv:Clean">
+        <MSBuild Projects="ClientService\gcclsrv.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="gcclsrv:Make">
+        <MSBuild Projects="ClientService\gcclsrv.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="gcclsrv_dev">
+        <MSBuild Projects="ClientService\gcclsrv_dev.dproj"/>
+    </Target>
+    <Target Name="gcclsrv_dev:Clean">
+        <MSBuild Projects="ClientService\gcclsrv_dev.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="gcclsrv_dev:Make">
+        <MSBuild Projects="ClientService\gcclsrv_dev.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="gccl">
+        <MSBuild Projects="Client\gccl.dproj"/>
+    </Target>
+    <Target Name="gccl:Clean">
+        <MSBuild Projects="Client\gccl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="gccl:Make">
+        <MSBuild Projects="Client\gccl.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GCServer">
+        <MSBuild Projects="Server\GCServer.dproj"/>
+    </Target>
+    <Target Name="GCServer:Clean">
+        <MSBuild Projects="Server\GCServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GCServer:Make">
+        <MSBuild Projects="Server\GCServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="winhkg">
+        <MSBuild Projects="Parts\Winhkg\winhkg.dproj"/>
+    </Target>
+    <Target Name="winhkg:Clean">
+        <MSBuild Projects="Parts\Winhkg\winhkg.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="winhkg:Make">
+        <MSBuild Projects="Parts\Winhkg\winhkg.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="gcosql">
+        <MSBuild Projects="Security\OSQl\gcosql.dproj"/>
+    </Target>
+    <Target Name="gcosql:Clean">
+        <MSBuild Projects="Security\OSQl\gcosql.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="gcosql:Make">
+        <MSBuild Projects="Security\OSQl\gcosql.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GCBackupRestore">
+        <MSBuild Projects="BackupRestore\GCBackupRestore.dproj"/>
+    </Target>
+    <Target Name="GCBackupRestore:Clean">
+        <MSBuild Projects="BackupRestore\GCBackupRestore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GCBackupRestore:Make">
+        <MSBuild Projects="BackupRestore\GCBackupRestore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProcUtils">
+        <MSBuild Projects="Parts\ProcessSupervisor\ProcUtils.dproj"/>
+    </Target>
+    <Target Name="ProcUtils:Clean">
+        <MSBuild Projects="Parts\ProcessSupervisor\ProcUtils.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProcUtils:Make">
+        <MSBuild Projects="Parts\ProcessSupervisor\ProcUtils.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="gcclsrv;gcclsrv_dev;gccl;GCServer;winhkg;gcosql;GCBackupRestore;ProcUtils"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="gcclsrv:Clean;gcclsrv_dev:Clean;gccl:Clean;GCServer:Clean;winhkg:Clean;gcosql:Clean;GCBackupRestore:Clean;ProcUtils:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="gcclsrv:Make;gcclsrv_dev:Make;gccl:Make;GCServer:Make;winhkg:Make;gcosql:Make;GCBackupRestore:Make;ProcUtils:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

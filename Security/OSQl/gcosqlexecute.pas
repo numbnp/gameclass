@@ -8,9 +8,9 @@ uses
 const
   GCOSQL_COMMAND_TIMEOUT = 120;
 
-function DecryptAndExecute(const AcnnMain: TADOConnection;
-    const AstrSQPFileName: String): Boolean;
-function Execute(const AcnnMain: TADOConnection;
+{function DecryptAndExecute(const AcnnMain: TADOConnection;
+    const AstrSQPFileName: String): Boolean;}
+function FileExecute(const AcnnMain: TADOConnection;
     const AstrSQLFileName: String): Boolean;
 
 function EncodeScript(const AstrSQLFileName, AstrSQPFileName: String): Boolean;
@@ -34,7 +34,7 @@ Uses
   GCConst,
   uSQLTools;
 
-function DecryptAndExecute(const AcnnMain: TADOConnection;
+{function DecryptAndExecute(const AcnnMain: TADOConnection;
     const AstrSQPFileName: String): Boolean;
 var
   fScript: File;
@@ -45,7 +45,7 @@ var
   strAll: String;
 begin
   Result := True;
-  try
+{  try
     AcnnMain.CommandTimeout := GCOSQL_COMMAND_TIMEOUT;
     strAll := '';
     Fcoder := TCoder.Create;
@@ -80,9 +80,9 @@ begin
       Result := False;
     end;
   end;
-end;
+end;}
 
-function Execute(const AcnnMain: TADOConnection;
+function FileExecute(const AcnnMain: TADOConnection;
     const AstrSQLFileName: String): Boolean;
 var
   fScript: TextFile;
@@ -121,16 +121,16 @@ end;
 
 
 function EncodeScript(const AstrSQLFileName, AstrSQPFileName: String): Boolean;
-var
+{var
   fSQL: textfile;
   fSQP: file;
   rs: string;
   Buffer: TLongCodeArray;
   Fcoder : TCoder;
-  i, size8: longword;
+  i, size8: longword;}
 begin
   Result := True;
-  try
+{  try
     Fcoder := TCoder.Create;
     // read and encode source to dest
     AssignFile(fSQL, AstrSQLFileName);
@@ -156,7 +156,7 @@ begin
     Fcoder.Free;
   except
     Result := False;
-  end;
+  end;}
 end;
 
 function UpdateCustomReportOld(const AcnnMain: TADOConnection;

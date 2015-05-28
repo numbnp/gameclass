@@ -15,10 +15,10 @@ uses
   GCCommon, GCLangutils, GCComputers, GCConst, frmMail,
   frmPassChange, frmBossOptions, frmRemontLong, frmSideline, frmCompManualPrint,
   frmCompStart, frmCompStop, frmCurrentReport, frmCompAdd, frmGCMessageBox,
-  Menus,ComCtrls, SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
+  Menus,ComCtrls, System.SysUtils, Windows, Messages, Variants, Classes, Graphics, Controls,
   DateUtils, ADODB, Shlobj, registry, Proxy,
   IdBaseComponent, IdUDPBase, IdUDPServer, IdSocketHandle,
-  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines;
+  IdUDPClient, IdComponent, StdCtrls, gcsessions,uPingIcmp,uPingThread,uGCSidelines,IdGlobalProtocols;
 
 // proxy
 procedure ProxyInitialize;
@@ -43,8 +43,8 @@ function  FunctionAmIRight(id:string):boolean;
 function FunctionAvailable(id:string):boolean;
 procedure FunctionEnable(id:string; value: boolean);
 
-procedure SetBackColor(const AColor: TColor);
-procedure SetTableFont(const AFont: TFont);
+procedure SetBackColor(AColor: TColor);
+procedure SetTableFont(AFont: TFont);
 
 // Ввели код  физической карты
 procedure EnterHardCode(code:string); stdcall;
@@ -97,8 +97,6 @@ procedure ReserveCancel(ASession: TGCSession);
 
 procedure ehsSessionTrafficPayment;
 function GetSize: Cardinal;
-
-{procedure PingComputer(const AnComputerIndex: Integer);}
 
 function WrapProtocol(sdata: string): string;
 procedure UnWrapProtocol(sdata: string; protocol, cmd, param: pstring);
@@ -174,7 +172,7 @@ uses
   frmMain,
   GCSystem,
   frmRemoteManage,
-  DBTables,
+//  DBTables,
   DB,
   dbgrideh,
   StrUtils,
@@ -202,7 +200,6 @@ uses
   uErrors,
   uProtocol,
   uTariffication,
-  uRegistration,
   uKKMTools,
   ufrmClearStatistic,
   uFileInfo,
@@ -225,7 +222,7 @@ type
 procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
  var FTitleOffset, SDistance : Integer;
      NewRect : TRect;
-     RowHeight : Integer;
+//     RowHeight : Integer;
      NewRow : Integer;
 begin
  with TMyDBGrid(Grid) do begin
@@ -411,11 +408,15 @@ begin
         and FunctionAmIRight(FN_XREPORT);
     formMain.mnuZReport.Enabled := (dmMain.cnnMain.State = [stOpen])
         and FunctionAmIRight(FN_ZREPORT);
-    formMain.mnuAddCheckAccount.Enabled := (dmMain.cnnMain.State = [stOpen])
-        and Assigned(GAccountSystem)
+    if Assigned(GRegistry) and Assigned(GAccountSystem) then
+    begin
+      formMain.mnuAddCheckAccount.Enabled := (dmMain.cnnMain.State = [stOpen])
         and GAccountSystem.UseCheckAccounts
-        and Assigned(GRegistry)
         and GRegistry.Modules.KKM.Active;
+    end else
+      formMain.mnuAddCheckAccount.Enabled := false;
+
+
   end;
   // ehsRemoteClientsManage
   result := FunctionAmIRight(FN_REMOTECLIENTS_MANAGE);
@@ -462,16 +463,18 @@ end;
 
 procedure DoInterfaceComps;
 var
-  result, result2, result3, result4, isRemont: boolean;
+  result: boolean;
   i:Integer;
-  tv: TTarifVariants;
-  bOneSelected, bTwoSelected, bOneOrMoreSelected, bFewSelected, bRemont: Boolean;
+//  tv: TTarifVariants;
+  bOneSelected, bTwoSelected, bOneOrMoreSelected, bRemont: Boolean;
   firstComputer: Tcomputer;
 begin
+  bRemont := false;
+  firstComputer := nil;
   bOneSelected := (CompsSelCount = 1) and not isManager;
   bTwoSelected := (CompsSelCount = 2) and not isManager;
   bOneOrMoreSelected := (CompsSelCount > 0) and not isManager;
-  bFewSelected := (CompsSelCount > 1) and not isManager;
+//  bFewSelected := (CompsSelCount > 1) and not isManager;
   if bOneOrMoreSelected then begin
     firstComputer := Comps[ComputersGetIndex(CompsSel[0])];
     if firstComputer.Busy then
@@ -548,23 +551,20 @@ procedure ehsLogon;
 var
   CurrBaseVersion: string;
   i: integer;
-  bNeedShowTrial: Boolean;
-  strTemp: String;
-  lstTemp: TStringList;
+//  strTemp: String;
+//  lstTemp: TStringList;
 //  info: TFileCheckSumInfo;
   frmLogon: TfrmLogon;
-  pMem, pBuf: ^TBuf;
+//  pMem, pBuf: ^TBuf;
 //  pBuf: PByte;
-  b: Int64;
-  c: Byte;
-  s: Boolean;
-  mem: TMemoryStream;
+//  b: Int64;
+ // c: Byte;
+//  s: Boolean;
+//  mem: TMemoryStream;
 
 begin
 //  bNeedShowTrial := False;
   // если же дни еще есть, то подсчет трафа еще работает
-  Registration.InternetControlLinux := True;
-  Registration.InternetControl := True;
   frmLogon := TfrmLogon.Create(formMain, dmMain.cnnMain);
   frmLogon.OnError := formMain.Error;
   if (frmLogon.ShowModal = mrOk) then begin
@@ -627,7 +627,7 @@ begin
     GAutoUpdate := TAutoUpdate.Create(dmMain.cnnMain);
     Application.ProcessMessages;
     GAccountsCopy := TAccounts.CreateCopy(GAutoUpdate);
-    CurrencyString := GRegistry.Options.Currency;
+    FormatSettings.CurrencyString := GRegistry.Options.Currency;
     // включаем сокеты для оператора
     if not isManager then
       if not formMain.EnableSockets() then begin
@@ -738,16 +738,13 @@ begin
     //Записываем инфу
     if isManager then begin
       GRegistry.Info.AppVersion := APP_VERSION;
-      GRegistry.Info.UserName := Registration.UserName;
-      GRegistry.Info.ComputersNumber := Registration.CompsRegs;
-      GRegistry.Info.HardwareControl := Registration.HardwareControl;
-      GRegistry.Info.PrinterControl := Registration.PrinterControl;
-      GRegistry.Info.InternetControl :=
-          Registration.InternetControl;
-      GRegistry.Info.InternetControlLinux :=
-          Registration.InternetControlLinux;
-      GRegistry.Info.InternetControlComLinux :=
-          Registration.InternetControlComLinux;
+      GRegistry.Info.UserName := 'Free';
+      GRegistry.Info.ComputersNumber := MAX_COMPUTERS;
+      GRegistry.Info.HardwareControl := True;
+      GRegistry.Info.PrinterControl := True;
+      GRegistry.Info.InternetControl := True;
+      GRegistry.Info.InternetControlLinux := True;
+      GRegistry.Info.InternetControlComLinux := True;
       GRegistry.Info.MainCheckSum := GnServerFileCheckSum;
       GRegistry.Info.ClientCheckSum := GnClientScriptFileCheckSum;
       GRegistry.Info.InstallCheckSum := GnClientInstallFileCheckSum;
@@ -799,6 +796,7 @@ begin
     GSessions := Nil;
   end;
   dsUnloadComputers;
+  dsUnLoadComputerGroups;
   dsUnloadTarifs;
   dmActions.actRedrawComps.Execute;
   FunctionRightClear;
@@ -940,21 +938,22 @@ procedure ehsRedrawComps;
 var
  i:integer;
  bUpdate : boolean;
- bookmark : TBookmarkStr;
+ bookmark : TBookmark;
  nNumber: Integer;
- iOldRow: Integer;
+// iOldRow: Integer;
 begin
 //   formMain.gridComps.SaveBookmark;
 
-   iOldRow := TMyDBGrid(formMain.gridComps).Row;
+//   iOldRow := TMyDBGrid(formMain.gridComps).Row;
+
+//   formMain.gridComps.SaveBookmark;
    formMain.cdsComps.DisableControls;
    bookmark := formMain.cdsComps.Bookmark;
-   SortDataSet(False);
    if ( CompsCount = 0 ) or (formMain.cdsComps.RecordCount <> CompsCount) then begin
       bUpdate := false;
       formMain.cdsComps.Close;
       formMain.cdsComps.CreateDataSet;
-      bookmark := '';
+      bookmark := nil;//'';
    end
    else begin
       bUpdate := true;
@@ -965,8 +964,10 @@ begin
          formMain.cdsComps.Edit
       else
          formMain.cdsComps.Append;
+
       formMain.cdsComps.FieldValues['id'] := Comps[i].id;
-      formMain.cdsComps.FieldValues['Group'] := Comps[i].GroupName; 
+      formMain.cdsComps.FieldValues['Group'] :=  AnsiString(Comps[i].GroupName);
+
       if Comps[i].busy then
         nNumber := 3 //сессия
       else begin
@@ -1014,7 +1015,7 @@ begin
                   formMain.cdsComps.FieldValues['SysState'] := 'Prevented';
 
             end;
-      formMain.cdsComps.FieldValues['State'] := translate(formMain.cdsComps.FieldValues['SysState']);
+      formMain.cdsComps.FieldValues['State'] := AnsiString( translate(formMain.cdsComps.FieldValues['SysState']));
       formMain.cdsComps.FieldValues['Time'] := Null;
       if (Comps[i].session <> Nil) then
       begin
@@ -1059,12 +1060,19 @@ begin
       formMain.cdsComps.Post;
       if bUpdate then
          formMain.cdsComps.Next;
+
   end;
    SortDataSet(True);
+
    formMain.cdsComps.Bookmark := bookmark;
+//   formMain.gridComps.RestoreBookmark;
    formMain.cdsComps.EnableControls;
-//   if not NoRestoreCompsGrid then
+
+//      formMain.gridComps.RestoreBookmark;
+   //   if not NoRestoreCompsGrid then
 //    ScrollActiveToRow(formMain.gridComps,iOldRow);
+//   formMain.gridComps.Row := iOldRow;
+
 end;
 
 // PreLogon actions
@@ -1076,11 +1084,11 @@ begin
 end;
 
 procedure ehsCompStart;
-var
-  i: integer;
-  index : integer;
-  session: TGCSession;
-  strMessage: String;
+//var
+//  i: integer;
+//  index : integer;
+//  session: TGCSession;
+//  strMessage: String;
 begin
   if (isManager) then exit;
   if (not FunctionAmIRight(FN_COMP_START)) then exit;
@@ -1103,7 +1111,7 @@ procedure ehsCompBackPartMoney;
 var
   i: integer;
   session: TGCSession;
-  bActionCanceled: Boolean;
+//  bActionCanceled: Boolean;
   dMoneyBack: double;
 begin
   if (isManager) then exit;
@@ -1175,6 +1183,7 @@ begin
                 'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
             else begin
               session.Stop(False);
+              FreeAndNil(session);
               QueryAuthGoState1(ComputersGetIndex(CompsSel[i]));
               end;
           end;
@@ -1273,13 +1282,12 @@ begin
 end;
 
 procedure ehsCompAdd;
-var
-  AddSumma: double;
-  index: integer;
+//var
+//  index: integer;
 begin
   if (isManager) then exit;
   if (not FunctionAmIRight(FN_COMP_ADD)) then exit;
-  index := ComputersGetIndex(CompsSel[0]);
+  //index := ComputersGetIndex(CompsSel[0]);
   Application.CreateForm(TformCompAdd, formCompAdd);
   if (formCompAdd.ShowModal = mrOK) then begin
     dmActions.actLoadSessions.Execute;
@@ -1394,7 +1402,7 @@ end;
 
 procedure ehsLastLogin;
 var
-  param, key: string;
+  key: string;
 begin
   // читаем последнее значение
 //  param := 'LastLogon'+CurOperatorName;
@@ -1517,7 +1525,7 @@ end;
 
 procedure ehsAutoKillTasksAfterStop;
 var
-  i,j: integer;
+  i: integer;
   diff: TDateTime;
 begin
   if (isManager) then exit;
@@ -1613,18 +1621,6 @@ procedure ProxyInitialize;
 var
   i: integer;
 begin
-  // проверка на пробном этапе
-  // если дни кончились, то нет подсчета трафа
-  if ((StrLen(Registration.UserName) = 0)
-      and ((Registration.TrialDaysLeft=0)
-      or (Registration.TrialExLeft=0))) then
-    Registration.InternetControl := False;
-// если же дни еще есть, то подсчет трафа еще работает
-  if ((StrLen(Registration.UserName) = 0)
-      and (Registration.TrialDaysLeft<>0)
-      and (Registration.TrialExLeft<>0))
-    then Registration.InternetControl := True;
-
   if (isManager) then exit;
 
   if GRegistry.Modules.Internet.InnerProxy then begin
@@ -1728,13 +1724,13 @@ end;
 
 
 procedure MakeAndSendCurrentReportEx();
-var
+//var
 
-  FReportParameters:TReportParameters;
-  SendMail:TSendMail;
+//  FReportParameters:TReportParameters;
+//  SendMail:TSendMail;
 begin
-
-
+ { TODO : Вытащить код из формы отправки почты в млдуль }
+  {
   FReportParameters.dtCurrent := GetVirtualTime;
   FReportParameters.dtBegin := 0;
   FReportParameters.dtEnd  := 0;
@@ -1781,11 +1777,11 @@ begin
 
 
   SendMail.Destroy;
-
+  }
 end;
 
 
-procedure SetBackColor(const AColor: TColor);
+procedure SetBackColor( AColor: TColor);
 begin
   formMain.gridComps.Color := Acolor;
   formMain.lvConsole.Color := Acolor;
@@ -1795,12 +1791,13 @@ begin
     GRegistry.UserInterface.BackColor := Acolor;
 end;
 
-procedure SetTableFont(const AFont: TFont);
+procedure SetTableFont( AFont: TFont);
 begin
   formMain.gridComps.Font.Assign(AFont);
   formMain.FfrmReports.SetFont(AFont);
   if dsConnected then
     GRegistry.UserInterface.TableFont := AFont;
+
 end;
 
 procedure ehsColor;
@@ -2025,7 +2022,7 @@ begin
   if FileExists(Application.ExeName) then
     Result := FileSizeByName(Application.ExeName);
 end;
-{
+
 procedure PingComputer(const AnComputerIndex: Integer);
 var
   n: integer;
@@ -2033,7 +2030,6 @@ var
   uncontrol_flag: boolean;
   strParm: String;
 
-  Idx: Integer;
   SnmpResult: integer;
   ClientState: integer;
 
@@ -2156,9 +2152,9 @@ begin
   if Comps[AnComputerIndex].ClientType = CT_SNMP then
   begin
     if  ((Comps[AnComputerIndex].busy = true) and (Comps[AnComputerIndex].session<>Nil)) then
-      ClientState:=1
+      ClientState:=Comps[AnComputerIndex].SNMP_ON_Value
     else
-      ClientState:=0;
+      ClientState:=Comps[AnComputerIndex].SNMP_OFF_Value;
     Comps[AnComputerIndex].control := Comps[AnComputerIndex].IcmpPingable;
     uncontrol_flag := not Comps[AnComputerIndex].control;
     if Comps[AnComputerIndex].control and Comps[AnComputerIndex].RealIcmpPingable then
@@ -2173,7 +2169,7 @@ begin
       and uncontrol_flag) then
     DoSound([NotifyLostLink]);
 end;
-}
+
 
 
 // процедура обертки данных протоколом

@@ -40,6 +40,7 @@ object frmMailSend: TfrmMailSend
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -108,8 +109,6 @@ object frmMailSend: TfrmMailSend
     Width = 146
     Height = 101
     Caption = '  '#1054#1090#1087#1088#1072#1074#1080#1090#1100
-    TabOrder = 3
-    OnClick = btnSendMailClick
     Glyph.Data = {
       76010000424D7601000000000000760000002800000020000000100000000100
       04000000000000010000120B0000120B00001000000000000000000000000000
@@ -124,6 +123,8 @@ object frmMailSend: TfrmMailSend
       BBB73373333377F37F3737333777BB777B9B3733333377F337F7333333777B77
       77BB3333333337333377333333333777337B3333333333333337}
     NumGlyphs = 2
+    TabOrder = 3
+    OnClick = btnSendMailClick
   end
   object Button1: TButton
     Left = 442
@@ -151,7 +152,6 @@ object frmMailSend: TfrmMailSend
     Top = 24
     Width = 409
     Height = 21
-    ItemHeight = 13
     TabOrder = 6
   end
   object cbTo: TComboBox
@@ -159,7 +159,6 @@ object frmMailSend: TfrmMailSend
     Top = 64
     Width = 409
     Height = 21
-    ItemHeight = 13
     TabOrder = 7
   end
   object cbSubject: TComboBox
@@ -167,7 +166,6 @@ object frmMailSend: TfrmMailSend
     Top = 142
     Width = 569
     Height = 21
-    ItemHeight = 13
     TabOrder = 8
   end
   object MailMessage: TIdMessage
@@ -175,18 +173,18 @@ object frmMailSend: TfrmMailSend
     BccList = <>
     CCList = <>
     Encoding = meMIME
+    FromList = <
+      item
+      end>
     Recipients = <>
     ReplyTo = <>
-    OnInitializeISO = MailMessageInitializeISO
+    ConvertPreamble = True
     Left = 176
     Top = 416
   end
   object SMTP: TIdSMTP
     OnStatus = SMTPStatus
-    MaxLineAction = maException
-    ReadTimeout = 0
-    Port = 25
-    AuthenticationType = atNone
+    SASLMechanisms = <>
     Left = 208
     Top = 416
   end

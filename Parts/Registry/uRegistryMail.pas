@@ -12,7 +12,7 @@ type
   private
     FRegistryDataSet: TRegistryDataSet;
     FRegistryRecord: TRegistryRecord;
-    FnComputerIndex: Integer;
+//    FnComputerIndex: Integer;
     function LocateSMTPHost: Boolean;
     function GetSMTPHost: String;
     procedure SetSMTPHost(AValue: String);

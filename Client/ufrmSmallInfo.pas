@@ -254,7 +254,7 @@ var
   X1, X2, Y1, Y2: integer;
   rectBorder: TRect;
   rectCircle: TRect;
-  pointCenter, pointText: TPoint;
+  pointCenter: TPoint;
   nHeight, nWidtch: integer;
   AstrInfo, AstrTime: String;
   fAngle: Double;
@@ -357,7 +357,9 @@ begin
     // Рисуем сектор отработанного времени.
     Pen.Color := clPurple;
     Brush.Color := clPurple;
+{$IFDEF LINUX}
     nRadius := Round(5760 * fUsedTimePercent);
+{$ENDIF}
     If (fUsedTimePercent <> 0) then
 {$IFDEF MSWINDOWS}
       Pie(rectCircle.Left, rectCircle.Top, rectCircle.Right, rectCircle.Bottom,

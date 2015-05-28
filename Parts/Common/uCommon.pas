@@ -7,17 +7,17 @@
 unit uCommon;
 
 interface
-
+{
 function StrToXoredHex(const AstrText, AstrKey: String): String;
 function XoredHexToStr(const AstrXoredHex, AstrKey: String): String;
-function GenerateUniqueName: String;
+}function GenerateUniqueName: String;
 
 implementation
 
 uses
   SysUtils,
   StrUtils;
-
+{
 function StrToXoredHex(const AstrText, AstrKey: String): String;
 var
   i,j: Integer;
@@ -53,7 +53,7 @@ begin
     end;
   end;
 end;
-
+}
 function GenerateUniqueName: String;
 begin
   DateTimeToString(Result, 'yymmdd-hhmmss', Now);

@@ -1,9 +1,9 @@
 object frmGetMoney: TfrmGetMoney
   Left = 365
   Top = 524
-  Width = 380
-  Height = 265
   Caption = #1047#1072#1073#1088#1072#1090#1100' '#1095#1072#1089#1090#1100' '#1076#1077#1085#1077#1075' '#1080#1079' '#1082#1072#1089#1089#1099
+  ClientHeight = 227
+  ClientWidth = 364
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object frmGetMoney: TfrmGetMoney
     Left = 0
     Top = 0
     Width = 128
-    Height = 238
+    Height = 227
     Align = alLeft
     AutoSize = True
     ParentShowHint = False
@@ -332,6 +332,7 @@ object frmGetMoney: TfrmGetMoney
       5964B091C000B5B8647FB57FFFD9}
     Proportional = True
     ShowHint = False
+    ExplicitHeight = 238
   end
   object lblSumma: TLabel
     Left = 160

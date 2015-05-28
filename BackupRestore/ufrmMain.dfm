@@ -145,6 +145,7 @@ object frmMain: TfrmMain
     DialogText = 'dfgdfg'
     NumGlyphs = 1
     TabOrder = 9
+    Text = ''
     Visible = False
   end
   object btnCreateEmptyDB: TButton

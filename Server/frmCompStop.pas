@@ -6,7 +6,7 @@ uses
   GCLangutils, GCComputers, GCCommon,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, ExtCtrls, gcsessions,
-  ufrmComputers, Grids, Mask, ToolEdit, CurrEdit, uAlignEdit;
+  ufrmComputers, Grids, Mask, RxToolEdit, RxCurrEdit, uAlignEdit;
 
 type
   TCompStopAction = (
@@ -197,7 +197,7 @@ procedure TformCompStop.UpdateInformation;
 var
   session: TGCSession;
 begin
-  session := Nil;
+//  session := Nil;
   if ((FComputerAction = caDec) or (FComputerAction = caReserveCancel)) and (FnSessionId <> -1) then
     session := GSessions.GetItemByIdSessionsAdd(FnSessionId)
   else
@@ -216,7 +216,7 @@ procedure TformCompStop.UpdateGridInformation;
 var
   tempMoney, fSumm: double;
   session: TGCSession;
-  i, j: Integer;
+  i: Integer;
   dtStop: TDateTime;
   bGuestPresent: Boolean;
 //  CompStopAction: CompStopAction

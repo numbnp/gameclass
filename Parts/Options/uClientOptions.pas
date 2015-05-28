@@ -512,6 +512,10 @@ end; // TClientOptions.ReleaseInstance
 // properties methods
 
 procedure TClientOptions.Load();
+{$IFDEF GC3SERVER}
+var
+  tmpStringList:TStringList;
+{$ENDIF}
 begin
   Debug.Trace5('TClientOptions.Load');
 try
@@ -658,7 +662,9 @@ try
   FstrClientScriptFileName := ExtractFileName(GRegistry.Scripts.OnClientPath);
   FbClientScript := GRegistry.Scripts.OnClient;
   FbClientScriptHideWindow := GRegistry.Scripts.OnClientHideWindow;
-  SetTaskList(GRegistry.TaskKill.Template);
+  tmpStringList:=GRegistry.TaskKill.Template;
+  SetTaskList(tmpStringList);
+  FreeAndNil(tmpStringList);
   FTaskKillMode := GRegistry.TaskKill.Mode;
   FbGuestSession := GRegistry.Client.GuestSession;
 
@@ -1163,6 +1169,7 @@ begin
     FbDirty := True;
     FlstTaskList.Text := AlstTaskList.Text;
   end;
+
 end; // TClientOptions.SetTarifNames
 
 procedure TClientOptions.SetTaskListAsText(const AstrTaskList: String);

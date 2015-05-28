@@ -1,11 +1,12 @@
-unit uGCSendRecieve;
+﻿unit uGCSendRecieve;
 
 interface
 
 uses Classes,
     IdUDPServer,
     IdUDPClient,
-    gcconst;
+    gcconst,
+    IdGlobal;
 
 type
   TGCSendRecieve = class
@@ -15,13 +16,13 @@ type
     public
       constructor Create(OnRecieveEvent:TUDPReadEvent);
       destructor Destroy; override;
-      procedure SendData(AstrIP:string;vport:integer;strData:string);
+      procedure SendData(AstrIP:string;vport:TIdPort;strData:string);
     end;
 var
   GCSendRecieve:TGCSendRecieve;
 implementation
 
-uses SysUtils;
+uses SysUtils, Windows;
 
 { TGCSendRecieve }
 
@@ -43,9 +44,32 @@ begin
   inherited;
 end;
 
-procedure TGCSendRecieve.SendData(AstrIP:string;vport:integer;strData:string);
+procedure TGCSendRecieve.SendData(AstrIP:string;vport:TIdPort;strData:string);
+var
+  Buffer : TidBytes;
+  len:integer;
+  astr:String;
 begin
-  udpClient.Send(AstrIP,vport,strData)
+  astr := ansistring(strData);
+//  astr := 'ololo_ололоl';
+ {len := Length(astr);
+  SetLength(Buffer,len);
+  Move(astr,Buffer , len);}
+
+//  Buffer := BytesOf(astr,len);
+  udpClient.Host := AstrIP;
+  udpClient.Port := vport;
+  udpClient.Send(astr, Indy8BitEncoding);
+//  udpClient.SendBuffer(AstrIP,vport,Buffer);
+
+{  MyStringBuilder := TStringBuilder.Create('');
+  try
+    Price := 1.49;
+    Label1.Caption := MyStringBuilder.Append('The apples are $').Append(Price).
+             ÄAppend(' a pound.').ToString;
+  finally
+    MyStringBuilder.Free;
+  end;}
 end;
 
 end.

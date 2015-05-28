@@ -68,10 +68,10 @@ begin
       and (ParamCount = 1) then begin
     if ConfigureServerWithLogon(str,dbUserName,dbPassword) then
       ExitCode := 0;
-  end else if (ParamStr(1) = GCOSQL_MODE_ENCODE)
+{  end else if (ParamStr(1) = GCOSQL_MODE_ENCODE)
       and (ParamCount = 3) then begin
     if EncodeScript(ParamStr(2), ParamStr(3)) then
-      ExitCode := 0;
+      ExitCode := 0;}
   end else if (ParamStr(1) = GCOSQL_MODE_CREATEDB)
       and (ParamCount = 2) then begin
     frmMain := TfrmMain.Create(Application, ParamStr(2), True, False);
@@ -98,17 +98,17 @@ begin
     begin
       strFileExt:=UpperCase(ExtractFileExt(ParamStr(2)));
       if strFileExt='.SQL' then
-        if Execute(cnnResult, ParamStr(2)) then
+        if FileExecute(cnnResult, ParamStr(2)) then
         begin
           ExitCode := 0;
           FreeAndNil(cnnResult);
         end;
-      if strFileExt='.SQP' then
+{      if strFileExt='.SQP' then
         if DecryptAndExecute(cnnResult, ParamStr(2)) then
         begin
           ExitCode := 0;
           FreeAndNil(cnnResult);
-        end;
+        end;}
     end;
     FreeAndNil(frmLogon);
   end else

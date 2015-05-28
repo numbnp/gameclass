@@ -33,8 +33,7 @@ uses
   DB,
   uGCDataSet,
   uRegistry,
-  gcComputers,
-  uRegistration;
+  gcComputers;
 
 {*******************************************************************************
                       class  TRegistryHardware
@@ -53,8 +52,7 @@ end;
 
 function TRegistryHardware.LocateActive: Boolean;
 begin
-  Result := Registration.HardwareControl
-      and FRegistryDataSet.LocateByKey('ActivateHardwareControl', '0');
+  Result := FRegistryDataSet.LocateByKey('ActivateHardwareControl', '0');
 end;
 
 function TRegistryHardware.GetActive: Boolean;

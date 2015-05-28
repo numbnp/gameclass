@@ -76,7 +76,8 @@ implementation
 uses
   // project units
   uY2KString,
-  uHWConst;
+  uHWConst,
+  System.Classes;
 
 
 //////////////////////////////////////////////////////////////////////////////

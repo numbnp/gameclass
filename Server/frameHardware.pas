@@ -24,8 +24,7 @@ implementation
 
 uses
   uRegistry,
-  uRegistryModules,
-  URegistration;
+  uRegistryModules;
 
 {$R *.dfm}
 
@@ -37,16 +36,9 @@ end;
 // процедура ставит все контролы в исходные позиции
 procedure TframHardware.ResetFrame;
 begin
-  if Registration.HardwareControl then begin
-    cbHWEnabled.Checked := GRegistry.Modules.Hardware.Active;
-    cbHWEnabled.Enabled := true;
-    memo.Text := translate('infoModuleActivateOn');
-  end
-  else begin
-    cbHWEnabled.Checked := false;
-    cbHWEnabled.Enabled := false;
-    memo.Text := translate('infoModuleActivateOff');
-  end;
+  cbHWEnabled.Checked := GRegistry.Modules.Hardware.Active;
+  cbHWEnabled.Enabled := true;
+  memo.Text := translate('infoModuleActivateOn');
 end;
 
 procedure TframHardware.Activate(ID: integer);

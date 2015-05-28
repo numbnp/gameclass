@@ -15,14 +15,14 @@ object frameClientInterface: TframeClientInterface
     object lblUseTextMessage: TLabel
       Left = 207
       Top = 47
-      Width = 117
+      Width = 116
       Height = 13
       Caption = #1084#1080#1085#1091#1090' '#1076#1086' '#1082#1086#1085#1094#1072' '#1089#1077#1072#1085#1089#1072
     end
     object lblBracket: TLabel
       Left = 336
       Top = 47
-      Width = 3
+      Width = 4
       Height = 13
       Caption = '('
     end
@@ -85,35 +85,35 @@ object frameClientInterface: TframeClientInterface
     object lblURLTop: TLabel
       Left = 8
       Top = 62
-      Width = 191
+      Width = 190
       Height = 13
       Caption = 'URL '#1074#1077#1088#1093#1085#1077#1081' '#1095#1072#1089#1090#1080' '#1082#1083#1080#1077#1085#1090#1089#1082#1086#1075#1086' '#1086#1082#1085#1072
     end
     object lblURLCompFree: TLabel
       Left = 8
       Top = 20
-      Width = 191
+      Width = 186
       Height = 13
       Caption = 'URL '#1101#1082#1088#1072#1085#1072' "'#1057#1074#1086#1073#1086#1076#1085#1099#1081' '#1082#1086#1084#1087#1100#1102#1090#1077#1088'"'
     end
     object lblURLAccount: TLabel
       Left = 8
       Top = 80
-      Width = 187
+      Width = 185
       Height = 13
       Caption = 'URL '#1083#1077#1074#1086#1081' '#1095#1072#1089#1090#1080' '#1074' '#1088#1077#1078#1080#1084#1077' '#1072#1082#1082#1072#1091#1085#1090#1072
     end
     object lblURLAgreement: TLabel
       Left = 8
       Top = 114
-      Width = 214
+      Width = 206
       Height = 13
       Caption = 'URL '#1101#1082#1088#1072#1085#1072' "'#1057#1086#1075#1083#1072#1096#1077#1085#1080#1077' '#1089' '#1087#1086#1089#1077#1090#1080#1090#1077#1083#1077#1084'"'
     end
     object Label1: TLabel
       Left = 8
       Top = 41
-      Width = 231
+      Width = 224
       Height = 13
       Caption = 'URL '#1084#1072#1083#1086#1075#1086' '#1101#1082#1088#1072#1085#1072' "'#1057#1074#1086#1073#1086#1076#1085#1099#1081' '#1082#1086#1084#1087#1100#1102#1090#1077#1088'"'
     end
@@ -208,7 +208,6 @@ object frameClientInterface: TframeClientInterface
         Top = 16
         Width = 145
         Height = 21
-        ItemHeight = 13
         TabOrder = 0
         Text = #1053#1077#1090
         OnChange = cbDefActionChange

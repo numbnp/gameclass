@@ -85,8 +85,7 @@ uses
   IdIPWatch,
   StrUtils,
   uRegistry,
-  uRegistryInternet,
-  URegistration;
+  uRegistryInternet;
 
 {$R *.dfm}
 
@@ -106,15 +105,13 @@ begin
   gbTCPMappings.Caption := translate('gbTCPMappings');
   gbClientSettings.Caption := translate('gbClientSettings');
   cbActiveInnerProxy.Caption := translate('GCICActivate');
-  gbWindows.Caption := IfThen(Registration.InternetControl,
-      translate('infoModuleActivateOn'), translate('infoModuleActivateOff'));
-  gbUnixPro.Caption := IfThen(Registration.InternetControlComLinux,
-      translate('infoModuleActivateOn'), translate('infoModuleActivateOff'));
-  cbActiveInnerProxy.Enabled := Registration.InternetControl;
+  gbWindows.Caption :=  translate('infoModuleActivateOn');
+  gbUnixPro.Caption :=  translate('infoModuleActivateOn');
+  cbActiveInnerProxy.Enabled := True;
   cbActiveInnerProxy.Checked := GRegistry.Modules.Internet.InnerProxy;
-  cbActiveOuterPlugin.Enabled := Registration.InternetControl;
+  cbActiveOuterPlugin.Enabled := True;
   cbActiveOuterPlugin.Checked := GRegistry.Modules.Internet.OuterPlugin;
-  cbActiveLinuxPro.Enabled := Registration.InternetControlComLinux;
+  cbActiveLinuxPro.Enabled := True;
   cbActiveLinuxPro.Checked := GRegistry.Modules.Internet.LinuxPro;
   cbActiveLinuxFree.Checked := GRegistry.Modules.Internet.LinuxFree;
   cbOuterPluginSetLimit.Checked :=

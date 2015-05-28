@@ -66,10 +66,7 @@ begin
       with cmd.Parameters.AddParameter do begin
         DataType := ftBlob;
         Direction := pdInput;
-        if Length(FieldValues['photo']) > 0 then
-          Value := FieldValues['photo']
-        else
-          Value := Null;
+        Value := FieldValues['photo']
       end;
       cmd.execute;
       cmd.Destroy;

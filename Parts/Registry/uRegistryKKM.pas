@@ -79,7 +79,6 @@ type
 implementation
 
 uses
-  uRegistration,
   SysUtils,
   DB,
   uGCDataSet,
@@ -109,8 +108,7 @@ end;
 function TRegistryKKM.GetActive: Boolean;
 begin
   LocateActive;
-  Result := Registration.KKMControl
-      and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryKKM.SetActive(AValue: Boolean);

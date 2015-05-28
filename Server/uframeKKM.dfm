@@ -50,7 +50,7 @@ object frameKKM: TframeKKM
       object lblKKMNotes: TLabel
         Left = 8
         Top = 48
-        Width = 50
+        Width = 49
         Height = 13
         Caption = #1054#1087#1080#1089#1072#1085#1080#1077
       end
@@ -59,7 +59,6 @@ object frameKKM: TframeKKM
         Top = 18
         Width = 337
         Height = 21
-        ItemHeight = 13
         TabOrder = 0
         OnChange = cboKKMPluginChange
       end

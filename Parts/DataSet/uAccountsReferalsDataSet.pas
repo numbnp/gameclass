@@ -39,8 +39,8 @@ begin
 end;
 
 function TAccountsReferalsDataSet.DoUpdate(const AnId: Integer): Boolean;
-var
-  cmd: TADOCommand;
+//var
+//  cmd: TADOCommand;
 begin
   Result := dsDoCommand(Connection,
       'exec AccountsReferalsUpdate @id='+ IntToStr(FieldValues['id'])
@@ -68,6 +68,7 @@ var
   AstrFilter: String;
   AbFiltered: Boolean;
 begin
+  AnId := 0;
   Result := False;
   AstrSort := Sort;
   AstrFilter := Filter;

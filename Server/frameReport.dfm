@@ -230,7 +230,6 @@ object framReport: TframReport
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = []
-          FilterStringColor = clWindow
           OnApplyFilter = gridReportApplyFilter
         end
       end

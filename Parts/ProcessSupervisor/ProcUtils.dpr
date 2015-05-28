@@ -7,8 +7,12 @@
 library ProcUtils;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Classes,
-  System,
   Windows,
   SysUtils,
   Tlhelp32,

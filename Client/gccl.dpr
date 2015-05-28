@@ -1,6 +1,14 @@
 program gccl;
 
 uses
+  //FastMM4,
+  //FastMM4Messages,
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
+  ceflib,
   Forms,
   Windows,
   ActiveX,
@@ -46,7 +54,7 @@ uses
   uSendMessageRemoteCommand in '..\Parts\RemoteCommands\uSendMessageRemoteCommand.pas',
   uShellModeRemoteCommand in '..\Parts\RemoteCommands\uShellModeRemoteCommand.pas',
   uShowTextInAllVideoModes in '..\Parts\Direct3D\uShowTextInAllVideoModes.pas',
-  uWinhkg in '..\Parts\Winhkg\uwinhkg.pas',
+  uwinhkg in '..\Parts\Winhkg\uwinhkg.pas',
   uY2KCommon in '..\Parts\Y2KCommon\uY2KCommon.pas',
   uY2KString in '..\parts\Y2KCommon\uY2KString.pas',
   uRunPadTools in '..\Parts\RunPadShell\uRunPadTools.pas',
@@ -69,11 +77,13 @@ uses
   uWebServer in '..\Parts\Web\uWebServer.pas',
   uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas',
   uClientWebInterface in '..\Parts\ClientWebInterface\uClientWebInterface.pas',
-  DzURL in '..\Parts\Web\dzurl.pas';
+  dzurl in '..\Parts\Web\dzurl.pas';
 
 {$R *.res}
 const
   DEF_DEBUG_LEVEL = 0;
+var
+  hMutex :THandle;
 
 function CreateLockMutex(const AstrMutex: String;
     var AhMutex: THandle): Boolean;
@@ -86,39 +96,49 @@ begin
 end; // CreateLockMutex
 
 begin
-  Debug.Level := DEF_DEBUG_LEVEL;
-//  Debug.Level := 9;
-  Application.Initialize;
-  GWinhkg := TWinhkg.Create(InstallDirectory + '\' + 'winhkg.dll');
-  GWinhkg.Init();
-  BlockingsAndNotifications := TBlockingsAndNotifications.Create();
-  frmMain := Nil;
-    GClientOptions.Load;
-    if GClientOptions.RestoreClientInfo then
-      GClientInfo.Load
-    else
-      GClientInfo.Init;
-  BlockingsAndNotifications.StartChecking();
-  Application.Title := 'GCCL';
-  Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmMessage, frmMessage);
-  GWinhkg.SetClientHandle(frmMain.Handle);
-  Application.CreateForm(TdmMain, dmMain);
-  Application.CreateForm(TfrmSmallInfo, frmSmallInfo);
-  Application.ShowMainForm := False;
+  hMutex := CreateMutex(nil, False, Pchar(ExtractFileName(Application.ExeName)));
+  if ((GetLastError = ERROR_ALREADY_EXISTS) or (hMutex = 0)) then
+  begin
+	  if not CefLoadLibDefault then Exit;
+  end else begin
+    CefCache := 'cache';
+    CefSingleProcess := True;
 
-  RegisterHotKey(frmMain.Handle, WM_USER_ACTIVATE_INFO,
-      MOD_ALT or MOD_CONTROL or MOD_SHIFT, $49 {I Key});
-  RegisterHotKey(frmMain.Handle, WM_USER_UNBLOCK_PASSWORD,
-      MOD_ALT or MOD_CONTROL, $55 {U Key});
-  frmMain.EnableSafeOperation;
-  Application.Run;
-  if Assigned(BlockingsAndNotifications) then begin
-    BlockingsAndNotifications.StopChecking();
+    Debug.Level := DEF_DEBUG_LEVEL;
+  //  Debug.Level := 9;
+    Application.Initialize;
+    GWinhkg := TWinhkg.Create(InstallDirectory + '\' + 'winhkg.dll');
+    GWinhkg.Init();
+    BlockingsAndNotifications := TBlockingsAndNotifications.Create();
+    frmMain := Nil;
+      GClientOptions.Load;
+      if GClientOptions.RestoreClientInfo then
+        GClientInfo.Load
+      else
+        GClientInfo.Init;
+    BlockingsAndNotifications.StartChecking();
+
+    Application.Title := 'GCCL';
+    Application.CreateForm(TfrmMain, frmMain);
+    Application.CreateForm(TfrmMessage, frmMessage);
+    GWinhkg.SetClientHandle(frmMain.Handle);
+    Application.CreateForm(TdmMain, dmMain);
+    Application.CreateForm(TfrmSmallInfo, frmSmallInfo);
+    Application.ShowMainForm := False;
+
+    RegisterHotKey(frmMain.Handle, WM_USER_ACTIVATE_INFO,
+        MOD_ALT or MOD_CONTROL or MOD_SHIFT, $49 {I Key});
+    RegisterHotKey(frmMain.Handle, WM_USER_UNBLOCK_PASSWORD,
+        MOD_ALT or MOD_CONTROL, $55 {U Key});
+    frmMain.EnableSafeOperation;
+    Application.Run;
+    if Assigned(BlockingsAndNotifications) then begin
+      BlockingsAndNotifications.StopChecking();
+    end;
+    FreeAndNilWithAssert(BlockingsAndNotifications);
+    UnregisterHotKey(frmMain.Handle, WM_USER_ACTIVATE_INFO);
+    UnregisterHotKey(frmMain.Handle, WM_USER_UNBLOCK_PASSWORD);
+    FreeAndNilWithAssert(Debug);
+    RunClientScript(caClientStop);
   end;
-  FreeAndNilWithAssert(BlockingsAndNotifications);
-  UnregisterHotKey(frmMain.Handle, WM_USER_ACTIVATE_INFO);
-  UnregisterHotKey(frmMain.Handle, WM_USER_UNBLOCK_PASSWORD);
-  FreeAndNilWithAssert(Debug);
-  RunClientScript(caClientStop);
 end.

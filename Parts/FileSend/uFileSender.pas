@@ -66,9 +66,9 @@ uses
   SysUtils,
   IdTCPConnection,
   IdTCPClient,
-  jwaWinBase,
-  jwaWinNT,
-  jwaWinType,
+//  jwaWinBase,
+//  jwaWinNT,
+//  jwaWinType,
   Tlhelp32,
   // project units
   uDebugLog;
@@ -228,9 +228,9 @@ begin
       TCPClientFileTransfer.Port := Port;
       TCPClientFileTransfer.Connect();
       try
-        TCPClientFileTransfer.WriteLn(AstrReceivedFileName);
-        TCPClientFileTransfer.WriteLn(IntToStr(AdwFileSize));
-        TCPClientFileTransfer.WriteFile(strPath);
+        TCPClientFileTransfer.IOHandler.WriteLn(AstrReceivedFileName);
+        TCPClientFileTransfer.IOHandler.WriteLn(IntToStr(AdwFileSize));
+        TCPClientFileTransfer.IOHandler.WriteFile(strPath);
       finally
         TCPClientFileTransfer.Disconnect();
       end;

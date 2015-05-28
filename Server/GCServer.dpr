@@ -13,10 +13,9 @@ program GCServer;
   {$MESSAGE WARN '!!! Assert directives present !!!'}
 {$ENDIF}
 
-
-
-
 uses
+  //FastMM4,
+  //FastMM4Messages,
   Forms,
   SysUtils,
   Windows,
@@ -52,11 +51,11 @@ uses
   frmRemoteManage in 'frmRemoteManage.pas' {formRemoteManage},
   frmSideline in 'frmSideline.pas' {formSideline},
   frmTrial in 'frmTrial.pas' {formTrial},
-  gccommon in 'GCCOMMON.PAS',
+  GCCOMMON in 'GCCOMMON.PAS',
   gccomputers in 'gccomputers.pas',
   gcconst in 'gcconst.pas',
   gcfunctions in 'gcfunctions.pas',
-  GClangutils in '..\Parts\Language\gclangutils.pas',
+  gclangutils in '..\Parts\Language\gclangutils.pas',
   GCSessions in 'GCSessions.pas',
   gcsystem in 'gcsystem.pas',
   IdControlledMappedPortTCP in '..\Parts\Proxy\IdControlledMappedPortTCP.pas',
@@ -159,7 +158,6 @@ uses
   uRegistryReportStrings in '..\Parts\Registry\uRegistryReportStrings.pas',
   uReportStrings in '..\Parts\Reports\uReportStrings.pas',
   uLocal in '..\Parts\Local\uLocal.pas',
-  uRegistration in '..\Parts\Registration\uRegistration.pas',
   uRegistryKKM in '..\Parts\Registry\uRegistryKKM.pas',
   ufrmKKMConfig in '..\KKM\ufrmKKMConfig.pas' {frmKKMConfig},
   uKKMPlugin in '..\KKM\uKKMPlugin.pas',
@@ -177,7 +175,6 @@ uses
   uTaskKillConst in '..\Parts\TaskKill\uTaskKillConst.pas',
   uCommon in '..\Parts\Common\uCommon.pas',
   uFileInfo in '..\Parts\FileTools\uFileInfo.pas',
-  SynHighlighterSQL in '..\Parts\Reports\SynHighlighterSQL.pas',
   Grids,
   ufrmOperatorOpt in 'ufrmOperatorOpt.pas' {frmOperatorOpt},
   uRegistryControlCommands in '..\Parts\Registry\uRegistryControlCommands.pas',
@@ -187,7 +184,6 @@ uses
   uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
   ufrmMailSend in 'ufrmMailSend.pas' {frmMailSend},
   frameMail in 'frameMail.pas' {framMail: TFrame},
-  frmMail in 'frmMail.pas' {formMail},
   uRegistryMail in '..\Parts\Registry\uRegistryMail.pas',
   uAccountsReferalsDataSet in '..\Parts\DataSet\uAccountsReferalsDataSet.pas',
   uAccountsReferalsRecord in '..\Parts\Accounts\uAccountsReferalsRecord.pas',
@@ -254,7 +250,6 @@ begin
   Application.CreateForm(TfrmVolume, frmVolume);
   Application.CreateForm(TfrmOperatorOpt, frmOperatorOpt);
   Application.CreateForm(TfrmMailSend, frmMailSend);
-  Application.CreateForm(TformMail, formMail);
   Application.Run;
 
   FreeAndNilWithAssert(Debug);

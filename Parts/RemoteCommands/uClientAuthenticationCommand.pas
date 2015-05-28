@@ -78,9 +78,6 @@ end; // TClientAuthenticationCommand.Create
 // public methods
 
 procedure TClientAuthenticationCommand.Execute();
-var
-  i : Integer;
-  str: String;
 begin
   if (CompareText(FstrCommand, STR_CMD_AUTH_GOSTATE_0) = 0) then begin
 

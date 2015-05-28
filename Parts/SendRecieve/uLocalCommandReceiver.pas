@@ -15,7 +15,13 @@ uses
   IdSocketHandle,
   IdBaseComponent,
   IdComponent,
-  IdTCPServer;
+  IdContext,
+  IdCustomTCPServer,
+  IdTCPServer,
+  IdSync,
+  IdGlobal;
+
+
 
 
 type
@@ -35,7 +41,7 @@ type
     FOnDataReceived: TLocalDataReceivedProc;
 
     // events handlers
-    procedure _TCPServerRead(AThread: TIdPeerThread);
+    procedure _TCPServerRead(AContext: TIdContext);
 
     // private helper methods
     procedure _SendDataReceiveEvent(const AstrData: string);
@@ -135,30 +141,29 @@ end; // TLocalCommandReceiver.StopReceiveProcess
 //////////////////////////////////////////////////////////////////////////////
 // events handlers
 {$IFDEF MSWINDOWS}
-procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
+procedure TLocalCommandReceiver._TCPServerRead(AContext: TIdContext);
 var
 {  strTest: string;
-  strLine: string;
-  nLength: integer;}
+  strLine: string; }
+{  nLength: integer;}
   CommBlock: TCommandPakage;
 begin
   try
-    with AThread.Connection do
-      try
+    try
 //        strTest := ReadString(4);
 //        if strTest = 'sYNc' then
         begin
         CommBlock.Command:='';
-          AThread.Connection.ReadBuffer(CommBlock, SizeOf(CommBlock))
+        CommBlock.Command := AContext.Connection.IOHandler.ReadLn;
 {          nLength := ReadInteger();
           strLine := ReadString(nLength);
           strTest := ReadString(2);}
         end
-      except
-        Disconnect();
+    except
+        AContext.Connection.Disconnect();
 //      finally
 //        Disconnect();
-      end;
+    end;
 
 //    _SendDataReceiveEvent(strLine);
       _SendDataReceiveEvent(CommBlock.Command);

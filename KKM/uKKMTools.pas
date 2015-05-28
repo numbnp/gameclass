@@ -168,7 +168,7 @@ end;
 function PrintAddTraffic(const ASession: TGCSession;
     const AfPay: Double): Boolean;
 begin
-  Result := False;
+//  Result := False;
   Result := GKKMPlugin.StartSale
       and GKKMPlugin.AddItem('¹'
       + Comps[ComputersGetIndex(ASession.IdComp)].GetStrNumber

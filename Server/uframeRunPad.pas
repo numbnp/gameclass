@@ -112,7 +112,7 @@ var
   bTabNamePresent: Boolean;
   bCurrentTabNamePresentInHided: Boolean;
   bHidedTabSelected: Boolean;
-  i: Integer;
+//  i: Integer;
 begin
   GbFormGC3ClientLock := True;
   // Блокировка

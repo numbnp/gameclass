@@ -1,0 +1,263 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9958CE52-3647-477C-9079-3FE8F3222ACF}</ProjectGuid>
+        <MainSource>gccl.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>16.0</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>gccl</SanitizedProjectName>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=3.85.6.2;InternalName=;LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb;LegalTrademarks=;OriginalFilename=;ProductName=GameClass3 Client;ProductVersion=3.85.6.2 Alpha</VerInfo_Keys>
+        <VerInfo_Build>12</VerInfo_Build>
+        <VerInfo_Locale>1049</VerInfo_Locale>
+        <VerInfo_MinorVer>85</VerInfo_MinorVer>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Release>2</VerInfo_Release>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_DcuOutput>..\Output\dcu\debug</DCC_DcuOutput>
+        <DCC_ExeOutput>..\Output\debug</DCC_ExeOutput>
+        <DCC_F>false</DCC_F>
+        <DCC_UsePackage>vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Y2KControls;EhLib70;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UnitSearchPath>$(DELPHI)\Lib\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_E>false</DCC_E>
+        <DCC_UNSAFE_CAST>true</DCC_UNSAFE_CAST>
+        <DCC_UNSAFE_TYPE>true</DCC_UNSAFE_TYPE>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_S>false</DCC_S>
+        <DCC_N>true</DCC_N>
+        <DCC_UNSAFE_CODE>true</DCC_UNSAFE_CODE>
+        <DCC_Define>ASPROTECT, GCCL;$(DCC_Define)</DCC_Define>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_K>false</DCC_K>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Icon_MainIcon>gccl_Icon2.ico</Icon_MainIcon>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Icon_MainIcon>gccl_Icon2.ico</Icon_MainIcon>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_DebugInformation>true</DCC_DebugInformation>
+        <DCC_Define>madExcept;ASPROTECT;GCCL;$(DCC_Define)</DCC_Define>
+        <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_ExeOutput>C:\Project\Free\Output\Release\</DCC_ExeOutput>
+        <DCC_DcuOutput>..\Output\dcu\release</DCC_DcuOutput>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_Release>0</VerInfo_Release>
+        <VerInfo_Build>0</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_ExeOutput>..\Output\debug\gccl</DCC_ExeOutput>
+        <DCC_DcuOutput>..\Output\dcu\debug\gccl</DCC_DcuOutput>
+        <DCC_UNSAFE_CAST>false</DCC_UNSAFE_CAST>
+        <DCC_UNSAFE_CODE>false</DCC_UNSAFE_CODE>
+        <VerInfo_Release>0</VerInfo_Release>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>0</VerInfo_Build>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_Define>madExcept;GCCL;ASPROTECT;GCCL;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="AbsoluteAlone.pas"/>
+        <DCCReference Include="..\Parts\RunPadShell\RS_APILib_TLB.pas"/>
+        <DCCReference Include="..\Parts\Blocking\uBlockingsAndNotifications.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uBlockRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientAuthenticationCommand.pas"/>
+        <DCCReference Include="uClientConst.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientDoDesignCommand.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientInstallDirectory.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptions.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsConst.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsRegistryStorage.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsStorage.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientRemoteCommandFactory.pas"/>
+        <DCCReference Include="..\Parts\Scripting\uClientScripting.pas"/>
+        <DCCReference Include="..\Parts\Security\uCoder.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uCompositeRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\CrossPlatform\uCrossPlatformBlocking.pas"/>
+        <DCCReference Include="..\Parts\CrossPlatform\uCrossPlatformFunctions.pas"/>
+        <DCCReference Include="..\Parts\CrossPlatform\uCrossPlatformWindow.pas"/>
+        <DCCReference Include="..\parts\Debug\uDebugLog.pas"/>
+        <DCCReference Include="udmMain.pas">
+            <Form>dmMain</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Parts\FileSend\uFilesSynchronizeConst.pas"/>
+        <DCCReference Include="ufrmMain.pas">
+            <Form>frmMain</Form>
+        </DCCReference>
+        <DCCReference Include="ufrmSmallInfo.pas">
+            <Form>frmSmallInfo</Form>
+        </DCCReference>
+        <DCCReference Include="..\Parts\RemoteCommands\uKillTaskRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uLocalCommandReceiver.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uLocalCommandSender.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uLogoffRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uNullRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uOptionSetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Protocol\uProtocol.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uReceiveMessageRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uRemoteCommandFactory.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uRemoteCommandList.pas"/>
+        <DCCReference Include="..\Parts\SafeStorage\uSafeStorage.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uSendMessageRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uShellModeRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Direct3D\uShowTextInAllVideoModes.pas"/>
+        <DCCReference Include="..\Parts\Winhkg\uwinhkg.pas"/>
+        <DCCReference Include="..\Parts\Y2KCommon\uY2KCommon.pas"/>
+        <DCCReference Include="..\parts\Y2KCommon\uY2KString.pas"/>
+        <DCCReference Include="..\Parts\RunPadShell\uRunPadTools.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uRestartRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\TaskKill\uTaskKill.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientInfo.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientInfoConst.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientInfoConstrainedCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientInfoSetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\TaskKill\uTaskKillConst.pas"/>
+        <DCCReference Include="frmTopMessage.pas">
+            <Form>frmMessage</Form>
+        </DCCReference>
+        <DCCReference Include="..\Parts\Tools\uParseAndReplase.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\uControlVolume.pas"/>
+        <DCCReference Include="..\Parts\Tools\uGetWinVer.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uSetVolumeRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\MMDevApi_tlb.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\Mixer.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uProtocolTcp.pas"/>
+        <DCCReference Include="..\Parts\Web\uWebExec.pas"/>
+        <DCCReference Include="..\Parts\Web\uWebServer.pas"/>
+        <DCCReference Include="..\Parts\ClientFunctions\uClientFunctions.pas"/>
+        <DCCReference Include="..\Parts\ClientWebInterface\uClientWebInterface.pas"/>
+        <DCCReference Include="..\Parts\Web\dzurl.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">gccl.dpr</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">3</VersionInfo>
+                    <VersionInfo Name="MinorVer">85</VersionInfo>
+                    <VersionInfo Name="Release">2</VersionInfo>
+                    <VersionInfo Name="Build">12</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1049</VersionInfo>
+                    <VersionInfo Name="CodePage">1251</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName"/>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">3.85.6.2</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright">(c) 2000-2009 NodaSoft, 2010-2012 numb</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName">GameClass3 Client</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">3.85.6.2 Alpha</VersionInfoKeys>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k180.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp180.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

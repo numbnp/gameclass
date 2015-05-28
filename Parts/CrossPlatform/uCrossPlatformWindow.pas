@@ -61,7 +61,7 @@ function _GetProcessFileName(AnHandle: THandle): String;
 var
   ProcessEntry32: TProcessEntry32;
   hSnapshot: THandle;
-  strProcessName: String;
+//  strProcessName: String;
   bIsProcessPresent: Boolean;
 begin
   Result := '';
@@ -118,7 +118,7 @@ end; // TProcessSupervisor._GetProcessHandle
 {$IFDEF MSWINDOWS}
 function _EnumWinProc(handle: THandle; Param: LongInt): Boolean; stdcall;
 var
-  strBufFileName : array[0..MAX_PATH] of char;  // буфер для имени процесса
+//  strBufFileName : array[0..MAX_PATH] of char;  // буфер для имени процесса
   strBufWndName : array[0..MAX_PATH] of char;  // буфер для имени окна
   strFileName : String;
   strWndName : String;
@@ -287,11 +287,11 @@ function GetTaskBarHeight: Integer;
     rx, ry: Integer;
 {$ENDIF}
 begin
-  Result := 0;
 {$IFDEF MSWINDOWS}
   Result := GetSystemMetrics(SM_CYCAPTION);
 {$ENDIF}
 {$IFDEF LINUX}
+  Result := 0;
   try
     dpy := Application.Display;
     root := XDefaultRootWindow(dpy);

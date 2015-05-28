@@ -5,7 +5,8 @@ interface
 uses  
   GCConst, GCLangUtils, GCComputers, ADODB, GCCommon,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, DBGridEh, DB, ValEdit;
+  ExtCtrls, Grids, DBGridEh, DB, ValEdit, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, GridsEh, DBAxisGridsEh;
 
 type
   TframeDiscounts = class(TFrame)
@@ -61,7 +62,7 @@ type
   private
   { Private declarations }
     FbControlsEnabled: Boolean;
-    FbLock: Boolean;
+//    FbLock: Boolean;
     FbEdited: boolean;
     procedure ResetFrame;
     procedure DoDesign;
@@ -187,7 +188,6 @@ end;
 
 procedure TframeDiscounts.butDiscountAddClick(Sender: TObject);
 var
-  nId: Integer;
   fSummary: Double;
   nDiscount: Integer;
 begin
@@ -336,7 +336,6 @@ end;
 
 procedure TframeDiscounts.butReferalsAddClick(Sender: TObject);
 var
-  nId: Integer;
   nLevel: Integer;
   nBonus: Integer;
 begin
@@ -369,7 +368,6 @@ end;
 
 procedure TframeDiscounts.butReferalsUpdateClick(Sender: TObject);
 var
-  nId: Integer;
   nLevel: Integer;
   nBonus: Integer;
 begin

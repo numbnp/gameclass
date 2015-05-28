@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<TgConfig Version="3" SubLevelDisabled="False">
+  <Option Name="namespaceFolder.uY2KCommon" Type="System.String" Value="uY2KCommon" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ProcUtils" Type="System.String" Value="ProcUtils" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.uY2KString" Type="System.String" Value="uY2KString" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.uDebugLog" Type="System.String" Value="uDebugLog" Category="General" IsBrowsable="False" />
+</TgConfig>

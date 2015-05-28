@@ -15,7 +15,7 @@ uses
   StdCtrls,
   ExtCtrls,
   Mask,
-  ToolEdit,
+  RxToolEdit,
   ufrmTaskList;
 
 type

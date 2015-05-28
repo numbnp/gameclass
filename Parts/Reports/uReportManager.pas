@@ -141,7 +141,9 @@ uses
   xmldom,
   XMLIntf,
   msxmldom,
-  XMLDoc, Dialogs, Variants;
+  XMLDoc, Dialogs, Variants,
+  System.Classes,
+  System.Types;
 
 resourcestring
   INVARIABLE_REPORT_CODE = '/*  Код этого отчета нельзя изменять!  */ '#13#10;

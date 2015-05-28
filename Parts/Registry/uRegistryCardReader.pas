@@ -11,7 +11,7 @@ type
   private
     FRegistryDataSet: TRegistryDataSet;
     FRegistryRecord: TRegistryRecord;
-    FnComputerIndex: Integer;
+//    FnComputerIndex: Integer;
 
     function GetEnabled: Boolean;
     procedure SetEnabled(AValue: Boolean);

@@ -5,15 +5,13 @@ interface
 uses
   SysUtils,
   Classes,
-  bsPolyglotUn,
+//  bsPolyglotUn,
   DB,
   ADODB,
   uReportManager;
 
 type
   TdmMain = class(TDataModule)
-    bsPolyglotManager: TbsPolyglotManager;
-    bsPolyglotTranslator: TbsPolyglotTranslator;
     cnnMain: TADOConnection;
     dstOnInitDatabase: TADOStoredProc;
     dstGetLogonInfo: TADOStoredProc;

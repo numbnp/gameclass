@@ -61,14 +61,14 @@ object frameDiscounts: TframeDiscounts
         object lblDiscount: TLabel
           Left = 246
           Top = 72
-          Width = 54
+          Width = 60
           Height = 13
           Caption = #1057#1082#1080#1076#1082#1072' (%)'
         end
         object lblSumma: TLabel
           Left = 247
           Top = 24
-          Width = 49
+          Width = 48
           Height = 13
           Caption = #1057#1091#1084#1084#1072' ($)'
         end
@@ -87,30 +87,24 @@ object frameDiscounts: TframeDiscounts
           Height = 114
           AutoFitColWidths = True
           DataSource = dsrcDiscounts
-          FooterColor = clWindow
-          FooterFont.Charset = DEFAULT_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -11
-          FooterFont.Name = 'MS Sans Serif'
-          FooterFont.Style = []
+          DynProps = <>
+          FooterParams.Color = clWindow
+          ImeMode = imDisable
+          IndicatorOptions = []
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           TabOrder = 1
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
           VertScrollBar.VisibleMode = sbNeverShowEh
-          FilterStringColor = clWindow
           OnCellClick = grdDiscountsCellClick
           Columns = <
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'id'
               Footers = <>
               Visible = False
             end
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'summary'
               Footers = <>
@@ -118,12 +112,15 @@ object frameDiscounts: TframeDiscounts
               Width = 106
             end
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'discount'
               Footers = <>
               Title.Caption = #1057#1082#1080#1076#1082#1072' %'
               Width = 105
             end>
+          object RowDetailData: TRowDetailPanelControlEh
+          end
         end
         object editSumma: TEdit
           Left = 245
@@ -172,7 +169,7 @@ object frameDiscounts: TframeDiscounts
         object Label1: TLabel
           Left = 8
           Top = 20
-          Width = 236
+          Width = 242
           Height = 13
           Caption = #1059#1095#1080#1090#1099#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1076#1077#1085#1100#1075#1080', '#1087#1086#1090#1088#1072#1095#1077#1085#1085#1099#1077' '#1087#1086#1089#1083#1077
         end
@@ -210,14 +207,14 @@ object frameDiscounts: TframeDiscounts
         object lblBonus: TLabel
           Left = 244
           Top = 89
-          Width = 47
+          Width = 51
           Height = 13
           Caption = #1041#1086#1085#1091#1089' (%)'
         end
         object lblLevel: TLabel
           Left = 241
           Top = 41
-          Width = 44
+          Width = 43
           Height = 13
           Caption = #1059#1088#1086#1074#1077#1085#1100
         end
@@ -271,30 +268,24 @@ object frameDiscounts: TframeDiscounts
           Height = 114
           AutoFitColWidths = True
           DataSource = dsrcReferals
-          FooterColor = clWindow
-          FooterFont.Charset = DEFAULT_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -11
-          FooterFont.Name = 'MS Sans Serif'
-          FooterFont.Style = []
+          DynProps = <>
+          FooterParams.Color = clWindow
+          ImeMode = imDisable
+          IndicatorOptions = []
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           TabOrder = 5
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
           VertScrollBar.VisibleMode = sbNeverShowEh
-          FilterStringColor = clWindow
           OnCellClick = grdReferalsCellClick
           Columns = <
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'id'
               Footers = <>
               Visible = False
             end
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'level'
               Footers = <>
@@ -302,12 +293,15 @@ object frameDiscounts: TframeDiscounts
               Width = 106
             end
             item
+              DynProps = <>
               EditButtons = <>
               FieldName = 'percent'
               Footers = <>
               Title.Caption = #1041#1086#1085#1091#1089' %'
               Width = 105
             end>
+          object RowDetailData: TRowDetailPanelControlEh
+          end
         end
       end
       object cbxUseRefers: TCheckBox

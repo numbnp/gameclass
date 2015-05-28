@@ -125,7 +125,8 @@ var
   strParameterPrevShiftEnd: String;
   FormatSettings: TFormatSettings;
 begin
-  GetLocaleFormatSettings(LANG_ENGLISH, FormatSettings);
+  //GetLocaleFormatSettings(LANG_ENGLISH, FormatSettings);
+  GetLocaleFormatSettings(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),0)  , FormatSettings);
 
   DateTimeToString(strParameterCurrent,
       DATETIME_FORMAT, FReportParameters.dtCurrent, FormatSettings);

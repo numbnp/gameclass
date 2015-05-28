@@ -26,8 +26,8 @@ type
     procedure cbComputerSelect(Sender: TObject);
   private
     { Private declarations }
-    oldstring: string;
-    oldcursor: integer;
+//    oldstring: string;
+//    oldcursor: integer;
     lock: boolean;    
     sourceUID: string;
   public

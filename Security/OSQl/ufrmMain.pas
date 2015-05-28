@@ -17,7 +17,7 @@ uses
   ExtCtrls,
   DateUtils,
   Mask,
-  ToolEdit,
+//  ToolEdit,
   uDBConfigParsingThread;
 
 type

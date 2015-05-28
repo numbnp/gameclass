@@ -38,8 +38,8 @@ implementation
 {$R *.dfm}
 constructor TfrmComputerSelect.Create(const AOwner: TComponent;
     const ANotifyEvent: TNotifyEvent);
-var
-  i: Integer;
+//var
+//  i: Integer;
 begin
   inherited Create(AOwner);
   FNotifyEvent := ANotifyEvent;

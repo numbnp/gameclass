@@ -59,7 +59,7 @@ uses
 function TClientOptionsDBStorage._SaveOption(const AstrFolder: String;
     const AstrName: String; const AstrValue: String): TFunctionResult;
 begin
-  Result := RES_ERROR;
+//  Result := RES_ERROR;
   GRegistry[AstrFolder + '_' + AstrName].Value := EncodeStringForSQL(AstrValue);
 //  dsRegistrySave(AstrFolder + '_' + AstrName, EncodeStringForSQL(AstrValue));
   Result := RES_SUCCESS;

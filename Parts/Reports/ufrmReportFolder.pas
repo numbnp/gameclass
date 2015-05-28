@@ -43,9 +43,7 @@ type
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure tvReportFolderFreeNode(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
-    procedure tvReportFolderGetText(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-      var CellText: WideString);
+
     procedure tvReportFolderSaveNode(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Stream: TStream);
     procedure tvReportFolderLoadNode(Sender: TBaseVirtualTree;
@@ -55,6 +53,10 @@ type
       var Ghosted: Boolean; var ImageIndex: Integer);
     procedure tvReportFolderDblClick(Sender: TObject);
     procedure edtFolderNameChange(Sender: TObject);
+    procedure tvReportFolderGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: UnicodeString);
+    procedure FormCreate(Sender: TObject);
 
   private
     // fields
@@ -168,10 +170,34 @@ end; // TfrmReportFolder.Storage
 
 procedure TfrmReportFolder.SetFolder(
     const AtvSource: TVirtualStringTree; const AptrNode: PVirtualNode);
+var
+  Source: PVirtualNode;
+  ptrNode: PVirtualNode;
+  ptrReportData, ptrNewReportData: PReportData;
 begin
   tvReportFolder.Clear();
   tvReportFolder.Images := AtvSource.Images;
-  AtvSource.CopyTo(AptrNode, tvReportFolder, amInsertAfter, TRUE);
+  Source := AptrNode;
+
+  Source := Source.FirstChild;
+  while Assigned(Source) do
+  begin
+    tvReportFolder.AddChild(tvReportFolder.RootNode);
+    ptrNode := tvReportFolder.GetLast();
+    ASSERT(Assigned(ptrNode));
+    ptrReportData := AtvSource.GetNodeData(Source);
+    ptrNewReportData := tvReportFolder.GetNodeData(ptrNode);
+
+    ASSERT(Assigned(ptrNewReportData));
+    ptrNewReportData^.id := ptrReportData^.id;
+    ptrNewReportData^.Caption := ptrReportData^.Caption;
+    ptrNewReportData^.IsFolder := ptrReportData^.IsFolder;
+
+
+    Source := Source.NextSibling;
+  end;
+
+//  AtvSource.CopyTo(AptrNode, tvReportFolder, amInsertAfter, False);
   _ExpandAllNodes();
 end; // TfrmReportFolder.SetFolder
 
@@ -198,7 +224,7 @@ var
   ptrData: PReportData;
 begin
   ptrData := Sender.GetNodeData(Node);
-  ptrData.Caption := '';
+  ptrData^.Caption := '';
 end; // TfrmReportFolder.tvReportFolderInitNode
 
 
@@ -209,22 +235,12 @@ var
 begin
   ptrData := Sender.GetNodeData(Node);
   if Assigned(ptrData) then begin
-    ptrData.Caption := '';
+    ptrData^.Caption := '';
   end;
 end; // TfrmReportFolder.tvReportFolderFreeNode
 
 
-procedure TfrmReportFolder.tvReportFolderGetText(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: WideString);
-var
-  ptrData: PReportData;
-begin
-  ptrData := Sender.GetNodeData(Node);
-  if Assigned(ptrData) then begin
-    CellText := ptrData.Caption;
-  end;
-end; // TfrmReportFolder.tvReportFolderGetText
+
 
 
 procedure TfrmReportFolder.tvReportFolderGetImageIndex(
@@ -244,7 +260,22 @@ begin
     end;
     Ghosted := FALSE;
   end;
-end; // TfrmReportFolder.tvReportFolderGetImageIndex
+end;
+// TfrmReportFolder.tvReportFolderGetImageIndex
+
+procedure TfrmReportFolder.tvReportFolderGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: unicodestring);
+var
+  ptrData: PReportData;
+begin
+  ptrData := Sender.GetNodeData(Node);
+  if Assigned(ptrData) then begin
+    CellText := ptrData^.Caption;
+  end;
+end;
+
+
 
 
 procedure TfrmReportFolder.tvReportFolderSaveNode(Sender: TBaseVirtualTree;
@@ -292,7 +323,13 @@ begin
     FReport.ReportName := edtFolderName.Text;
     _FireModifyReport();
   end;
-end; // TfrmReportFolder.edtFolderNameChange
+end; procedure TfrmReportFolder.FormCreate(Sender: TObject);
+begin
+  inherited;
+  tvReportFolder.OnGetText := tvReportFolderGetText;
+end;
+
+// TfrmReportFolder.edtFolderNameChange
 
 
 {procedure TfrmReportFolder._LanguageChange(ASender: TObject);

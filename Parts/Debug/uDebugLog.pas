@@ -140,6 +140,7 @@ implementation
 uses
   // system units
   SysUtils,
+  System.UITypes,
 {$IFDEF LINUX}
   QDialogs,
 {$ENDIF}

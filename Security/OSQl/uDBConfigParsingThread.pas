@@ -198,7 +198,8 @@ begin
             strDescription := Attributes['Description'];
             if strScriptBaseVersion = strBaseVersion then begin
               frmMain.MessageAdd(strDescription);
-              if DecryptAndExecute(cnnMain, strPath + strFileName) then begin
+//              if DecryptAndExecute(cnnMain, strPath + strFileName) then begin
+              if FileExecute(cnnMain, strPath + strFileName) then begin
                 MessageResultAppend(True);
                 if not GetDatabaseVersion(cnnMain, strBaseVersion) then begin
                   MessageBox(0, PChar(DBCFG_ERR_DONT_GET_VERSION),

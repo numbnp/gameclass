@@ -24,10 +24,10 @@ type
   private
     // fields
     FbEnableInternet: Boolean;
-    FnMain: Integer;
-    FnWave: Integer;
-    FbMute: Boolean;
-    FbSetVolume: Boolean;
+//    FnMain: Integer;
+//    FnWave: Integer;
+//    FbMute: Boolean;
+//    FbSetVolume: Boolean;
 
     // private helper methods
     function _GetIntegerParameFromString(

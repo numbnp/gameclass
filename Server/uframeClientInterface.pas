@@ -5,7 +5,7 @@ interface
 uses
   GCConst, GCLangUtils, uProtocol, GCComputers, GCCommon,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, frmInstallLogin, Mask, ToolEdit;
+  ExtCtrls, frmInstallLogin, Mask, RxToolEdit;
 
 type
   TframeClientInterface = class(TFrame)
@@ -71,7 +71,6 @@ implementation
 uses
   uClientOptions,
   uClientOptionsConst,
-  uCoder,
   uRegistry;
 
 var

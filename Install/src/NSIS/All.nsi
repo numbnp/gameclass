@@ -7,6 +7,7 @@
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
+!define PROJECT_FOLDER "..\..\.."
 SetCompressor lzma
 
 ; MUI 1.67 compatible ------
@@ -17,7 +18,7 @@ SetCompressor lzma
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
-!define MUI_WELCOMEFINISHPAGE_BITMAP "c:\Projects\Free\Res\Installer.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${PROJECT_FOLDER}\Res\Installer.bmp"
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
@@ -43,7 +44,7 @@ SetCompressor lzma
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "c:\Projects\Free\Output\Setup\gc3setup.${PRODUCT_VERSION}.exe"
+OutFile "${PROJECT_FOLDER}\Output\Setup\gc3setup.${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\GameClass3"
 ShowInstDetails show
 ShowUnInstDetails show
@@ -65,16 +66,16 @@ Section "Клиентская часть GameClass" SEC01
 ; Заливаем файлы клиента
   SetOutPath "$INSTDIR\Client"
   SetOverwrite on
-  File "c:\Projects\Free\Install\src\Packages\Client\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Client\*.*"
   SetOutPath "$INSTDIR\Client\Skins"
   SetOverwrite on
-  File "c:\Projects\Free\Install\src\Packages\Client\Skins\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Client\Skins\*.*"
   SetOutPath "$INSTDIR\Client\Skins\full"
   SetOverwrite on
-  File "c:\Projects\Free\Install\src\Packages\Client\Skins\full\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Client\Skins\full\*.*"
   SetOutPath "$INSTDIR\Client\Sounds"
   SetOverwrite on
-  File "c:\Projects\Free\Install\src\Packages\Client\Sounds\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Client\Sounds\*.*"
   SetOutPath "$INSTDIR\Client\Files"
 
 ; Делаем нужные записи в реестре
@@ -98,16 +99,16 @@ Section "Сервер GameClass" SEC02
   SectionIn 2 3 4
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File "C:\Projects\Free\Install\src\Packages\Server\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Server\*.*"
   SetOutPath "$INSTDIR\Scripts"
   SetOverwrite ifnewer
-  File "C:\Projects\Free\Install\src\Packages\Server\Scripts\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Server\Scripts\*.*"
   SetOutPath "$INSTDIR\Traffic Inspector Plug-In"
   SetOverwrite ifnewer
-  File "C:\Projects\Free\Install\src\Packages\Server\Traffic Inspector Plug-In\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Server\Traffic Inspector Plug-In\*.*"
   SetOutPath "$INSTDIR\UserGate Plug-In"
   SetOverwrite ifnewer
-  File "C:\Projects\Free\Install\src\Packages\Server\UserGate Plug-In\*.*"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Server\UserGate Plug-In\*.*"
 
 ; Делаем нужные записи в реестре
   WriteRegStr HKLM "SOFTWARE\GameClass\Server" "InstallDirectory" "$INSTDIR"
@@ -128,13 +129,13 @@ Section "Создание БД" SEC03
   SectionIn 3
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\*.sqp"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.sql"
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\*.xml"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.xml"
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\GCosql.exe"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\GCosql.exe"
   
   ExecWait "$INSTDIR\SQL\GCosql.exe customcreatedatabase dbconfig.xml"
   
@@ -147,13 +148,13 @@ Section "Обновление БД" SEC04
   SectionIn 4
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\*.sqp"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.sql"
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\*.xml"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.xml"
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
-  File "c:\Projects\Free\Install\src\Packages\Database\GCosql.exe"
+  File "${PROJECT_FOLDER}\Install\src\Packages\Database\GCosql.exe"
 
   ExecWait "$INSTDIR\SQL\GCosql.exe updatedatabase dbconfig.xml"
 

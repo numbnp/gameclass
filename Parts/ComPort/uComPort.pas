@@ -49,7 +49,11 @@ end;
 
 function TMyComPort.Clear_RTS: boolean;
 begin
-  if not _PortOpened then exit;
+  if not _PortOpened then
+  begin
+    result := False;
+    exit;
+  end;
   EscapeCommFunction(com_port,ClrRTS);
 end;
 
@@ -81,7 +85,12 @@ end;
 
 function TMyComPort.FlushBuffer: boolean;
 begin
-  if not _PortOpened then exit;
+  result := True;
+  if not _PortOpened then
+  begin
+    result := False;
+    exit;
+  end;
   PurgeComm(com_port, PURGE_TXCLEAR or PURGE_RXCLEAR);
 end;
 
@@ -96,7 +105,11 @@ begin
                               nil, OPEN_EXISTING,
                               FILE_ATTRIBUTE_NORMAL, 0);
   if (com_port <= 0) or not Windows.SetupComm(com_port, inQueue, outQueue)or not
-      Windows.GetCommState(com_port, dcb) then exit; //init error
+      Windows.GetCommState(com_port, dcb) then
+      begin
+        result := False;
+        exit;
+      end; //init error
 
   dcb.BaudRate := com_dcb.BaudRate;
   dcb.StopBits := com_dcb.StopBits;
@@ -123,7 +136,11 @@ var
   i: cardinal;
   ovr: TOverlapped;
 begin
-  if not _PortOpened then exit;
+  if not _PortOpened then
+  begin
+    result := 0;
+    exit;
+  end;
   fillChar(buf, size, 0);
   fillChar(ovr, sizeOf(ovr), 0); i := 0; result := -1;
   if not windows.ReadFile(com_port, buf, size, i, @ovr) then exit;
@@ -133,8 +150,13 @@ end;
 
 function TMyComPort.Set_RTS: boolean;
 begin
-  if not _PortOpened then exit;
+  if not _PortOpened then
+  begin
+    result := False;
+    exit;
+  end;
   EscapeCommFunction(com_port,SETRTS);
+  result := False;
 end;
 
 function TMyComPort.WriteData(var Buf; size: word): integer;
@@ -142,12 +164,20 @@ var
   p: pointer;
   i: cardinal;
 begin
-  if not _PortOpened then exit;
+  if not _PortOpened then
+  begin
+    result := 0;
+    exit;
+  end;
   p := @Buf;
   result := 0;
-  if not WriteFile(com_port, p^, size, i, nil) then exit;
-
+  if not WriteFile(com_port, p^, size, i, nil) then
+  begin
+    Result:= 0;
+    exit;
+  end;
   WriteData := result;
+
 end;
 
 

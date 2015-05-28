@@ -94,7 +94,8 @@ uses
   usrvGCCL,
   uProtocol,
   uClientInfo,
-  uProcUtils;
+  uProcUtils,
+  System.UITypes;
 
 
 const
@@ -168,16 +169,18 @@ end; // TProcessSupervisor.StartThreads
 procedure TProcessSupervisor.StopSupervision();
 begin
   ASSERT(Assigned(FProcessesDescriptions));
+  try
+    if (FhSupervisorThread <> INVALID_HANDLE_VALUE)
+        and (FhSupervisorThread <> 0) then begin
+      QueueUserAPC(@ExitThreadAPC, FhSupervisorThread, 0);
+      Debug.Trace0('wait...');
+      WaitForSingleObject(FhSupervisorThread, INFINITE);
+      Debug.Trace0('wait complete!');
+      CloseHandle(FhSupervisorThread);
+    end;
+  finally
 
-  if (FhSupervisorThread <> INVALID_HANDLE_VALUE)
-      and (FhSupervisorThread <> 0) then begin
-    QueueUserAPC(@ExitThreadAPC, FhSupervisorThread, 0);
-    Debug.Trace0('wait...');
-    WaitForSingleObject(FhSupervisorThread, INFINITE);
-    Debug.Trace0('wait complete!');    
-    CloseHandle(FhSupervisorThread);
   end;
-
 end; // TProcessSupervisor.StopThreads
 
 
@@ -308,12 +311,12 @@ var
   bIsThreadPresent: Boolean;
 begin
   Result := 0;
-
-//  hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+ { TODO : Разобраться для чего это }
+{  hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
   if hSnapshot = INVALID_HANDLE_VALUE then begin
     Exit;
   end;
-
+}
   ThreadEntry32.dwSize := sizeof(ThreadEntry32);
 
   bIsThreadPresent := Thread32First(hSnapshot, ThreadEntry32);

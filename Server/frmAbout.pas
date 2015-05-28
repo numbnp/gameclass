@@ -7,7 +7,7 @@ uses
   frmAddKey,
   registry, ShellAPI,
   Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls, Buttons, ExtCtrls,
-  ComCtrls, uCoder, uY2KFileVersionInfoLabel, uY2KFileVersionInfo;
+  ComCtrls;
 
 type
   TformAbout = class(TForm)
@@ -23,9 +23,6 @@ type
     butHelp: TButton;
     lvModules: TListView;
     lblLicensedComps: TLabel;
-    Y2KFileVersionInfo: TY2KFileVersionInfo;
-    lblProductVersion: TY2KFileVersionInfoLabel;
-    lblProductName: TY2KFileVersionInfoLabel;
     procedure FormActivate(Sender: TObject);
     procedure butKeyClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -45,7 +42,6 @@ var
 implementation
 
 uses
-  uRegistration,
   frmGCMessageBox;
 
 {$R *.dfm}
@@ -56,66 +52,45 @@ var
 begin
   li := lvModules.Items.Add;
   li.Caption := 'GCLinuxClientCount';
-  li.SubItems.Insert(0, IntToStr(Registration.LinuxClientCount));
+  li.SubItems.Insert(0, IntToStr(MAX_COMPUTERS));
 
   li := lvModules.Items.Add;
   li.Caption := 'GCHardwareControl';
-  if Registration.HardwareControl then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCPrinterControl';
-  if Registration.PrinterControl then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCInternetControl for Windows';
-  if Registration.InternetControl then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCInternetControl for Linux/FreeBSD';
-  if Registration.InternetControlComLinux then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCKKMControl';
-  if Registration.KKMControl then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCViewer';
-  if Registration.Viewer then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+  li.SubItems.Insert(0, 'Да');
 
   li := lvModules.Items.Add;
   li.Caption := 'GCSync';
-  if Registration.Sync then
-    li.SubItems.Insert(0, 'Да')
-  else
-    li.SubItems.Insert(0, 'Нет');
+  li.SubItems.Insert(0, 'Да');
 
   editRegs.Text := STR_UNREGISTERED_VERSION;
   lblLicensedComps.Caption := '';
-  if StrLen(Registration.UserName) > 0 then
-  begin
-    editRegs.Text := Registration.UserName;
-    lblLicensedComps.Caption := 'Лицензия на '
-        + IntToStr(Registration.CompsRegs)
+  editRegs.Text := 'Free';
+  lblLicensedComps.Caption := 'Лицензия на '
+        + IntToStr(MAX_COMPUTERS)
         + ' компьютеров';
-  end;
+
 end;
 
 procedure TformAbout.butKeyClick(Sender: TObject);
@@ -133,7 +108,7 @@ begin
   end;
  if GetKeyState(VK_CONTROL) < 0  then begin
     formGCMessageBox.memoInfo.Text := translate('GetHardwareIdInfo')
-        + Registration.HardwareID;
+        + 'Free';
     formGCMessageBox.SetDontShowAgain(False);
     formGCMessageBox.ShowModal;
     exit;
@@ -143,7 +118,7 @@ begin
   if (formAddKey.ShowModal = mrOK) then
   begin
     //MessageBox(HWND_TOP,PChar(Registration.LocalHardwareID),'',MB_OK);
-    str := XorCodeString(formAddKey.memoKey.Text, Registration.HardwareID);
+    str := XorCodeString(formAddKey.memoKey.Text, 'Free');
     Reg := TRegistry.Create;
     Reg.RootKey := HKEY_LOCAL_MACHINE;
     bTryFail := false;
@@ -188,7 +163,7 @@ begin
   ShellExecute(0,'open',
       pChar('mailto:support@nodasoft.com?subject=GameClass3&body=Version = '
       + APP_VERSION + ';  Registered to '
-      + Registration.UserName), NIL, NIL, SW_SHOWNORMAL);
+      + 'Free'), NIL, NIL, SW_SHOWNORMAL);
 end;
 
 procedure TformAbout.butHelpClick(Sender: TObject);

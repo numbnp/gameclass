@@ -14,7 +14,6 @@ uses
   Buttons,
   ExtCtrls,
   ComCtrls,
-  uCoder,
   uY2KFileVersionInfoLabel,
   uY2KFileVersionInfo;
 
@@ -52,8 +51,7 @@ implementation
 
 
 uses
-  ShellAPI,
-  uRegistration;
+  ShellAPI;
 
 resourcestring
   STR_UNREGISTERED_VERSION = 'Незаригистрированная демо-версия';

@@ -19,20 +19,20 @@ type
 
   TClientThread = class(TThread)
   private
-    procedure SendStr(s:TSocket;str:String);
+    procedure SendStr(s:TSocket;str:ansiString);
     procedure SendFile(s:TSocket;FileStream:TMemoryStream);
     Function PrepareFile(FilePath:String): TMemoryStream;
 
 //    function GetFilePath(FilePath:string):string;
-    function GetTypeContent(FilePath:string):string;
-    function ParseHttpRequest(recv:string): HttpRequest;
+    function GetTypeContent(FilePath:ansistring):ansistring;
+    function ParseHttpRequest(recv:ansistring): HttpRequest;
   public
     _Client :TSocket;
     DocumentRoot :String;
     DirectoryIndex :String;
     AddLog:procedure (str:string); stdcall;
     ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
-    ParceAndReplaceLine:procedure (var Str:string); stdcall;
+    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
   protected
     procedure AddToLog(str:string);
     procedure Execute; override;
@@ -48,7 +48,7 @@ type
     DirectoryIndex:String;
     AddLog:procedure (str:string); stdcall;
     ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
-    ParceAndReplaceLine:procedure (var Str:string); stdcall;
+    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
   protected
       procedure Execute; override;
   end;
@@ -64,7 +64,7 @@ type
 
     AddLog:procedure (str:string);  stdcall;
     ExecuteClient:function (Request:HttpRequest):boolean;  stdcall;
-    ParceAndReplaceLine:procedure (var Str:string); stdcall;
+    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
 
     constructor Create();
     procedure start();
@@ -75,14 +75,14 @@ Var
   MyWebServer: TMyWebServer;
 
 //function HexToInt(HexStr : string) : Int64;
-procedure StrBreakApart(const Source, Delimeter: string; Parts: TStrings);
-function UnpackKeyValue(const Str:string; var Key,Value:string):boolean;
+procedure StrBreakApart(const Source, Delimeter: ansistring; Parts: TStrings);
+function UnpackKeyValue(const Str:ansistring; var Key,Value:ansistring):boolean;
 
 
 
 function ReplaceSlash(Str: string): string;
-function ReplaceStr(Str, X, Y: string): string;
-function ReplaceWebCode(Str: string): string;
+//function ReplaceStr(Str, X, Y: ansistring): ansistring;
+function ReplaceWebCode(Str: ansistring): ansistring;
 
 
 implementation
@@ -184,19 +184,18 @@ end;
 
 procedure TClientThread.Execute;
 var
- _buff: array [0..1024] of char;
- _request:string;
- _temp: string;
- _path: string;
+ _buff: array [0..1024] of AnsiChar;
+ _request:AnsiString;
+ _path: String;
  _FileStream : TMemoryStream;
  _httpRequest : HttpRequest;
- _f:file of byte;
- _fileSize:integer;
+// _f:file of byte;
+// _fileSize:integer;
 begin
   inherited;
 
   Recv(_client, _buff, 1024, 0);
-  _request:=string(_buff);
+  _request:=ansistring(_buff);
 
   if _request='' then
   begin
@@ -204,7 +203,7 @@ begin
     exit;
   end;
 
-  AddToLog(_request);
+  AddToLog(string(_request));
 
   AddToLog('-----------------------------------------------');
   _httpRequest := ParseHttpRequest(_request);
@@ -233,8 +232,8 @@ begin
 
     SendStr(_Client, 'HTTP/1.0 200 OK');
     SendStr(_Client, 'Server: GameClassClient');
-    SendStr(_Client, 'Content-Length: ' + IntToStr(_FileStream.Size));
-    SendStr(_Client, 'Content-Type: ' + GetTypeContent(_Path));
+    SendStr(_Client, ansistring('Content-Length: ' + IntToStr(_FileStream.Size)));
+    SendStr(_Client, ansistring('Content-Type: ' + GetTypeContent(AnsiString(_Path))));
     SendStr(_Client, 'Cache-Control: no-store');
     SendStr(_Client, 'Expires: Sat, 26 Jan 2008 20:31:55 +0300');
     SendStr(_Client, 'Connection: close');
@@ -262,7 +261,7 @@ end;
 
 procedure TClientThread.SendFile(s: TSocket; FileStream: TMemoryStream);
 var
-  _buff:array [0..5000] of char;
+  _buff:array [0..500000] of ansichar;
   _ret:integer;
 begin
   while true do
@@ -274,31 +273,33 @@ begin
   end;
 end;
 
-procedure TClientThread.SendStr(s: TSocket; str: String);
+procedure TClientThread.SendStr(s: TSocket; str: ansiString);
 var
   _buff: array [0..255] of char;
   _temp: AnsiString;
 begin
-  AddToLog(str);
+  AddToLog(string(str));
   _temp :=str+#13+#10;
-  CopyMemory(@_buff, PChar(_temp), Length(_temp));
+  CopyMemory(@_buff, PAnsiChar(_temp), Length(_temp));
   send(s, _buff, Length(_temp), 0);
 end;
 
 
-function TClientThread.GetTypeContent(FilePath: string): string;
+function TClientThread.GetTypeContent(FilePath: AnsiString): ansistring;
 var
-  ex:string;
+  ex:AnsiString;
 begin
-  ex:=UpperCase(ExtractFileExt(FilePath));
+  ex:=AnsiString(UpperCase(ExtractFileExt(string(FilePath))));
   if (ex='.HTM') or (ex='.HTML') then Result := 'text/html';
   if (ex='.CSS') then Result := 'text/css';
 end;
 
-function UnpackKeyValue(const Str:string; var Key,Value:string):boolean;
+function UnpackKeyValue(const Str:AnsiString; var Key,Value:AnsiString):boolean;
 var
   DelimeterPos:integer;
+  _Result:Boolean;
 begin
+  _Result:=false;
   Key :='';
   Value :='';
   DelimeterPos := Pos('=',Str);
@@ -306,15 +307,15 @@ begin
   begin
     Key := LeftStr(Str,DelimeterPos-1);
     Value := RightStr(Str, Length(Str)-DelimeterPos);
-    Result := True;
+    _Result := True;
   end;
+  Result := _Result;
 end;
 
-procedure StrBreakApart(const Source, Delimeter: string; Parts: TStrings);
+procedure StrBreakApart(const Source, Delimeter: AnsiString; Parts: TStrings);
 var
  curPos: Integer;
- curStr: string;
- Key,Value:string;
+ curStr: AnsiString;
 begin
  Parts.Clear;
  if Length(Source) = 0 then
@@ -323,30 +324,31 @@ begin
  try
    CurStr:= Source;
    repeat
-     CurPos:= AnsiPos(Delimeter, CurStr);
+     CurPos:= Pos(Delimeter, CurStr);
      if CurPos > 0 then begin
-       Parts.Add(Copy(CurStr, 1, Pred(CurPos)));
+       Parts.Add(String(Copy(CurStr, 1, Pred(CurPos))));
        CurStr:= Copy(CurStr, CurPos+Length(Delimeter),
          Length(CurStr)-CurPos-Length(Delimeter)+1);
      end else
-       Parts.Add(CurStr);
+       Parts.Add(String(CurStr));
    until CurPos=0;
  finally
    Parts.EndUpdate;
  end;
 end;
 
-function TClientThread.ParseHttpRequest(recv: string): HttpRequest;
+function TClientThread.ParseHttpRequest(recv: AnsiString): HttpRequest;
 var
   tmp_slist,tmp_slist1:TStringList;
-  tmp_str:string;
+  tmp_str:AnsiString;
   Res:HttpRequest;
   i:integer;
-  parametrs:string;
-  Key,Value:string;
+  parametrs:AnsiString;
+  Key,Value:AnsiString;
   CurrentRequestLineNumber: integer;
   Content_Length:integer;
 begin
+  Content_Length := 0;
   // Разбиваем запрос на строки
   tmp_slist := TStringList.Create;
   StrBreakApart(recv,#13+#10,tmp_slist);
@@ -359,14 +361,17 @@ begin
   if pos('POST',tmp_slist.Strings[0])>0 then Res.RequestType := RT_POST;
 
   //Разбор запрашиваемого файла на имя файла и параметры
-  tmp_str:= Copy(tmp_slist.Strings[0],pos(' ',tmp_slist.Strings[0])+1,length(tmp_slist.Strings[0])-pos(' ',tmp_slist.Strings[0]));
-  tmp_str := LeftStr(tmp_str,pos(' ',tmp_str)-1);
-  if pos('?',tmp_str)>0 then
+  tmp_str:= Copy(tmp_slist.Strings[0],
+                  Pos(' ',tmp_slist.Strings[0])+1,
+                  length(tmp_slist.Strings[0])-Pos(' ',tmp_slist.Strings[0])
+                );
+  tmp_str := LeftStr(tmp_str,ansiPos(' ',tmp_str)-1);
+  if AnsiPos('?',tmp_str)>0 then
   begin
-    parametrs := RightStr(tmp_str,length(tmp_str) - pos('?',tmp_str));
-    tmp_str := LeftStr(tmp_str,pos('?',tmp_str)-1);
+    parametrs := RightStr(tmp_str,length(tmp_str) - AnsiPos('?',tmp_str));
+    tmp_str := LeftStr(tmp_str,AnsiPos('?',tmp_str)-1);
   end;
-  Res.FilePath := tmp_str;
+  Res.FilePath := string(tmp_str);
 
   // Вытаскиваем все Http заголовки
   Res.Headers := TStringList.Create;
@@ -387,17 +392,17 @@ begin
     for i:=CurrentRequestLineNumber to tmp_slist.Count -1 do
     if pos('=', tmp_slist.Strings[i])>0 then
       if length(parametrs)>0 then
-        parametrs := parametrs + '&' + LeftStr(tmp_slist.Strings[i],Content_Length)
+        parametrs := parametrs + '&' + AnsiString(LeftStr(tmp_slist.Strings[i],Content_Length))
       else
-        parametrs := LeftStr(tmp_slist.Strings[i],Content_Length);
+        parametrs := AnsiString(LeftStr(tmp_slist.Strings[i],Content_Length));
 
   tmp_slist1 := TStringList.Create;
   if length(parametrs)>0 then
   begin
     StrBreakApart(parametrs,'&',tmp_slist1);
     for i:= 0 to tmp_slist1.Count -1 do
-      if UnpackKeyValue(tmp_slist1.Strings[i],Key,Value) then
-        Res.Parametrs.Values[Key]:= ReplaceWebCode(Value);
+      if UnpackKeyValue(AnsiString(tmp_slist1.Strings[i]),Key,Value) then
+        Res.Parametrs.Values[string(Key)]:= string(ReplaceWebCode(Value));
   end;
 
   tmp_slist1.Free;
@@ -413,13 +418,13 @@ begin
   Result := ReplaceStr(str,'/','\');
 end;
 
-function ReplaceStr(Str, X, Y: string): string;
+//function ReplaceStr(Str, X, Y: AnsiString): AnsiString;
 {Str - строка, в которой будет производиться замена.
  X - подстрока, которая должна быть заменена.
  Y - подстрока, на которую будет произведена заменена}
-
+{
 var
-  buf1, buf2, buffer: string;
+  buf1, buf2, buffer: AnsiString;
 
 begin
   buf1 := '';
@@ -436,74 +441,35 @@ begin
 
   ReplaceStr := Buffer;
 end;
+}
 
-{function HexToInt(HexStr : string) : Int64;
-var RetVar : Int64;
-    i : byte;
+
+
+function ReplaceWebCode(Str: AnsiString): AnsiString;
+var
+  ss: string;
+  _Result: string;
 begin
-  HexStr := UpperCase(HexStr);
-  if HexStr[length(HexStr)] = 'H' then
-     Delete(HexStr,length(HexStr),1);
-  RetVar := 0;
-
-  for i := 1 to length(HexStr) do begin
-      RetVar := RetVar shl 4;
-      if HexStr[i] in ['0'..'9'] then
-         RetVar := RetVar + (byte(HexStr[i]) - 48)
-      else
-         if HexStr[i] in ['A'..'F'] then
-            RetVar := RetVar + (byte(HexStr[i]) - 55)
-         else begin
-            Retvar := 0;
-            break;
-         end;
-  end;
-
-  Result := RetVar;
-end;}
-
-
-function ReplaceWebCode(Str: string): string;
-var ss: string;
-begin
-  ss:= Str;
-  Result:=Utf8ToAnsi(dzurl.UrlDecode(ss));
-  Result:=StringReplace(Result,'&lt;','<',[rfReplaceAll]);
-  Result:=StringReplace(Result,'&gt;','>',[rfReplaceAll]);
+  ss:= string(Str);
+  _Result:=Utf8ToAnsi(dzurl.UrlDecode(ss));
+  _Result:=StringReplace(_Result,'&lt;','<',[rfReplaceAll]);
+  _Result:=StringReplace(_Result,'&gt;','>',[rfReplaceAll]);
+  Result := AnsiString(_Result);
 end;
 
-{Str - строка, в которой будет производиться замена.
-}
-{
-var
-  buf1, buf2, buffer: string;
 
-begin
-  buf1 := '';
-  buf2 := Str;
-  Buffer := Str;
-  while Pos('%', buf2) > 0 do
-  begin
-    buf2 := Copy(buf2, Pos('%', buf2), (Length(buf2) - Pos('%', buf2)) + 1);
-    buf1 := Copy(Buffer, 1, Length(Buffer) - Length(buf2)) + chr(HexToInt(copy(buf2,2,2)));
-    Delete(buf2, Pos('%', buf2), 3);
-    Buffer := buf1 + buf2;
-  end;
-  Buffer := ReplaceStr(Buffer, '+', ' ');
-  ReplaceWebCode := Buffer;
-end;    }
-
+{ TODO : Вынести обработку строк из веб сервера }
 Function TClientThread.PrepareFile(FilePath:String): TMemoryStream;
 var
   msResultFile: TMemoryStream;
-  sFileType: string;
+  sFileType: AnsiString;
   fFile: TextFile;
-  sBuf:string;
-  _Out_buff:array [0..5000] of char;
+  sBuf:AnsiString;
+  _Out_buff:array [0..5000] of ansichar;
   iBufSize:integer;
 begin
   msResultFile := TMemoryStream.Create;
-  sFileType := UpperCase(ExtractFileExt(FilePath));
+  sFileType := AnsiString(UpperCase(ExtractFileExt(FilePath)));
   if (sFileType='.HTM') or (sFileType='.HTML') or (sFileType='.CSS') then
   begin
     AssignFile (fFile,FilePath);

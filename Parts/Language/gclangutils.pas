@@ -18,7 +18,7 @@ function GetPhraseIndex(str:widestring):integer;
 
 const words_count = 1000; // количество фраз, которые мы умеем переводить!
 type
-  TPhrases = array[0..999, 0..2] of WideString; // массив знаний :)
+  TPhrases = array[0..999, 0..2] of String; // массив знаний :)
 
 var
   Phrases: TPhrases; // все фразы - массив

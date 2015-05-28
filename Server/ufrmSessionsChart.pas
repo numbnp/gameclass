@@ -40,7 +40,7 @@ type
     FCurrentSession: TGCSession;
     FStartTime: TDateTime;
     FStopTime: TDateTime;
-    FT :TNotifyEvent;
+//    FT :TNotifyEvent;
     FnState: TfrmSessionsChartState;
     FfShowCompCount: Integer; // Колво компов отображаемое без прокрутки
     FfMinCompIndex: Double; //Нужно когда компов >FfShowCompCount
@@ -155,7 +155,7 @@ end;
 
 procedure TfrmSessionsChart.UpdateGSessions;
 var
-  nSessionIndex, nGanntIndex, nGanntCount: Integer;
+  nSessionIndex, nGanntIndex: Integer;
 begin
 //логика такая: новые сессии добавляются только в конец коллекции, следовательно
 //если ID в Gannt не совпадает то элемент надо грохнуть
@@ -174,7 +174,7 @@ end;
 
 
 procedure TfrmSessionsChart.DoDesign;
-var min,max:Double;
+//var min,max:Double;
 begin
   chartComps.BottomAxis.Automatic := False;
 //  if FStartTime > FStopTime then
@@ -312,8 +312,7 @@ begin
 end;
 
 procedure TfrmSessionsChart.Activate;
-var
-  i: Integer;
+
 begin
   DoDesign;
   UpdateData;
@@ -333,6 +332,7 @@ end;
 
 function TfrmSessionsChart.GetGanntColor(Asession: TGCSession):TColor;
 begin
+  Result := SESSIONS_CHART_COLOR_FINISHED;
   case Asession.Status of
     ssReserve: Result := SESSIONS_CHART_COLOR_RESERVE;
     ssActive: begin
@@ -375,6 +375,7 @@ end;
 
 function TfrmSessionsChart.GetStatusByColor(nGanntIndex: Integer): TGCSessionStatus;
 begin
+  Result := ssFinished;
   case Series1.ValueColor[nGanntIndex] of
     SESSIONS_CHART_COLOR_RESERVE: Result := ssReserve;
     SESSIONS_CHART_COLOR_ACTIVE: Result := ssActive;

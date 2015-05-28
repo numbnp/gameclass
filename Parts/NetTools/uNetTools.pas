@@ -8,13 +8,13 @@ implementation
 uses
   WinSock,
   SysUtils;
-  
+
 function GetIPByName(AstrHostName: String): String;
 var
   wsdata : TWSAData;
-  hostName : array [0..255] of char;
+//  hostName : array [0..255] of ansichar;
   hostEnt : PHostEnt;
-  addr : PChar;
+  addr : PAnsiChar;
   ip: string;
 begin
   WSAStartup ($0101, wsdata);
@@ -23,9 +23,9 @@ begin
   if (length(AstrHostName)>2) then
   if ((AstrHostName[1]='\') and (AstrHostName[2]='\')) then AstrHostName := Copy(AstrHostName,3,1000);
   try
-    gethostname (hostName, sizeof (hostName));
-    StrPCopy(hostName, AstrHostName);
-    hostEnt := gethostbyname (hostName);
+//    gethostname (hostName, sizeof (hostName));
+//    StrPCopy(hostName, AstrHostName);
+    hostEnt := gethostbyname (PAnsichar(Ansistring(AstrHostName)));
     if Assigned (hostEnt) then
       if Assigned (hostEnt^.h_addr_list) then begin
         addr := hostEnt^.h_addr_list^;

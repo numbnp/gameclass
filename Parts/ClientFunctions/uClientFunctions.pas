@@ -39,8 +39,8 @@ uses
   uClientInfo,
   uClientInfoConst,
   SysUtils,
-  uCoder,
-  uDebugLog;
+  uDebugLog,
+  uCoder;
 
 
 // Функция логона клиента
@@ -173,7 +173,7 @@ begin
   LocalSendDataTo(STR_CMD_CLIENT_INFO_SET+'=UnblockedByPassword/'
       + BoolToStr(GClientInfo.UnblockedByPassword), False);
 {$ENDIF}
-
+  Result := True;
 end;
 
 procedure QueryTariffs;

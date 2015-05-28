@@ -6,7 +6,7 @@ type
 
   TReportData = record
     id: Integer;
-    Caption: ShortString;
+    Caption: String;
     IsFolder: Boolean;
   end; // TReportData
   PReportData = ^TReportData;

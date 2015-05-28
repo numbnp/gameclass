@@ -39,20 +39,22 @@ uses
   IdUDPClient,
   IdICMPClient,
   IdComponent,
-  DBTables,
+//  DBTables,
   DBClient,
   Provider,
   SqlExpr,
-  DBLocal,
+//  DBLocal,
   Types,
   uframeMessages,
-  bsPolyglotUn,
+//  bsPolyglotUn,
   udmActions,
   ufrmReports,
   udmMain,
   Graphics, XPMan,
   ufrmOperatorOpt,
-  uGCSendRecieve;
+  uGCSendRecieve, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh,
+  DBAxisGridsEh,
+  IdGlobal, MemTableDataEh, MemTableEh, DynVarsEh, EhLibVCL;
 
 type
   TformMain = class(TForm)
@@ -136,7 +138,6 @@ type
     N11: TMenuItem;
     gridComps: TDBGridEh;
     dsComps: TDataSource;
-    cdsComps: TADODataSet;
     PageControl: TPageControl;
     tabComputers: TTabSheet;
     splitComps: TSplitter;
@@ -214,6 +215,7 @@ type
     PopupMenu1: TPopupMenu;
     mnuCompBackPartMoney: TMenuItem;
     pnlRep: TPanel;
+    cdsComps: TMemTableEh;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     // when change language
@@ -265,8 +267,10 @@ type
     procedure dtpIntDateChange(Sender: TObject);
     procedure butResetTimeClick(Sender: TObject);
     procedure mnuClientInfoClick(Sender: TObject);
-    procedure udpServer_UDPRead(Sender: TObject; AData: TStream;
-      ABinding: TIdSocketHandle);
+    {procedure udpServer_UDPRead(Sender: TObject; AData: TStream;
+      ABinding: TIdSocketHandle);}
+    procedure udpServer_UDPRead(AThread: TIdUDPListenerThread;
+    const AData: TIdBytes; ABinding: TIdSocketHandle);// of object;
     function EnableSockets: Boolean;
     procedure DisableSockets;
     procedure tmrShowFormKillTasksTimer(Sender: TObject);
@@ -397,7 +401,6 @@ uses
   StrUtils,
   ufrmAccounts,
   EhLibADO,
-  uCoder ,
   GCSessions,
   SysUtils,
   Windows,
@@ -421,7 +424,6 @@ uses
   uTariffication,
   gcsystem,
   uY2KString,
-  uRegistration,
   uKKMTools, Variants,
   uGCSidelines;
 
@@ -467,7 +469,7 @@ end;
 procedure ScrollActiveToRow(Grid : TDBGridEh; ARow : Integer);
  var FTitleOffset, SDistance : Integer;
      NewRect : TRect;
-     RowHeight : Integer;
+//     RowHeight : Integer;
      NewRow : Integer;
 begin
  with TMyDBGrid(Grid) do begin
@@ -535,11 +537,9 @@ end;
 
 // тут инициализируем все наши переменные
 procedure TformMain.FormCreate(Sender: TObject);
-var
-//  info: TFileCheckSumInfo;
-  key: TKeyArray;
 begin
-  timerCompsList.Interval := GLOBAL_TIMER * 1000;
+//  timerCompsList.Interval := GLOBAL_TIMER * 1000;
+  timerCompsList.Interval := 1000;
   FstrHotNumber := '';
   FdtHotNumberEntered := Now;
   FProxy := nil;
@@ -563,6 +563,8 @@ begin
   Application.OnMinimize := MinimizeToTray;
   Randomize;
   formMain.cdsComps.CreateDataSet;
+
+
   FbStarting := True;
 end;
 
@@ -580,13 +582,15 @@ procedure TformMain.UpdateSelectedCompList;
 var
   i,j: integer;
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
   iOldRow: Integer;
 begin
    if (not dsConnected) then exit;
 
    iOldRow := TMyDBGrid(gridComps).Row;
+
    cdsComps.DisableControls;
+   //j:= gridComps.
    bookmark := cdsComps.Bookmark;
    cdsComps.First;
    while (not cdsComps.Eof) do begin
@@ -690,6 +694,8 @@ var
   i: integer;
   ChangedSessions: boolean;
 begin
+  ChangedSessions := false;
+
   if not dsConnected then
     exit;
   // исключаем режим мониторинга
@@ -761,6 +767,7 @@ begin
 {$ENDIF}
   begin
     dmActions.actExit.Execute;
+    
   end;
 end;
 
@@ -898,6 +905,10 @@ end;
 
 procedure TformMain.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(FMappings);
+  FreeAndNil(Console);
+  FreeAndNil(Sideline);
+  FreeAndNil(OperatorProfile);
   Shell_notifyIcon(NIM_DELETE, @FTrayIcon);
 end;
 
@@ -947,9 +958,9 @@ end;
 procedure ShowFormKillTasks(listtasks: string; compindex: integer);
 var
   i: integer;
-  curTask: AnsiString;
-  li: TListItem;
-  result: integer;
+//  curTask: AnsiString;
+//  li: TListItem;
+//  result: integer;
   frmTaskKill: TfrmTaskKill;
   lstTasks: TStringList;
 begin
@@ -966,7 +977,7 @@ end;
 procedure TformMain.mnuRestartClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -988,7 +999,7 @@ end;
 procedure TformMain.mnuShutdownClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -1098,7 +1109,9 @@ begin
 end;
 
 // принимаем пакет на UDP порт 3773 и делаем что надо
-procedure TformMain.udpServer_UDPRead(Sender: TObject; AData: TStream; ABinding: TIdSocketHandle);
+//procedure TformMain.udpServer_UDPRead(Sender: TObject; AData: TStream; ABinding: TIdSocketHandle);
+procedure TformMain.udpServer_UDPRead(AThread: TIdUDPListenerThread;
+    const AData: TIdBytes; ABinding: TIdSocketHandle);
 var
   DataStringStream: TStringStream;
   strData: string;
@@ -1140,8 +1153,10 @@ begin
   DataStringStream := TStringStream.Create('');
   try
   try
-    DataStringStream.CopyFrom(AData, AData.Size);
-    strData := TrimLeft(TrimRight(DataStringStream.DataString));
+
+//    DataStringStream.CopyFrom(AThread.AData, AData.Size);
+//    strData := TrimLeft(TrimRight(DataStringStream.DataString));
+    strData := BytesToString(AData);
     // распаковываем пакет
     UnWrapProtocol(strData, @protocol, @cmd, @param);
      
@@ -1188,14 +1203,12 @@ begin
       // ------------------------------
       if (cmd = STR_CMD_RET_RESTARTING) then begin
         SendAllOptionsToClient(index);
-        if Registration.HardwareControl then
-          if ((Not isManager) and GRegistry.Modules.Hardware.Active) then
+        if ((Not isManager) and GRegistry.Modules.Hardware.Active) then
             UDPSend(Comps[index].ipaddr, STR_CMD_GETHARDWARE);
         if (Not isManager) then UDPSend(Comps[index].ipaddr, STR_CMD_GETEXTENDEDINFO);
       end;
       // ------------------------------
-      if ((cmd = STR_CMD_RET_GETHARDWARE)
-          and Registration.HardwareControl) then begin
+      if (cmd = STR_CMD_RET_GETHARDWARE) then begin
         if (Not isManager) then AnalyzeHardware(param, index);
       end;
       // ------------------------------
@@ -1371,6 +1384,7 @@ begin
                 if (Tarifs[i].tarifvariants[j].IsAvailable(GetVirtualTime)) then
                   rettarifs := rettarifs + Tarifs[i].name + '-' + Tarifs[i].tarifvariants[j].name + '/';
             end;
+ { TODO : test }
         rettarifs := MidStr(rettarifs,1,strlen(PChar(rettarifs))-1);
         UDPSend(Comps[index].ipaddr, STR_CMD_AUTH_RETTARIFS_2+ '='+rettarifs);
       end; // STR_CMD_AUTH_QUERYTARIFS_2
@@ -1491,8 +1505,8 @@ begin
         strTarifName := GetParamFromString(param,0);
         fSumma := StrToFloatGC(GetParamFromString(param,1));
         dtStart := GetVirtualTime;
-        if(GAccountSystem.Accounts[Comps[index].a.number].Discount=100) then
-          qSumma := 0;
+{        if(GAccountSystem.Accounts[Comps[index].a.number].Discount=100) then
+          qSumma := 0;}
         if CalculateTarif(strTarifName, dtStart, dtTime, fSumma, True,
             index, GAccountSystem.Accounts[Comps[index].a.number].Discount) then begin
           GetTarifByName(strTarifName, nTarifIndex, nTarifVariantIndex,
@@ -1501,7 +1515,7 @@ begin
             qWhole := Tarifs[nTarifIndex].tarifvariants[nTarifVariantIndex].id
           else
             qWhole := 0;
-          dtStop := dtStart + dtTime;
+//          dtStop := dtStart + dtTime;
           if GClientOptions.Agreement then
             state := ClientState_Agreement
           else
@@ -1715,7 +1729,7 @@ begin
             and GetTarifByName(strTarifName, nTarifIndex, nTarifVariantIndex,
               bIsPacketTarif) and not bIsPacketTarif then begin
           qWhole := 0;
-          dtStop := dtStart + dtTime;
+//          dtStop := dtStart + dtTime;
           if GClientOptions.Agreement then
             state := ClientState_OperatorAgreement
           else
@@ -1757,7 +1771,8 @@ end;
 procedure TformMain.tmrShowFormKillTasksTimer(Sender: TObject);
 begin
   tmrShowFormKillTasks.Enabled := false;
-  ShowFormKillTasks(ShowFormKillTasks_param, ShowFormKillTasks_index);
+  { TODO : Раскоментить }
+//  ShowFormKillTasks(ShowFormKillTasks_param, ShowFormKillTasks_index);
 end;
 
 procedure TformMain.mnuAccountsClick(Sender: TObject);
@@ -1884,21 +1899,22 @@ begin
             IfThen(formMain.gridComps.SortMarkedColumns[i].Title.SortMarker = smUpEh,
                 ' DESC , ',
                 ' ASC , ');
-      formMain.cdsComps.Sort := Copy(strSort,1,Length(strSort)-2);
+        formMain.cdsComps.SortByFields( Copy(strSort,1,Length(strSort)-2));
+
    end
    else
-      formMain.cdsComps.Sort := '';
+        formMain.cdsComps.SortByFields('');
 end;
 
 procedure TformMain.tmrFileSynchronizationTimer(Sender: TObject);
 begin
-  if (isManager) then exit;
+{  if (isManager) then exit;
   if CompsCount > 0 then begin
     if GnFileSynchronizationCounter >= CompsCount then
       GnFileSynchronizationCounter := 0;
     SyncFile(GnFileSynchronizationCounter);
     Inc(GnFileSynchronizationCounter);
-  end;
+  end;}
 end;
 
 procedure TformMain.gridCompsCellClick(Column: TColumnEh);
@@ -2010,7 +2026,11 @@ var
 begin
   if (Shift=[ssAlt]) and (Key>=Ord('1')) and (Key<=Ord('9')) then begin
     nKey := Key-Ord('0'); //число от 0 до 8
-    nRowBlock := gridComps.VisibleRowCount; //количество компов на экране
+//    nRowBlock := gridComps.VisibleRowCount; //количество компов на экране
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    nRowBlock := 5; //количество компов на экране
+
+
     if (CompsCount div nRowBlock) > 9 then
       nRowBlock := CompsCount div 9; //если компов больше 9-ти экранов распределяем равномерно
      gridComps.DataSource.DataSet.DisableControls;
@@ -2093,10 +2113,11 @@ end;
 
 procedure TformMain.Edit1KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-var i:integer;
+//var
+//  i:integer;
 begin
   Application.MessageBox('SDF','SDF');
-  i := 0;
+//  i := 0;
 
 end;
 
@@ -2245,7 +2266,7 @@ end;
 procedure TformMain.mnuWakeUpClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -2389,7 +2410,7 @@ end;
 procedure TformMain.mnuLogoffClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -2445,7 +2466,7 @@ end;
 procedure TformMain.tlbMonOnClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -2466,7 +2487,7 @@ end;
 procedure TformMain.tlbMonOffClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -2487,7 +2508,7 @@ end;
 procedure TformMain.tlbStationUnlockClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;
@@ -2508,7 +2529,7 @@ end;
 procedure TformMain.tlbStationLockClick(Sender: TObject);
 var
   index: integer;
-  bookmark: TBookmarkStr;
+  bookmark: TBookmark;
 begin
    if (not dsConnected) then exit;
    cdsComps.DisableControls;

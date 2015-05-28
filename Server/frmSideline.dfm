@@ -1948,7 +1948,6 @@ object formSideline: TformSideline
     Top = 384
     Width = 73
     Height = 21
-    ItemHeight = 13
     TabOrder = 9
     OnChange = cboComputerNumberChange
   end
@@ -1957,7 +1956,6 @@ object formSideline: TformSideline
     Top = 384
     Width = 105
     Height = 21
-    ItemHeight = 13
     TabOrder = 10
     OnChange = cboComputerIPChange
   end

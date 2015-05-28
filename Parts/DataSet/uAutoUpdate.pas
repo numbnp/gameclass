@@ -87,6 +87,9 @@ destructor TAutoUpdate.Destroy();
 begin
   FreeAndNilWithAssert(Ftmr);
   FreeAndNilWithAssert(FCollection);
+  FreeAndNilWithAssert(GRegistry);
+  FreeAndNilWithAssert(GAccountSystem);
+  FreeAndNilWithAssert(GPMJobs);
   inherited Destroy();
 end; // TAutoUpdate.Destroy
 
