@@ -82,6 +82,7 @@ object frmReportEdit: TfrmReportEdit
         BevelOuter = bvSpace
         Caption = 'Columns:'
         TabOrder = 1
+        ExplicitWidth = 47
       end
     end
   end
@@ -164,6 +165,10 @@ object frmReportEdit: TfrmReportEdit
     TabOrder = 2
     object tabCode: TTabSheet
       Caption = 'Code'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object edtReportCode: TSynEdit
         Left = 0
         Top = 0
@@ -190,19 +195,22 @@ object frmReportEdit: TfrmReportEdit
     object tabDescription: TTabSheet
       Caption = 'Description'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object redtDescription: TRichEdit
         Left = 0
         Top = 0
         Width = 697
         Height = 224
         Align = alClient
+        ParentFont = False
         TabOrder = 0
       end
     end
   end
   object SynSQLSyn: TSynSQLSyn
-    DefaultFilter = 'SQL Files (*.sql)|*.sql'
-    SQLDialect = sqlStandard
     Left = 296
     Top = 80
   end

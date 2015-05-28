@@ -308,7 +308,8 @@ var
 begin
   str := GetSecCodesAsString;
   for i := 0 to 19 do begin
-    if (strlen(PChar(str))>=4) then begin
+//    if (strlen(PChar(str))>=4) then begin
+    if (Length(str)>=4) then begin
       FSecCodes[i] := Copy(str,1,4);
       str := Copy(str,5,10000);
     end else
@@ -382,7 +383,7 @@ end;
 
 function TAccountsRecord.GetPhoto: TPicture;
 var
-  picture: TPicture;
+//  picture: TPicture;
   stream : TStringStream;
   imgAccountPhoto: TImage;
 begin

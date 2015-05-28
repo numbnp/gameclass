@@ -6,8 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls,
   GCLangUtils, Grids, DBGridEh, DB, Mask, DBCtrlsEh, DBCtrls,
-  ADODB, EDBImage, RxGIF, ToolEdit, RXDBCtrl,
-  uTariffication, uCardReader, uZ2CardReader;
+  ADODB, {EDBImage,} RxGIF, rxToolEdit, RXDBCtrl,
+  uTariffication, uCardReader, uZ2CardReader, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, GridsEh, DBAxisGridsEh;
 
 type
   TfrmAccounts = class(TForm)
@@ -17,7 +18,6 @@ type
     lblAccountAddress: TLabel;
     lblAccountPhone: TLabel;
     lblAccountPhoto: TLabel;
-    imgAccountPhotoBG: TImage;
     editAccountName: TDBEditEh;
     editAccountNumber: TDBEditEh;
     editAccountAddress: TDBEditEh;
@@ -47,7 +47,6 @@ type
     dsrcAccounts: TDataSource;
     grdAccounts: TDBGridEh;
     OpenDialog1: TOpenDialog;
-    imgAccountPhoto: TEDBImage;
     cbxPeriodOfValidity: TDBCheckBox;
  
     gbTarifsInfo: TGroupBox;
@@ -84,6 +83,7 @@ type
     editHardCode: TDBEditEh;
     cbIgnoreHardCode: TDBCheckBoxEh;
     butGetCode: TButton;
+    imgAccountPhoto: TDBImage;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
@@ -202,8 +202,8 @@ var
   bRecordSelected: Boolean;
   bEditPermission: Boolean;
   bManagerPermission: Boolean;
-  i:Integer;
-  bookmark: Pointer;
+//  i:Integer;
+//  bookmark: Pointer;
 begin
   bCreateRigth := isManager or FunctionAmIRight(FN_ACCOUNTS_CREATE);
   bRecordSelected := not GAccountsCopy.IsEmpty;
@@ -333,14 +333,15 @@ end;
 function IntToStr2(i: integer):string;
 begin
   Result := IntToStr(i);
-  if (Strlen(PChar(Result))<2) then
+//  if (Strlen(PChar(Result))<2) then
+  if (length(Result)<2) then
     Result := '0'+Result;
 end;
 
 procedure TfrmAccounts.butViewSecCodesClick(Sender: TObject);
 var
   SecCodes: TSecCodes;
-  i, index: integer;
+  i : integer;
 begin
   if GAccountsCopy.IsEmpty then exit;
   formGCMessageBox.memoInfo.Text := '';
@@ -426,6 +427,8 @@ begin
   if editName.Text = '' then editName.Text := ' ';
   if editOt.Text = '' then editOt.Text := ' ';
 
+
+
   GAccountsCopy.Edit;
   GAccountsCopy.Post;
   //butAccountSave.Enabled := false;
@@ -444,9 +447,9 @@ end;
 
 procedure TfrmAccounts.butBalanceAddClick(Sender: TObject);
 var
-  index: integer;
+//  index: integer;
   res: double;
-  str: string;
+//  str: string;
   bActionCanceled: Boolean;
   Rbonus,refer,Rlevel:integer;
 begin
@@ -507,7 +510,7 @@ end;
 procedure TfrmAccounts.butBalanceRemoveClick(Sender: TObject);
 var
   res: double;
-  str: string;
+//  str: string;
   bActionCanceled: Boolean;
 begin
   if butAccountSave.Enabled then
@@ -671,7 +674,9 @@ end;
 procedure TfrmAccounts.butPhotoClick(Sender: TObject);
 begin
   if OpenDialog1.Execute then begin
-    imgAccountPhoto.LoadFromFile(OpenDialog1.FileName);
+    imgAccountPhoto.Picture.LoadFromFile(OpenDialog1.FileName);
+    intCurentId := editAccountNumber.Text;
+    GAccountsCopy.Current.Photo := imgAccountPhoto.Picture;
     _OnChange(Sender);
   end;
 end;
@@ -811,6 +816,7 @@ procedure TfrmAccounts.cbReferalChange(Sender: TObject);
 var
   uindex: Integer;
 begin
+  uindex := 0;
   if cbReferal.Text = '' then
     uindex:=0
   else

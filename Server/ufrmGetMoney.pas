@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Mask, ToolEdit, CurrEdit, jpeg;
+  Dialogs, StdCtrls, ExtCtrls, Mask, rxToolEdit, jpeg, RxCurrEdit;
 
 type
   TfrmGetMoney = class(TForm)
@@ -42,7 +42,7 @@ uses
 
 procedure TfrmGetMoney.butGetMoneyClick(Sender: TObject);
 var
-  fMoney: Double;
+//  fMoney: Double;
   strQuestion: String;
 begin
   strQuestion := 'Вы забираете из кассы ' + edtRemovedMoney.Text

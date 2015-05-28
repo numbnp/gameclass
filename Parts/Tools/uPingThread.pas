@@ -53,8 +53,11 @@ begin
         exit;
       ClientPingable := false;
       ClientIndex := i;
-
-      ClientPingable := PingICMP(Comps[i].ipaddr);
+      Synchronize(procedure
+                  begin
+                    ip := Comps[i].ipaddr
+                  end );
+      ClientPingable := PingICMP(ip);
       Synchronize(Self,SyncClient);
       Sleep(Interval);
     end;

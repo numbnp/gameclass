@@ -242,8 +242,8 @@ end;
 
 procedure TframeOptions.RedrawTarifsList;
 var
-  i,j: Integer;
-  li: TListItem;
+  i: Integer;
+//  li: TListItem;
   strSelectedTarif: String;
 begin
   strSelectedTarif := GRegistry.Client.GuestSessionTarifName;

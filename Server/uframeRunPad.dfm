@@ -43,7 +43,7 @@ object frameRunPad: TframeRunPad
     object lblTarifs: TLabel
       Left = 8
       Top = 24
-      Width = 41
+      Width = 40
       Height = 13
       Caption = #1058#1072#1088#1080#1092#1099
     end
@@ -57,7 +57,7 @@ object frameRunPad: TframeRunPad
     object lblTabsCurrent: TLabel
       Left = 316
       Top = 24
-      Width = 50
+      Width = 51
       Height = 13
       Caption = #1057#1082#1088#1099#1074#1072#1090#1100
     end
@@ -195,7 +195,7 @@ object frameRunPad: TframeRunPad
     object lblShablon: TLabel
       Left = 10
       Top = 28
-      Width = 42
+      Width = 43
       Height = 13
       Caption = #1064#1072#1073#1083#1086#1085' '
     end

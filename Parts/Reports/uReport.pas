@@ -125,7 +125,8 @@ uses
   uTimeShift,
 {$ENDIF}
   DB,
-  SysUtils;
+  SysUtils,
+  System.Classes;
 
 const
   DEF_QUERY_OTHERS1 = 'EXEC CustomReport';

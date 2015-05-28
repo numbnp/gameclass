@@ -2,41 +2,41 @@
 <DataBaseConfiguration>
   <Connection Login="" Pssword="" Server="127.0.0.1"/>
   <Scripts Path="">
-          <ScriptCreate DataBaseVersion="Create" FileName="GCBaseCreate.sqp" Description="Creating database v3.7. Please wait a few seconds ..."/>
-          <Script37 DataBaseVersion="3.7" FileName="GCBaseUpdate37to372.sqp" Description="Updating database to v3.72 ..."/>
-          <Script372 DataBaseVersion="3.72" FileName="GCBaseUpdate372to373.sqp" Description="Updating database to v3.73 ..."/>
-          <Script373 DataBaseVersion="3.73" FileName="GCBaseUpdate373to374.sqp" Description="Updating database to v3.74 ..."/>
-          <Script374 DataBaseVersion="3.74" FileName="GCBaseUpdate374to375.sqp" Description="Updating database to v3.75 ..."/>
-          <Script375 DataBaseVersion="3.75" FileName="GCBaseUpdate375to375a.sqp" Description="Updating database to v3.75a ..."/>
-          <Script375a DataBaseVersion="3.75a" FileName="GCBaseUpdate375ato375b.sqp" Description="Updating database to v3.75b ..."/>
-          <Script375b DataBaseVersion="3.75b" FileName="GCBaseUpdate375bto376.sqp" Description="Updating database to v3.76 ..."/>
-          <Script376 DataBaseVersion="3.76" FileName="GCBaseUpdate376to377.sqp" Description="Updating database to v3.77 ..."/>
-          <Script377 DataBaseVersion="3.77" FileName="GCBaseUpdate377to378.sqp" Description="Updating database to v3.78 ..."/>
-          <Script378PM1 DataBaseVersion="3.78" FileName="mssql_pmonitor.sqp" Description="Updating database for pmonitor module (pmonitor)..."/>
-          <Script378PM2 DataBaseVersion="3.78" FileName="mssql_pmdata.sqp" Description="Updating database for pmonitor module (pmdata)..."/>
-          <Script378PM3 DataBaseVersion="3.78" FileName="mssql_pmadvices.sqp" Description="Updating database for pmonitor module (pmadvices)..."/>
-          <Script378PM4 DataBaseVersion="3.78" FileName="mssql_pmupgrade_379.sqp" Description="Updating database for pmonitor module (pmupgrade)..."/>
-          <Script378PM4 DataBaseVersion="3.78" FileName="mssql_pmrights.sqp" Description="Updating database for pmonitor module (pmrights)..."/>
-          <Script378 DataBaseVersion="3.78" FileName="GCBaseUpdate378to379.sqp" Description="Updating database to v3.79 ..."/>
-          <Script379PM1 DataBaseVersion="3.79" FileName="mssql_pmupgrade_3_4.sqp" Description="Updating database for pmonitor module (PM 3.4)..."/>
-          <Script379 DataBaseVersion="3.79" FileName="GCBaseUpdate379to380.sqp" Description="Updating database to v3.80 ..."/>
-          <Script380 DataBaseVersion="3.80" FileName="GCBaseUpdate380to381.sqp" Description="Updating database to v3.81 ..."/>
-          <Script381 DataBaseVersion="3.81" FileName="GCBaseUpdate381to382.sqp" Description="Updating database to v3.82 ..."/>
-          <Script382pm37 DataBaseVersion="3.82" FileName="mssql_pmupgrade_3_7.sqp" Description="Updating database for pmonitor module (PM 3.7) ..."/>
-          <Script382pm38 DataBaseVersion="3.82" FileName="mssql_pmupgrade_3_8.sqp" Description="Updating database for pmonitor module (PM 3.8) ..."/>
-          <Script382 DataBaseVersion="3.82" FileName="GCBaseUpdate382to383.sqp" Description="Updating database to v3.83 ..."/>
-          <Script383pm39 DataBaseVersion="3.83" FileName="mssql_pmupgrade_3_9.sqp" Description="Updating database for pmonitor module (PM 3.9) ..."/>
-          <Script383 DataBaseVersion="3.83" FileName="GCBaseUpdate383to384.sqp" Description="Updating database to v3.84 ..."/>
-          <Script383patch DataBaseVersion="3.84" FileName="GCBaseUpdate384update.sqp" Description="Updating database for v3.84 ..."/>
-          <Script384 DataBaseVersion="3.84" FileName="GCBaseUpdate384to385.sqp" Description="Updating database to v3.85 ..."/>
-          <Script384patch DataBaseVersion="3.85" FileName="GCBaseUpdate385update.sqp" Description="Updating database for v3.85 ..."/>
-          <Script385patch DataBaseVersion="3.85" FileName="GCBaseUpdate385to3851.sqp" Description="Updating database for v3.85.1 ..."/>
-          <Script385patch DataBaseVersion="3.85.1" FileName="GCBaseUpdate3851to3852.sqp" Description="Updating database for v3.85.2 ..."/>
-          <Script385patch DataBaseVersion="3.85.2" FileName="GCBaseUpdate3852to3853.sqp" Description="Updating database for v3.85.3 ..."/>
-          <Script3854 DataBaseVersion="3.85.3" FileName="GCBaseUpdate3853to3854.sqp" Description="Updating database for v3.85.4 ..."/>
-          <Script3855 DataBaseVersion="3.85.4" FileName="GCBaseUpdate3854to3855.sqp" Description="Updating database for v3.85.5 ..."/>
-          <Script3856 DataBaseVersion="3.85.5" FileName="GCBaseUpdate3855to3856.sqp" Description="Updating database for v3.85.6 ..."/>
-          <Script3857 DataBaseVersion="3.85.6" FileName="GCBaseUpdate3856to3857.sqp" Description="Updating database for v3.85.7 ..."/>
+          <ScriptCreate DataBaseVersion="Create" FileName="GCBaseCreate.sql" Description="Creating database v3.7. Please wait a few seconds ..."/>
+          <Script37 DataBaseVersion="3.7" FileName="GCBaseUpdate37to372.sql" Description="Updating database to v3.72 ..."/>
+          <Script372 DataBaseVersion="3.72" FileName="GCBaseUpdate372to373.sql" Description="Updating database to v3.73 ..."/>
+          <Script373 DataBaseVersion="3.73" FileName="GCBaseUpdate373to374.sql" Description="Updating database to v3.74 ..."/>
+          <Script374 DataBaseVersion="3.74" FileName="GCBaseUpdate374to375.sql" Description="Updating database to v3.75 ..."/>
+          <Script375 DataBaseVersion="3.75" FileName="GCBaseUpdate375to375a.sql" Description="Updating database to v3.75a ..."/>
+          <Script375a DataBaseVersion="3.75a" FileName="GCBaseUpdate375ato375b.sql" Description="Updating database to v3.75b ..."/>
+          <Script375b DataBaseVersion="3.75b" FileName="GCBaseUpdate375bto376.sql" Description="Updating database to v3.76 ..."/>
+          <Script376 DataBaseVersion="3.76" FileName="GCBaseUpdate376to377.sql" Description="Updating database to v3.77 ..."/>
+          <Script377 DataBaseVersion="3.77" FileName="GCBaseUpdate377to378.sql" Description="Updating database to v3.78 ..."/>
+          <Script378PM1 DataBaseVersion="3.78" FileName="mssql_pmonitor.sql" Description="Updating database for pmonitor module (pmonitor)..."/>
+          <Script378PM2 DataBaseVersion="3.78" FileName="mssql_pmdata.sql" Description="Updating database for pmonitor module (pmdata)..."/>
+          <Script378PM3 DataBaseVersion="3.78" FileName="mssql_pmadvices.sql" Description="Updating database for pmonitor module (pmadvices)..."/>
+          <Script378PM4 DataBaseVersion="3.78" FileName="mssql_pmupgrade_379.sql" Description="Updating database for pmonitor module (pmupgrade)..."/>
+          <Script378PM4 DataBaseVersion="3.78" FileName="mssql_pmrights.sql" Description="Updating database for pmonitor module (pmrights)..."/>
+          <Script378 DataBaseVersion="3.78" FileName="GCBaseUpdate378to379.sql" Description="Updating database to v3.79 ..."/>
+          <Script379PM1 DataBaseVersion="3.79" FileName="mssql_pmupgrade_3_4.sql" Description="Updating database for pmonitor module (PM 3.4)..."/>
+          <Script379 DataBaseVersion="3.79" FileName="GCBaseUpdate379to380.sql" Description="Updating database to v3.80 ..."/>
+          <Script380 DataBaseVersion="3.80" FileName="GCBaseUpdate380to381.sql" Description="Updating database to v3.81 ..."/>
+          <Script381 DataBaseVersion="3.81" FileName="GCBaseUpdate381to382.sql" Description="Updating database to v3.82 ..."/>
+          <Script382pm37 DataBaseVersion="3.82" FileName="mssql_pmupgrade_3_7.sql" Description="Updating database for pmonitor module (PM 3.7) ..."/>
+          <Script382pm38 DataBaseVersion="3.82" FileName="mssql_pmupgrade_3_8.sql" Description="Updating database for pmonitor module (PM 3.8) ..."/>
+          <Script382 DataBaseVersion="3.82" FileName="GCBaseUpdate382to383.sql" Description="Updating database to v3.83 ..."/>
+          <Script383pm39 DataBaseVersion="3.83" FileName="mssql_pmupgrade_3_9.sql" Description="Updating database for pmonitor module (PM 3.9) ..."/>
+          <Script383 DataBaseVersion="3.83" FileName="GCBaseUpdate383to384.sql" Description="Updating database to v3.84 ..."/>
+          <Script383patch DataBaseVersion="3.84" FileName="GCBaseUpdate384update.sql" Description="Updating database for v3.84 ..."/>
+          <Script384 DataBaseVersion="3.84" FileName="GCBaseUpdate384to385.sql" Description="Updating database to v3.85 ..."/>
+          <Script384patch DataBaseVersion="3.85" FileName="GCBaseUpdate385update.sql" Description="Updating database for v3.85 ..."/>
+          <Script385patch DataBaseVersion="3.85" FileName="GCBaseUpdate385to3851.sql" Description="Updating database for v3.85.1 ..."/>
+          <Script385patch DataBaseVersion="3.85.1" FileName="GCBaseUpdate3851to3852.sql" Description="Updating database for v3.85.2 ..."/>
+          <Script385patch DataBaseVersion="3.85.2" FileName="GCBaseUpdate3852to3853.sql" Description="Updating database for v3.85.3 ..."/>
+          <Script3854 DataBaseVersion="3.85.3" FileName="GCBaseUpdate3853to3854.sql" Description="Updating database for v3.85.4 ..."/>
+          <Script3855 DataBaseVersion="3.85.4" FileName="GCBaseUpdate3854to3855.sql" Description="Updating database for v3.85.5 ..."/>
+          <Script3856 DataBaseVersion="3.85.5" FileName="GCBaseUpdate3855to3856.sql" Description="Updating database for v3.85.6 ..."/>
+          <Script3857 DataBaseVersion="3.85.6" FileName="GCBaseUpdate3856to3857.sql" Description="Updating database for v3.85.6 ..."/>
   </Scripts>
   <Reports>
           <Report FileName="Важные сообщения.xml" Description="Обновление отчета Важные сообщения.xml ..."/>

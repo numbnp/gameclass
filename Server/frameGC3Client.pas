@@ -5,7 +5,7 @@ interface
 uses
   GCConst, GCLangUtils, uProtocol, GCComputers, GCCommon,
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, frmInstallLogin, Mask, ToolEdit;
+  ExtCtrls, frmInstallLogin, Mask, RxToolEdit;//, ToolEdit, ;
 
 type
   TframGC3Client = class(TFrame)
@@ -29,7 +29,6 @@ type
     lblSec2: TLabel;
     gbBlockAction: TGroupBox;
     cbxUnblockPassword: TCheckBox;
-    edtUnblockPassword: TEdit;
     cbxAfterStop: TCheckBox;
     gbSessionStop: TGroupBox;
     rbtnAfterStopType_KillTask: TRadioButton;
@@ -57,6 +56,7 @@ type
     lblDistribPath: TLabel;
     cbxUseWOL: TCheckBox;
     cbShowSummOnClient: TCheckBox;
+    edtUnblockPassword: TEdit;
     procedure cbxKeyboardClick(Sender: TObject);
     procedure cbxMouseClick(Sender: TObject);
     procedure cbxTasksClick(Sender: TObject);

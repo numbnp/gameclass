@@ -125,10 +125,10 @@ begin
 end;
 
 function TZ2CardReader.Start: boolean;
-var
-  ByteArrRx: array [1..6] of byte;
+//var
+//  ByteArrRx: array [1..6] of byte;
 begin
-  result:=false;
+//  result:=false;
   if ComPort.PortOpened then raise Exception.Create('Port is already open');
   if not ComPort.OpenPort(PortName) then raise Exception.Create('Can not open port');
 
@@ -143,6 +143,7 @@ function TZ2CardReader.Stop: boolean;
 begin
   ReadTimer.Enabled :=False;
   if ComPort.PortOpened then ComPort.ClosePort;
+  Result := True;
 end;
 
 

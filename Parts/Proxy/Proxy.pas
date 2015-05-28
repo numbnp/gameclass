@@ -10,7 +10,7 @@ type
    protected
    //протектед вэриэйблс
       FIPList : TIPInfoList;  //Список ip-адресов
-      FMappedPorts: TMappedPorts;      //коллекция "мапперов", слушающих сокет
+//      FMappedPorts: TMappedPorts;      //коллекция "мапперов", слушающих сокет
 //                                     //(listen) и создающих редирект
 
    public
@@ -56,12 +56,12 @@ constructor TProxy.Create;
 begin
    inherited Create;
    FIPList := TIPInfoList.Create;
-   FMappedPorts := TMappedPorts.Create(FIPList);
+   //FMappedPorts := TMappedPorts.Create(FIPList);
 end;
 
 destructor TProxy.Destroy;
 begin
-   FMappedPorts.Free;
+   //FMappedPorts.Free;
    FIPList.Free;
    inherited Destroy;
 end;
@@ -74,14 +74,14 @@ end;
 procedure TProxy.Stop;
 begin
    FIPList.DisableMapping;
-   FMappedPorts.DisconnectAll;
+   //FMappedPorts.DisconnectAll;
 end;
 
 procedure TProxy.Reset;
 begin
    FIPList.DisableMapping;
-   FMappedPorts.DisconnectAll;
-   FMappedPorts.Clear;
+   //FMappedPorts.DisconnectAll;
+   //FMappedPorts.Clear;
    FIPList.Clear;
 end;
 
@@ -98,12 +98,12 @@ end;
 procedure TProxy.IPDisable(Addr : String);
 begin
    FIPList.Disable(Addr);
-   FMappedPorts.DisconnectByIP(Addr);
+   //FMappedPorts.DisconnectByIP(Addr);
 end;
 
 procedure TProxy.MappingAdd(ServerPort : Word; MappedAddr : String; MappedPort : Word);
 begin
-   FMappedPorts.Add(ServerPort,MappedAddr,MappedPort);
+   //FMappedPorts.Add(ServerPort,MappedAddr,MappedPort);
 end;
 
 procedure TProxy.IPTrafficReset(Addr : String); // сбросить весь (исх/вход) траффик в ноль

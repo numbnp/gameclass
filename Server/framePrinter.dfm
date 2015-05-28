@@ -15,14 +15,14 @@ object framePrinter: TframePrinter
     object lblCost: TLabel
       Left = 16
       Top = 40
-      Width = 107
+      Width = 106
       Height = 13
       Caption = #1057#1090#1086#1080#1084#1086#1089#1090#1100' '#1089#1090#1088#1072#1085#1080#1094#1099
     end
     object lblCurrency: TLabel
       Left = 128
       Top = 62
-      Width = 52
+      Width = 54
       Height = 13
       Caption = 'lblCurrency'
     end

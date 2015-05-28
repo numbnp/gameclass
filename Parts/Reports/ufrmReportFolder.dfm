@@ -12,6 +12,7 @@ object frmReportFolder: TfrmReportFolder
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object tvReportFolder: TVirtualStringTree
@@ -31,7 +32,6 @@ object frmReportFolder: TfrmReportFolder
     TabOrder = 0
     OnDblClick = tvReportFolderDblClick
     OnFreeNode = tvReportFolderFreeNode
-    OnGetText = tvReportFolderGetText
     OnGetImageIndex = tvReportFolderGetImageIndex
     OnInitNode = tvReportFolderInitNode
     OnLoadNode = tvReportFolderLoadNode

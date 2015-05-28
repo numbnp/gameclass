@@ -132,8 +132,8 @@ begin
 end;
 
 procedure TformSideline.UpdateInformation;
-var
-  nServiceId: Integer;
+//var
+//  nServiceId: Integer;
 begin
   butSel.Enabled := (lvSideline.ItemIndex <> -1) or (editFilterCode.Text <> '');
   if (lvSideline.ItemIndex <> -1) then begin
@@ -163,7 +163,7 @@ end;
 procedure TformSideline.butSelClick(Sender: TObject);
 var
   nComputerIndex: Integer;
-  str: String;
+//  str: String;
 begin
   if not GRegistry.Options.ServiceNoClose then ModalResult := mrOk;
   if (TypeCost = stcSeparate) then begin

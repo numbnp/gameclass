@@ -49,7 +49,7 @@ var
   strDBName: String;
   strDBXML: String;
   bNeedInsert: Boolean;
-  t: Integer;
+//  t: Integer;
 begin
   bNeedInsert := True;
   ParseHardwareNode(AXMLNode, strName, strDescription, strXML);
@@ -83,7 +83,6 @@ function ParseHardwareNode(const AXMLNode: IXMLNode;
     var AstrDescription: String;
     var AstrXML: String): Boolean;
 begin
-  Result := False;
   AstrName := AXMLNode.NodeName;
   AstrXML := AXMLNode.XML;
   if (AstrName = SYSTEM_TAG) then
@@ -96,16 +95,16 @@ begin
   else if (AstrName = MEMORY_TAG) then
       AstrDescription := AXMLNode.Attributes['BankLabel'] + ' '
           + AXMLNode.Attributes['Name'] + ' '
-          + GetShortSizeString(AXMLNode.Attributes['Capacity']) + ' '
+//          + GetShortSizeString(AXMLNode.Attributes['Capacity']) + ' '
           + AXMLNode.Attributes['Speed']
           + IfThen(Length(AXMLNode.Attributes['Speed'])>0,' MHz','')
   else if (AstrName = VIDEO_TAG) then
       AstrDescription := AXMLNode.Attributes['Name'] + ' '
-          + GetShortSizeString(AXMLNode.Attributes['RAMCapacity'])
+//          + GetShortSizeString(AXMLNode.Attributes['RAMCapacity'])
   else if (AstrName = HDD_TAG) then
       AstrDescription := AXMLNode.Attributes['Name'] + ' '
           + AXMLNode.Attributes['Caption'] + ' '
-          + GetShortSizeString(AXMLNode.Attributes['Size'])
+//          + GetShortSizeString(AXMLNode.Attributes['Size'])
   else if (AstrName = CDROM_TAG) then
       AstrDescription := AXMLNode.Attributes['MediaType'] + ' '
           + AXMLNode.Attributes['Name']
@@ -129,10 +128,10 @@ var
   dtsOldHardwareLocal: TADODataSet;
 
   XMLDoc: TXMLDocument;
-  NodeList, ChildNodeList: IXMLNodeList;
+  NodeList : IXMLNodeList;
   Node: IXMLNode;
-  n:Integer;
-  strXML, strNodeName: String;
+//  n:Integer;
+  strXML : String;
 
 begin
   // 1. Читаем из базы старый список

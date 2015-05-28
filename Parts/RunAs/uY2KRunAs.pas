@@ -34,7 +34,8 @@ implementation
 uses
   SysUtils,
   Dialogs,
-  uDebugLog;
+  uDebugLog,
+  System.UITypes;
 
 
 const
@@ -472,6 +473,7 @@ begin
   hWinStaSave := 0;
   ptrSid := nil;
   Result := -1;
+  pcUserName := nil;
 
   try
     // Сохраняем текущую window station.
@@ -569,7 +571,7 @@ begin
     StartupInfo.lpDesktop := 'winsta0\default';
 
     Debug.Trace0('CreateProcessAsUser:'+AstrCommandLine);
-    if CreateProcessAsUser(AhToken, nil, PAnsiChar(AstrCommandLine),
+    if CreateProcessAsUser(AhToken, nil, PWideChar(AstrCommandLine),
         nil, nil, FALSE, NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo,
         {out}ProcessInformation) then begin
 

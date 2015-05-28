@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Registry,
   Dialogs, StdCtrls, ExtCtrls, DateUtils, ufrmLogon,
-  Mask, ToolEdit;
+  Mask, RxToolEdit;
 
 resourcestring
   MSG_SELECT_FOLDER = 'Выберите папку ...';
@@ -119,8 +119,7 @@ implementation
 uses
   ADODB,
   uCommon,
-  uSQLTools,
-  uRegistration;
+  uSQLTools;
 {$R *.dfm}
 
 procedure TfrmMain.SetCustomeMode(const AbCustomMode: Boolean = False);
@@ -220,10 +219,6 @@ begin
   if (Length(edtBackupPath.Text) <= 2) then begin
     memInfo.Lines.Add(MSG_FILE_NOT_SELECTED);
     Exit;
-  end;
-  if (StrLen(Registration.UserName)=0) then begin
-    memInfo.Lines.Add(MSG_REGISTRATION_NEDED);
-    exit;
   end;
   if MessageBox(Handle, PChar(MSG_RESTORE_WARNING), PChar(MSG_ATTENTION),
       MB_YESNO or MB_ICONWARNING) = IDNO then exit;

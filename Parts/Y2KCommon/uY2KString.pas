@@ -87,7 +87,7 @@ implementation
 
 uses
   // system units
-  SysUtils,
+  System.SysUtils,
   StrUtils;
 
 
@@ -214,7 +214,6 @@ var
   nCount: integer;
 begin
   nCount := 0;
-  Result := 0;
   while True do begin
     // флаг того, что параметров меньше, чем попросили
     if (Pos(AstrDividerSymbol,AstrData) = 0) then begin
@@ -325,8 +324,8 @@ function StrToFloatDefWithReplace(const S: string;
 var
   str: String;
 begin
-  str := AnsiReplaceStr(S, '.', DecimalSeparator);
-  str := AnsiReplaceStr(str, ',', DecimalSeparator);
+  str := AnsiReplaceStr(S, '.', FormatSettings.DecimalSeparator);
+  str := AnsiReplaceStr(str, ',', FormatSettings.DecimalSeparator);
   Result := StrToFloatDef(str, Default);
 end;
 
@@ -335,8 +334,8 @@ function StrToDateTimeDefWithReplace(const S: string;
 var
   str: String;
 begin
-  str := AnsiReplaceStr(S, '-', DateSeparator);
-  str := AnsiReplaceStr(str, '.', DateSeparator);
+  str := AnsiReplaceStr(S, '-', FormatSettings.DateSeparator);
+  str := AnsiReplaceStr(str, '.', FormatSettings.DateSeparator);
   Result := StrToDateTimeDef(str, Default);
 end;
 
@@ -393,7 +392,6 @@ function FindParamInString(const AstrForSearch: String;
 {var
   i: Integer;}
 begin
-  Result := False;
   if AbIsCaseSensitivity then
     Result := AnsiContainsStr(AstrDividerSymbol + AstrParameters
         + AstrDividerSymbol, AstrDividerSymbol + AstrForSearch

@@ -3,7 +3,7 @@ unit udmActions;
 interface
 
 uses
-  SysUtils, Classes, ActnList, XPStyleActnCtrls, ActnMan;
+  SysUtils, Classes, ActnList, XPStyleActnCtrls, ActnMan, System.Actions;
 
 type
   TdmActions = class(TDataModule)

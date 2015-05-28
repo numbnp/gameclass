@@ -5,8 +5,8 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'GameClass3 Client'
-  ClientHeight = 747
-  ClientWidth = 1134
+  ClientHeight = 625
+  ClientWidth = 1270
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -28,14 +28,13 @@ object frmMain: TfrmMain
   object webSkin: TChromium
     Left = 0
     Top = 0
-    Width = 1134
-    Height = 747
-    Align = alClient
+    Width = 508
+    Height = 625
+    Color = clHotLight
+    Align = alLeft
+    DefaultUrl = 'about:blank'
     TabOrder = 2
     OnLoadEnd = webSkinLoadEnd
-    Options.AcceleratedPaintingDisabled = False
-    Options.AcceleratedFiltersDisabled = False
-    Options.AcceleratedPluginsDisabled = False
   end
   object pnlMain: TPanel
     Left = 644
@@ -56,6 +55,10 @@ object frmMain: TfrmMain
         Caption = 'tabScreenAgreement'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlScreenAgreement: TPanel
           Left = 0
           Top = 0
@@ -98,7 +101,6 @@ object frmMain: TfrmMain
               Height = 289
               Align = alClient
               TabOrder = 0
-              OnNavigateComplete2 = wbAgreementNavigateComplete2
               ControlData = {
                 4C000000F13E0000DE1D00000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -186,7 +188,6 @@ object frmMain: TfrmMain
                 Width = 278
                 Height = 21
                 Style = csDropDownList
-                ItemHeight = 13
                 TabOrder = 0
                 OnChange = cboTarifsChange
                 Items.Strings = (
@@ -211,19 +212,6 @@ object frmMain: TfrmMain
                 TabOrder = 2
                 OnClick = btnSessionStopClick
               end
-              object edtSum: TCurrencyEdit
-                Left = 15
-                Top = 92
-                Width = 64
-                Height = 21
-                AutoSize = False
-                DisplayFormat = ',0.00;-,0.00'
-                MaxLength = 20
-                TabOrder = 3
-                OnChange = edtSumChange
-                OnEnter = edtSumEnter
-                OnExit = edtSumExit
-              end
               object dtpTime: TDateTimePicker
                 Left = 98
                 Top = 92
@@ -234,7 +222,7 @@ object frmMain: TfrmMain
                 Time = 37620.000000000000000000
                 DateMode = dmUpDown
                 Kind = dtkTime
-                TabOrder = 4
+                TabOrder = 3
                 OnChange = dtpTimeChange
                 OnEnter = dtpTimeEnter
                 OnExit = dtpTimeExit
@@ -245,7 +233,7 @@ object frmMain: TfrmMain
                 Width = 116
                 Height = 21
                 Enabled = False
-                TabOrder = 5
+                TabOrder = 4
                 Text = 'edtStart'
               end
               object edtStop: TEdit
@@ -254,8 +242,20 @@ object frmMain: TfrmMain
                 Width = 116
                 Height = 21
                 Enabled = False
-                TabOrder = 6
+                TabOrder = 5
                 Text = 'Edit1'
+              end
+              object edtSum: TEdit
+                Left = 15
+                Top = 92
+                Width = 64
+                Height = 21
+                Alignment = taRightJustify
+                TabOrder = 6
+                Text = '0,00'
+                OnChange = edtSumChange
+                OnEnter = edtSumEnter
+                OnExit = edtSumExit
               end
             end
             object tabAdd: TTabSheet
@@ -284,26 +284,13 @@ object frmMain: TfrmMain
                   Height = 13
                   Caption = #1042#1088#1077#1084#1103
                 end
-                object edtAddTimeSum: TCurrencyEdit
-                  Left = 15
-                  Top = 44
-                  Width = 82
-                  Height = 21
-                  AutoSize = False
-                  DisplayFormat = ',0.00;-,0.00'
-                  MaxLength = 20
-                  TabOrder = 0
-                  OnChange = edtAddTimeSumChange
-                  OnEnter = edtAddTimeSumEnter
-                  OnExit = edtAddTimeSumExit
-                end
                 object btnAddTime: TButton
                   Left = 15
                   Top = 80
                   Width = 97
                   Height = 25
                   Caption = #1044#1086#1087#1083#1072#1090#1080#1090#1100
-                  TabOrder = 1
+                  TabOrder = 0
                   OnClick = btnAddTimeClick
                 end
                 object dtpAddTimeLength: TDateTimePicker
@@ -316,10 +303,19 @@ object frmMain: TfrmMain
                   Time = 37620.000000000000000000
                   DateMode = dmUpDown
                   Kind = dtkTime
-                  TabOrder = 2
+                  TabOrder = 1
                   OnChange = dtpAddTimeLengthChange
                   OnEnter = dtpAddTimeLengthEnter
                   OnExit = dtpAddTimeLengthExit
+                end
+                object edtAddTimeSum: TEdit
+                  Left = 15
+                  Top = 44
+                  Width = 82
+                  Height = 21
+                  Alignment = taRightJustify
+                  TabOrder = 2
+                  Text = '0,00'
                 end
               end
               object gbTraffic: TGroupBox
@@ -360,28 +356,23 @@ object frmMain: TfrmMain
                   TabOrder = 0
                   OnClick = butAddTrafficClick
                 end
-                object edtAddTrafficSum: TCurrencyEdit
+                object edtAddTrafficSum: TEdit
                   Left = 15
                   Top = 44
                   Width = 82
                   Height = 21
-                  AutoSize = False
-                  DisplayFormat = ',0.00;-,0.00'
-                  MaxLength = 20
+                  Alignment = taRightJustify
                   TabOrder = 1
-                  OnChange = edtAddTrafficSumChange
-                  OnEnter = edtAddTrafficSumEnter
-                  OnExit = edtAddTrafficSumExit
+                  Text = '0,00'
                 end
-                object edtAddTrafficSize: TCurrencyEdit
-                  Left = 111
+                object edtAddTrafficSize: TEdit
+                  Left = 112
                   Top = 44
-                  Width = 82
+                  Width = 81
                   Height = 21
-                  AutoSize = False
-                  DisplayFormat = ',0;-,0'
-                  MaxLength = 20
+                  Alignment = taRightJustify
                   TabOrder = 2
+                  Text = '0'
                   OnChange = edtAddTrafficSizeChange
                   OnEnter = edtAddTrafficSizeEnter
                   OnExit = edtAddTrafficSizeExit
@@ -391,9 +382,13 @@ object frmMain: TfrmMain
             object tabSendMess: TTabSheet
               Caption = #1054#1090#1087#1088#1072#1074#1080#1090#1100' '#1089#1086#1086#1073#1097#1077#1085#1080#1077' '#1072#1076#1084#1080#1085#1080#1089#1090#1088#1072#1090#1086#1088#1091
               ImageIndex = 2
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object pnlSendMessageBottom: TPanel
                 Left = 0
-                Top = 226
+                Top = 225
                 Width = 330
                 Height = 41
                 Align = alBottom
@@ -422,7 +417,7 @@ object frmMain: TfrmMain
                 Left = 0
                 Top = 0
                 Width = 330
-                Height = 226
+                Height = 225
                 Align = alClient
                 BevelOuter = bvNone
                 BorderWidth = 15
@@ -431,7 +426,7 @@ object frmMain: TfrmMain
                   Left = 15
                   Top = 15
                   Width = 300
-                  Height = 196
+                  Height = 195
                   Align = alClient
                   ReadOnly = True
                   ScrollBars = ssVertical
@@ -608,6 +603,10 @@ object frmMain: TfrmMain
         Caption = 'tabScreenCompFree'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlScreenCompFree: TPanel
           Left = 0
           Top = 0
@@ -623,7 +622,6 @@ object frmMain: TfrmMain
             Width = 613
             Height = 329
             TabOrder = 0
-            OnNavigateComplete2 = wbCompFreeNavigateComplete2
             ControlData = {
               4C0000005B3F0000012200000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -637,6 +635,10 @@ object frmMain: TfrmMain
         Caption = 'tabScreenLogin'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlScreenLogin: TPanel
           Left = 0
           Top = 0
@@ -810,7 +812,6 @@ object frmMain: TfrmMain
               Height = 153
               Align = alClient
               TabOrder = 0
-              OnNavigateComplete2 = wbAccountNavigateComplete2
               ControlData = {
                 4C000000A9200000D00F00000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -833,7 +834,6 @@ object frmMain: TfrmMain
               Height = 165
               Align = alClient
               TabOrder = 0
-              OnNavigateComplete2 = wbAccountCompFreeNavigateComplete2
               ControlData = {
                 4C000000903F00000E1100000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -862,33 +862,12 @@ object frmMain: TfrmMain
         Height = 97
         Align = alClient
         TabOrder = 0
-        OnNavigateComplete2 = wbTopNavigateComplete2
         ControlData = {
           4C0000000B420000060A00000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
           00000000000000000100000000000000000000000000000000000000}
-      end
-      object pnlCompNumber: TPanel
-        Left = 22
-        Top = 8
-        Width = 79
-        Height = 79
-        BevelOuter = bvNone
-        BorderWidth = 1
-        Caption = '188'
-        Color = clWhite
-        Ctl3D = False
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = 7566195
-        Font.Height = -38
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentCtl3D = False
-        ParentFont = False
-        TabOrder = 1
-        OnClick = pnlCompNumberClick
       end
       object pnlClock: TPanel
         Left = 550
@@ -904,11 +883,11 @@ object frmMain: TfrmMain
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 1
         OnClick = pnlClockClick
       end
       object tbActions: TToolBar
-        Left = 579
+        Left = 100
         Top = 53
         Width = 51
         Height = 37
@@ -917,11 +896,9 @@ object frmMain: TfrmMain
         ButtonWidth = 38
         Caption = 'tbActions'
         Color = clBtnFace
-        EdgeBorders = []
-        Flat = True
         Images = ilActions
         ParentColor = False
-        TabOrder = 3
+        TabOrder = 2
         Transparent = True
         Visible = False
         object tbCompShutdown: TToolButton
@@ -951,114 +928,7 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 1
     Visible = False
-  end
-  object modernTrayIcon: TModernTrayIcon
-    Hint = 'GameClass3 Client'
-    BalloonIcon = BalloonIcon_Information
-    Icon.Data = {
-      0000010001002020000001001800A80C00001600000028000000200000004000
-      00000100180000000000800C0000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000001F04041F0404000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000002E06062E06062E06062E0606000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000003D09093D09093D09093D09093D09093D0909000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00004B0B0B4B0B0B4B0B0B4B0B0B4B0B0B4B0B0B4B0B0B4B0B0B000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000059
-      0D0D590D0D590D0D590D0D590D0D590D0D590D0D590D0D590D0D590D0D000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000660E0E66
-      0E0E660E0E660E0E660E0E660E0E660E0E660E0E660E0E660E0E660E0E660E0E
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000072101072
-      1010721010721010721010721010721010721010721010721010721010721010
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000000000000000000000000000007E
-      12127E12127E12127E12127E12127E12127E12127E12127E12127E1212000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000008A13138A131300000000000000
-      00008A13138A13138A13138A13138A13138A13138A13138A1313000000000000
-      0000008A13138A13130000000000000000000000000000000000000000000000
-      0000000000000000000000000000000094151594151594151594151500000000
-      0000000000941515941515941515941515941515941515000000000000000000
-      9415159415159415159415150000000000000000000000000000000000000000
-      000000000000000000000000009F16169F16169F16169F16169F16169F161600
-      00000000000000009F16169F16169F16169F16160000000000000000009F1616
-      9F16169F16169F16169F16169F16160000000000000000000000000000000000
-      00000000000000000000A91818A91818A91818A91818A91818A91818A91818A9
-      1818000000000000000000A91818A91818000000000000000000A91818A91818
-      A91818A91818A91818A91818A91818A918180000000000000000000000000000
-      00000000000000B21919B21919B21919B21919B21919B21919B21919B21919B2
-      1919B21919000000000000000000000000000000000000B21919B21919B21919
-      B21919B21919B21919B21919B21919B21919B219190000000000000000000000
-      00000000BB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB
-      1A1ABB1A1ABB1A1A000000000000000000000000BB1A1ABB1A1ABB1A1ABB1A1A
-      BB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1ABB1A1A0000000000000000
-      00000000C31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC3
-      1C1CC31C1CC31C1C000000000000000000000000C31C1CC31C1CC31C1CC31C1C
-      C31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC31C1CC31C1C0000000000000000
-      00000000000000CB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB
-      1D1DCB1D1D000000000000000000000000000000000000CB1D1DCB1D1DCB1D1D
-      CB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB1D1DCB1D1D0000000000000000000000
-      00000000000000000000D21E1ED21E1ED21E1ED21E1ED21E1ED21E1ED21E1ED2
-      1E1E000000000000000000D21E1ED21E1E000000000000000000D21E1ED21E1E
-      D21E1ED21E1ED21E1ED21E1ED21E1ED21E1E0000000000000000000000000000
-      00000000000000000000000000D61E1ED91F1FD91F1FD61E1ED91F1FD91F1F00
-      0000000000000000D91F1FD91F1FD91F1FD91F1F000000000000000000D91F1F
-      D91F1FD91F1FD91F1FD91F1FD91F1F0000000000000000000000000000000000
-      00000000000000000000000000000000DF1F1FDF1F1FDF1F1FDF1F1F00000000
-      0000000000DF1F1FDF1F1FDF1F1FDF1F1FDF1F1FDF1F1F000000000000000000
-      DF1F1FDF1F1FDF1F1FDF1F1F0000000000000000000000000000000000000000
-      00000000000000000000000000000000000000E42020E4202000000000000000
-      0000E42020E42020E42020E42020E42020E42020E42020E42020000000000000
-      000000E42020E420200000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000000000E9
-      2121E92121E92121E92121E92121E92121E92121E92121E92121E92121000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000EE2222EE
-      2222EE2222EE2222EE2222EE2222EE2222EE2222EE2222EE2222EE2222EE2222
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000F22222F2
-      2222F22222F22222F22222F22222F22222F22222F22222F22222F22222F22222
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000000000F5
-      2323F52323F52323F52323F52323F52323F52323F52323F52323F52323000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000F82323F82323F82323F82323F82323F82323F82323F82323000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000FF2424FB2323FB2323FB2323FF2424FF2424000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000FD2424FD2424FF2424FF2424000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000FE2424FF2424000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000000000000000000000000000FFFF
-      FFFFFFFFFFFFFFFE7FFFFFFC3FFFFFF81FFFFFF00FFFFFE007FFFFC003FFFFC0
-      03FFFFE007FFFE700E7FFC381C3FF81C381FF00E700FE007E007C003C003C003
-      C003E007E007F00E700FF81C381FFC381C3FFE700E7FFFE007FFFFC003FFFFC0
-      03FFFFE007FFFFF00FFFFFF81FFFFFFC3FFFFFFE7FFFFFFFFFFFFFFFFFFF}
-    OnDblClick = modernTrayIconDblClick
+    OnClick = pnlBlockedClick
   end
   object tmrClock: TTimer
     OnTimer = tmrClockTimer
@@ -1081,7 +951,7 @@ object frmMain: TfrmMain
     Left = 464
     Top = 380
     Bitmap = {
-      494C01010300040004001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C0101030004002C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       000000000000000000000000000000000000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000

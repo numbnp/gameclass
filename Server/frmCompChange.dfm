@@ -95,7 +95,6 @@ object formCompChange: TformCompChange
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    ItemHeight = 13
     ParentFont = False
     TabOrder = 3
     OnSelect = cbComputerSelect

@@ -16,7 +16,7 @@ type
     FnIdSessions: Longword;
     FnIdSessionsAdd: Longword; // почти праймари кей,
                                // кроме случая добавления новых сессий (=0)
-    FnIdComp:Longword;
+    FnIdComp:Integer;
     FnIdClient: Longword;
     FdtStarted: TDateTime;
     FdtStart: TDateTime;
@@ -116,7 +116,7 @@ type
     procedure Update(
         AnIdSessions: Longword;
         AnIdSessionsAdd: Longword;
-        AnIdComp:Longword;
+        AnIdComp:Integer;
         AnIdClient: Longword;
         AdtStarted: TDateTime;
         AdtStart: TDateTime;
@@ -179,7 +179,7 @@ type
     property TimeStart: TDateTime read FdtStart write FdtStart;
     property TimeStop: TDateTime read FdtStop write FdtStop;
     property IdClient: Longword read FnIdClient write FnIdClient;
-    property IdComp: Longword read FnIdComp write FnIdComp;
+    property IdComp: Integer read FnIdComp write FnIdComp;
     property Whole: Integer read FnWhole write FnWhole;
     property CommonPay: Double read FfCommonPay write FfCommonPay;
     property SeparateTrafficPay: Double read FfSeparateTrafficPay;
@@ -213,8 +213,8 @@ type
     destructor Destroy; override;
 
     function Index(AnIdSessionsAdd:Longword):Integer;
-    function IndexDesignedByIdComp(AnIdComp: Longword): Integer;
-    function IndexDesignedByIdCollection(AnIdCollection: Longword): Integer;
+    function IndexDesignedByIdComp(AnIdComp: Integer): Integer;
+    function IndexDesignedByIdCollection(AnIdCollection: Integer): Integer;
     function Add(
         AnIdSessions: Longword;
         AnIdSessionsAdd: Longword;
@@ -713,7 +713,6 @@ end;
 // выдает бабло, ушедшее на оплату ВРЕМЕНИ
 function TGCSession.GetCostTime:Double;
 begin
-  Result := 0;
   if (FnIdTarif = ID_TARIF_REMONT) then
     Result := 0
   else begin
@@ -725,10 +724,10 @@ end;
 function TGCSession.GetCostTotal:Double;
 var
   m: Double;
-  idt: Integer;
+//  idt: Integer;
 begin
   m := GetCostTime + PrintCost + GetCostTraffic + ServiceCost;
-  idt := FnTarifIndex;
+//  idt := FnTarifIndex;
 //округление относится к тарифам а не к трафику
 //GetCostTotal := Tarifs[idt].fnRoundMoney(m,Tarifs[idt].roundmoney,1);
   Result := m;
@@ -761,8 +760,8 @@ var
   FullPrice: Double;
   fOverUsedFreeTrafficPrice: Double; // Стоимость перерасходованного
                                      // бесплатного траффика
-  fTimeUsagePercent: Double; // Процент потраченного времени (для сдачи по трафику)
-  fTrafficUsagePercent: Double; // Процент потраченного трафика (для сдачи по трафику)
+//  fTimeUsagePercent: Double; // Процент потраченного времени (для сдачи по трафику)
+//  fTrafficUsagePercent: Double; // Процент потраченного трафика (для сдачи по трафику)
   tarif: TTarif;
   fUsedFreeTrafic: Double;
   fTrafficLimit: Double;
@@ -833,10 +832,13 @@ var
   nIdGroup: Integer;
   nTarifIndex: Integer;
   dtNewStop: TDateTime;
-  dtLength: TDateTime;
+//  dtLength: TDateTime;
 begin
   if (FnIdTarif = ID_TARIF_REMONT) then
+  begin
+    result := false;
     exit;
+  end;
   fSumma := GetPayedCurrent - GetCostTraffic - PrintCost - ServiceCost;
   nIdGroup := Comps[ComputersGetIndex(IdComp)].IdGroup;
   nTarifIndex := FnTarifIndex;
@@ -960,7 +962,7 @@ var
   dts: TADODataSet;
   query: String;
   computer: Tcomputer;
-  tarif: TTarif;
+//  tarif: TTarif;
 begin
   if (isManager) then exit;
   if (FnIdClient <> 0) then exit;
@@ -1001,7 +1003,7 @@ end;
 procedure TGCSession.Update(
     AnIdSessions: Longword;
     AnIdSessionsAdd: Longword;
-    AnIdComp:Longword;
+    AnIdComp:Integer;
     AnIdClient: Longword;
     AdtStarted: TDateTime;
     AdtStart: TDateTime;
@@ -1118,7 +1120,10 @@ var
   session : TGCSession;
 begin
   if not ComputersCheckIndex(AnIdComp) then
+  begin
+    Result := nil;
     exit;
+  end;
   session := TGCSession(inherited Add);
 
   with session do begin
@@ -1164,7 +1169,7 @@ begin
          Result := i;
 end;
 
-function TGCSessions.IndexDesignedByIdComp(AnIdComp: Longword): Integer;
+function TGCSessions.IndexDesignedByIdComp(AnIdComp: Integer): Integer;
 var
    i : Integer;
 begin
@@ -1174,7 +1179,7 @@ begin
          Result := i;
 end;
 
-function TGCSessions.IndexDesignedByIdCollection(AnIdCollection: Longword): Integer;
+function TGCSessions.IndexDesignedByIdCollection(AnIdCollection: Integer): Integer;
 var
    i : Integer;
 begin
@@ -1245,7 +1250,7 @@ begin
 
     with dts.Recordset.Fields do
       if nIndex = -1 then begin
-        nIndex := Item['IdSessions'].Value;
+//        nIndex := Item['IdSessions'].Value;
 
         Add(
             Item['IdSessions'].Value,
@@ -1441,8 +1446,6 @@ begin
 end;
 
 procedure TGCSession.SetStatus(AnStatus : TGCSessionStatus);
-var
-  computer: TComputer;
 begin
   if (AnStatus = ssActive) then
     with Comps[ComputersGetIndex(FnIdComp)] do begin
@@ -1453,8 +1456,6 @@ begin
 end;
 
 procedure TGCSession.SetState(AnState : TClientState);
-var
-  computer: TComputer;
 begin
   if (FnStatus = ssActive) then
     Comps[ComputersGetIndex(FnIdComp)].a.state := AnState;
@@ -1504,12 +1505,12 @@ end;
 function TGCSessions.GetDesignedMaxStopTime:TDateTime;
 var
   i:Integer;
-  fInterval : Double;
+//  fInterval : Double;
   dtMaxStopTime: TDateTime;
   dtCurrentMaxStopTime: TDateTime;
 begin
   dtMaxStopTime := GetVirtualTime() + EncodeTime(12,0,0,0)*4; //48 часов хватит
-  fInterval := EncodeTime(0,1,0,0);//0.001; //Должно быть 1 минута
+//  fInterval := EncodeTime(0,1,0,0);//0.001; //Должно быть 1 минута
   for i:=0 to Count-1 do
     if (Items[i].Status = ssDesigned) then begin
       dtCurrentMaxStopTime := GetMaxStopTime(Items[i].IdComp);
@@ -1664,12 +1665,12 @@ end;
 function TGCSession.MoneyInfo: String;
 var
   lstInfo: TStringList;
-  tempMoney: double;
-  dtStop: TDateTime;
+//  tempMoney: double;
+//  dtStop: TDateTime;
 begin
   Result := '';
   lstInfo := TStringList.Create;
-  dtStop := GetVirtualTime;
+//  dtStop := GetVirtualTime;
   if (Status = ssReserve) or (IsGuest and not PostPay) then begin
     lstInfo.Add(Format(INFO_COMMONPAY, [CommonPay]));
     if CompareValue(SeparateTrafficPay, 0) = GreaterThanValue	then

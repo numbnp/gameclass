@@ -1,0 +1,259 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{F4CB4F8C-40AD-48D1-9385-EB601A8C4372}</ProjectGuid>
+        <MainSource>gcclsrv.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Application</AppType>
+        <FrameworkType>None</FrameworkType>
+        <ProjectVersion>14.6</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <DCC_E>false</DCC_E>
+        <VerInfo_MinorVer>85</VerInfo_MinorVer>
+        <DCC_DcuOutput>..\Output\dcu\debug</DCC_DcuOutput>
+        <DCC_ExeOutput>..\Output\debug</DCC_ExeOutput>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_K>false</DCC_K>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Define>GCCLSRV;$(DCC_Define)</DCC_Define>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_Optimize>false</DCC_Optimize>
+        <VerInfo_Locale>1049</VerInfo_Locale>
+        <DCC_S>false</DCC_S>
+        <VerInfo_Release>2</VerInfo_Release>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <VerInfo_Build>12</VerInfo_Build>
+        <DCC_F>false</DCC_F>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=3.85.2.12;InternalName=;LegalCopyright=(c) 2000-2009 NodaSoft, 2010-2012 numb;LegalTrademarks=;OriginalFilename=;ProductName=GameClass Client Service;ProductVersion=3.85.2.12 Free</VerInfo_Keys>
+        <DCC_UnitSearchPath>$(DELPHI)\Lib\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_N>true</DCC_N>
+        <DCC_UsePackage>vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Y2KControls;EhLib70;dclbsPolyglotD7;bsPolyglotD7;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <Icon_MainIcon>gcclsrv_Icon.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Icon_MainIcon>gcclsrv_Icon.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>false</DCC_DebugInformation>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_Build>0</VerInfo_Build>
+        <VerInfo_Release>0</VerInfo_Release>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_DcuOutput>..\Output\dcu\debug\gcclsrv</DCC_DcuOutput>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>0</VerInfo_Build>
+        <VerInfo_Release>0</VerInfo_Release>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="..\Server\gcconst.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uAnswerRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Blocking\uBlockingsAndNotifications.pas"/>
+        <DCCReference Include="..\Client\uClientConst.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientInfo.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientInfoConst.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientInfoConstrainedCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientInfoGetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uClientInfoSetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptions.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsConst.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsRegistryStorage.pas"/>
+        <DCCReference Include="..\Parts\Options\uClientOptionsStorage.pas"/>
+        <DCCReference Include="..\Parts\Scripting\uClientScripting.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uCloseClientRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Security\uCoder.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uCommandReceiver.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uCommandSender.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uCompositeRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\CrossPlatform\uCrossPlatformFunctions.pas"/>
+        <DCCReference Include="..\parts\Debug\uDebugLog.pas"/>
+        <DCCReference Include="..\Parts\FileSend\uFileReceiver.pas"/>
+        <DCCReference Include="..\Parts\FileSend\uFilesSynchronizeConst.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uGetExtendedInfoRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uGetHardwareRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uGetTasksListRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHardwareAccessories.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHardwareManager.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWCDROMs.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWCollection.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWConst.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWFloppyDrives.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWHDDs.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWMemories.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWNetworkAdapters.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWProcessors.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWSoundDevices.pas"/>
+        <DCCReference Include="..\Parts\HardwareWMI\uHWVideoControllers.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uKillTaskRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uLocalCommandReceiver.pas"/>
+        <DCCReference Include="..\parts\SendRecieve\uLocalCommandSender.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uLocalResendRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uLogoffRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uNullRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uOptionGetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uOptionSetRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uPingRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uPlaySoundRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\ProcessSupervisor\uProcessesDescriptions.pas"/>
+        <DCCReference Include="..\parts\ProcessSupervisor\uProcessSupervisor.pas"/>
+        <DCCReference Include="..\parts\Protocol\uProtocol.pas"/>
+        <DCCReference Include="..\Parts\Protocol\uProtocolReIndexes.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uRemoteCommandFactory.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uRemoteCommandList.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uResendRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uRestartRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\Y2KCommon\uServiceManager.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uServiceRemoteCommandFactory.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uSetTimeRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uSetVolumeRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Direct3D\uShowTextInAllVideoModes.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uShutdownRemoteCommand.pas"/>
+        <DCCReference Include="..\parts\RemoteCommands\uExecuteCommandRemoteCommand.pas"/>
+        <DCCReference Include="usrvGCCL.pas">
+            <Form>srvGCCL</Form>
+            <DesignClass>TService</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\parts\RemoteCommands\uUninstallRemoteCommand.pas"/>
+        <DCCReference Include="..\Parts\Winhkg\uwinhkg.pas"/>
+        <DCCReference Include="..\parts\Y2KCommon\uY2KCommon.pas"/>
+        <DCCReference Include="..\Parts\RunAs\uY2KRunAs.pas"/>
+        <DCCReference Include="..\parts\Y2KCommon\uY2KString.pas"/>
+        <DCCReference Include="..\Parts\ProcessSupervisor\uProcUtils.pas"/>
+        <DCCReference Include="..\Parts\TaskKill\uTaskKillConst.pas"/>
+        <DCCReference Include="..\Parts\FileTools\uFileInfo.pas"/>
+        <DCCReference Include="..\Parts\Tools\uParseAndReplase.pas"/>
+        <DCCReference Include="..\Parts\Tools\uGetWinVer.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\uControlVolume.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\MMDevApi_tlb.pas"/>
+        <DCCReference Include="..\Parts\ControlVolume\Mixer.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uProtocolTcp.pas"/>
+        <DCCReference Include="..\Parts\RemoteCommands\uExecuteCommandRemoteCommandByClient.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">gcclsrv.dpr</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">3</VersionInfo>
+                    <VersionInfo Name="MinorVer">85</VersionInfo>
+                    <VersionInfo Name="Release">2</VersionInfo>
+                    <VersionInfo Name="Build">12</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1049</VersionInfo>
+                    <VersionInfo Name="CodePage">1251</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName"/>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">3.85.2.12</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright">(c) 2000-2009 NodaSoft, 2010-2012 numb</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName">GameClass Client Service</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">3.85.2.12 Free</VersionInfoKeys>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k180.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp180.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="OSX32">False</Platform>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

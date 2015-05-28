@@ -48,8 +48,7 @@ uses
   DB,
   uGCDataSet,
   uRegistry,
-  gcComputers,
-  uRegistration;
+  gcComputers;
 
 {*******************************************************************************
                       class  TRegistryPrinter
@@ -74,8 +73,7 @@ end;
 function TRegistryPrinter.GetActive: Boolean;
 begin
   LocateActive;
-  Result := Registration.PrinterControl
-      and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryPrinter.SetActive(AValue: Boolean);
@@ -126,8 +124,7 @@ end;
 function TRegistryPrinter.GetUsePMCosts: Boolean;
 begin
   LocateUsePMCosts;
-  Result := Registration.PrinterControl
-      and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryPrinter.SetUsePMCosts(AValue: Boolean);

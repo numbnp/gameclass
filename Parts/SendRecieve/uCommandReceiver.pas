@@ -13,7 +13,8 @@ uses
   // system units
   Classes,
   IdSocketHandle,
-  IdUDPServer;
+  IdUDPServer,
+  IdGlobal;
 
 const
   DEF_PORT_FOR_UDPSERVER = 3774;
@@ -36,8 +37,10 @@ type
     FbCheckProtocol: Boolean;
 
     // events handlers
-    procedure _UDPServerRead(Sender: TObject; AData: TStream;
-        ABinding: TIdSocketHandle);
+    procedure _UDPServerRead(AThread: TIdUDPListenerThread;
+        const AData: TIdBytes; ABinding: TIdSocketHandle);
+  //(Sender: TObject; AData: TStream;
+  //      ABinding: TIdSocketHandle);
 
     // private helper methods
     procedure _SendDataReceiveEvent(const AstrData: string;
@@ -189,18 +192,21 @@ end; // TCommandReceiver.GetPort
 //////////////////////////////////////////////////////////////////////////////
 // events handlers
 
-procedure TCommandReceiver._UDPServerRead(Sender: TObject; AData: TStream;
-    ABinding: TIdSocketHandle);
+procedure TCommandReceiver._UDPServerRead(AThread: TIdUDPListenerThread;
+  const AData: TIdBytes; ABinding: TIdSocketHandle);
+
+//procedure TCommandReceiver._UDPServerRead(Sender: TObject; AData: TStream;
+//    ABinding: TIdSocketHandle);
 var
-  DataStringStream: TStringStream;
+//  DataStringStream: TStringStream;
   strData: string;
   strProtocol: string;
 begin
   try
-    DataStringStream := TStringStream.Create('');
+//    DataStringStream := TStringStream.Create('');
     try
-      DataStringStream.CopyFrom(AData, AData.Size);
-      strData := TrimLeft(TrimRight(DataStringStream.DataString));
+//      DataStringStream.CopyFrom(AData, AData.Size);
+      strData := TrimLeft(TrimRight(BytesToString(AData)));
 
       strProtocol := _ExtractProtocolInfo(strData);
       if not FbCheckProtocol or _IsValidProtocol(strProtocol) then begin
@@ -210,7 +216,7 @@ begin
       end;
 
     finally
-      FreeAndNilWithAssert(DataStringStream);
+//    FreeAndNilWithAssert(DataStringStream);
     end;
 
   except

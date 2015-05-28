@@ -47,10 +47,10 @@ object frmComputers: TfrmComputers
     Top = 63
     Width = 29
     Height = 21
+    Alignment = eaRight
     Enabled = False
     TabOrder = 0
     Text = '22'
-    Alignment = eaRight
   end
   object memComputers: TMemo
     Left = 0

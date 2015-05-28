@@ -25,7 +25,7 @@ uses
   uReportCommon,
   uReport,
   uReportManager,
-  uReportFormsManager;
+  uReportFormsManager, System.Actions;
 
 
 type
@@ -141,16 +141,13 @@ type
     tbtnSend: TToolButton;
     actSendMail: TAction;
     procedure actConstructorExecute(Sender: TObject);
-    procedure tvReportsNavigatorGetText(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-      var CellText: WideString);
+
     procedure tvReportsNavigatorFreeNode(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
     procedure tvReportsNavigatorInitNode(Sender: TBaseVirtualTree;
       ParentNode, Node: PVirtualNode;
       var InitialStates: TVirtualNodeInitStates);
-    procedure tvReportsNavigatorChange(Sender: TBaseVirtualTree;
-      Node: PVirtualNode);
+
     procedure tvReportsNavigatorGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);
@@ -189,6 +186,13 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure tbtnSendClick(Sender: TObject);
     procedure actSendMailExecute(Sender: TObject);
+
+    procedure tvReportsNavigatorChange(Sender: TBaseVirtualTree;
+      Node: PVirtualNode);
+    procedure tvReportsNavigatorGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: String);
+    procedure FormCreate(Sender: TObject);
 
   private
     // fields
@@ -330,7 +334,12 @@ begin
   finally
     tvReportsNavigator.EndUpdate();
   end;
-end; // TfrmReports.Create
+end; procedure TfrmReports.FormCreate(Sender: TObject);
+begin
+  tvReportsNavigator.OnGetText := tvReportsNavigatorGetText;
+end;
+
+// TfrmReports.Create
 
 procedure TfrmReports.SetBackColor(AColor: TColor);
 begin
@@ -516,7 +525,7 @@ begin
   if Assigned(ActiveReport) then begin
     _DeleteReportFromTree(ActiveReport.UID);
     FReportManager.DeleteReport(ActiveReport.UID);
-//    _ReorderReports();
+    _ReorderReports();
     _SelectFirstReport();    
   end;
 end; // TfrmReports.actDeleteReportExecute
@@ -678,7 +687,7 @@ var
   ptrData: PReportData;
 begin
   ptrData := Sender.GetNodeData(Node);
-  ptrData.Caption := '';
+  ptrData^.Caption := '';
 end; // TfrmReports.tvReportsNavigatorInitNode
 
 
@@ -689,22 +698,12 @@ var
 begin
   ptrData := Sender.GetNodeData(Node);
   if Assigned(ptrData) then begin
-    ptrData.Caption := '';
+    ptrData^.Caption := '';
   end;
 end; // TfrmReports.tvReportsNavigatorFreeNode
 
 
-procedure TfrmReports.tvReportsNavigatorGetText(Sender: TBaseVirtualTree;
-    Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-    var CellText: WideString);
-var
-  ptrData: PReportData;
-begin
-  ptrData := Sender.GetNodeData(Node);
-  if Assigned(ptrData) then begin
-    CellText := ptrData.Caption;
-  end;
-end; // TfrmReports.tvReportsNavigatorGetText
+
 
 
 procedure TfrmReports.tvReportsNavigatorGetImageIndex(
@@ -724,7 +723,23 @@ begin
     end;
     Ghosted := FALSE;
   end;
-end; // TfrmReports.tvReportsNavigatorGetImageIndex
+end;
+
+
+// TfrmReports.tvReportsNavigatorGetImageIndex
+
+procedure TfrmReports.tvReportsNavigatorGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: String);
+var
+  ptrData: PReportData;
+begin
+  ptrData := Sender.GetNodeData(Node);
+  if Assigned(ptrData) then begin
+    CellText := ptrData^.Caption;;
+  end;
+end;
+
 
 
 procedure TfrmReports.tvReportsNavigatorLoadNode(Sender: TBaseVirtualTree;
@@ -751,8 +766,14 @@ begin
 end; // TfrmReports.tvReportsNavigatorSaveNode
 
 
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// drag & drop events
+
 procedure TfrmReports.tvReportsNavigatorChange(Sender: TBaseVirtualTree;
-    Node: PVirtualNode);
+  Node: PVirtualNode);
 var
   ptrNodeData: PReportData;
 begin
@@ -761,10 +782,6 @@ begin
     _SetActiveReport(ptrNodeData^.id);
   end;
 end; // TfrmReports.tvReportsNavigatorChange
-
-
-//////////////////////////////////////////////////////////////////////////////
-// drag & drop events
 
 procedure TfrmReports.tvReportsNavigatorDragAllowed(
     Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;

@@ -44,7 +44,7 @@ end;
 
 function TPCardReader.GetRuning: boolean;
 begin
-
+  Result := False
 end;
 
 procedure TPCardReader.OnReadTimer(Sender: TObject);

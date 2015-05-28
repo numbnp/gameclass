@@ -56,8 +56,8 @@ begin
 end;
 
 procedure TfrmComputers._ComputerSelectNotifyEvent(Sender: TObject);
-var
-  nCount: Integer;
+//var
+//  nCount: Integer;
 begin
   memComputers.Text := TfrmComputerSelect(Sender).SelectedAsText;
   edtCount.Text := IntToStr(TfrmComputerSelect(Sender).Count);

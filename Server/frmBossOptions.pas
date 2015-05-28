@@ -150,6 +150,7 @@ end;
 procedure TformBossOptions.FormDestroy(Sender: TObject);
 begin
   KKMPluginStart;
+  framComputers1.FreeData;
 end;
 
 end.

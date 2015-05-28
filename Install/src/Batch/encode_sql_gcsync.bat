@@ -16,5 +16,5 @@ del Install\src\Packages\DataBase\*.sqp 2>nul
 
 rem Кодирование sql-файлов в sqp
 ech "Кодирование sql-файлов в sqp "
-for /r DataBase\SQLCode %%i in (GCSync*.sql) do Output\Release\GCOsql.exe encode "%%~fi" "Install\src\Packages\GCSync\%%~ni.sqp" | ech .
+for /r DataBase\SQLCode %%i in (GCSync*.sql) do copy "%%~fi" "Install\src\Packages\GCSync\%%~ni.sql" | ech .
 echo  OK

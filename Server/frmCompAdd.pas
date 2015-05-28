@@ -5,8 +5,8 @@ interface
 uses
   GCLangUtils, GCComputers, GCCommon,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, GCSessions, Mask, ToolEdit,
-  CurrEdit, Grids,
+  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, GCSessions, Mask, RxToolEdit,
+  RxCurrEdit, Grids,
   ufrmComputers;
 
 type
@@ -333,7 +333,12 @@ var
 begin
   DisableControls;
   bOkEnabled := True;
-  dtCurrent := GetVirtualTime;
+  dtAddLength := 0;
+  fSummaryMoney := 0;
+  dtLength := 0;
+  fMoney :=0;
+  dtStop := 0;
+//  dtCurrent := GetVirtualTime;
   if (CompsSelCount >= 1) then begin
     case FState of
       casMoney: begin

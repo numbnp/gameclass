@@ -53,7 +53,6 @@ object frmReportChart: TfrmReportChart
         Height = 21
         BevelKind = bkFlat
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
       end
       object cboChartY: TComboBox
@@ -63,7 +62,6 @@ object frmReportChart: TfrmReportChart
         Height = 21
         BevelKind = bkFlat
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 1
       end
       object btnApply: TButton
@@ -93,81 +91,100 @@ object frmReportChart: TfrmReportChart
       BevelOuter = bvNone
       Color = clWindow
       TabOrder = 1
+      ColorPaletteIndex = 13
       object Series1: TBarSeries
-        Marks.ArrowLength = 20
+        Marks.Arrow.Visible = True
+        Marks.Callout.Brush.Color = clBlack
+        Marks.Callout.Arrow.Visible = True
+        Marks.ShapeStyle = fosRoundRectangle
         Marks.Visible = True
         SeriesColor = clRed
-        XValues.DateTime = False
         XValues.Name = 'X'
-        XValues.Multiplier = 1.000000000000000000
         XValues.Order = loAscending
-        YValues.DateTime = False
         YValues.Name = 'Bar'
-        YValues.Multiplier = 1.000000000000000000
         YValues.Order = loNone
       end
       object Series2: TAreaSeries
         Active = False
-        Marks.ArrowLength = 8
+        Marks.Arrow.Visible = True
+        Marks.Callout.Brush.Color = clBlack
+        Marks.Callout.Arrow.Visible = True
+        Marks.ShapeStyle = fosRoundRectangle
         Marks.Visible = False
         SeriesColor = clGreen
+        AreaChartBrush.Color = clGray
+        AreaChartBrush.BackColor = clDefault
         DrawArea = True
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
         Pointer.Visible = False
-        XValues.DateTime = False
         XValues.Name = 'X'
-        XValues.Multiplier = 1.000000000000000000
         XValues.Order = loAscending
-        YValues.DateTime = False
         YValues.Name = 'Y'
-        YValues.Multiplier = 1.000000000000000000
         YValues.Order = loNone
       end
       object Series3: TPieSeries
-        Active = False
-        Marks.ArrowLength = 8
+        Marks.Arrow.Visible = True
+        Marks.Callout.Brush.Color = clBlack
+        Marks.Callout.Arrow.Visible = True
+        Marks.ShapeStyle = fosRoundRectangle
         Marks.Visible = True
         SeriesColor = clYellow
-        Circled = True
+        XValues.Order = loAscending
+        YValues.Name = 'Pie'
+        YValues.Order = loNone
+        Active = False
+        Frame.InnerBrush.BackColor = clRed
+        Frame.InnerBrush.Gradient.EndColor = clGray
+        Frame.InnerBrush.Gradient.MidColor = clWhite
+        Frame.InnerBrush.Gradient.StartColor = 4210752
+        Frame.InnerBrush.Gradient.Visible = True
+        Frame.MiddleBrush.BackColor = clYellow
+        Frame.MiddleBrush.Gradient.EndColor = 8553090
+        Frame.MiddleBrush.Gradient.MidColor = clWhite
+        Frame.MiddleBrush.Gradient.StartColor = clGray
+        Frame.MiddleBrush.Gradient.Visible = True
+        Frame.OuterBrush.BackColor = clGreen
+        Frame.OuterBrush.Gradient.EndColor = 4210752
+        Frame.OuterBrush.Gradient.MidColor = clWhite
+        Frame.OuterBrush.Gradient.StartColor = clSilver
+        Frame.OuterBrush.Gradient.Visible = True
+        Frame.Width = 4
+        OtherSlice.Legend.Visible = False
         OtherSlice.Text = 'Other'
-        PieValues.DateTime = False
-        PieValues.Name = 'Pie'
-        PieValues.Multiplier = 1.000000000000000000
-        PieValues.Order = loNone
       end
       object Series4: TLineSeries
         Active = False
-        Marks.ArrowLength = 8
+        Marks.Arrow.Visible = True
+        Marks.Callout.Brush.Color = clBlack
+        Marks.Callout.Arrow.Visible = True
+        Marks.ShapeStyle = fosRoundRectangle
         Marks.Visible = False
         SeriesColor = clBlue
+        Brush.BackColor = clDefault
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
         Pointer.Visible = False
-        XValues.DateTime = False
         XValues.Name = 'X'
-        XValues.Multiplier = 1.000000000000000000
         XValues.Order = loAscending
-        YValues.DateTime = False
         YValues.Name = 'Y'
-        YValues.Multiplier = 1.000000000000000000
         YValues.Order = loNone
       end
       object Series5: TPointSeries
         Active = False
-        Marks.ArrowLength = 0
+        Marks.Arrow.Visible = True
+        Marks.Callout.Brush.Color = clBlack
+        Marks.Callout.Arrow.Visible = True
+        Marks.ShapeStyle = fosRoundRectangle
         Marks.Visible = False
         SeriesColor = clWhite
+        ClickableLine = False
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
         Pointer.Visible = True
-        XValues.DateTime = False
         XValues.Name = 'X'
-        XValues.Multiplier = 1.000000000000000000
         XValues.Order = loAscending
-        YValues.DateTime = False
         YValues.Name = 'Y'
-        YValues.Multiplier = 1.000000000000000000
         YValues.Order = loNone
       end
     end

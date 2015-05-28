@@ -61,7 +61,7 @@ object frameTraffic: TframeTraffic
       object lblReadyMappings: TLabel
         Left = 8
         Top = 14
-        Width = 151
+        Width = 147
         Height = 13
         Caption = #1053#1072#1089#1090#1088#1086#1077#1085#1085#1099#1077' TCP - '#1084#1072#1087#1087#1080#1085#1075#1080
       end
@@ -89,9 +89,11 @@ object frameTraffic: TframeTraffic
           end>
         GridLines = True
         HideSelection = False
-        Items.Data = {
-          400000000100000000000000FFFFFFFFFFFFFFFF030000000000000001350536
-          353535350F3235352E3235352E3235352E323535053635353335FFFFFFFFFFFF}
+        Items.ItemData = {
+          05630000000100000000000000FFFFFFFFFFFFFFFF03000000FFFFFFFF000000
+          000135000536003500350035003500000000000F3200350035002E0032003500
+          35002E003200350035002E003200350035000000000005360035003500330035
+          0000000000FFFFFFFFFFFF}
         ReadOnly = True
         RowSelect = True
         TabOrder = 0
@@ -126,21 +128,21 @@ object frameTraffic: TframeTraffic
         object lblListenPort: TLabel
           Left = 129
           Top = 14
-          Width = 50
+          Width = 51
           Height = 13
           Caption = 'Listen Port'
         end
         object Label5: TLabel
           Left = 111
           Top = 33
-          Width = 3
+          Width = 4
           Height = 13
           Caption = ':'
         end
         object lblClientIP: TLabel
           Left = 12
           Top = 33
-          Width = 81
+          Width = 84
           Height = 13
           Caption = '255.255.255.255'
         end
@@ -163,21 +165,21 @@ object frameTraffic: TframeTraffic
         object lblProxyIP: TLabel
           Left = 30
           Top = 14
-          Width = 39
+          Width = 41
           Height = 13
           Caption = 'Proxy IP'
         end
         object lblPort: TLabel
           Left = 132
           Top = 14
-          Width = 19
+          Width = 20
           Height = 13
           Caption = 'Port'
         end
         object Label6: TLabel
           Left = 111
           Top = 33
-          Width = 3
+          Width = 4
           Height = 13
           Caption = ':'
         end
@@ -268,21 +270,21 @@ object frameTraffic: TframeTraffic
     object lblIPAddress: TLabel
       Left = 8
       Top = 19
-      Width = 43
+      Width = 44
       Height = 13
       Caption = 'IP-'#1072#1076#1088#1077#1089
     end
     object lblFrequency: TLabel
       Left = 160
       Top = 19
-      Width = 81
+      Width = 80
       Height = 13
       Caption = #1063#1072#1089#1090#1086#1090#1072' '#1086#1087#1088#1086#1089#1072
     end
     object lblSec: TLabel
       Left = 288
       Top = 19
-      Width = 18
+      Width = 17
       Height = 13
       Caption = #1089#1077#1082
     end

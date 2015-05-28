@@ -36,8 +36,7 @@ uses
   uDebugLog,
   uSyncOptions,
   uSyncConst,
-  Math,
-  uRegistration;
+  Math;
 
 {$R *.DFM}
 

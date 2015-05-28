@@ -96,8 +96,7 @@ uses
   uGCDataSet,
   gcconst,
   gccomputers,
-  gcfunctions,
-  uRegistration;
+  gcfunctions;
 
 {*******************************************************************************
                       class  TRegistryInfo
@@ -135,7 +134,7 @@ end;
 function TRegistryInfo.LocateUserName: Boolean;
 begin
   Result := FRegistryDataSet.LocateByKey('UserName',
-      Registration.UserName);
+      'Free');
 end;
 
 function TRegistryInfo.GetUserName: String;
@@ -154,7 +153,7 @@ end;
 function TRegistryInfo.LocateComputersNumber: Boolean;
 begin
   Result := FRegistryDataSet.LocateByKey('ComputersNumber',
-      IntToStr(Registration.CompsRegs));
+      IntToStr(MAX_COMPUTERS));
 end;
 
 function TRegistryInfo.GetComputersNumber: Integer;
@@ -172,8 +171,7 @@ end;
 
 function TRegistryInfo.LocateHardwareControl: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('HardwareControl',
-      IfThen(Registration.HardwareControl, '1', '0'));
+  Result := FRegistryDataSet.LocateByKey('HardwareControl', '1');
 end;
 
 function TRegistryInfo.GetHardwareControl: Boolean;
@@ -191,8 +189,7 @@ end;
 
 function TRegistryInfo.LocatePrinterControl: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('PrinterControl',
-      IfThen(Registration.PrinterControl, '1', '0'));
+  Result := FRegistryDataSet.LocateByKey('PrinterControl', '1');
 end;
 
 function TRegistryInfo.GetPrinterControl: Boolean;
@@ -210,8 +207,7 @@ end;
 
 function TRegistryInfo.LocateInternetControl: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('InternetControl',
-      IfThen(Registration.InternetControl, '1', '0'));
+  Result := FRegistryDataSet.LocateByKey('InternetControl', '1');
 end;
 
 function TRegistryInfo.GetInternetControl: Boolean;
@@ -229,8 +225,7 @@ end;
 
 function TRegistryInfo.LocateInternetControlLinux: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('InternetControlLinux',
-      IfThen(Registration.InternetControlLinux, '1', '0'));
+  Result := FRegistryDataSet.LocateByKey('InternetControlLinux', '1');
 end;
 
 function TRegistryInfo.GetInternetControlLinux: Boolean;
@@ -248,8 +243,7 @@ end;
 
 function TRegistryInfo.LocateInternetControlComLinux: Boolean;
 begin
-  Result := FRegistryDataSet.LocateByKey('InternetControlComLinux',
-      IfThen(Registration.InternetControlComLinux, '1', '0'));
+  Result := FRegistryDataSet.LocateByKey('InternetControlComLinux','1');
 end;
 
 function TRegistryInfo.GetInternetControlComLinux: Boolean;

@@ -85,8 +85,8 @@ begin
 end;
 
 procedure TformCompChangeTarif.butOkClick(Sender: TObject);
-var
-  StartSumma: double;
+//var
+//  StartSumma: double;
 begin
   timerFrmCompChangeTarifTimer(nil);
   timerFrmCompChangeTarif.Enabled := false;
@@ -109,12 +109,12 @@ end;
 
 procedure TformCompChangeTarif.UpdateInformation;
 var
-  stop: TDateTime;
+//  stop: TDateTime;
   dtLeft: TDateTime;
-  old_lock: boolean;
-  tdMoney: double;
+//  old_lock: boolean;
+//  tdMoney: double;
   nCompIndex: integer;
-  nTarifIndex: integer;
+//  nTarifIndex: integer;
   session: GCSessions.TGCSession;
   i: integer;
   li: TListItem;
@@ -166,10 +166,10 @@ begin
 end;
 
 procedure TformCompChangeTarif.lvTarifsClick(Sender: TObject);
-var
-  Whole: TTarifVariants;
-  index: integer;
-  tm: TDateTime;
+//var
+//  Whole: TTarifVariants;
+//  index: integer;
+//  tm: TDateTime;
 begin
   if (lvTarifs.ItemIndex = -1) then
     FnSelectedTarifIndex := -1

@@ -27,7 +27,7 @@ object framMail: TframMail
       Top = 31
       Width = 201
       Height = 21
-      EditLabel.Width = 33
+      EditLabel.Width = 34
       EditLabel.Height = 13
       EditLabel.Caption = 'ledPort'
       TabOrder = 1
@@ -47,7 +47,7 @@ object framMail: TframMail
       Top = 88
       Width = 201
       Height = 21
-      EditLabel.Width = 64
+      EditLabel.Width = 63
       EditLabel.Height = 13
       EditLabel.Caption = 'ledUserName'
       TabOrder = 3
@@ -70,7 +70,7 @@ object framMail: TframMail
       Top = 130
       Width = 201
       Height = 21
-      EditLabel.Width = 37
+      EditLabel.Width = 38
       EditLabel.Height = 13
       EditLabel.Caption = 'ledFrom'
       TabOrder = 5
@@ -81,7 +81,7 @@ object framMail: TframMail
       Top = 130
       Width = 201
       Height = 21
-      EditLabel.Width = 27
+      EditLabel.Width = 26
       EditLabel.Height = 13
       EditLabel.Caption = 'ledTo'
       TabOrder = 6

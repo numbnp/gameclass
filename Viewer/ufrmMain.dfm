@@ -31,7 +31,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 42
     Width = 792
-    Height = 510
+    Height = 515
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -39,7 +39,7 @@ object frmMain: TfrmMain
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 552
+    Top = 557
     Width = 792
     Height = 117
     Align = alBottom

@@ -2,7 +2,7 @@ unit uWebExec;
 
 interface
 
-uses uWebServer;
+uses uWebServer,ufrmMain;
 
 var
   MyWebServer:TMyWebServer;
@@ -11,7 +11,7 @@ procedure StartWebServer;
 procedure StopWebServer;
 
 function ExecuteClient(Request:HttpRequest):boolean;  stdcall;
-procedure ParceAndReplaceLine(var Str:string);  stdcall;
+procedure ParceAndReplaceLine(var Str:Ansistring);  stdcall;
 
 implementation
 
@@ -27,7 +27,7 @@ procedure StartWebServer;
 begin
   MyWebServer := TMyWebServer.Create;
   MyWebServer.RootFolder := InstallDirectory + '\Skins\new';
-  MyWebServer.Port := 5060;
+  MyWebServer.Port := 5068;
   MyWebServer.ExecuteClient := @ExecuteClient;
   MyWebServer.ParceAndReplaceLine := @ParceAndReplaceLine;
   MyWebServer.start;
@@ -40,14 +40,12 @@ begin
   MyWebServer.Destroy;
 end;
 
-procedure ParceAndReplaceLine(var Str:string);
+procedure ParceAndReplaceLine(var Str:Ansistring);
 begin
-  Str := ParseAndReplase(Str);
+  Str := Ansistring(ParseAndReplase(String(Str)));
 end;
 
 function ExecuteClient(Request:HttpRequest):boolean;
-var
-  str:string;
 begin
   if Request.Parametrs.Values['action'] = 'logon' then
   begin
@@ -143,6 +141,10 @@ begin
     QueryTariffs;
   end;
 
+  if Request.Parametrs.Values['action'] = 'load_complete' then
+  begin
+    frmMain.DoDesign;
+  end;
 
 
 

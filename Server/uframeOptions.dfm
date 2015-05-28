@@ -23,14 +23,14 @@ object frameOptions: TframeOptions
       object lblMinutsForLongRepair: TLabel
         Left = 8
         Top = 36
-        Width = 94
+        Width = 97
         Height = 13
         Caption = '<'#1056#1077#1084#1086#1085#1090' '#1085#1072#1076#1086#1083#1075#1086'>'
       end
       object lblMin: TLabel
         Left = 146
         Top = 36
-        Width = 23
+        Width = 22
         Height = 13
         Caption = #1084#1080#1085'.'
       end
@@ -64,7 +64,7 @@ object frameOptions: TframeOptions
       object lblTarif: TLabel
         Left = 8
         Top = 36
-        Width = 33
+        Width = 32
         Height = 13
         Caption = #1058#1072#1088#1080#1092
       end
@@ -83,7 +83,6 @@ object frameOptions: TframeOptions
         Width = 142
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 1
         OnChange = cboGuestSessionTarifChange
       end
@@ -99,7 +98,7 @@ object frameOptions: TframeOptions
       object lblIPAddress: TLabel
         Left = 8
         Top = 19
-        Width = 43
+        Width = 44
         Height = 13
         Caption = 'IP-'#1072#1076#1088#1077#1089
       end
@@ -179,14 +178,14 @@ object frameOptions: TframeOptions
     object lblShutdown: TLabel
       Left = 8
       Top = 47
-      Width = 67
+      Width = 69
       Height = 13
       Caption = #1042#1099#1082#1083#1102#1095#1077#1085#1080#1077':'
     end
     object lblReboot: TLabel
       Left = 8
       Top = 71
-      Width = 75
+      Width = 74
       Height = 13
       Caption = #1055#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1072':'
     end
@@ -321,7 +320,7 @@ object frameOptions: TframeOptions
           Top = 136
           Width = 123
           Height = 21
-          EditLabel.Width = 111
+          EditLabel.Width = 110
           EditLabel.Height = 13
           EditLabel.Caption = 'ledMinBetvenReserved'
           TabOrder = 4
@@ -346,7 +345,7 @@ object frameOptions: TframeOptions
         object lblOperatingTimeEnd: TLabel
           Left = 8
           Top = 56
-          Width = 55
+          Width = 56
           Height = 13
           Caption = #1054#1082#1086#1085#1095#1072#1085#1080#1077
         end
@@ -395,35 +394,35 @@ object frameOptions: TframeOptions
         object lblStartMoneyMin: TLabel
           Left = 8
           Top = 16
-          Width = 88
+          Width = 85
           Height = 13
           Caption = #1052#1080#1085#1080#1084#1091#1084' '#1086#1087#1083#1072#1090#1099
         end
         object lblStartMoneyMax: TLabel
           Left = 8
           Top = 40
-          Width = 94
+          Width = 90
           Height = 13
           Caption = #1052#1072#1082#1089#1080#1084#1091#1084' '#1086#1087#1083#1072#1090#1099
         end
         object lblAddMoneyMin: TLabel
           Left = 8
           Top = 64
-          Width = 94
+          Width = 92
           Height = 13
           Caption = #1052#1080#1085#1080#1084#1091#1084' '#1076#1086#1087#1083#1072#1090#1099
         end
         object lblAddMoneyMax: TLabel
           Left = 8
           Top = 88
-          Width = 100
+          Width = 97
           Height = 13
           Caption = #1052#1072#1082#1089#1080#1084#1091#1084' '#1076#1086#1087#1083#1072#1090#1099
         end
         object lblMaximumTrust: TLabel
           Left = 8
           Top = 112
-          Width = 99
+          Width = 95
           Height = 13
           Caption = #1052#1072#1082#1089#1080#1084#1091#1084' '#1076#1086#1074#1077#1088#1080#1103
         end
@@ -567,7 +566,7 @@ object frameOptions: TframeOptions
         object lblCurrency: TLabel
           Left = 8
           Top = 16
-          Width = 152
+          Width = 155
           Height = 13
           Caption = #1050#1088#1072#1090#1082#1086#1077' '#1086#1073#1086#1079#1085#1072#1095#1077#1085#1080#1077' '#1074#1072#1083#1102#1090#1099
         end
@@ -592,7 +591,7 @@ object frameOptions: TframeOptions
         object lblClubName: TLabel
           Left = 8
           Top = 16
-          Width = 82
+          Width = 81
           Height = 13
           Caption = #1053#1072#1079#1074#1072#1085#1080#1077' '#1082#1083#1091#1073#1072
         end

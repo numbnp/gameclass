@@ -7,7 +7,8 @@ const
 
 type
   TCommandPakage = record
-    Command: string[255];
+    Command: string;
+    //Command: array;
   end;
 
 implementation

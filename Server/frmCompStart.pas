@@ -8,7 +8,7 @@ uses
   StrUtils, Windows, Messages, SysUtils, Variants, Graphics, Forms,
   Dialogs, Grids, ValEdit, Mask, TeEngine, Series, TeeProcs, Chart,
   TeeFunci, OleCtrls, {Chartfx3, VCFI,} DB, ADODB, DbChart, GCSessions,
-  ToolEdit, CurrEdit,
+  RxToolEdit, RxCurrEdit,
   ufrmComputers,
   ufrmSessionsChart;
 
@@ -175,6 +175,7 @@ type
       Shift: TShiftState);
 
     procedure lvTarifsKeyPress(Sender: TObject; var Key: Char);
+    procedure FormDestroy(Sender: TObject);
 
   private
     FfrmComputers: TfrmComputers;
@@ -184,7 +185,7 @@ type
     FSavedValue: string;
     FCanceledReserveSession: TGCSession;
     FDesignedSession: TGCSession;
-    ReserveEditSumm: string;
+//    ReserveEditSumm: string;
     FbControlsEnabled: Boolean;
     procedure EnableControls;
     procedure DisableControls;
@@ -265,8 +266,8 @@ end;
 
 procedure TformCompStart.Init;
 var
-  i,j: integer;
-  li: TListItem;
+  i: integer;
+//  li: TListItem;
 begin
   FnHoursInterval:=12;
   radio12Hours.Checked := True;
@@ -528,12 +529,12 @@ end;
 
 procedure TformCompStart.UpdateInformation;
 var
-  stop: TDateTime;
+//  stop: TDateTime;
   tdMoney: double;
   index: integer;
   tm: TDateTime;
   dtMaxStop: TDateTime;
-  d1,d2,d3,d4: Integer;
+//  d1,d2,d3,d4: Integer;
   maxtrust: Real;
 begin
   if not dsConnected then
@@ -559,7 +560,7 @@ begin
 
   if (FreePacketTarif in FState) then begin
     Index := TarifsGetIndex(FDesignedSession.IdTarif);
-    tm := Tarifs[Index].GetWholeStartByIndex(FDesignedSession.Whole);
+//    tm := Tarifs[Index].GetWholeStartByIndex(FDesignedSession.Whole);
     FDesignedSession.CommonPay := Tarifs[Index].GetWholeCostByIndex(
         FDesignedSession.Whole, FDesignedSession.IdComp);
     if (Reserve in FState) then begin
@@ -672,10 +673,10 @@ begin
     and not GSessions.IsBadDesignedSessions
     and (FDesignedSession.TimeStop>GetVirtualTime) ;
   /////////////////////
-  d1 := HourOf(dtpTimeLength.Time);
+{  d1 := HourOf(dtpTimeLength.Time);
   d2 := MinuteOf(dtpTimeLength.Time);
   d3 := SecondOf(dtpTimeLength.Time);
-  d4 := MillisecondOf(dtpTimeLength.Time);
+  d4 := MillisecondOf(dtpTimeLength.Time);}
   ///////////////////
   CopyDataToGSessions;
   FfrmSessionsChart.StartTime := GetVirtualTime ;
@@ -722,6 +723,11 @@ begin
   end;
   editDescription.Text := FDesignedSession.Description;
   DoDesign(False);
+end;
+
+procedure TformCompStart.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FDesignedSession);
 end;
 
 procedure TformCompStart.FormKeyDown(Sender: TObject; var Key: Word;

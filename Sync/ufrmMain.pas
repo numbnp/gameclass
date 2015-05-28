@@ -446,37 +446,25 @@ begin
 
   with dmMain do begin
     try
-      try
-        with dstGetSyncServerIdByName do begin
-//          Parameters.FindParam('Name').Value := AstrLocalServerName;
-          dstGetSyncServerIdByName.SQL.Clear;
-          dstGetSyncServerIdByName.SQL.Add ('select dbo.GetSyncServerIdByName('''+ AstrLocalServerName +''') as value');
-          Connection := AcnnSource;
-          Open;
-          nIdSyncServer := dstGetSyncServerIdByName.FieldValues['value'];
-          Close;
-        end;
-      except
-        ShowMessage('Добавьте сервер '+ AstrLocalServerName + ' (этот) в список синхронизации в первичной БД');
-        Result := False;
-        exit;
+      with dstGetSyncServerIdByName do begin
+//        Parameters.FindParam('Name').Value := AstrLocalServerName;
+        dstGetSyncServerIdByName.SQL.Clear;
+        dstGetSyncServerIdByName.SQL.Add ('select dbo.GetSyncServerIdByName('''+ AstrLocalServerName +''') as value');
+        Connection := AcnnSource;
+        Open;
+        nIdSyncServer := dstGetSyncServerIdByName.FieldValues['value'];
+        Close;
       end;
-      if Result = True then
-      begin
-        with dstAccountsSelect do begin
-          Parameters.FindParam('@idSyncServer').Value := 0;
-          Connection := AcnnSource;
-          Open;
-        end;
-        with dstAccountsHistorySelect do begin
-          Parameters.FindParam('@idSyncServer').Value := 0;
-          Connection := AcnnSource;
-          Open;
-        end;
-      end else begin
-        exit;
+      with dstAccountsSelect do begin
+        Parameters.FindParam('@idSyncServer').Value := 0;
+        Connection := AcnnSource;
+        Open;
       end;
-
+      with dstAccountsHistorySelect do begin
+        Parameters.FindParam('@idSyncServer').Value := 0;
+        Connection := AcnnSource;
+        Open;
+      end;
     except
       Result := False;
     end;
@@ -541,10 +529,6 @@ begin
               dstAccountsSelect.FieldValues['uname'];
           dstAccountsInsert.Parameters.FindParam('@uotch').Value :=
               dstAccountsSelect.FieldValues['uotch'];
-          dstAccountsInsert.Parameters.FindParam('@hardcode').Value :=
-              dstAccountsSelect.FieldValues['hardcode'];
-          dstAccountsInsert.Parameters.FindParam('@ignorehardcode').Value :=
-              dstAccountsSelect.FieldValues['ignorehardcode'];    
 
           dstAccountsInsert.ExecProc;
           dstAccountsSync.Parameters.FindParam('@idSyncServer').Value :=
@@ -552,8 +536,6 @@ begin
           dstAccountsSync.Parameters.FindParam('@guid').Value :=
               dstAccountsSelect.FieldValues['guid'];
           dstAccountsSync.ExecProc;
-          edtInitialization.Text := 'Идет синхронизация A:' + inttostr(dstAccountsSelect.RecordCount) + '/' +inttostr(dstAccountsSelect.RecNo);
-          Application.ProcessMessages;
           dstAccountsSelect.Next;
         end;
         cmdAccountsHistoryDelete.Execute;
@@ -581,11 +563,6 @@ begin
           dstAccountsHistorySync.Parameters.FindParam('@guid').Value :=
               dstAccountsHistorySelect.FieldValues['guid'];
           dstAccountsHistorySync.ExecProc;
-          if (dstAccountsHistorySelect.RecNo mod 10 = 0) then
-          begin
-            edtInitialization.Text := 'Идет синхронизация AH:' + inttostr(dstAccountsHistorySelect.RecordCount) + '/' +inttostr(dstAccountsHistorySelect.RecNo);
-            Application.ProcessMessages;
-          end;
           dstAccountsHistorySelect.Next;
         end;
       except

@@ -50,13 +50,14 @@ begin
         + SubItems[0] + ') ';
   lvUsers.Items.Clear;
   for i:=0 to CompsCount-1 do
-    with Comps[i] do
-      if (session <> Nil) or (a.state = ClientState_Order) then begin
-        liCurrent := lvUsers.Items.Add;
-        liCurrent.Caption := GetAccountName(a);
-        liCurrent.SubItems.Add(IntToStr(number));
-        liCurrent.SubItems.Add(ipaddr);
-      end;
+    if Comps[i] <> nil then
+      with Comps[i] do
+        if (session <> Nil) or (a.state = ClientState_Order) then begin
+          liCurrent := lvUsers.Items.Add;
+          liCurrent.Caption := GetAccountName(a);
+          liCurrent.SubItems.Add(IntToStr(number));
+          liCurrent.SubItems.Add(ipaddr);
+        end;
   for i:=0 to lvUsers.Items.Count-1 do
     with lvUsers.Items[i] do
       if Pos(' ' + Caption + '(' + SubItems[0] + ') ',strCurrentSelection)<>0 then

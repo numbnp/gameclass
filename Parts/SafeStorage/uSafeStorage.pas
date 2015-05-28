@@ -362,9 +362,7 @@ end;
 
 procedure TSafeStorage.ExecuteNextOperation;
 var
-  i: Integer;
-  str: String;
-  dtStart, dtStop: TDateTime;
+//  dtStart, dtStop: TDateTime;
   operation: TSafeOperation;
 begin
   GcsAddSafeOperation.Acquire;
@@ -418,10 +416,11 @@ begin
            + ': '
           + GetParamFromString(AOperation.Parameters,2));
 {$IFDEF MSWINDOWS}
-      if not frmMain.Visible then
+{      if not frmMain.Visible then
         frmMain.modernTrayIcon.ShowBalloonHint('Сообщение от '
             + GetParamFromString(AOperation.Parameters,0),
             GetParamFromString(AOperation.Parameters,2), 1000);
+}
 {$ENDIF}
     end;
     ThreadSafeOperation_ClearMessages: begin
@@ -525,9 +524,7 @@ begin
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_UpdateCompNumber: begin
-      frmMain.pnlCompNumber.Caption := GClientOptions.CompNumber;
       GCClientWebInterface.SetInterfaceData('{ "comp_num": "' + GClientOptions.CompNumber+ '" }');
-
     end;
     ThreadSafeOperation_MainFormAction:
       case AOperation.FormAction of
@@ -782,8 +779,8 @@ begin
 end;
 
 procedure TSafeStorage.DeleteOldDesigned;
-var
-  i: Integer;
+//var
+//  i: Integer;
 begin
 {  for i := Count - 1 downto 0  do
     if (Items[i].Status = ssDesigned) and not Items[i].Reloaded then

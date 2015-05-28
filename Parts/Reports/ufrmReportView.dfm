@@ -21,30 +21,24 @@ object frmReportView: TfrmReportView
     Height = 453
     Align = alClient
     DataSource = dsrcReport
+    DynProps = <>
     EditActions = [geaCopyEh, geaSelectAllEh]
     Flat = True
-    FooterColor = clWindow
-    FooterFont.Charset = DEFAULT_CHARSET
-    FooterFont.Color = clWindowText
-    FooterFont.Height = -11
-    FooterFont.Name = 'MS Sans Serif'
-    FooterFont.Style = []
+    FooterParams.Color = clWindow
+    GridLineParams.VertEmptySpaceStyle = dessNonEh
+    IndicatorOptions = [gioShowRowIndicatorEh]
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghColumnResize, dghColumnMove]
     PopupMenu = pmnuReport
     SortLocal = True
     STFilter.Local = True
     SumList.Active = True
     SumList.VirtualRecords = True
     TabOrder = 0
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
-    TitleFont.Style = []
-    UseMultiTitle = True
-    FilterStringColor = clWindow
+    TitleParams.MultiTitle = True
     OnSortMarkingChanged = grdReportSortMarkingChanged
+    object RowDetailData: TRowDetailPanelControlEh
+    end
   end
   object dsrcReport: TDataSource
     OnDataChange = dsrcReportDataChange

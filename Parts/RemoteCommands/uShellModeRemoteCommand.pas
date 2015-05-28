@@ -80,7 +80,7 @@ begin
         strDir := reg.ReadString('Install_Dir');
         if (strDir <> '') then begin
           strDir := strDir + '\rshell.exe 0';
-          WinExec(PChar(strDir), SW_HIDE);
+          WinExec(PAnsiChar(Ansistring(strDir)), SW_HIDE);
         end;
         reg.CloseKey;
       end;

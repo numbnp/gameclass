@@ -10,7 +10,8 @@ unit uLocalCommandSender;
 
 interface
 
-uses   IdTCPClient;
+uses    IdTCPClient,
+        IdGlobal;
 
 type
 
@@ -157,7 +158,8 @@ begin
 {$ENDIF}
 {$IFDEF MSWINDOWS}
           CommBlock.Command := AstrData;
-          tcpClient.WriteBuffer(CommBlock,SizeOf(CommBlock), true);
+//          tcpClient.IOHandler.
+          tcpClient.IOHandler.WriteLn(CommBlock.Command,IndyTextEncoding_UTF8 );
 {$ENDIF}
 {$IFDEF LINUX}
           tcpClient.Disconnect();

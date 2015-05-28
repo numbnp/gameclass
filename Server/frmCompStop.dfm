@@ -215,6 +215,7 @@ object formCompStop: TformCompStop
       Top = 29
       Width = 177
       Height = 41
+      Alignment = eaRight
       Enabled = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -226,7 +227,6 @@ object formCompStop: TformCompStop
       TabOrder = 2
       Text = '1024,24'
       OnChange = editResultChange
-      Alignment = eaRight
     end
   end
   object timerStop: TTimer

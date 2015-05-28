@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, ToolEdit, CurrEdit, DBCtrlsEh;
+  Dialogs, StdCtrls, Mask, RxToolEdit, RxCurrEdit, DBCtrlsEh;
 
 type
   TfrmAddCheckAccount = class(TForm)

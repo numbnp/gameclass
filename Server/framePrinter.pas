@@ -35,8 +35,7 @@ uses
   uRegistry,
   uRegistryOptions,
   uY2KString,
-  uRegistryPrinter,
-  uRegistration;
+  uRegistryPrinter;
 {$R *.dfm}
 
 function TframePrinter.GetID: integer;
@@ -53,16 +52,10 @@ begin
   lblCurrency.Caption := GRegistry.Options.Currency;
   editCost.Text := FloatToStr(GRegistry.Modules.Printer.PrintedPageCost);
   cbxUsePMCosts.Checked := GRegistry.Modules.Printer.UsePMCosts;
-  if not Registration.PrinterControl then begin
-    cbActive.Checked := false;
-    cbActive.Enabled := false;
-    memoActiveInfo.Text := translate('infoModuleActivateOff');
-  end
-  else begin
-    cbActive.Checked := GRegistry.Modules.Printer.Active;
-    cbActive.Enabled := true;
-    memoActiveInfo.Text := translate('infoModuleActivateOn');
-  end;
+  cbActive.Checked := GRegistry.Modules.Printer.Active;
+  cbActive.Enabled := true;
+  memoActiveInfo.Text := translate('infoModuleActivateOn');
+
   editCost.Enabled := cbActive.Checked;
   lblCost.Enabled := cbActive.Checked;
   lblCost.Enabled := cbActive.Checked;

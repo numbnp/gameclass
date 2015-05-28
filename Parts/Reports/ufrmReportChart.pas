@@ -105,7 +105,8 @@ type
 implementation
 
 uses
-  ShellAPI;
+  ShellAPI,
+  System.UITypes;
 
 {$R *.dfm}
 

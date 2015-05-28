@@ -13,7 +13,7 @@ uses
   Dialogs,
   ComCtrls,
   StdCtrls,
-  ExtCtrls, Mask, ToolEdit;
+  ExtCtrls, Mask, RxToolEdit;
 
 type
   TKKMProperty = class (TObject)
@@ -76,7 +76,6 @@ type
 implementation
 {$R *.dfm}
 uses
-  uRegistration,
   gcconst,
   uRegistry,
   uRegistryKKM,
@@ -98,7 +97,7 @@ var
 begin
   GbframeKKMLock := True;
   cbxKKM.Checked := GRegistry.Modules.KKM.Active;
-  cbxKKM.Enabled := Registration.KKMControl;
+  cbxKKM.Enabled := True;
   cboKKMPlugin.Enabled := cbxKKM.Checked;
   cbxDisconnectBlock.Enabled := cbxKKM.Checked;
   cbxZOrderByCloseShift.Enabled := cbxKKM.Checked;

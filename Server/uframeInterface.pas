@@ -13,7 +13,7 @@ uses
   Dialogs,
   ComCtrls,
   StdCtrls,
-  ExtCtrls, Mask, ToolEdit;
+  ExtCtrls, Mask, RxToolEdit;
 
 type
   TframeInterface = class(TFrame)

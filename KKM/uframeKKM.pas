@@ -74,7 +74,6 @@ type
 implementation
 {$R *.dfm}
 uses
-  uRegistration,
   gcconst,
   uRegistry,
   uRegistryKKM,

@@ -23,7 +23,7 @@ object framGC3Client: TframGC3Client
       object lblSec3: TLabel
         Left = 95
         Top = 17
-        Width = 18
+        Width = 17
         Height = 13
         Caption = #1089#1077#1082
       end
@@ -190,7 +190,7 @@ object framGC3Client: TframGC3Client
         object lblSec2: TLabel
           Left = 95
           Top = 19
-          Width = 18
+          Width = 17
           Height = 13
           Caption = #1089#1077#1082
         end
@@ -241,7 +241,7 @@ object framGC3Client: TframGC3Client
         object lblMin: TLabel
           Left = 111
           Top = 19
-          Width = 20
+          Width = 18
           Height = 13
           Caption = #1084#1080#1085
         end
@@ -345,23 +345,14 @@ object framGC3Client: TframGC3Client
           OnClick = cbxUnblockPasswordClick
         end
         object edtUnblockPassword: TEdit
-          Left = 24
+          Left = 8
           Top = 64
-          Width = 169
-          Height = 20
-          Font.Charset = SYMBOL_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Wingdings'
-          Font.Style = []
-          HideSelection = False
-          ParentFont = False
-          PasswordChar = 'l'
+          Width = 211
+          Height = 21
+          PasswordChar = '*'
           TabOrder = 5
-          Text = '12345678912345678912'
+          Text = 'edtUnblockPassword'
           OnChange = edtUnblockPasswordChange
-          OnEnter = edtUnblockPasswordEnter
-          OnExit = edtUnblockPasswordExit
         end
       end
       object GroupBox3: TGroupBox
@@ -411,7 +402,7 @@ object framGC3Client: TframGC3Client
         object lblDistribPath: TLabel
           Left = 16
           Top = 19
-          Width = 104
+          Width = 109
           Height = 13
           Caption = #1055#1091#1090#1100' '#1082' '#1076#1080#1089#1090#1088#1080#1073#1091#1090#1080#1074#1091
         end
@@ -431,6 +422,7 @@ object framGC3Client: TframGC3Client
           Height = 21
           NumGlyphs = 1
           TabOrder = 1
+          Text = ''
           OnChange = editInstallPathChange
         end
       end

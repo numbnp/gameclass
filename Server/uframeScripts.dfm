@@ -56,6 +56,7 @@ object frameScripts: TframeScripts
         Height = 21
         NumGlyphs = 1
         TabOrder = 1
+        Text = ''
         OnChange = editSessionScriptPathChange
       end
       object cbxSessionScriptHideWindow: TCheckBox
@@ -93,6 +94,7 @@ object frameScripts: TframeScripts
         Height = 21
         NumGlyphs = 1
         TabOrder = 1
+        Text = ''
         OnChange = editServerScriptPathChange
       end
       object cbxServerScriptHideWindow: TCheckBox
@@ -138,6 +140,7 @@ object frameScripts: TframeScripts
         Height = 21
         NumGlyphs = 1
         TabOrder = 1
+        Text = ''
         OnChange = editClientPathChange
       end
       object cbxClientHideWindow: TCheckBox

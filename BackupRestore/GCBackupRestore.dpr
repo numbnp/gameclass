@@ -13,8 +13,7 @@ uses
   ufrmSQLServerList in '..\Parts\SQLTools\ufrmSQLServerList.pas' {frmSQLServerList},
   uCommon in '..\Parts\Common\uCommon.pas',
   uSystemRegistryTools in '..\Parts\Registry\uSystemRegistryTools.pas',
-  uErrors in '..\Parts\Errors\uErrors.pas',
-  uRegistration in '..\Parts\Registration\uRegistration.pas';
+  uErrors in '..\Parts\Errors\uErrors.pas';
 
 {$R *.res}
 

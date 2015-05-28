@@ -1,18 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 1400
-  Top = 66
   Height = 332
   Width = 637
-  object bsPolyglotManager: TbsPolyglotManager
-    LangsDir = '.\Language\'
-    TranslateResourceStrings = True
-    Left = 32
-  end
-  object bsPolyglotTranslator: TbsPolyglotTranslator
-    Manager = bsPolyglotManager
-    Left = 144
-  end
   object cnnMain: TADOConnection
     ConnectionString = 
       'Provider=SQLOLEDB.1;Password="";Persist Security Info=True;User ' +

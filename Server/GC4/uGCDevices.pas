@@ -19,6 +19,7 @@ type
     function PowerOn: Boolean;
     function Reboot: Boolean;
     function Logoff: Boolean;
+    function UpdateDataOnDevice: Boolean;
 
     function GetOnline:Boolean;
     function GetControled:Boolean;
@@ -29,7 +30,7 @@ type
     property ipaddr:string read GetIP;
   end;
 
-  TGCDevicePC = class(TInterfacedObject, IGCDevice)
+  TGCDevice = class(TInterfacedObject, IGCDevice)
     private
       function GetOnline:Boolean;
       function GetControled:Boolean;
@@ -44,6 +45,7 @@ type
       function PowerOn: Boolean;
       function Reboot: Boolean;
       function Logoff: Boolean;
+      function UpdateDataOnDevice: Boolean;
 
       property online:Boolean read GetOnline;
       property controled:Boolean read GetControled;
@@ -120,59 +122,64 @@ end;
 
 { TGCDevicePC }
 
-constructor TGCDevicePC.Create;
+constructor TGCDevice.Create;
 begin
 
 end;
 
-function TGCDevicePC.GetControled: Boolean;
+function TGCDevice.GetControled: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.GetDiviceType: TDevicetype;
+begin
+  Result:=DeviceType_Uncnoun;
+end;
+
+function TGCDevice.GetIP: string;
+begin
+  Result:='';
+end;
+
+function TGCDevice.GetOnline: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.Logoff: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.PowerOff: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.PowerOn: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.Reboot: Boolean;
+begin
+  Result:=false;
+end;
+
+function TGCDevice.SendData(data: WideString): boolean;
+begin
+  Result:=false;
+end;
+
+procedure TGCDevice.SetState(State: TClientState);
 begin
 
 end;
 
-function TGCDevicePC.GetDiviceType: TDevicetype;
+function TGCDevice.UpdateDataOnDevice: Boolean;
 begin
-
-end;
-
-function TGCDevicePC.GetIP: string;
-begin
-
-end;
-
-function TGCDevicePC.GetOnline: Boolean;
-begin
-
-end;
-
-function TGCDevicePC.Logoff: Boolean;
-begin
-
-end;
-
-function TGCDevicePC.PowerOff: Boolean;
-begin
-
-end;
-
-function TGCDevicePC.PowerOn: Boolean;
-begin
-
-end;
-
-function TGCDevicePC.Reboot: Boolean;
-begin
-
-end;
-
-function TGCDevicePC.SendData(data: WideString): boolean;
-begin
-
-end;
-
-procedure TGCDevicePC.SetState(State: TClientState);
-begin
-
+  Result := false;
 end;
 
 end.

@@ -23,7 +23,7 @@ uses
   uReportCommon,
   uReport,
   uReportColumn,
-  ufrmReport, RXSpin, ComCtrls, Menus;
+  ufrmReport, RXSpin, ComCtrls, Menus, Vcl.Mask;
 
 
 type
@@ -142,7 +142,8 @@ type
 implementation
 
 uses
-  gccomputers;
+  gccomputers,
+  System.Types;
 {$R *.dfm}
 
 

@@ -222,7 +222,6 @@ function TGCDataSet.Select(AnId: Integer): Boolean;
 var
   dtsResult: TADODataSet;
   i: Integer;
-  Buffer: PChar;
   bookmark: Pointer;
   bInsert: Boolean;
 begin

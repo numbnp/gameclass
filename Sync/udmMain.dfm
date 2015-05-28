@@ -1,7 +1,7 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Left = 599
-  Top = 315
+  Left = 1943
+  Top = 173
   Height = 460
   Width = 499
   object cnnMain: TADOConnection
@@ -430,20 +430,6 @@ object dmMain: TdmMain
         DataType = ftWideString
         Size = 80
         Value = Null
-      end
-      item
-        Name = '@hardcode'
-        Attributes = [paNullable]
-        DataType = ftWideString
-        Size = 50
-        Value = Null
-      end
-      item
-        Name = '@ignorehardcode'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 10
-        Value = Null
       end>
     Left = 48
     Top = 288
@@ -638,20 +624,6 @@ object dmMain: TdmMain
         Attributes = [paNullable]
         DataType = ftWideString
         Size = 80
-        Value = Null
-      end
-      item
-        Name = '@hardcode'
-        Attributes = [paNullable]
-        DataType = ftWideString
-        Size = 50
-        Value = Null
-      end
-      item
-        Name = '@ignorehardcode'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        Precision = 10
         Value = Null
       end>
     Left = 160

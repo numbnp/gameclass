@@ -23,7 +23,7 @@ var
 
 procedure  DoSingleAction_My(Param:Integer);
 var
-  rpShell : IRunpadShell;
+//  rpShell : IRunpadShell;
    rpShell2 : IRunpadShell2;
    rpPro : IRunpadProShell;
 begin
@@ -119,13 +119,13 @@ begin
         begin
           try
             rpShell2 := CoRunpadShell2.Create;
-            rpShell2.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002);
+            rpShell2.ShowInfoMessage(PChar(AstrParameters),$00000002);
           except
             Debug.Trace0('Show info on desktop RPS failed');
           end;
           try
             rpPro := CoRunpadProShell.Create;
-            rpPro.ShowInfoMessage(PAnsiChar(AstrParameters),$00000002);
+            rpPro.ShowInfoMessage(PChar(AstrParameters),$00000002);
           except
             Debug.Trace0('Show info on desktop RPP failed');
           end;

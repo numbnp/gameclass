@@ -393,12 +393,12 @@ begin
   end;
   if Result then begin
     //Отключим любую возможность зайти на SQL-сервер с Windows-авторизацией
-    for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
+    {for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
       try
         str := SQL_TOOLS_REMOVE_LOGINS_CODE[i];
         dmo.ExecuteImmediate(str);
       except
-      end;
+      end;}
     dmo.DisConnect;
   end;
   dmo := null;
@@ -427,7 +427,7 @@ end; }
 
 function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
 var
-  dmo: OleVariant;
+  dmo, smo: OleVariant;
   frmLogon: TfrmLogon;
   bRestartNeeded: Boolean;
   i: Integer;
@@ -436,6 +436,7 @@ begin
   Result := False;
   try
     dmo := CreateOleObject('SQLDMO.SQLServer');
+    // smo := CreateOleObject('Microsoft.SqlServer.Management.Smo.Server');
   except
      MessageBox(0, 'SQL-сервер не установлен!' + Char(13)
         + 'Смотрите раздел помощи "Инсталляция GameClass"', 'Ошибка',
@@ -446,7 +447,7 @@ begin
   repeat
     if frmLogon.ShowModal = mrOk then begin
       dmo.Name := frmLogon.ServerName;
-      try
+      {try
         EnableTcp(bRestartNeeded, frmLogon.ServerName);
         if dmo.Status <> 1 then
           dmo.Start(False, frmLogon.ServerName)
@@ -464,13 +465,15 @@ begin
          MessageBox(0, 'Невозможно запустить SQL-сервер!' , 'Ошибка',
             MB_ICONERROR + MB_OK);
          exit;
-      end;
+      end;}
       dmo.LoginTimeout := 300;
       if frmLogon.WindowsAuthentication then try
         dmo.LoginSecure := True;
         dmo.Connect(frmLogon.ServerName);
+        dmo.DisConnect;
+
 //        SetSAPassword(dmo);
-        if dmo.IntegratedSecurity.SecurityMode = 2 then
+{        if dmo.IntegratedSecurity.SecurityMode = 2 then
           dmo.DisConnect
         else begin
           dmo.IntegratedSecurity.SecurityMode := 2;
@@ -479,12 +482,12 @@ begin
           repeat
           until dmo.Status = 	3;
           dmo.Start(False, frmLogon.ServerName);
-        end;
-        dmo.Connect(frmLogon.ServerName,frmLogon.UserName,
-            frmLogon.Password);
+        end;}
+//        dmo.Connect(frmLogon.ServerName,frmLogon.UserName,
+//            frmLogon.Password);
         Result := True;
       except
-      end else begin//try
+      end else begin try
         dmo.LoginSecure := False;
         dmo.Connect(frmLogon.ServerName, frmLogon.UserName,
             frmLogon.Password);
@@ -494,20 +497,21 @@ begin
 //      dmo.DisConnect;
 //      dmo.Connect(frmLogon.ServerName, 'sa', '1');
         Result := True;
-     // except
+        except
+        end;
       end;
     end;
   until Result or (frmLogon.ModalResult = mrCancel);
   if Result then begin
     AstrServerName := frmLogon.ServerName;
     //Отключим любую возможность зайти на SQL-сервер с Windows-авторизацией
-    for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
+    {for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
       try
         str := SQL_TOOLS_REMOVE_LOGINS_CODE[i];
         dmo.ExecuteImmediate(str);
       except
       end;
-    dmo.DisConnect;
+    dmo.DisConnect;}
 
   end;
   dmo := null;
@@ -854,7 +858,7 @@ begin
                   try
                     lstProtocols := RegistryReadMultiString(Reg,
                         SQL_TOOLS_REGISTRY_PROTOCOLLIST);
-                    bKeyFound := True;
+//                    bKeyFound := True;
                     if lstProtocols.IndexOf(SQL_TOOLS_REGISTRY_TCP_VALUE) = -1 then begin
                       lstProtocols.Add(SQL_TOOLS_REGISTRY_TCP_VALUE);
                       RegistryWriteMultiString(Reg,
@@ -941,9 +945,8 @@ function EnableTcpForClient(const AMSSQLServerVersion: TMSSQLServerVersion):
     Boolean;
 var
   reg: TRegistry;
-  strInstanceName, str: String;
-  i, nEnabled: Integer;
-  bKeyFound: Boolean;
+  i: Integer;
+//  bKeyFound: Boolean;
   lstProtocols, lstStrings: TStringList;
 begin
   // Есть два варианта, где находится параметр SQLDataRoot
@@ -1063,6 +1066,7 @@ var
   i, nVersion: Integer;
   dtsManagement: TADODataSet;
 begin
+  i := 0;
   if AbForce or not dsDoCommand(AcnnMain,
       'exec GameClass.dbo.sp_change_users_login "Auto_Fix", '''
       + AstrUser + '''') then begin

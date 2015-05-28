@@ -182,7 +182,7 @@ var
   dts: TADODataSet;
   nCalcCount: Integer;
   nRealCount: Integer;
-  bResult: Boolean;
+//  bResult: Boolean;
 begin
   Result := False;
   strQuery := QUERY_CHECK_TABLE + AstrTableName;
@@ -204,8 +204,8 @@ function CheckLogins(var AlstResult: TStringList): Boolean;
 var
   dts: TADODataSet;
   nCalcCount: Integer;
-  nRealCount: Integer;
-  bResult: Boolean;
+//  nRealCount: Integer;
+//  bResult: Boolean;
   strTemp: String;
   strLoginName: String;
   lstUsers: TStringList;
@@ -319,7 +319,7 @@ var
   strQuery: String;
   dts: TADODataSet;
   nRecordCount: Integer;
-  bResult: Boolean;
+//  bResult: Boolean;
 begin
   Result := False;
   strQuery := QUERY_CHECK_NULL_TIME;
@@ -337,10 +337,10 @@ end; // CheckNullTime
 
 function CheckGCRemover(var AstrResult: String): Boolean;
 var
-  strQuery: String;
+//  strQuery: String;
   dts: TADODataSet;
   dtDetectedMoment: TDateTime;
-  bResult: Boolean;
+//  bResult: Boolean;
 begin
   Result := False;
   dsDoCommandSQLQuery(QUERY_EXPIRED_GCREMOVER);

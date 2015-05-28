@@ -82,7 +82,7 @@ type
     FnInternetAvailableInKB: Integer;
     FnInternetUsedInKB: Integer;
     FlstRunPadHidedTabs: TStringList;
-    FstrInstallDirectory: String;
+//    FstrInstallDirectory: String;
     FstrServerIPAddress: String;
     FstrIPAddress: String;
     FbAfterStopActionNeeded: Boolean;
@@ -489,8 +489,8 @@ end; // TClientInfo.ReleaseInstance
 
 procedure TClientInfo.SetClientState(
     const AClientState: TClientState);
-var
-  bStateChanged: Boolean;
+{var
+  bStateChanged: Boolean;}
 begin
   TDebugLog.Instance().Trace5('ClientInfo.SetClientState old:'
       + IntToStr(Integer(FnClientState))
@@ -533,8 +533,8 @@ begin
 end; // TClientInfo.SetClientState
 
 procedure TClientInfo.SetBlocked(const AbBlocked: Boolean);
-var
-  bBlockChanged: Boolean;
+{var
+  bBlockChanged: Boolean;}
 begin
   if FbBlocked <> AbBlocked then begin
     FbDirty := True;

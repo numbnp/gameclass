@@ -74,7 +74,6 @@ type
 implementation
 
 uses
-  uRegistration,
   SysUtils,
   DB,
   uGCDataSet,
@@ -114,8 +113,7 @@ end;
 function TRegistryInternet.GetInnerProxy: Boolean;
 begin
   LocateInnerProxy;
-  Result := Registration.InternetControl
-    and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryInternet.SetInnerProxy(AValue: Boolean);
@@ -134,15 +132,13 @@ end;
 
 function TRegistryInternet.LocateOuterPlugin: Boolean;
 begin
-  Result := Registration.InternetControl
-      and FRegistryDataSet.LocateByKey('ActivateTrafficControlTI', '0');
+  Result := FRegistryDataSet.LocateByKey('ActivateTrafficControlTI', '0');
 end;
 
 function TRegistryInternet.GetOuterPlugin: Boolean;
 begin
   LocateOuterPlugin;
-  Result := Registration.InternetControl
-      and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryInternet.SetOuterPlugin(AValue: Boolean);
@@ -167,8 +163,7 @@ end;
 function TRegistryInternet.GetLinuxPro: Boolean;
 begin
   LocateLinuxPro;
-  Result := Registration.InternetControlComLinux
-      and FRegistryRecord.ValueAsBoolean;
+  Result := FRegistryRecord.ValueAsBoolean;
 end;
 
 procedure TRegistryInternet.SetLinuxPro(AValue: Boolean);

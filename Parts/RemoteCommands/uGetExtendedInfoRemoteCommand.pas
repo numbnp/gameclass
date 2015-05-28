@@ -119,7 +119,7 @@ end; // TGetExtendedInfoRemoteCommand.Execute
 function TGetExtendedInfoRemoteCommand._GetOSVersion: String;
 var
   osvi: TOSVersionInfo;
-  strResult: String;
+//  strResult: String;
 begin
   osvi.dwOSVersionInfoSize := sizeof (OSVERSIONINFO);
   GetVersionEx (osvi);

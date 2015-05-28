@@ -5,7 +5,7 @@ interface
 uses
   Classes, IdTCPClient, IdTCPServer, IPInfo;
 
-const
+{const
   ID_MAPPED_PORT_TCP_PORT = 0;
 type
   TIdControlledMappedPortTCPData = class
@@ -20,8 +20,8 @@ type
   TBeforeClientConnectEvent = procedure(ASender: TComponent; AThread:
     TIdPeerThread;
     AClient: TIdTCPClient) of object;
-
-  TIdControlledMappedPortTCP = class(TIdTCPServer)
+}
+  {TIdControlledMappedPortTCP = class(TIdTCPServer)
   protected
     FMappedPort: integer;
     FMappedHost: string;
@@ -41,14 +41,14 @@ type
     property OnBeforeClientConnect: TBeforeClientConnectEvent read
       FOnBeforeClientConnect
     write FOnBeforeClientConnect;
-  end;
+  end;}
 
 implementation
 
 uses
   IdGlobal, IdStack,
   SysUtils;
-
+{
 constructor TIdControlledMappedPortTCP.Create(AOwner: TComponent; IPList:TIPInfoList);
 begin
   inherited Create(AOwner);
@@ -156,5 +156,5 @@ begin
   FreeAndNil(OutboundClient);
   inherited;
 end;
-
+}
 end.

@@ -94,7 +94,8 @@ uses
   Variants,
   SysUtils,
   // project units
-  uY2KString;
+  uY2KString,
+  System.UITypes;
 
 
 

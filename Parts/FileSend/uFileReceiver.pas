@@ -12,6 +12,8 @@ uses
   // system units
   IdBaseComponent,
   IdComponent,
+  IdGlobal,
+  IdContext,
   IdTCPServer;
 
 type
@@ -27,7 +29,7 @@ type
     FFileTransferTCPServer: TIdTCPServer;
 
     // events handlers
-    procedure _FileTransferTCPServerExecute(AThread: TIdPeerThread);
+    procedure _FileTransferTCPServerExecute(AContext: TIdContext);
 
     // private helper methods
     function _BuildFullPath(const AstrFileName: String): String;
@@ -108,7 +110,7 @@ end; // TFileReceiver.StopReceive
 //////////////////////////////////////////////////////////////////////////////
 // events handlers
 
-procedure TFileReceiver._FileTransferTCPServerExecute(AThread: TIdPeerThread);
+procedure TFileReceiver._FileTransferTCPServerExecute(AContext: TIdContext);
 var
   strPath: String;
   strFileName: String;
@@ -118,13 +120,13 @@ var
 begin
   try
     Debug.Trace5('_FileTransferTCPServerExecute');
-    if AThread.Connection.Connected then begin
-      strFileName := AThread.Connection.ReadLn();
+    if AContext.Connection.Connected then begin
+      strFileName := AContext.Connection.IOHandler.ReadLn();
       strPath := _BuildFullPath(strFileName);
-      nSize := StrToInt(AThread.Connection.ReadLn());
+      nSize := StrToInt(AContext.Connection.IOHandler.ReadLn());
       Stream := TFileStream.Create(strPath, fmCreate);
       try
-        AThread.Connection.ReadStream(Stream, nSize);
+        AContext.Connection.IOHandler.ReadStream(Stream, nSize);
       finally
         FreeAndNil(Stream);
       end;
