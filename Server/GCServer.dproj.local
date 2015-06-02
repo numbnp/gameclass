@@ -5,7 +5,7 @@
     <Transaction>1899.12.30 00:00:00.000.645,C:\Project\Free\Server\frmMail.pas=</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
-    <File Path="..\..\Free"/>
+    <File Path="..\..\gameclass"/>
     <File Path="..\KKM"/>
     <File Path="..\KKM\ufrmKKMConfig.pas"/>
     <File Path="..\KKM\ufrmKKMConfig.dfm"/>
