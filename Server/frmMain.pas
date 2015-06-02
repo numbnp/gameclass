@@ -1771,8 +1771,8 @@ end;
 procedure TformMain.tmrShowFormKillTasksTimer(Sender: TObject);
 begin
   tmrShowFormKillTasks.Enabled := false;
-  { TODO : Раскоментить }
-//  ShowFormKillTasks(ShowFormKillTasks_param, ShowFormKillTasks_index);
+  { DONE : Раскоментить }
+  ShowFormKillTasks(ShowFormKillTasks_param, ShowFormKillTasks_index);
 end;
 
 procedure TformMain.mnuAccountsClick(Sender: TObject);
