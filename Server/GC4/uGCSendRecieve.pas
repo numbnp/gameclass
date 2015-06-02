@@ -48,28 +48,11 @@ procedure TGCSendRecieve.SendData(AstrIP:string;vport:TIdPort;strData:string);
 var
   Buffer : TidBytes;
   len:integer;
-  astr:String;
+  astr:AnsiString;
 begin
-  astr := ansistring(strData);
-//  astr := 'ololo_ололоl';
- {len := Length(astr);
-  SetLength(Buffer,len);
-  Move(astr,Buffer , len);}
-
-//  Buffer := BytesOf(astr,len);
   udpClient.Host := AstrIP;
   udpClient.Port := vport;
-  udpClient.Send(astr, Indy8BitEncoding);
-//  udpClient.SendBuffer(AstrIP,vport,Buffer);
-
-{  MyStringBuilder := TStringBuilder.Create('');
-  try
-    Price := 1.49;
-    Label1.Caption := MyStringBuilder.Append('The apples are $').Append(Price).
-             ÄAppend(' a pound.').ToString;
-  finally
-    MyStringBuilder.Free;
-  end;}
+  udpClient.Send(ansiString(strData), IndyTextEncoding_OSDefault);
 end;
 
 end.
