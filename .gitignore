@@ -5,3 +5,10 @@ __history
 Packages
 Debug
 /Install/src/Logs
+Thumbs.db
+default.txaPackage
+default.txvpck
+default_diagram.tvsconfig
+*.identcache
+*/*.identcache
+
