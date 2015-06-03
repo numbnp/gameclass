@@ -18,16 +18,15 @@ object frmSessionsChart: TfrmSessionsChart
     Top = 0
     Width = 423
     Height = 250
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     MarginBottom = 0
     MarginLeft = 1
     MarginRight = 1
     MarginTop = 0
-    Title.AdjustFrame = False
     Title.Text.Strings = (
       'TDBChart')
     Title.Visible = False
+    Title.AdjustFrame = False
     OnClickBackground = chartCompsClickBackground
     OnClickSeries = chartCompsClickSeries
     BottomAxis.Automatic = False
@@ -69,23 +68,20 @@ object frmSessionsChart: TfrmSessionsChart
     TabOrder = 0
     OnMouseMove = chartCompsMouseMove
     OnMouseUp = chartCompsMouseUp
+    DefaultCanvas = 'TGDIPlusCanvas'
     ColorPaletteIndex = 13
     object Series1: TGanttSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
-      Marks.ShapeStyle = fosRoundRectangle
-      Marks.Visible = False
       SeriesColor = clRed
       Title = 'Series'
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
-      Pointer.Visible = True
       XValues.Name = 'Start'
       XValues.Order = loAscending
       YValues.Name = 'Y'
       YValues.Order = loNone
+      Callout.Style = psRightTriangle
+      Callout.Arrow.Visible = False
       StartValues.Name = 'Start'
       StartValues.Order = loAscending
       EndValues.Name = 'End'

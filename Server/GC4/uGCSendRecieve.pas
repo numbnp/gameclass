@@ -45,14 +45,10 @@ begin
 end;
 
 procedure TGCSendRecieve.SendData(AstrIP:string;vport:TIdPort;strData:string);
-var
-  Buffer : TidBytes;
-  len:integer;
-  astr:AnsiString;
 begin
   udpClient.Host := AstrIP;
   udpClient.Port := vport;
-  udpClient.Send(ansiString(strData), IndyTextEncoding_OSDefault);
+  udpClient.Send(strData, IndyTextEncoding_OSDefault);
 end;
 
 end.

@@ -98,7 +98,7 @@ begin
   megaThread := TMegaThread.Create(True);
   megaThread.Priority := tpNormal;
   megaThread.typeDo := s_type;
-  megaThread.Resume;
+  if megaThread.Suspended then megaThread.Start;
 end;
 
 end.

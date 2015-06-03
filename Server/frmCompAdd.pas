@@ -322,11 +322,9 @@ end;
 
 procedure TformCompAdd.UpdateInformation;
 var
-//  stop: TDateTime;
-//  tdMoney: Double;
   i: Integer;
   session: TGCSession;
-  dtCurrent, dtLength, dtStop: TDateTime;
+  dtLength, dtStop: TDateTime;
   dtMeanTimeStop, dtAddLength: TDateTime;
   fMoney, fSummaryMoney: Double;
   bOkEnabled: Boolean;
@@ -338,7 +336,6 @@ begin
   dtLength := 0;
   fMoney :=0;
   dtStop := 0;
-//  dtCurrent := GetVirtualTime;
   if (CompsSelCount >= 1) then begin
     case FState of
       casMoney: begin
