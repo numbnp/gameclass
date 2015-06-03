@@ -323,8 +323,6 @@ function ConfigureServer(const AstrServerName: String): Boolean;
 var
   dmo: OleVariant;
   bRestartNeeded: Boolean;
-  i: Integer;
-  str: String;
 begin
   Result := False;
   try
@@ -392,51 +390,19 @@ begin
   except
   end;
   if Result then begin
-    //Отключим любую возможность зайти на SQL-сервер с Windows-авторизацией
-    {for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
-      try
-        str := SQL_TOOLS_REMOVE_LOGINS_CODE[i];
-        dmo.ExecuteImmediate(str);
-      except
-      end;}
     dmo.DisConnect;
   end;
   dmo := null;
 end;
 
-
-{function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
+function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
 var
   dmo: OleVariant;
   frmLogon: TfrmLogon;
-  bRestartNeeded: Boolean;
-  i: Integer;
-  str: String;
-begin
-  frmLogon := TfrmLogon.Create(Nil, Nil, True);
-  if frmLogon.ShowModal = mrOk then begin
-    dbUserName := frmLogon.UserName;
-    dbPassword := frmLogon.Password;
-    AstrServerName := frmLogon.ServerName;
-    Result := True;
-    exit;
-  end;
-  Result := False;
-end; }
-
-
-function ConfigureServerWithLogon(var AstrServerName,dbUserName,dbPassword: String): Boolean;
-var
-  dmo, smo: OleVariant;
-  frmLogon: TfrmLogon;
-  bRestartNeeded: Boolean;
-  i: Integer;
-  str: String;
 begin
   Result := False;
   try
     dmo := CreateOleObject('SQLDMO.SQLServer');
-    // smo := CreateOleObject('Microsoft.SqlServer.Management.Smo.Server');
   except
      MessageBox(0, 'SQL-сервер не установлен!' + Char(13)
         + 'Смотрите раздел помощи "Инсталляция GameClass"', 'Ошибка',
@@ -447,44 +413,11 @@ begin
   repeat
     if frmLogon.ShowModal = mrOk then begin
       dmo.Name := frmLogon.ServerName;
-      {try
-        EnableTcp(bRestartNeeded, frmLogon.ServerName);
-        if dmo.Status <> 1 then
-          dmo.Start(False, frmLogon.ServerName)
-        else if bRestartNeeded then begin
-          dmo.Stop;
-          repeat
-          until dmo.Status = 	3; //SQLDMOSvc_Stopped
-          dmo.Start(False, frmLogon.ServerName);
-          repeat
-          until dmo.Status = 	1;
-        end;
-        if dmo.Status <> 1 then
-          raise Exception.Create('');
-      except
-         MessageBox(0, 'Невозможно запустить SQL-сервер!' , 'Ошибка',
-            MB_ICONERROR + MB_OK);
-         exit;
-      end;}
       dmo.LoginTimeout := 300;
       if frmLogon.WindowsAuthentication then try
         dmo.LoginSecure := True;
         dmo.Connect(frmLogon.ServerName);
         dmo.DisConnect;
-
-//        SetSAPassword(dmo);
-{        if dmo.IntegratedSecurity.SecurityMode = 2 then
-          dmo.DisConnect
-        else begin
-          dmo.IntegratedSecurity.SecurityMode := 2;
-          dmo.DisConnect;
-          dmo.Stop;
-          repeat
-          until dmo.Status = 	3;
-          dmo.Start(False, frmLogon.ServerName);
-        end;}
-//        dmo.Connect(frmLogon.ServerName,frmLogon.UserName,
-//            frmLogon.Password);
         Result := True;
       except
       end else begin try
@@ -493,9 +426,6 @@ begin
             frmLogon.Password);
         dbUserName := frmLogon.UserName;
         dbPassword := frmLogon.Password;
-//      SetSAPassword(dmo);
-//      dmo.DisConnect;
-//      dmo.Connect(frmLogon.ServerName, 'sa', '1');
         Result := True;
         except
         end;
@@ -504,16 +434,7 @@ begin
   until Result or (frmLogon.ModalResult = mrCancel);
   if Result then begin
     AstrServerName := frmLogon.ServerName;
-    //Отключим любую возможность зайти на SQL-сервер с Windows-авторизацией
-    {for i := 1 to SQL_TOOLS_REMOVE_LOGINS_CODE_COUNT do
-      try
-        str := SQL_TOOLS_REMOVE_LOGINS_CODE[i];
-        dmo.ExecuteImmediate(str);
-      except
-      end;
-    dmo.DisConnect;}
-
-  end;
+   end;
   dmo := null;
 end;
 

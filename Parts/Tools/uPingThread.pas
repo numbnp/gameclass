@@ -95,9 +95,9 @@ end;
 procedure StartPingThread(Interval:integer);
 begin
   if PingThread=nil then
-    PingThread := TPingThread.Create(true);
+    PingThread := TPingThread.Create(True);
   PingThread.Interval := Interval;
-  PingThread.Resume;
+  if PingThread.Suspended then PingThread.Start;
 end;
 
 procedure StopPingThread();

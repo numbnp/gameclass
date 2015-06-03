@@ -32,7 +32,7 @@ type
     function GetShowSumm: Boolean;
     procedure SetShowSumm(AValue: Boolean);
 
-    //by numb
+{$WARNINGS OFF}
     function LocateKey(Key,DefValue:string): Boolean;
     function GetKeyAsBoolean(Key:string;DefValue: Boolean):Boolean;
     procedure SetKeyAsBoolean(Key:string;AValue: Boolean);
@@ -40,7 +40,7 @@ type
     procedure SetKeyAsInteger(Key:string;AValue: Integer);
     function GetKeyAsString(Key:string;DefValue: String):String;
     procedure SetKeyAsString(Key:string;AValue: String);
-
+{$WARNINGS ON}
     function GetShutdownButton: Integer;
     procedure SetShutdownButton(AValue: Integer);
 

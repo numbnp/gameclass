@@ -113,7 +113,7 @@ type
     FnRunPadMonitorOff: Boolean;
     FnRunPadLockStation: Boolean;
     FnFullScreenInterface: Boolean;
-
+{$WARNINGS OFF}
     // private helper methods
     function _GetStringOption(const AstrFolder: String;
         const AstrName: String; const AstrDefaultValue: String): String;
@@ -123,7 +123,7 @@ type
         const AstrName: String; const AbDefaultValue: Boolean): Boolean;
     function _GetFloatOption(const AstrFolder: String;
         const AstrName: String; const AfDefaultValue: Double): Double;
-
+{$WARNINGS ON}
   protected
     // constructor / destructor
     constructor CreateInstance();

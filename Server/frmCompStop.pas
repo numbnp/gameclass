@@ -6,7 +6,7 @@ uses
   GCLangutils, GCComputers, GCCommon,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, ExtCtrls, gcsessions,
-  ufrmComputers, Grids, Mask, RxToolEdit, RxCurrEdit, uAlignEdit;
+  ufrmComputers, Grids, Mask, RxToolEdit, RxCurrEdit, uAlignEdit, AlignEdit;
 
 type
   TCompStopAction = (

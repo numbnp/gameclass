@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   TeEngine, Series, StdCtrls, ExtCtrls, TeeProcs, Chart, DbChart, DB, ADODB,
-  DBClient, GanttCh, GCSessions, Menus;
+  DBClient, GanttCh, GCSessions, Menus, VclTee.TeeGDIPlus;
 
 type
 //    Fmm: Boolean;
@@ -50,15 +50,12 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-  { Public declarations }
     procedure Activate;
     procedure UpdateData;
     procedure UpdateGSessions;
 
     procedure DoDesign;
     procedure SeriesOnGetMarkText( Sender : TChartSeries ;  ValueIndex : Longint ;  Var MarkText : String );
-//    property IsDesigned: Boolean read FbIsDesigned write FbIsDesigned;
-//    property OnTimer: TNotifyEvent read FT write FT;
 
     property ShowCompCount: integer
         read FfShowCompCount write FfShowCompCount;
@@ -69,6 +66,7 @@ type
     function GetGanntColor(Asession: TGCSession):TColor;
     function IsBadDesignedChart:Boolean;
     function GetStatusByColor(nGanntIndex: Integer): TGCSessionStatus;
+  { Public declarations }
   published
     property IsDesigned: Boolean read FbDesigned write FbDesigned;
     property State: TfrmSessionsChartState read FnState write FnState;
@@ -160,8 +158,7 @@ begin
 //логика такая: новые сессии добавляются только в конец коллекции, следовательно
 //если ID в Gannt не совпадает то элемент надо грохнуть
   for nGanntIndex := 0 to Series1.Count -1 do
-{    if ((Series1.ValueColor[FCurrentIndex] = SESSIONS_CHART_COLOR_DESIGNED_BAD) or
-       (Series1.ValueColor[FCurrentIndex] = SESSIONS_CHART_COLOR_DESIGNED)) then} begin
+  begin
     nSessionIndex := GSessions.IndexDesignedByIdCollection(StrToInt(Series1.XLabel[nGanntIndex]));
     if nSessionIndex<>-1 then
       with GSessions.Items[nSessionIndex] do begin
@@ -174,11 +171,8 @@ end;
 
 
 procedure TfrmSessionsChart.DoDesign;
-//var min,max:Double;
 begin
   chartComps.BottomAxis.Automatic := False;
-//  if FStartTime > FStopTime then
-//    FStopTime := IncFStartTime
   if FStartTime <= chartComps.BottomAxis.Maximum then begin
     chartComps.BottomAxis.Minimum := FStartTime;
     chartComps.BottomAxis.Maximum := FStopTime;
@@ -189,26 +183,21 @@ begin
   end;
   chartComps.BottomAxis.Increment := (FStopTime - FStartTime) /12;
   chartComps.LeftAxis.Automatic := False;
-//'  chartComps.LeftAxis.Minimum := -1;
-//'  chartComps.LeftAxis.Maximum := CompsCount;
   chartComps.LeftAxis.Increment := 1;
   chartComps.LeftAxis.SetMinMax(FfMinCompIndex,
     IfThen(CompsCount<=FfShowCompCount,
     CompsCount-0.5,FfMinCompIndex+FfShowCompCount));
-//  sbarVertical.SetParams(Round(FfMinCompIndex*10),0,CompsCount*10-210);
   if CompsCount>FfShowCompCount then
     sbarVertical.Position := Round(FfMinCompIndex*10);
   chartComps.LeftAxis.LabelsOnAxis := False;
   chartComps.LeftAxis.DrawAxisLabel(0,1,180,'9');
-//	Series1.Pointer.VertSize:=1;
 end;
 
 procedure TfrmSessionsChart.chartCompsClickSeries(Sender: TCustomChart;
   Series: TChartSeries; ValueIndex: Integer; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if (Button = mbRight)
-      {and (GetStatusByColor(ValueIndex) = ssReserve)} then begin
+  if (Button = mbRight) then begin
     FCurrentSession := TGCSession(GSessions.FindItemID(
         StrToInt(Series1.XLabel[ValueIndex])));
     if (FCurrentSession <> nil)
@@ -263,7 +252,6 @@ begin
       FfMinCompIndex := CompsCount-20.5;
 
     FCurrentY := Y;
-//'    Series1.Repaint;
     DoDesign;
   end;
 end;
@@ -273,10 +261,6 @@ procedure TfrmSessionsChart.chartCompsMouseUp(Sender: TObject;
 var
   fY: Double;
 begin
-{  if (Button = mbRight) and not FbDesigned then begin
-    Series1.YValues[FCurrentIndex];
-    Series1.Repaint;
-  end;}
   if (Button = mbLeft) and FbDesigned then begin
     fY := RoundTo(Series1.YValues[FCurrentIndex],0);
     if (fY < 0) then

@@ -67,7 +67,7 @@ end;
 function TSendMail.Send: boolean;
 var
   res:Boolean;
-  IdEmailAddressItem: TIdEmailAddressItem;
+//  IdEmailAddressItem: TIdEmailAddressItem;
 begin
   res := False;
   FMessage.Subject := EncodeSubj(FMessage.Subject);
@@ -76,7 +76,7 @@ begin
       FSMTP.Connect;
       sleep(200);
 
-      IdEmailAddressItem := FMessage.Recipients.Add;
+//      IdEmailAddressItem := FMessage.Recipients.Add;
 
       FSMTP.Send(FMessage);
       _AddLog('Письмо отправлено!');
@@ -94,7 +94,6 @@ begin
     if FSMTP.Connected then FSMTP.Disconnect;
   end;
   Result := res;
-  result:=false;
 end;
 
 procedure TSendMail._AddLog(str: string);
