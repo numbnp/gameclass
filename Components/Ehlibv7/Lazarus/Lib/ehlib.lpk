@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="EhLib"/>
+    <Author Value="Dmitriy Bolshakov"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <IncludeAssertionCode Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <Checks>
+          <IOChecks Value="True"/>
+          <RangeChecks Value="True"/>
+          <OverflowChecks Value="True"/>
+          <StackChecks Value="True"/>
+        </Checks>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <UseHeaptrc Value="True"/>
+          <TrashVariables Value="True"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx4079="True" idx4080="True" idx4081="True" idx5023="True" idx5024="True" idx5057="True" idx5060="True"/>
+          <MsgFileName Value=""/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Description Value="Set of Components for Database Applications"/>
+    <License Value="Commercial"/>
+    <Version Major="7" Build="125"/>
+    <Files Count="53">
+      <Item1>
+        <Filename Value="GridsEh.pas"/>
+        <UnitName Value="GridsEh"/>
+      </Item1>
+      <Item2>
+        <Filename Value="GridToolCtrlsEh.pas"/>
+        <UnitName Value="GridToolCtrlsEh"/>
+      </Item2>
+      <Item3>
+        <Filename Value="ToolCtrlsEh.pas"/>
+        <UnitName Value="ToolCtrlsEh"/>
+      </Item3>
+      <Item4>
+        <Filename Value="DynVarsEh.pas"/>
+        <UnitName Value="DynVarsEh"/>
+      </Item4>
+      <Item5>
+        <Filename Value="EhLibConsts.pas"/>
+        <UnitName Value="EhLibConsts"/>
+      </Item5>
+      <Item6>
+        <Filename Value="ehliblcl.pas"/>
+        <UnitName Value="EhLibLCL"/>
+      </Item6>
+      <Item7>
+        <Filename Value="DBAxisGridsEh.pas"/>
+        <UnitName Value="DBAxisGridsEh"/>
+      </Item7>
+      <Item8>
+        <Filename Value="CalculatorEh.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="CalculatorEh"/>
+      </Item8>
+      <Item9>
+        <Filename Value="DBCtrlsEh.pas"/>
+        <UnitName Value="DBCtrlsEh"/>
+      </Item9>
+      <Item10>
+        <Filename Value="DBGridEhGrouping.pas"/>
+        <UnitName Value="DBGridEhGrouping"/>
+      </Item10>
+      <Item11>
+        <Filename Value="DBGridEhToolCtrls.pas"/>
+        <UnitName Value="DBGridEhToolCtrls"/>
+      </Item11>
+      <Item12>
+        <Filename Value="DBGridsEh.pas"/>
+        <UnitName Value="DBGridsEh"/>
+      </Item12>
+      <Item13>
+        <Filename Value="DBLookupEh.pas"/>
+        <UnitName Value="DBLookupEh"/>
+      </Item13>
+      <Item14>
+        <Filename Value="DBLookupGridsEh.pas"/>
+        <UnitName Value="DBLookupGridsEh"/>
+      </Item14>
+      <Item15>
+        <Filename Value="DBLookupUtilsEh.pas"/>
+        <UnitName Value="DBLookupUtilsEh"/>
+      </Item15>
+      <Item16>
+        <Filename Value="DBSumLst.pas"/>
+        <UnitName Value="DBSumLst"/>
+      </Item16>
+      <Item17>
+        <Filename Value="DbUtilsEh.pas"/>
+        <UnitName Value="DbUtilsEh"/>
+      </Item17>
+      <Item18>
+        <Filename Value="DropDownFormEh.pas"/>
+        <UnitName Value="DropDownFormEh"/>
+      </Item18>
+      <Item19>
+        <Filename Value="MemTableDataEh.pas"/>
+        <UnitName Value="MemTableDataEh"/>
+      </Item19>
+      <Item20>
+        <Filename Value="MemTableEh.pas"/>
+        <UnitName Value="MemTableEh"/>
+      </Item20>
+      <Item21>
+        <Filename Value="MemTreeEh.pas"/>
+        <UnitName Value="MemTreeEh"/>
+      </Item21>
+      <Item22>
+        <Filename Value="DataDriverEh.pas"/>
+        <UnitName Value="DataDriverEh"/>
+      </Item22>
+      <Item23>
+        <Filename Value="DBGridEhFindDlgs.pas"/>
+        <UnitName Value="DBGridEhFindDlgs"/>
+      </Item23>
+      <Item24>
+        <Filename Value="DBGridEhImpExp.pas"/>
+        <UnitName Value="DBGridEhImpExp"/>
+      </Item24>
+      <Item25>
+        <Filename Value="DBGridEhSimpleFilterDlg.pas"/>
+        <UnitName Value="DBGridEhSimpleFilterDlg"/>
+      </Item25>
+      <Item26>
+        <Filename Value="DBVertGridsEh.pas"/>
+        <UnitName Value="DBVertGridsEh"/>
+      </Item26>
+      <Item27>
+        <Filename Value="ehlib.pas"/>
+        <UnitName Value="EhLib"/>
+      </Item27>
+      <Item28>
+        <Filename Value="EhLibGIFImage.pas"/>
+        <UnitName Value="EhLibGIFImage"/>
+      </Item28>
+      <Item29>
+        <Filename Value="EhLibImages.pas"/>
+        <UnitName Value="EhLibImages"/>
+      </Item29>
+      <Item30>
+        <Filename Value="EhLibJPegImage.pas"/>
+        <UnitName Value="EhLibJPegImage"/>
+      </Item30>
+      <Item31>
+        <Filename Value="EhLibMTE.pas"/>
+        <UnitName Value="EhLibMTE"/>
+      </Item31>
+      <Item32>
+        <Filename Value="EhLibPNGImage.pas"/>
+        <UnitName Value="EhLibPNGImage"/>
+      </Item32>
+      <Item33>
+        <Filename Value="MemoEditFormsEh.pas"/>
+        <UnitName Value="MemoEditFormsEh"/>
+      </Item33>
+      <Item34>
+        <Filename Value="ObjectInspectorEh.pas"/>
+        <UnitName Value="ObjectInspectorEh"/>
+      </Item34>
+      <Item35>
+        <Filename Value="PictureEditFormsEh.pas"/>
+        <UnitName Value="PictureEditFormsEh"/>
+      </Item35>
+      <Item36>
+        <Filename Value="PrnDgDlg.pas"/>
+        <UnitName Value="PrnDgDlg"/>
+      </Item36>
+      <Item37>
+        <Filename Value="PrntsEh.pas"/>
+        <UnitName Value="PrntsEh"/>
+      </Item37>
+      <Item38>
+        <Filename Value="PropFilerEh.pas"/>
+        <UnitName Value="PropFilerEh"/>
+      </Item38>
+      <Item39>
+        <Filename Value="PropStorageEh.pas"/>
+        <UnitName Value="PropStorageEh"/>
+      </Item39>
+      <Item40>
+        <Filename Value="SideOwnedComponentsEh.pas"/>
+        <UnitName Value="SideOwnedComponentsEh"/>
+      </Item40>
+      <Item41>
+        <Filename Value="EhLibDesignAbout.pas"/>
+        <UnitName Value="EhLibDesignAbout"/>
+      </Item41>
+      <Item42>
+        <Filename Value="EhLibReg.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="EhLibReg"/>
+      </Item42>
+      <Item43>
+        <Filename Value="MemTableDesignEh.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="MemTableDesignEh"/>
+      </Item43>
+      <Item44>
+        <Filename Value="GridEhEd.pas"/>
+        <UnitName Value="GridEhEd"/>
+      </Item44>
+      <Item45>
+        <Filename Value="DBVertGridsDesignEditorEh.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="DBVertGridsDesignEditorEh"/>
+      </Item45>
+      <Item46>
+        <Filename Value="SQLDBDataDriverEh.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="SQLDBDataDriverEh"/>
+      </Item46>
+      <Item47>
+        <Filename Value="EditPivotFieldFormEh.dfm"/>
+        <Type Value="Text"/>
+      </Item47>
+      <Item48>
+        <Filename Value="EditPivotFieldFormEh.pas"/>
+        <UnitName Value="EditPivotFieldFormEh"/>
+      </Item48>
+      <Item49>
+        <Filename Value="PivotGridPivotFieldsEditors.dfm"/>
+        <Type Value="Text"/>
+      </Item49>
+      <Item50>
+        <Filename Value="PivotGridPivotFieldsEditors.pas"/>
+        <UnitName Value="PivotGridPivotFieldsEditors"/>
+      </Item50>
+      <Item51>
+        <Filename Value="PivotGridRegEh.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PivotGridRegEh"/>
+      </Item51>
+      <Item52>
+        <Filename Value="PivotGridsEh.pas"/>
+        <UnitName Value="PivotGridsEh"/>
+      </Item52>
+      <Item53>
+        <Filename Value="PivotGridToolsEh.pas"/>
+        <UnitName Value="PivotGridToolsEh"/>
+      </Item53>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="4">
+      <Item1>
+        <PackageName Value="IDEIntf"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="Printer4Lazarus"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>

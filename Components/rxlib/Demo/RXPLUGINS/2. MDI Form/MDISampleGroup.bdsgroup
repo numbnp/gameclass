@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">Default.Personality</Option>
+      <Option Name="ProjectType"></Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{C04DE4F1-78D6-4AC1-8AA0-6D1B53C744EA}</Option>
+    </Option>
+  </PersonalityInfo>
+  <Default.Personality>
+    
+    <Projects>
+      <Projects Name="MDIPlugin.dll">MDIPlugin.bdsproj</Projects>
+      <Projects Name="MDISample.exe">MDISample.bdsproj</Projects>
+      <Projects Name="Targets">MDIPlugin.dll MDISample.exe</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>

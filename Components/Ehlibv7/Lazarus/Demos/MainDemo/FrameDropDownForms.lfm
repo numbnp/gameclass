@@ -1,0 +1,282 @@
+object frFrameDropDownForms: TfrFrameDropDownForms
+  Left = 0
+  Height = 434
+  Top = 0
+  Width = 499
+  ClientHeight = 434
+  ClientWidth = 499
+  TabOrder = 0
+  DesignLeft = 472
+  DesignTop = 286
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 499
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 499
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 499
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+    object Memo1: TMemo
+      Left = 211
+      Height = 17
+      Top = 6
+      Width = 468
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderStyle = bsNone
+      Lines.Strings = (
+        'Advanced way of using DropDownForms.'
+      )
+      ParentColor = True
+      ReadOnly = True
+      TabOrder = 0
+      WordWrap = False
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 401
+    Top = 33
+    Width = 499
+    Align = alClient
+    ColumnDefValues.AlwaysShowEditButton = True
+    DataSource = DataSource1
+    DynProps = <>
+    Flat = True
+    FooterParams.Color = clWindow
+    FrozenCols = 2
+    IndicatorOptions = [gioShowRowIndicatorEh]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+    TabOrder = 1
+    TitleParams.MultiTitle = True
+    OnActiveGroupingStructChanged = DBGridEh1ActiveGroupingStructChanged
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PartNo'
+        Footers = <>
+        Title.Caption = 'Part No'
+        Width = 48
+      end    
+      item
+        DynProps = <>
+        DropDownFormParams.DropDownFormClassName = 'TDropDownMemoEdit'
+        EditButtons = <>
+        FieldName = 'Description'
+        Footers = <>
+        Title.Caption = 'Part Description'
+        Width = 134
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'VendorNo'
+        Footers = <>
+        Title.Caption = 'Vendor|No'
+        Width = 38
+      end    
+      item
+        DynProps = <>
+        DropDownFormParams.DropDownFormClassName = 'TDDFVendors'
+        DropDownFormParams.PassParams = pspRecordValuesEh
+        DropDownFormParams.AssignBackFieldNames = 'VendorNo;VendorName'
+        EditButtons = <>
+        FieldName = 'VendorName'
+        Footers = <>
+        Title.Caption = 'Vendor|Name'
+        Width = 145
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Cost'
+        Footers = <>
+        Width = 61
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ListPrice'
+        Footers = <>
+        Width = 54
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'OnHand'
+        Footers = <>
+        Width = 40
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'OnOrder'
+        Footers = <>
+        Width = 47
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object mtVendors: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh2
+    left = 208
+    top = 200
+  end
+  object MemTableEh1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 40
+    top = 200
+    object MemTableEh1Cost: TFloatField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'Cost'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      MaxValue = 0
+      MinValue = 0
+    end
+    object MemTableEh1Description: TWideStringField
+      DisplayWidth = 30
+      FieldKind = fkData
+      FieldName = 'Description'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 30
+    end
+    object MemTableEh1ListPrice: TFloatField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'ListPrice'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      MaxValue = 0
+      MinValue = 0
+    end
+    object MemTableEh1OnHand: TFloatField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'OnHand'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      MaxValue = 0
+      MinValue = 0
+    end
+    object MemTableEh1OnOrder: TFloatField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'OnOrder'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      MaxValue = 0
+      MinValue = 0
+    end
+    object MemTableEh1PartNo: TAutoIncField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'PartNo'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInWhere]
+      ReadOnly = True
+      Required = False
+    end
+    object MemTableEh1VendorNo: TIntegerField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'VendorNo'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object MemTableEh1VandorName: TStringField
+      DisplayWidth = 200
+      FieldKind = fkData
+      FieldName = 'VendorName'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 200
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 120
+    top = 200
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select * from parts'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 40
+    top = 272
+  end
+  object SQLDataDriverEh2: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select * from vendors'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 208
+    top = 268
+  end
+end

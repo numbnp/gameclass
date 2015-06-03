@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B106808E-988D-4A52-A521-F19E3B78656A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="EhLibBDEDataDrivers210.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DclEhLibBDEDataDrivers210.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EhLibBDEDataDrivers210">
+        <MSBuild Projects="EhLibBDEDataDrivers210.dproj"/>
+    </Target>
+    <Target Name="EhLibBDEDataDrivers210:Clean">
+        <MSBuild Projects="EhLibBDEDataDrivers210.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EhLibBDEDataDrivers210:Make">
+        <MSBuild Projects="EhLibBDEDataDrivers210.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DclEhLibBDEDataDrivers210">
+        <MSBuild Projects="DclEhLibBDEDataDrivers210.dproj"/>
+    </Target>
+    <Target Name="DclEhLibBDEDataDrivers210:Clean">
+        <MSBuild Projects="DclEhLibBDEDataDrivers210.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DclEhLibBDEDataDrivers210:Make">
+        <MSBuild Projects="DclEhLibBDEDataDrivers210.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EhLibBDEDataDrivers210;DclEhLibBDEDataDrivers210"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EhLibBDEDataDrivers210:Clean;DclEhLibBDEDataDrivers210:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EhLibBDEDataDrivers210:Make;DclEhLibBDEDataDrivers210:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

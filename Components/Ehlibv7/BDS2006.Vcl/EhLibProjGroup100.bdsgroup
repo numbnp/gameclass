@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<PersonalityInfo>
+		<Option>
+			<Option Name="Personality">Default.Personality</Option>
+			<Option Name="ProjectType"></Option>
+			<Option Name="Version">1.0</Option>
+			<Option Name="GUID">{761F1125-0933-47B2-928F-9CBA1D0C9026}</Option>
+		</Option>
+	</PersonalityInfo>
+	<Default.Personality>  <Projects>
+      <Projects Name="EhLib100.bpl">EhLib100.bdsproj</Projects>
+      <Projects Name="DclEhLib100.bpl">DclEhLib100.bdsproj</Projects>
+      <Projects Name="EhLibADODataDrivers100.bpl">EhLibADODataDrivers100.bdsproj</Projects>
+      <Projects Name="EhLibBDEDataDrivers100.bpl">EhLibBDEDataDrivers100.bdsproj</Projects>
+      <Projects Name="EhLibDBXDataDrivers100.bpl">EhLibDBXDataDrivers100.bdsproj</Projects>
+      <Projects Name="EhLibIBXDataDrivers100.bpl">EhLibIBXDataDrivers100.bdsproj</Projects>
+      <Projects Name="DclEhLibADODataDrivers100.bpl">DclEhLibADODataDrivers100.bdsproj</Projects>
+      <Projects Name="DclEhLibBDEDataDrivers100.bpl">DclEhLibBDEDataDrivers100.bdsproj</Projects>
+      <Projects Name="DclEhLibDBXDataDrivers100.bpl">DclEhLibDBXDataDrivers100.bdsproj</Projects>
+      <Projects Name="DclEhLibIBXDataDrivers100.bpl">DclEhLibIBXDataDrivers100.bdsproj</Projects>
+      <Projects Name="Targets">EhLib100.bpl DclEhLib100.bpl EhLibADODataDrivers100.bpl EhLibBDEDataDrivers100.bpl EhLibDBXDataDrivers100.bpl EhLibIBXDataDrivers100.bpl DclEhLibADODataDrivers100.bpl DclEhLibBDEDataDrivers100.bpl DclEhLibDBXDataDrivers100.bpl DclEhLibIBXDataDrivers100.bpl</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>

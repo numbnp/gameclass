@@ -1,0 +1,244 @@
+object frRowAsPanel: TfrRowAsPanel
+  Left = 0
+  Height = 392
+  Top = 0
+  Width = 732
+  ClientHeight = 392
+  ClientWidth = 732
+  TabOrder = 0
+  DesignLeft = 361
+  DesignTop = 311
+  object DBGridEh5: TDBGridEh
+    Left = 0
+    Height = 359
+    Top = 33
+    Width = 732
+    Align = alClient
+    AutoFitColWidths = True
+    Border.EdgeBorders = [ebTop, ebRight]
+    DataSource = DataSource1
+    DrawGraphicData = True
+    DrawMemoText = True
+    DynProps = <>
+    Flat = True
+    FooterParams.Color = clWindow
+    GridLineParams.ColorScheme = glcsThemedEh
+    IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghRowHighlight, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+    RowDetailPanel.Height = 300
+    RowSizingAllowed = True
+    RowPanel.Active = True
+    TabOrder = 0
+    VertScrollBar.SmoothStep = True
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SpeciesId'
+        Footers = <>
+        Width = 49
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Notes'
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -9
+        Font.Name = 'Microsoft Sans Serif'
+        Footers = <>
+        Width = 480
+        InRowLinePos = 1
+        InRowLineHeight = 4
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Category'
+        Footers = <>
+        Width = 91
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Common_name'
+        Footers = <>
+        Width = 115
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Species_Name'
+        Footers = <>
+        Title.Caption = 'Species Name'
+        Width = 152
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Length'
+        Footers = <>
+        Title.Caption = 'Length (cm)'
+        Width = 69
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Graphic'
+        Footers = <>
+        Title.Alignment = taCenter
+        Width = 203
+        InRowLineHeight = 5
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Length_In'
+        Footers = <>
+        Visible = False
+        Width = 47
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 732
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 732
+    TabOrder = 1
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 732
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label2: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 384
+    top = 224
+  end
+  object MemTableEh1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    AfterOpen = MemTableEh1AfterOpen
+    left = 384
+    top = 280
+    object MemTableEh1SpeciesId: TAutoIncField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'SpeciesId'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object MemTableEh1Category: TStringField
+      DisplayWidth = 50
+      FieldKind = fkData
+      FieldName = 'Category'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object MemTableEh1Common_name: TStringField
+      DisplayWidth = 255
+      FieldKind = fkData
+      FieldName = 'Common_name'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 255
+    end
+    object MemTableEh1Species_Name: TStringField
+      DisplayWidth = 255
+      FieldKind = fkData
+      FieldName = 'Species_Name'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 255
+    end
+    object MemTableEh1Length: TFloatField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'Length'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      MaxValue = 0
+      MinValue = 0
+      Precision = -1
+    end
+    object MemTableEh1Notes: TMemoField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'Notes'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      BlobType = ftBlob
+      Transliterate = False
+    end
+    object MemTableEh1Graphic: TGraphicField
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'Graphic'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      BlobType = ftGraphic
+    end
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select * from biolife'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh2
+    MacroVars.Macros = <>
+    OnAssignCommandParam = SQLDataDriverEh1AssignCommandParam
+    OnBuildDataStruct = SQLDataDriverEh1BuildDataStruct
+    left = 384
+    top = 336
+  end
+end

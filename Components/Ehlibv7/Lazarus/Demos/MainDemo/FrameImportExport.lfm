@@ -1,0 +1,527 @@
+object frImportExport: TfrImportExport
+  Left = 0
+  Height = 387
+  Top = 0
+  Width = 560
+  ClientHeight = 387
+  ClientWidth = 560
+  TabOrder = 0
+  DesignLeft = 312
+  DesignTop = 288
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 354
+    Top = 33
+    Width = 400
+    Align = alClient
+    AutoFitColWidths = True
+    Border.Color = clBtnShadow
+    Border.EdgeBorders = []
+    DataSource = DataSource1
+    DynProps = <>
+    EditActions = [geaCutEh, geaCopyEh, geaPasteEh, geaDeleteEh, geaSelectAllEh]
+    EvenRowColor = clWindow
+    Flat = True
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Microsoft Sans Serif'
+    FooterRowCount = 1
+    FooterParams.Font.Color = clWindowText
+    FooterParams.Font.Height = -11
+    FooterParams.Font.Name = 'Microsoft Sans Serif'
+    FooterParams.Font.Style = [fsBold]
+    FooterParams.ParentFont = False
+    FooterParams.RowHeight = 5
+    FooterParams.RowLines = 1
+    GridLineParams.GridBoundaries = True
+    GridLineParams.ColorScheme = glcsThemedEh
+    IndicatorOptions = [gioShowRecNoEh]
+    IndicatorParams.FillStyle = cfstSolidEh
+    IndicatorParams.RecNoShowStep = 5
+    IndicatorTitle.ShowDropDownSign = True
+    IndicatorTitle.TitleButton = True
+    OddRowColor = 16772332
+    Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghTraceColSizing, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+    ParentFont = False
+    ParentShowHint = False
+    RowSizingAllowed = True
+    SearchPanel.FilterEnabled = False
+    ShowHint = True
+    EditButtonsShowOptions = [sebShowOnlyForCurRowEh]
+    SortLocal = True
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    STFilter.FilterButtonDrawTime = fbdtWhenCellHotEh
+    SumList.Active = True
+    SumList.VirtualRecords = True
+    TabOrder = 0
+    TitleParams.SecondColor = 16382457
+    TitleParams.MultiTitle = True
+    TitleParams.SortMarkerStyle = smstFrameEh
+    TitleParams.VTitleMargin = 5
+    TitleParams.FillStyle = cfstGradientEh
+    Columns = <    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = False
+        DynProps = <>
+        DropDownSizing = True
+        EditButtons = <>
+        FieldName = 'VNo'
+        Footer.Value = 'Sum and count'
+        Footer.ValueType = fvtStaticText
+        Footers = <        
+          item
+            Value = 'Sum of cost'
+            ValueType = fvtStaticText
+          end        
+          item
+            Value = 'Record count'
+            ValueType = fvtStaticText
+          end>
+        Title.Caption = 'Vendor of parts|Vendor Number|1 '
+        Title.TitleButton = True
+        ToolTips = True
+        Width = 98
+      end    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = False
+        DynProps = <>
+        DropDownBox.ColumnDefValues.EndEllipsis = True
+        DropDownBox.ColumnDefValues.Title.ToolTips = True
+        DropDownBox.ColumnDefValues.ToolTips = True
+        DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
+        DropDownBox.UseMultiTitle = True
+        DropDownRows = 14
+        DropDownShowTitles = True
+        DropDownSizing = True
+        DropDownSpecRow.CellsText = '( Empty ); -; -; -'
+        DropDownSpecRow.Font.Color = clWindowText
+        DropDownSpecRow.Font.Height = -11
+        DropDownSpecRow.Font.Name = 'Microsoft Sans Serif'
+        DropDownSpecRow.Visible = True
+        DropDownWidth = -1
+        EditButtons = <>
+        FieldName = 'VName1'
+        Footer.Alignment = taCenter
+        Footer.ValueType = fvtCount
+        Footers = <        
+          item
+            Alignment = taCenter
+            FieldName = 'PCost'
+            ValueType = fvtSum
+          end>
+        LookupDisplayFields = 'VendorName;City;State;FAX'
+        STFilter.DataField = 'VNo'
+        STFilter.KeyField = 'VendorNo'
+        STFilter.ListField = 'VendorName'
+        Title.Caption = 'Vendor of parts|Vendor Name|2'
+        ToolTips = True
+        Width = 121
+      end    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = False
+        DynProps = <>
+        DropDownSizing = True
+        EditButtons = <>
+        FieldName = 'PNo'
+        Footers = <>
+        Title.Caption = 'Parts|PN|3 '
+        Title.TitleButton = True
+        ToolTips = True
+        Width = 56
+      end    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = False
+        DynProps = <>
+        DropDownSizing = True
+        EditButtons = <>
+        FieldName = 'PDescription'
+        Footers = <        
+          item
+            Value = 'Sum'
+            ValueType = fvtStaticText
+          end        
+          item
+            Value = 'Vendor No'
+            ValueType = fvtStaticText
+          end>
+        STFilter.DataField = 'PDescription'
+        STFilter.KeyField = 'Description'
+        STFilter.ListField = 'Description'
+        Title.Caption = 'Parts|Description|4 '
+        Title.TitleButton = True
+        ToolTips = True
+        Width = 133
+      end    
+      item
+        AlwaysShowEditButton = True
+        ButtonStyle = cbsUpDown
+        Checkboxes = False
+        DynProps = <>
+        DropDownSizing = True
+        EditButton.Style = ebsUpDownEh
+        EditButton.Visible = True
+        EditButtons = <>
+        FieldName = 'PCost'
+        Footer.ValueType = fvtSum
+        Footers = <        
+          item
+            ValueType = fvtSum
+          end        
+          item
+            FieldName = 'VNo'
+            ValueType = fvtFieldValue
+          end>
+        Increment = 0.1
+        Title.Caption = 'Parts|Cost|5 '
+        Title.TitleButton = True
+        Title.SortIndex = 1
+        Title.SortMarker = smDownEh
+        ToolTips = True
+        Width = 89
+      end    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = False
+        DynProps = <>
+        DropDownSizing = True
+        EditButtons = <>
+        FieldName = 'IQty'
+        Footers = <>
+        Title.Caption = 'Items|Qry|6 '
+        Title.TitleButton = True
+        Title.SortIndex = 2
+        Title.SortMarker = smDownEh
+        ToolTips = True
+        Width = 33
+      end    
+      item
+        AlwaysShowEditButton = True
+        Checkboxes = True
+        DynProps = <>
+        DropDownSizing = True
+        EditButtons = <>
+        FieldName = 'VPreferred'
+        Footers = <>
+        NotInKeyListIndex = 2
+        Title.Caption = 'Preferred'
+        Title.Hint = 'Preferred'
+        Title.ImageIndex = 0
+        Title.TitleButton = True
+        ToolTips = True
+        Width = 23
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object Panel1: TPanel
+    Left = 400
+    Height = 354
+    Top = 33
+    Width = 160
+    Align = alRight
+    BevelOuter = bvNone
+    ClientHeight = 354
+    ClientWidth = 160
+    TabOrder = 1
+    object RBSaveAll: TRadioButton
+      Left = 10
+      Height = 19
+      Top = 7
+      Width = 59
+      Caption = 'Save all'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object RadioButton2: TRadioButton
+      Left = 10
+      Height = 19
+      Top = 27
+      Width = 90
+      Caption = 'Save selected'
+      TabOrder = 1
+    end
+    object btnExportAsTxt: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 2
+    end
+    object btnExportAsUnicodeText: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 3
+    end
+    object btnExportAsCSV: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 4
+    end
+    object btnExportAsHTML: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 5
+    end
+    object btnExportAsRTF: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 6
+    end
+    object btnExportAsXLS: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 7
+    end
+    object btnExportAsOLEXLS: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 8
+    end
+    object btnImportAsTXT: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 9
+    end
+    object btnImportAsUnicodeText: TButton
+      Left = 0
+      Height = 0
+      Top = 0
+      Width = 0
+      TabOrder = 10
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 560
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 560
+    TabOrder = 2
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 560
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object qrVendors: TMemTableEh
+    Params = <>
+    DataDriver = ddrVendors
+    left = 200
+    top = 304
+  end
+  object ddrVendors: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select * from Vendors'
+      'order by VendorName'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 248
+    top = 304
+  end
+  object DataSource1: TDatasource
+    DataSet = mtQuery1
+    left = 170
+    top = 348
+  end
+  object mtQuery1: TMemTableEh
+    CachedUpdates = True
+    Filtered = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = ddrData1
+    left = 206
+    top = 340
+    object mtQuery1VNo: TFloatField
+      DisplayLabel = 'Vendor of parts|Vendor Number|1'
+      DisplayWidth = 17
+      FieldKind = fkData
+      FieldName = 'VNo'
+      Index = 0
+      LookupCache = False
+      Origin = '"Vendors.DB".VendorNo'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      DisplayFormat = 'VN 0000'
+      MaxValue = 0
+      MinValue = 0
+    end
+    object mtQuery1VName: TStringField
+      DisplayLabel = 'Vendor of parts|Vendor Name|2'
+      DisplayWidth = 24
+      FieldKind = fkData
+      FieldName = 'VName'
+      Index = 1
+      LookupCache = False
+      Origin = '"Vendors.DB".VendorName'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 30
+    end
+    object mtQuery1PNo: TFloatField
+      Alignment = taLeftJustify
+      DisplayLabel = 'Parts|PN|3'
+      DisplayWidth = 15
+      FieldKind = fkData
+      FieldName = 'PNo'
+      Index = 2
+      LookupCache = False
+      Origin = '"PARTS.DB".PartNo'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      DisplayFormat = 'PN-00000'
+      MaxValue = 0
+      MinValue = 0
+    end
+    object mtQuery1PDescription: TStringField
+      DisplayLabel = 'Parts|Description|4'
+      DisplayWidth = 18
+      FieldKind = fkData
+      FieldName = 'PDescription'
+      Index = 3
+      LookupCache = False
+      Origin = '"PARTS.DB".Description'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 30
+    end
+    object mtQuery1PCost: TCurrencyField
+      DisplayLabel = 'Parts|Cost|5'
+      DisplayWidth = 9
+      FieldKind = fkData
+      FieldName = 'PCost'
+      Index = 4
+      LookupCache = False
+      Origin = '"PARTS.DB".Cost'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      DisplayFormat = '#,##0.0000'
+      MaxValue = 0
+      MinValue = 0
+    end
+    object mtQuery1IQty: TIntegerField
+      DisplayLabel = 'Items|Qry|6'
+      DisplayWidth = 21
+      FieldKind = fkData
+      FieldName = 'IQty'
+      Index = 5
+      LookupCache = False
+      Origin = '"ITEMS.DB".Qty'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object mtQuery1VName1: TStringField
+      DisplayWidth = 20
+      FieldKind = fkLookup
+      FieldName = 'VName1'
+      Index = 6
+      KeyFields = 'VNo'
+      LookupCache = False
+      LookupDataSet = qrVendors
+      LookupKeyFields = 'VendorNo'
+      LookupResultField = 'VendorName'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object mtQuery1VPreferred: TBooleanField
+      DefaultExpression = 'True'
+      DisplayWidth = 5
+      FieldKind = fkData
+      FieldName = 'VPreferred'
+      Index = 7
+      LookupCache = False
+      Origin = '"vendors.DB".Preferred'
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      DisplayValues = 'True;False'
+    end
+  end
+  object ddrData1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'SELECT'
+      '       Vendors.VendorNo As VNo,'
+      '       Vendors.VendorName As VName,'
+      '       Vendors.Preferred As VPreferred,'
+      '       Parts.PartNo As PNo,'
+      '       Parts.Description As PDescription,'
+      '       Parts.Cost As PCost,'
+      '       Items.Qty As IQty'
+      ''
+      'FROM Vendors, Parts, Items'
+      'WHERE Vendors.VendorNo = Parts.VendorNo AND'
+      '       Parts.PartNo = Items.PartNo'
+      'ORDER BY Items.Qty, Parts.Cost'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 248
+    top = 344
+  end
+  object SaveDialog1: TSaveDialog
+    left = 384
+    top = 112
+  end
+  object OpenDialog1: TOpenDialog
+    left = 384
+    top = 168
+  end
+end

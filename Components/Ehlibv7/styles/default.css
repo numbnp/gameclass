@@ -1,0 +1,53 @@
+body {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+}
+
+td {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+}
+
+th {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+}.body-text {
+
+}
+.body-text-1 {
+	margin-top: 0.5em;
+}
+.body-text-1-red-line {
+	margin-top: 0.5em;
+	text-indent: -1em;
+}
+
+
+.MainTitle {
+	text-decoration: underline;
+}
+.FixedText {
+	font-family: "Courier New", Courier, monospace;
+}
+p {
+	margin-top: 0em;
+	margin-bottom: 0em;
+}
+
+blockquote {
+	margin-top: 0em;
+	margin-bottom: 0em;
+}
+#margin0-5 {
+	margin-top: 0.5em;
+}
+#margin-0-5 {
+	margin-top: -0.5em;
+	margin-bottom: -0.5em;
+}
+#left-margin-0-5 {
+	margin-left: -1.2em;
+
+}
+#red-line {
+	margin-top: 0.5em;
+	text-indent: -1em;
+
+}

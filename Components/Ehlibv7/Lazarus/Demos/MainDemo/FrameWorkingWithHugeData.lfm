@@ -1,0 +1,355 @@
+object frWorkingWithHugeData: TfrWorkingWithHugeData
+  Left = 0
+  Height = 471
+  Top = 0
+  Width = 628
+  ClientHeight = 471
+  ClientWidth = 628
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  ParentColor = False
+  ParentFont = False
+  TabOrder = 0
+  DesignLeft = 611
+  DesignTop = 229
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 628
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 628
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 628
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label2: TLabel
+      Left = 22
+      Height = 23
+      Top = 4
+      Width = 239
+      Caption = 'Working With Huge Data'
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = clNavy
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 49
+    Top = 33
+    Width = 628
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 49
+    ClientWidth = 628
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 8
+      Height = 13
+      Top = 2
+      Width = 364
+      Caption = 'To make measuring actual, Run Application in "Run Without Debuging" mode'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 336
+      Height = 13
+      Top = 27
+      Width = 90
+      Caption = 'Action Time (msec)'
+      ParentColor = False
+    end
+    object btnSmallTable: TButton
+      Left = 8
+      Height = 25
+      Top = 20
+      Width = 98
+      Caption = 'Open Small Table'
+      OnClick = btnSmallTableClick
+      TabOrder = 0
+    end
+    object btnBigTable: TButton
+      Left = 112
+      Height = 25
+      Top = 20
+      Width = 97
+      Caption = 'Open Big Table'
+      OnClick = btnBigTableClick
+      TabOrder = 1
+    end
+    object DBEditEh1: TDBEditEh
+      Left = 432
+      Height = 21
+      Top = 24
+      Width = 121
+      CharCase = ecNormal
+      DynProps = <>
+      EditButtons = <>
+      MaxLength = 0
+      TabOrder = 2
+      Visible = True
+    end
+    object btnSortBy: TButton
+      Left = 215
+      Height = 25
+      Top = 20
+      Width = 106
+      Caption = 'Sort by [asciiname]'
+      OnClick = btnSortByClick
+      TabOrder = 3
+    end
+    object ProgressBar1: TProgressBar
+      Left = 432
+      Height = 17
+      Top = 3
+      Width = 121
+      TabOrder = 4
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 389
+    Top = 82
+    Width = 628
+    Align = alClient
+    Border.ExtendedDraw = True
+    Border.EdgeBorders = [ebTop]
+    ColumnDefValues.Title.TitleButton = True
+    DataSource = DataSource1
+    DynProps = <>
+    Flat = True
+    GridLineParams.ColorScheme = glcsThemedEh
+    GridLineParams.VertEmptySpaceStyle = dessSolidEh
+    HorzScrollBar.ExtraPanel.Visible = True
+    HorzScrollBar.ExtraPanel.VisibleItems = [gsbiRecordsInfoEh, gsbiSelAggregationInfoEh]
+    IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+    IndicatorParams.RecNoShowStep = 10
+    OptionsEh = [dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghExtendVertLines]
+    SearchPanel.Enabled = True
+    SortLocal = True
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    TabOrder = 2
+    TitleParams.Font.Color = clWindowText
+    TitleParams.Font.Height = -11
+    TitleParams.Font.Name = 'Tahoma'
+    TitleParams.ParentFont = False
+    TitleParams.SortMarkerStyle = smstFrameEh
+    OnSortMarkingChanged = DBGridEh1SortMarkingChanged
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'geonameid'
+        Footers = <>
+        Width = 59
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'asciiname'
+        Footers = <>
+        Width = 113
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'population'
+        Footers = <>
+        Width = 68
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'timezone'
+        Footers = <>
+        Width = 79
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'latitude'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'gname'
+        Footers = <>
+        Width = 123
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'longitude'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'feature_class'
+        Footers = <>
+        Width = 75
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'feature_code'
+        Footers = <>
+        Width = 80
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'country_code'
+        Footers = <>
+        Width = 78
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'cc2'
+        Footers = <>
+        Width = 29
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin1_code'
+        Footers = <>
+        Width = 68
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin2_code'
+        Footers = <>
+        Width = 53
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin3_code'
+        Footers = <>
+        Width = 24
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin4_code'
+        Footers = <>
+        Width = 27
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'elevation'
+        Footers = <>
+        Width = 54
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'dem'
+        Footers = <>
+        Width = 52
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'modification_date'
+        Footers = <>
+        Width = 82
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '*'
+      'from'
+      '  %Table_name%'
+      'where'
+      ' 1=1 %Filter%'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = SQLConnectionProviderEh1
+    MacroVars.SpecMacrosUsages = [smuUseFilterMacroEh, smuFilterWithANDPrecedingEh, smuSortOrderAsOrderByClauseEh]
+    MacroVars.Macros = <    
+      item
+        Name = '%Table_name%'
+        Value = 'Cities1000Small'
+      end>
+    left = 216
+    top = 248
+  end
+  object DataSetDriverEh1: TDataSetDriverEh
+    left = 296
+    top = 336
+  end
+  object MemTableEh1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 312
+    top = 280
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 408
+    top = 280
+  end
+  object SQLConnectionProviderEh1: TSQLDBConnectionProviderEh
+    Connection = ODBCConnection1
+    ServerType = 'MSAccess'
+    left = 96
+    top = 280
+  end
+  object ODBCConnection1: TODBCConnection
+    Connected = True
+    LoginPrompt = False
+    AfterConnect = ODBCConnection1AfterConnect
+    BeforeConnect = ODBCConnection1BeforeConnect
+    KeepConnection = False
+    Params.Strings = (
+      'DBQ=C:\Delphi7\EhLib\Demos\Data\cities10000.mdb'
+    )
+    Transaction = SQLTransaction1
+    LogEvents = []
+    Driver = 'Microsoft Access Driver (*.mdb)'
+    left = 96
+    top = 344
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Database = ODBCConnection1
+    left = 96
+    top = 400
+  end
+end

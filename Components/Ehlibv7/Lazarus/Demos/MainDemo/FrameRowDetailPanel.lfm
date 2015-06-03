@@ -1,0 +1,625 @@
+object frRowDetailPanel: TfrRowDetailPanel
+  Left = 0
+  Height = 354
+  Top = 0
+  Width = 519
+  ClientHeight = 354
+  ClientWidth = 519
+  TabOrder = 0
+  DesignLeft = 465
+  DesignTop = 229
+  object DBGridEh7: TDBGridEh
+    Left = 0
+    Height = 321
+    Top = 33
+    Width = 519
+    Align = alClient
+    AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
+    Border.EdgeBorders = [ebTop, ebBottom]
+    ColumnDefValues.AlwaysShowEditButton = True
+    ColumnDefValues.Title.TitleButton = True
+    ColumnDefValues.ToolTips = True
+    DataSource = dsCustomersRDP
+    DynProps = <>
+    EditActions = [geaCopyEh, geaSelectAllEh]
+    Flat = True
+    FooterRowCount = 1
+    FooterParams.Color = clBtnFace
+    IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+    IndicatorParams.RecNoShowStep = 10
+    IndicatorTitle.ShowDropDownSign = True
+    IndicatorTitle.TitleButton = True
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghFixed3D, dghFooter3D, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghTraceColSizing, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+    ParentShowHint = False
+    RowDetailPanel.Active = True
+    RowDetailPanel.Height = 220
+    RowSizingAllowed = True
+    ShowHint = True
+    SortLocal = True
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    TabOrder = 0
+    TitleParams.MultiTitle = True
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CustNo'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Company'
+        Footers = <>
+        Width = 128
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'TaxRate'
+        Footers = <>
+      end    
+      item
+        ButtonStyle = cbsAltDropDown
+        DynProps = <>
+        EditButton.Style = ebsAltDropDownEh
+        EditButton.Visible = True
+        EditButtons = <        
+          item
+            Style = ebsEllipsisEh
+          end>
+        FieldName = 'LastInvoiceDate'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Addr1'
+        Footers = <>
+        Width = 145
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Addr2'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'City'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'State'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Zip'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Country'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Phone'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'FAX'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Contact'
+        Footers = <>
+      end>
+    object TRowDetailPanelControlEh
+      object PageControl2: TPageControl
+        Left = 0
+        Height = 218
+        Top = 0
+        Width = 475
+        ActivePage = TabSheet8
+        Align = alClient
+        TabIndex = 0
+        TabOrder = 0
+        object TabSheet8: TTabSheet
+          Caption = 'Orders'
+          ClientHeight = 190
+          ClientWidth = 467
+          object DBGridEh8: TDBGridEh
+            Left = 0
+            Height = 190
+            Top = 0
+            Width = 467
+            Align = alClient
+            ColumnDefValues.AlwaysShowEditButton = True
+            DataSource = dsOrdersRDP
+            DynProps = <>
+            Flat = True
+            FooterParams.Color = clWindow
+            IndicatorOptions = [gioShowRowIndicatorEh]
+            OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+            RowDetailPanel.Height = 50
+            RowPanel.Active = True
+            TabOrder = 0
+            VertScrollBar.SmoothStep = True
+            Columns = <            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'OrderNo'
+                Footers = <>
+                Width = 62
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'CustNo'
+                Footers = <>
+                Width = 62
+                InRowLinePos = 1
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'SaleDate'
+                Footers = <>
+                Width = 127
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipDate'
+                Footers = <>
+                Width = 127
+                InRowLinePos = 1
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipVIA'
+                Footers = <>
+                Width = 119
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'PaymentMethod'
+                Footers = <>
+                Width = 119
+                InRowLinePos = 1
+              end            
+              item
+                ButtonStyle = cbsDropDown
+                DynProps = <>
+                EditButton.Visible = True
+                EditButtons = <>
+                FieldName = 'ItemsTotal'
+                Footers = <>
+                Width = 99
+              end            
+              item
+                ButtonStyle = cbsDropDown
+                DynProps = <>
+                EditButton.Visible = True
+                EditButtons = <>
+                FieldName = 'AmountPaid'
+                Footers = <>
+                Width = 99
+                InRowLinePos = 1
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'TaxRate'
+                Footers = <>
+                Width = 119
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'Freight'
+                Footers = <>
+                Width = 119
+                InRowLinePos = 1
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToPhone'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'EmpNo'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToZip'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToContact'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'PO'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToAddr2'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToCity'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'Terms'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToState'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToCountry'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end            
+              item
+                DynProps = <>
+                EditButtons = <>
+                FieldName = 'ShipToAddr1'
+                Footers = <>
+                Visible = False
+                Width = 52
+              end>
+            object RowDetailData: TRowDetailPanelControlEh
+            end
+          end
+        end
+        object TabSheet9: TTabSheet
+          Caption = 'Customer details'
+          ClientHeight = 0
+          ClientWidth = 0
+          ImageIndex = 1
+          object ScrollBox1: TScrollBox
+            Left = 0
+            Height = 190
+            Top = 0
+            Width = 541
+            HorzScrollBar.Page = 541
+            HorzScrollBar.Tracking = True
+            VertScrollBar.Page = 190
+            VertScrollBar.Tracking = True
+            Align = alClient
+            BorderStyle = bsNone
+            ClientHeight = 190
+            ClientWidth = 541
+            TabOrder = 0
+            object Label25: TStaticText
+              Left = 7
+              Height = 17
+              Top = 33
+              Width = 40
+              Caption = 'Country'
+              TabOrder = 8
+            end
+            object Label26: TStaticText
+              Left = 7
+              Height = 17
+              Top = 59
+              Width = 39
+              Caption = 'CustNo'
+              TabOrder = 9
+            end
+            object Label27: TStaticText
+              Left = 7
+              Height = 17
+              Top = 85
+              Width = 24
+              Caption = 'FAX'
+              TabOrder = 10
+            end
+            object Label28: TStaticText
+              Left = 7
+              Height = 17
+              Top = 111
+              Width = 82
+              Caption = 'LastInvoiceDate'
+              TabOrder = 11
+            end
+            object Label29: TStaticText
+              Left = 7
+              Height = 17
+              Top = 137
+              Width = 35
+              Caption = 'Phone'
+              TabOrder = 12
+            end
+            object Label30: TStaticText
+              Left = 7
+              Height = 17
+              Top = 163
+              Width = 29
+              Caption = 'State'
+              TabOrder = 13
+            end
+            object Label1: TStaticText
+              Left = 7
+              Height = 17
+              Top = 7
+              Width = 21
+              Caption = 'City'
+              TabOrder = 7
+            end
+            object DBEditEh3: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 7
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'City'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 0
+              Visible = True
+            end
+            object DBEditEh4: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 33
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'Country'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+              Visible = True
+            end
+            object DBEditEh5: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 59
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'CustNo'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 2
+              Visible = True
+            end
+            object DBEditEh6: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 85
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'FAX'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 3
+              Visible = True
+            end
+            object DBEditEh7: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 137
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'Phone'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 4
+              Visible = True
+            end
+            object DBEditEh8: TDBEditEh
+              Left = 98
+              Height = 23
+              Top = 163
+              Width = 97
+              CharCase = ecNormal
+              DataField = 'State'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButtons = <>
+              MaxLength = 0
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 5
+              Visible = True
+            end
+            object DBDateTimeEditEh3: TDBDateTimeEditEh
+              Left = 98
+              Height = 23
+              Top = 110
+              Width = 96
+              DataField = 'LastInvoiceDate'
+              DataSource = dsCustomersRDP
+              DynProps = <>
+              EditButton.Style = ebsAltDropDownEh
+              EditButtons = <              
+                item
+                  Style = ebsEllipsisEh
+                end>
+              Kind = dtkDateEh
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 6
+              Visible = True
+            end
+          end
+        end
+      end
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 519
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 519
+    TabOrder = 1
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 519
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label2: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object dsCustomersRDP: TDataSource
+    DataSet = mtCustomersRDP
+    left = 206
+    top = 166
+  end
+  object mtCustomersRDP: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 210
+    top = 215
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '  *'
+      'from'
+      '  customer'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 208
+    top = 264
+  end
+  object dsOrdersRDP: TDataSource
+    DataSet = mtOrdersRDP
+    left = 302
+    top = 166
+  end
+  object mtOrdersRDP: TMemTableEh
+    CachedUpdates = True
+    DetailFields = 'CustNo'
+    FetchAllOnOpen = True
+    MasterFields = 'CustNo'
+    MasterSource = dsCustomersRDP
+    Params = <>
+    DataDriver = SQLDataDriverEh2
+    left = 300
+    top = 263
+  end
+  object SQLDataDriverEh2: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '  *'
+      'from'
+      '  orders'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 296
+    top = 216
+  end
+end

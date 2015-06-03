@@ -1,0 +1,45 @@
+package Win2KTray;
+
+{$R *.res}
+{$R *.otares}
+{$R 'Win2KTray.res'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vcldb,
+  dclstd,
+  rtl;
+
+contains
+  uModernTrayIcon in 'uModernTrayIcon.pas',
+  RegWin2KTray in 'RegWin2KTray.pas',
+  uIconList in 'uIconList.pas',
+  ufrmIconListEdit in 'ufrmIconListEdit.pas' {frmIconListEdit},
+  uTimerThread in 'uTimerThread.pas';
+
+end.

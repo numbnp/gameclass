@@ -1,0 +1,107 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{67ed227f-6f69-49c1-9393-fcfab5101e9b}</ProjectGuid>
+    <MainSource>DBEXPLR.DPR</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>DBEXPLR.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>DEBUG;RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG;DEBUG</DCC_Define>
+    <DCC_WriteableConstants>True</DCC_WriteableConstants>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject xmlns=""> <Delphi.Personality>   <Parameters>
+      <Parameters Name="UseLauncher">False</Parameters>
+      <Parameters Name="LoadAllSymbols">True</Parameters>
+      <Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+    </Parameters>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+      <VersionInfo Name="MajorVer">1</VersionInfo>
+      <VersionInfo Name="MinorVer">0</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">0</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">1029</VersionInfo>
+      <VersionInfo Name="CodePage">1250</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+    <Source>
+      <Source Name="MainSource">DBEXPLR.DPR</Source>
+    </Source>
+  </Delphi.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="DBEXPLR.DPR">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="ABOUT.PAS">
+      <Form>AboutDlg</Form>
+    </DCCReference>
+    <DCCReference Include="BDEINFO.PAS" />
+    <DCCReference Include="BDEPROP.PAS">
+      <Form>BdePropertyDlg</Form>
+    </DCCReference>
+    <DCCReference Include="CHILDWIN.PAS">
+      <Form>MDIChild</Form>
+    </DCCReference>
+    <DCCReference Include="DESTTAB.PAS">
+      <Form>DestTableDlg</Form>
+    </DCCReference>
+    <DCCReference Include="EDITPICT.PAS">
+      <Form>PictEditDlg</Form>
+    </DCCReference>
+    <DCCReference Include="EDITSTR.PAS">
+      <Form>StrEditDlg</Form>
+    </DCCReference>
+    <DCCReference Include="FILTDLG.PAS">
+      <Form>FilterDialog</Form>
+    </DCCReference>
+    <DCCReference Include="MAIN.PAS">
+      <Form>DBExplorerMainForm</Form>
+    </DCCReference>
+    <DCCReference Include="OPENDLG.PAS">
+      <Form>OpenDatabaseDlg</Form>
+    </DCCReference>
+    <DCCReference Include="OPTDLG.PAS">
+      <Form>OptionsDialog</Form>
+    </DCCReference>
+    <DCCReference Include="OPTIONS.PAS" />
+    <DCCReference Include="SRCTAB.PAS">
+      <Form>SrcTableDlg</Form>
+    </DCCReference>
+    <DCCReference Include="VIEWBLOB.PAS">
+      <Form>BlobViewDlg</Form>
+    </DCCReference>
+  </ItemGroup>
+</Project>

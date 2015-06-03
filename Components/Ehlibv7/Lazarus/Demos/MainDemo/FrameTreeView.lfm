@@ -1,0 +1,187 @@
+object frTreeView: TfrTreeView
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 320
+  ClientHeight = 240
+  ClientWidth = 320
+  TabOrder = 0
+  DesignLeft = 359
+  DesignTop = 347
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 320
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 320
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 320
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object DBGridEh9: TDBGridEh
+    Left = 0
+    Height = 165
+    Top = 33
+    Width = 320
+    Align = alClient
+    AllowedSelections = [gstRecordBookmarks, gstRectangle, gstColumns]
+    Border.ExtendedDraw = True
+    Border.Color = clRed
+    Border.EdgeBorders = [ebTop, ebBottom]
+    DataSource = dsTreeView
+    DynProps = <>
+    EditActions = [geaCopyEh, geaSelectAllEh]
+    Flat = True
+    FooterParams.Color = clWindow
+    FrozenCols = 1
+    GridLineParams.DataVertLines = True
+    GridLineParams.DataHorzLines = False
+    GridLineParams.GridBoundaries = True
+    GridLineParams.ColorScheme = glcsThemedEh
+    GridLineParams.VertEmptySpaceStyle = dessSolidEh
+    IndicatorOptions = [gioShowRowIndicatorEh]
+    IndicatorParams.FillStyle = cfstSolidEh
+    IndicatorTitle.ShowDropDownSign = True
+    IndicatorTitle.TitleButton = True
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDblClickOptimizeColWidth, dghDialogFind, dghRecordMoving, dghColumnResize, dghColumnMove, dghExtendVertLines]
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
+    TabOrder = 1
+    TreeViewParams.ShowTreeLines = False
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'NAME'
+        Footers = <>
+        Width = 220
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ID'
+        Footers = <>
+        Width = 48
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ID_PARENT'
+        Footers = <>
+        Width = 100
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Expanded'
+        Footer.FieldName = 'ExpCount'
+        Footer.ValueType = fvtFieldValue
+        Footers = <>
+        Width = 79
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Visible'
+        Footers = <>
+        Width = 58
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 42
+    Top = 198
+    Width = 320
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 42
+    ClientWidth = 320
+    TabOrder = 2
+    object Label2: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+    object CheckBox1: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 11
+      Width = 105
+      Caption = 'Show Tree Lines'
+      OnClick = CheckBox1Click
+      TabOrder = 0
+    end
+    object DBComboBoxEh1: TDBComboBoxEh
+      Left = 267
+      Height = 21
+      Top = 11
+      Width = 121
+      AlwaysShowBorder = True
+      CharCase = ecNormal
+      DynProps = <>
+      EditButtons = <>
+      Flat = True
+      Items.Strings = (
+        'Classic'
+        'Themed'
+        'Explorer'
+      )
+      KeyItems.Strings = (
+        'Classic'
+        'Themed'
+        'Explorer'
+      )
+      MaxLength = 0
+      TabOrder = 1
+      Text = 'Themed'
+      Visible = True
+      OnChange = DBComboBoxEh1Change
+    end
+  end
+  object mtTreeView: TMemTableEh
+    CachedUpdates = True
+    FieldDefs = <>
+    FetchAllOnOpen = True
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    TreeList.Active = True
+    TreeList.KeyFieldName = 'ID'
+    TreeList.RefParentFieldName = 'ID_PARENT'
+    TreeList.DefaultNodeExpanded = True
+    left = 560
+    top = 144
+  end
+  object dsTreeView: TDataSource
+    DataSet = mtTreeView
+    left = 560
+    top = 96
+  end
+end
