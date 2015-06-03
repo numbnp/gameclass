@@ -1,0 +1,104 @@
+EhLib 7.0 Lazarus Edition
+
+----------------------------------
+Установка библиотеки в Lazarus IDE
+
+1. Создайте папку C:\lazarus\components\EhLib
+   (Считаем что lazarus установлен в C:\lazarus)
+
+2. Скопируйте содержимое папки <EhLib Archive>\Larasus<*>\*.* в C:\lazarus\components\EhLib\
+
+2.1 Скопируйте папку <EhLib Archive>\Demos\Data в C:\lazarus\components\EhLib\Demos
+
+3. Запустите lazarus IDE
+
+4. Откройте C:\lazarus\EhLib\Lib\ehlib.lpk
+
+5. При открытии выберите "Open Package" 
+
+6. В инспекторе пакета выберите Use->Install
+
+7. После компиляции и перезапуска IDE в палитре компонент должны появиться закладки "EhLib Controls" и "Ehlib Components".
+
+8. Протестируйте работу компонент на примере проекта C:\lazarus\components\EhLib\Demos\MainDemo\project1.lpr 
+
+
+-------------
+Release Notes
+
+---------------------------
+Отличия в названиях модулей
+
+В Lazarus версии библиотеки EhLib названия следующих модулей изменено:
+
+ EhLibVCL.pas -> EhLibLCL.pas
+ (Вместо модуля EhLibVCL.pas используйте модуль EhLibLCL.pas)
+
+ DBGridEh.Pas -> DBGridsEh.Pas
+
+------------------------
+Портированные компоненты:
+
+В Lazarus версию библиотеки EhLib портированы следующие компоненты:
+
++TDBGridEh
+  Run-Time functional work fully as in VCL version.
+    Artefacts on drawing grid futter.
+  Design-Time functional works partly:
+    TDBGridEh Compomnent Editor - don't work.    
+
++TDBVertGridEh
+  Run-Time functional work fully as in VCL version.
+
++TDBEditEh
+  Run-Time functional work fully as in VCL version.
+
++TDBDateTimeEditEh 
+  Run-Time functional work fully as in VCL version.
+
++TDBNumberEditEh
+  Run-Time functional work fully as in VCL version.
+
++TDBComboBoxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBLookupComboboxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBCheckBoxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBMemoEh
+  Run-Time functional work fully as in VCL version.
+
++TDBImageEh
+  Run-Time functional work fully as in VCL version.
+
++TDBRadioGroupEh
+  Run-Time functional work fully as in VCL version.
+
++TDBSumList
+  Run-Time functional work fully as in VCL version.
+
+-TPropStorageEh, 
+  Run-Time functional work fully as in VCL version.
+
+-TIniPropStorageManEh, 
+  Run-Time functional work fully as in VCL version.
+
+-TRegPropStorageManEh
+  Run-Time functional work fully as in VCL version.
+
+
+-TDBRichEditEh
+  Doesn't exists in Lazarus version as there is no base class in Lazarus to inherit.
+
+-TPreviewBox
+  Doesn't exists in Lazarus version as there is no TMetafile class in Lazarus.
+  EhLib Printing and Preview technique is based on Metafile objects.
+
+-TPrintDBGridEh
+  Doesn't exists in Lazarus version as there is no TMetafile class in Lazarus.
+
+
+	

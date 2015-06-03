@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">Default.Personality</Option>
+      <Option Name="ProjectType"></Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{7C24FDE2-2041-4CFE-9171-D33D66EB4626}</Option>
+    </Option>
+  </PersonalityInfo>
+  <Default.Personality>
+    
+    <Projects>
+      <Projects Name="ExceptionPlugin.dll">ExceptionPlugin.bdsproj</Projects>
+      <Projects Name="PlugInDemo.exe">PlugInDemo.bdsproj</Projects>
+      <Projects Name="Targets">ExceptionPlugin.dll PlugInDemo.exe</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>

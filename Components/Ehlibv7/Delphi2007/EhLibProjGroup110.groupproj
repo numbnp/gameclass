@@ -1,0 +1,112 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{7cec8d41-dc97-48c1-8e97-23cdf19e6e06}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="EhLib110">
+    <MSBuild Projects="EhLib110.dproj" Targets="" />
+  </Target>
+  <Target Name="EhLib110:Clean">
+    <MSBuild Projects="EhLib110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EhLib110:Make">
+    <MSBuild Projects="EhLib110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclEhLib110">
+    <MSBuild Projects="DclEhLib110.dproj" Targets="" />
+  </Target>
+  <Target Name="DclEhLib110:Clean">
+    <MSBuild Projects="DclEhLib110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclEhLib110:Make">
+    <MSBuild Projects="DclEhLib110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EhLibADODataDrivers110">
+    <MSBuild Projects="EhLibADODataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="EhLibADODataDrivers110:Clean">
+    <MSBuild Projects="EhLibADODataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EhLibADODataDrivers110:Make">
+    <MSBuild Projects="EhLibADODataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EhLibBDEDataDrivers110">
+    <MSBuild Projects="EhLibBDEDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="EhLibBDEDataDrivers110:Clean">
+    <MSBuild Projects="EhLibBDEDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EhLibBDEDataDrivers110:Make">
+    <MSBuild Projects="EhLibBDEDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EhLibDBXDataDrivers110">
+    <MSBuild Projects="EhLibDBXDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="EhLibDBXDataDrivers110:Clean">
+    <MSBuild Projects="EhLibDBXDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EhLibDBXDataDrivers110:Make">
+    <MSBuild Projects="EhLibDBXDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EhLibIBXDataDrivers110">
+    <MSBuild Projects="EhLibIBXDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="EhLibIBXDataDrivers110:Clean">
+    <MSBuild Projects="EhLibIBXDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EhLibIBXDataDrivers110:Make">
+    <MSBuild Projects="EhLibIBXDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclEhLibADODataDrivers110">
+    <MSBuild Projects="DclEhLibADODataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="DclEhLibADODataDrivers110:Clean">
+    <MSBuild Projects="DclEhLibADODataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclEhLibADODataDrivers110:Make">
+    <MSBuild Projects="DclEhLibADODataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclEhLibBDEDataDrivers110">
+    <MSBuild Projects="DclEhLibBDEDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="DclEhLibBDEDataDrivers110:Clean">
+    <MSBuild Projects="DclEhLibBDEDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclEhLibBDEDataDrivers110:Make">
+    <MSBuild Projects="DclEhLibBDEDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclEhLibDBXDataDrivers110">
+    <MSBuild Projects="DclEhLibDBXDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="DclEhLibDBXDataDrivers110:Clean">
+    <MSBuild Projects="DclEhLibDBXDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclEhLibDBXDataDrivers110:Make">
+    <MSBuild Projects="DclEhLibDBXDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclEhLibIBXDataDrivers110">
+    <MSBuild Projects="DclEhLibIBXDataDrivers110.dproj" Targets="" />
+  </Target>
+  <Target Name="DclEhLibIBXDataDrivers110:Clean">
+    <MSBuild Projects="DclEhLibIBXDataDrivers110.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclEhLibIBXDataDrivers110:Make">
+    <MSBuild Projects="DclEhLibIBXDataDrivers110.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="EhLib110;DclEhLib110;EhLibADODataDrivers110;EhLibBDEDataDrivers110;EhLibDBXDataDrivers110;EhLibIBXDataDrivers110;DclEhLibADODataDrivers110;DclEhLibBDEDataDrivers110;DclEhLibDBXDataDrivers110;DclEhLibIBXDataDrivers110" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="EhLib110:Clean;DclEhLib110:Clean;EhLibADODataDrivers110:Clean;EhLibBDEDataDrivers110:Clean;EhLibDBXDataDrivers110:Clean;EhLibIBXDataDrivers110:Clean;DclEhLibADODataDrivers110:Clean;DclEhLibBDEDataDrivers110:Clean;DclEhLibDBXDataDrivers110:Clean;DclEhLibIBXDataDrivers110:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="EhLib110:Make;DclEhLib110:Make;EhLibADODataDrivers110:Make;EhLibBDEDataDrivers110:Make;EhLibDBXDataDrivers110:Make;EhLibIBXDataDrivers110:Make;DclEhLibADODataDrivers110:Make;DclEhLibBDEDataDrivers110:Make;DclEhLibDBXDataDrivers110:Make;DclEhLibIBXDataDrivers110:Make" />
+  </Target>
+</Project>

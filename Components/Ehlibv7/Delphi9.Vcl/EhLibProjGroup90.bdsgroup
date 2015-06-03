@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<PersonalityInfo>
+		<Option>
+			<Option Name="Personality">Default.Personality</Option>
+			<Option Name="ProjectType"></Option>
+			<Option Name="Version">1.0</Option>
+			<Option Name="GUID">{9747BAE5-3B40-49D7-8932-131BD5C08A63}</Option>
+		</Option>
+	</PersonalityInfo>
+	<Default.Personality>  <Projects>
+      <Projects Name="EhLib90.bpl">EhLib90.bdsproj</Projects>
+      <Projects Name="DclEhLib90.bpl">DclEhLib90.bdsproj</Projects>
+      <Projects Name="EhLibADODataDrivers90.bpl">EhLibADODataDrivers90.bdsproj</Projects>
+      <Projects Name="EhLibBDEDataDrivers90.bpl">EhLibBDEDataDrivers90.bdsproj</Projects>
+      <Projects Name="EhLibDBXDataDrivers90.bpl">EhLibDBXDataDrivers90.bdsproj</Projects>
+      <Projects Name="EhLibIBXDataDrivers90.bpl">EhLibIBXDataDrivers90.bdsproj</Projects>
+      <Projects Name="DclEhLibADODataDrivers90.bpl">DclEhLibADODataDrivers90.bdsproj</Projects>
+      <Projects Name="DclEhLibBDEDataDrivers90.bpl">DclEhLibBDEDataDrivers90.bdsproj</Projects>
+      <Projects Name="DclEhLibDBXDataDrivers90.bpl">DclEhLibDBXDataDrivers90.bdsproj</Projects>
+      <Projects Name="DclEhLibIBXDataDrivers90.bpl">DclEhLibIBXDataDrivers90.bdsproj</Projects>
+      <Projects Name="Targets">EhLib90.bpl DclEhLib90.bpl EhLibADODataDrivers90.bpl EhLibBDEDataDrivers90.bpl EhLibDBXDataDrivers90.bpl EhLibIBXDataDrivers90.bpl DclEhLibADODataDrivers90.bpl DclEhLibBDEDataDrivers90.bpl DclEhLibDBXDataDrivers90.bpl DclEhLibIBXDataDrivers90.bpl</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>

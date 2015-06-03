@@ -1,0 +1,52 @@
+package DclEhLibADODataDrivers70;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'EhLib 7.0 DataDrivers for ADO'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  dcldb,
+  dclado,
+  EhLib70,
+  DclEhLib70,
+  vcl,
+  dbrtl,
+  designdgm,
+  vclx,
+  designide,
+  vclactnband,
+  vcldesigner,
+  dclstd,
+  vcldb,
+  adortl,
+  dsnap,
+  EhLibADODataDrivers70;
+
+contains
+  ADODataDriverDesignEh in 'ADODataDriverDesignEh.pas',
+  ADOConnectionProviderDesignEdit in 'ADOConnectionProviderDesignEdit.pas' {FormADOConnProviderEdit};
+
+end.

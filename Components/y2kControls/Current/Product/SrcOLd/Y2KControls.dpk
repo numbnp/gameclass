@@ -1,0 +1,51 @@
+package Y2KControls;
+
+{$R *.res}
+{$R 'Y2KCtrls.res'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Y2KControls'}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl,
+  vcldb,
+  dclstd,
+  rtl;
+
+contains
+  RegY2KControls in 'RegY2KControls.pas',
+  resstrings in 'resstrings.pas',
+  uY2KTitledPanel in 'uY2KTitledPanel.pas',
+  uY2KTitledLine in 'uY2KTitledLine.pas',
+  uY2KLinkLabel in 'uY2KLinkLabel.pas',
+  uY2KSysInfoButton in 'uY2KSysInfoButton.pas',
+  uY2KLine in 'uY2KLine.pas',
+  uY2KFileVersionInfo in 'uY2KFileVersionInfo.pas',
+  uY2KFileVersionInfoLabel in 'uY2KFileVersionInfoLabel.pas',
+  uY2KSysInfo in 'uY2KSysInfo.pas',
+  uY2KSysInfoLabel in 'uY2KSysInfoLabel.pas',
+  uY2KCheckedPanel in 'uY2KCheckedPanel.pas',
+  uY2KHTMLHelp in 'uY2KHTMLHelp.pas',
+  uY2KHelpLabel in 'uY2KHelpLabel.pas';
+
+end.

@@ -1,0 +1,194 @@
+object frSearchPanel: TfrSearchPanel
+  Left = 0
+  Height = 364
+  Top = 0
+  Width = 711
+  ClientHeight = 364
+  ClientWidth = 711
+  TabOrder = 0
+  DesignLeft = 385
+  DesignTop = 190
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 711
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 711
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 711
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 0
+      Height = 1
+      Top = 0
+      Width = 1
+      ParentColor = False
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 290
+    Top = 74
+    Width = 711
+    Align = alClient
+    ColumnDefValues.Title.TitleButton = True
+    DataGrouping.Active = True
+    DataSource = DataSource1
+    DynProps = <>
+    Flat = True
+    FooterParams.Color = clWindow
+    GridLineParams.DataVertLines = False
+    GridLineParams.DataHorzLines = True
+    GridLineParams.GridBoundaries = True
+    GridLineParams.ColorScheme = glcsThemedEh
+    GridLineParams.VertEmptySpaceStyle = dessNonEh
+    IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+    IndicatorParams.FillStyle = cfstSolidEh
+    IndicatorParams.RecNoShowStep = 5
+    EmptyDataInfo.Font.Color = clSilver
+    EmptyDataInfo.Font.Height = -11
+    EmptyDataInfo.Font.Name = 'MS Sans Serif'
+    EmptyDataInfo.ParentFont = False
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghRowHighlight, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove]
+    SearchPanel.Enabled = True
+    SearchPanel.FilterOnTyping = True
+    SortLocal = True
+    TabOrder = 1
+    TitleParams.SortMarkerStyle = smstFrameEh
+    TitleParams.FillStyle = cfstGradientEh
+    TitleParams.BorderInFillStyle = True
+    VertScrollBar.VisibleMode = sbAlwaysShowEh
+    Columns = <    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CustNo'
+        Footers = <>
+        Width = 62
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Company'
+        Footers = <>
+        Width = 115
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Addr1'
+        Footers = <>
+        Width = 125
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Addr2'
+        Footers = <>
+        Width = 84
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'City'
+        Footers = <>
+      end    
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'State'
+        Footers = <>
+        Width = 79
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 41
+    Top = 33
+    Width = 711
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 711
+    TabOrder = 2
+    object bFilerOnTyping: TButton
+      Left = 6
+      Height = 25
+      Top = 8
+      Width = 150
+      Caption = 'FilterOnTyping (Yes)'
+      OnClick = bFilerOnTypingClick
+      TabOrder = 0
+    end
+    object Button4: TButton
+      Left = 159
+      Height = 25
+      Top = 8
+      Width = 150
+      Caption = 'Persistent Show (Yes)'
+      OnClick = Button4Click
+      TabOrder = 1
+    end
+    object Button5: TButton
+      Left = 312
+      Height = 25
+      Top = 8
+      Width = 150
+      Caption = 'Filter Enabled (Yes)'
+      OnClick = Button5Click
+      TabOrder = 2
+    end
+    object Button6: TButton
+      Left = 465
+      Height = 25
+      Top = 8
+      Width = 150
+      Caption = 'FitlerPanel in the Top (Yes)'
+      OnClick = Button6Click
+      TabOrder = 3
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 384
+    top = 272
+  end
+  object MemTableEh1: TMemTableEh
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 472
+    top = 272
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select * from customer'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 568
+    top = 272
+  end
+end

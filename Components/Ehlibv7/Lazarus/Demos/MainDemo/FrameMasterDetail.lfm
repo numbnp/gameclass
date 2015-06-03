@@ -1,0 +1,505 @@
+object frMasterDetail: TfrMasterDetail
+  Left = 0
+  Height = 266
+  Top = 0
+  Width = 435
+  Align = alClient
+  ClientHeight = 266
+  ClientWidth = 435
+  TabOrder = 0
+  DesignLeft = 484
+  DesignTop = 151
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 123
+    Width = 435
+    Align = alBottom
+    ResizeAnchor = akBottom
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 87
+    Top = 36
+    Width = 435
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 87
+    ClientWidth = 435
+    TabOrder = 0
+    object DBGridEh3: TDBGridEh
+      Left = 8
+      Height = 49
+      Top = 30
+      Width = 416
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Border.Color = clScrollBar
+      ColumnDefValues.AlwaysShowEditButton = True
+      DataSource = DataSource1
+      DynProps = <>
+      EditActions = [geaCopyEh, geaSelectAllEh]
+      Flat = True
+      FooterRowCount = 1
+      FooterParams.Color = clBtnFace
+      FooterParams.FillStyle = cfstSolidEh
+      FooterParams.Font.Color = clWindowText
+      FooterParams.Font.Height = -11
+      FooterParams.Font.Name = 'Microsoft Sans Serif'
+      FooterParams.Font.Style = [fsBold]
+      FooterParams.ParentFont = False
+      FrozenCols = 2
+      GridLineParams.GridBoundaries = True
+      GridLineParams.ColorScheme = glcsThemedEh
+      IndicatorOptions = [gioShowRowIndicatorEh]
+      IndicatorTitle.ShowDropDownSign = True
+      IndicatorTitle.TitleButton = True
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+      OptionsEh = [dghFixed3D, dghFooter3D, dghHighlightFocus, dghClearSelection, dghTraceColSizing, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+      ParentShowHint = False
+      ShowHint = True
+      STFilter.Local = True
+      STFilter.Location = stflInTitleFilterEh
+      STFilter.Visible = True
+      STFilter.FilterButtonDrawTime = fbdtWhenCellHotEh
+      SumList.Active = True
+      TabOrder = 0
+      TitleParams.FillStyle = cfstThemedEh
+      TitleParams.BorderInFillStyle = True
+      Columns = <      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'OrderNo'
+          Footer.Alignment = taCenter
+          Footer.ValueType = fvtCount
+          Footers = <>
+          ToolTips = True
+          Width = 42
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'CustNo'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ItemsTotal'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ToolTips = True
+          Width = 79
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'TaxRate'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'Freight'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          ButtonStyle = cbsDropDown
+          Checkboxes = False
+          DynProps = <>
+          EditButton.Visible = True
+          EditButtons = <>
+          FieldName = 'AmountPaid'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ToolTips = True
+          Width = 82
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'SaleDate'
+          Footer.Alignment = taCenter
+          Footer.FieldName = 'PaymentMethod'
+          Footer.ValueType = fvtFieldValue
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipDate'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'EmpNo'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Alignment = taCenter
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToContact'
+          Footers = <>
+          ToolTips = True
+          Width = 55
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToAddr1'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToAddr2'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToCity'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToState'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToZip'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToCountry'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipToPhone'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ShipVIA'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'PO'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'Terms'
+          Footers = <>
+          ToolTips = True
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'PaymentMethod'
+          Footers = <>
+          ToolTips = True
+        end>
+      object RowDetailData: TRowDetailPanelControlEh
+      end
+    end
+    object DBNavigator2: TDBNavigator
+      Left = 8
+      Height = 25
+      Top = 2
+      Width = 220
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 25
+      ClientWidth = 220
+      DataSource = DataSource1
+      Flat = True
+      Options = []
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 138
+    Top = 128
+    Width = 435
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 138
+    ClientWidth = 435
+    TabOrder = 1
+    object DBGridEh4: TDBGridEh
+      Left = 7
+      Height = 97
+      Top = 31
+      Width = 363
+      Anchors = [akTop, akLeft, akBottom]
+      AutoFitColWidths = True
+      Border.Color = clScrollBar
+      DataSource = DataSource2
+      DynProps = <>
+      Flat = True
+      FooterRowCount = 1
+      FooterParams.Color = clWindow
+      FooterParams.HorzLines = False
+      GridLineParams.ColorScheme = glcsThemedEh
+      GridLineParams.VertEmptySpaceStyle = dessSolidEh
+      IndicatorOptions = [gioShowRowIndicatorEh]
+      IndicatorParams.HorzLines = True
+      IndicatorTitle.ShowDropDownSign = True
+      IndicatorTitle.TitleButton = True
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+      OptionsEh = [dghFixed3D, dghFooter3D, dghHighlightFocus, dghClearSelection, dghTraceColSizing, dghIncSearch, dghPreferIncSearch, dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+      SumList.Active = True
+      TabOrder = 0
+      TitleParams.HorzLines = True
+      Columns = <      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'OrderNo'
+          Footer.Alignment = taCenter
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'Microsoft Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footer.ValueType = fvtCount
+          Footers = <>
+        end      
+        item
+          Checkboxes = False
+          Color = 16116704
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'ItemNo'
+          Footer.Color = 15855076
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'Microsoft Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footers = <>
+          Title.Color = 15197150
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'PartNo'
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'Microsoft Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footers = <>
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'Qty'
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'Microsoft Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footer.ValueType = fvtSum
+          Footers = <>
+        end      
+        item
+          Checkboxes = False
+          DynProps = <>
+          EditButtons = <>
+          FieldName = 'Discount'
+          Footer.Font.Color = clWindowText
+          Footer.Font.Height = -11
+          Footer.Font.Name = 'Microsoft Sans Serif'
+          Footer.Font.Style = [fsBold]
+          Footers = <>
+        end>
+      object RowDetailData: TRowDetailPanelControlEh
+      end
+    end
+    object DBNavigator3: TDBNavigator
+      Left = 7
+      Height = 24
+      Top = 3
+      Width = 220
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 24
+      ClientWidth = 220
+      DataSource = DataSource2
+      Flat = True
+      Options = []
+      TabOrder = 1
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 36
+    Top = 0
+    Width = 435
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 36
+    ClientWidth = 435
+    TabOrder = 2
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 35
+      Top = 0
+      Width = 435
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 39
+      Height = 23
+      Top = 5
+      Width = 212
+      Caption = 'Master/Detail relation'
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = clNavy
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel1: TBevel
+      Left = 0
+      Height = 1
+      Top = 35
+      Width = 435
+      Align = alBottom
+      Shape = bsTopLine
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = mtTable1
+    left = 44
+    top = 235
+  end
+  object DataSource2: TDataSource
+    DataSet = mtTable2
+    left = 134
+    top = 235
+  end
+  object mtTable1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = ddrOrders
+    left = 44
+    top = 209
+  end
+  object mtTable2: TMemTableEh
+    CachedUpdates = True
+    DetailFields = 'OrderNo'
+    FetchAllOnOpen = True
+    MasterFields = 'OrderNo'
+    MasterSource = DataSource1
+    Params = <>
+    DataDriver = ddrItems
+    left = 135
+    top = 209
+  end
+  object ddrOrders: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select *'
+      'from'
+      '  orders'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 48
+    top = 176
+  end
+  object ddrItems: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select *'
+      'from'
+      '  items'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    left = 135
+    top = 182
+  end
+end

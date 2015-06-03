@@ -1,0 +1,50 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = EhLib70.bpl EhLibADODataDrivers70.bpl EhLibBDEDataDrivers70.bpl \
+  EhLibDBXDataDrivers70.bpl EhLibIBXDataDrivers70.bpl DclEhLib70.bpl \
+  DclEhLibADODataDrivers70.bpl DclEhLibBDEDataDrivers70.bpl \
+  DclEhLibDBXDataDrivers70.bpl DclEhLibIBXDataDrivers70.bpl
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+DclEhLib70.bpl: DclEhLib70.dpk
+  $(DCC)
+
+DclEhLibIBXDataDrivers70.bpl: DclEhLibIBXDataDrivers70.dpk
+  $(DCC)
+
+EhLib70.bpl: EhLib70.dpk
+  $(DCC)
+
+EhLibIBXDataDrivers70.bpl: EhLibIBXDataDrivers70.dpk
+  $(DCC)
+
+EhLibADODataDrivers70.bpl: EhLibADODataDrivers70.dpk
+  $(DCC)
+
+EhLibDBXDataDrivers70.bpl: EhLibDBXDataDrivers70.dpk
+  $(DCC)
+
+EhLibBDEDataDrivers70.bpl: EhLibBDEDataDrivers70.dpk
+  $(DCC)
+
+DclEhLibADODataDrivers70.bpl: DclEhLibADODataDrivers70.dpk
+  $(DCC)
+
+DclEhLibBDEDataDrivers70.bpl: DclEhLibBDEDataDrivers70.dpk
+  $(DCC)
+
+DclEhLibDBXDataDrivers70.bpl: DclEhLibDBXDataDrivers70.dpk
+  $(DCC)
+
+
