@@ -1156,7 +1156,7 @@ begin
 
 //    DataStringStream.CopyFrom(AThread.AData, AData.Size);
 //    strData := TrimLeft(TrimRight(DataStringStream.DataString));
-    strData := BytesToString(AData);
+    strData := BytesToString(AData,IndyTextEncoding_OSDefault);
     // распаковываем пакет
     UnWrapProtocol(strData, @protocol, @cmd, @param);
      
