@@ -43,7 +43,7 @@ begin
   with GRegistry.Modules.KKM do begin
     if isManager and OnlyForOperator then
       exit;
-    if Active then begin
+    if Active and (PluginPath<>'') then begin
       GKKMPlugin := TKKMPlugin.Create(PluginPath, Config);
       GKKMPlugin.Connect;
       if not GKKMPlugin.IsShiftOpened then
