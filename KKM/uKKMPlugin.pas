@@ -18,33 +18,33 @@ type
 
   // типы для экспортируемых из DLL функций
   TIsKKMPluginProc = function: Boolean; stdcall;
-  TGetNameProc = function: PChar; stdcall;
-  TGetVersionProc = function: PChar; stdcall;
-  TGetNotesProc = function : PChar; stdcall;
-  TGetConfigTypesProc = function : PChar; stdcall;
-  TGetConfigProc = function : PChar; stdcall;
-  TSetConfigProc = procedure (const AstrConfig: PChar); stdcall;
+  TGetNameProc = function: PAnsiChar; stdcall;
+  TGetVersionProc = function: PAnsiChar; stdcall;
+  TGetNotesProc = function : PAnsiChar; stdcall;
+  TGetConfigTypesProc = function : PAnsiChar; stdcall;
+  TGetConfigProc = function : PAnsiChar; stdcall;
+  TSetConfigProc = procedure (const AstrConfig: PAnsiChar); stdcall;
   TInternalConfigProc = procedure (const AnApplicationHandle: Integer;
-      const AstrExt: PChar); stdcall;
+      const AstrExt: PAnsiChar); stdcall;
   TConnectProc = function: Boolean; stdcall;
   TDisconnectProc = function: Boolean; stdcall;
   TIsConnectedProc = function: Boolean; stdcall;
   TOpenShiftProc = function (const AnOperatorNum: Integer;
-      const AstrOperatorName: PChar;
-      const AstrExt: PChar): Boolean; stdcall;
-  TIsShiftOpenedProc = function (const AstrExt: PChar): Boolean; stdcall;
-  TXReportProc = function (const AstrExt: PChar): Boolean; stdcall;
-  TZReportProc = function (const AstrExt: PChar): Boolean; stdcall;
+      const AstrOperatorName: PAnsiChar;
+      const AstrExt: PAnsiChar): Boolean; stdcall;
+  TIsShiftOpenedProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
+  TXReportProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
+  TZReportProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
   TCashInProc = function (const AfSum: Currency;
-      const AstrAccount: PChar;
-      const AstrExt: PChar): Boolean; stdcall;
+      const AstrAccount: PAnsiChar;
+      const AstrExt: PAnsiChar): Boolean; stdcall;
   TCashOutProc = function (const AfSum: Currency;
-      const AstrAccount: PChar;
-      const AstrExt: PChar): Boolean; stdcall;
-  TStartSaleProc = function (const AstrExt: PChar): Boolean; stdcall;
-  TStartRefundProc = function (const AstrExt: PChar): Boolean; stdcall;
+      const AstrAccount: PAnsiChar;
+      const AstrExt: PAnsiChar): Boolean; stdcall;
+  TStartSaleProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
+  TStartRefundProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
   TAddItemProc = function (
-      const AstrName: PChar;
+      const AstrName: PAnsiChar;
       const AfPrice: Currency;
       const AbIsTare: Boolean;
       const AnDepartment: Integer;
@@ -52,10 +52,10 @@ type
       const AnQuantity: Integer;
       const AnQuantityPerc: Integer;
       const AnTaxIndex: Integer;
-      const AstrUnitName: PChar;
+      const AstrUnitName: PAnsiChar;
       const AfPercent: Double;
       const AfAmount: Currency;
-      const AstrExt: PChar): Boolean; stdcall;
+      const AstrExt: PAnsiChar): Boolean; stdcall;
   TEndSaleProc = function (
       const AnType: Integer;
       // 0 -
@@ -64,11 +64,11 @@ type
       const AnTaxIndex: Integer;
       const AfPercent: Double;
       const AfAmount: Currency;
-      const AstrExt: PChar): Boolean; stdcall;
-  TEndRefundProc = function (const AstrExt: PChar): Boolean; stdcall;
-  TPrintNonFiscalProc = function (const AstrText: PChar;
-    const AstrExt: PChar): Boolean; stdcall;
-  TGetLastErrorProc = function: PChar; stdcall;
+      const AstrExt: PAnsiChar): Boolean; stdcall;
+  TEndRefundProc = function (const AstrExt: PAnsiChar): Boolean; stdcall;
+  TPrintNonFiscalProc = function (const AstrText: PAnsiChar;
+    const AstrExt: PAnsiChar): Boolean; stdcall;
+  TGetLastErrorProc = function: PAnsiChar; stdcall;
   TGetErrorCountProc = function: Integer; stdcall;
 
   TPayType = (ptCashe = 0, ptCredit = 1, ptCard = 2, ptCashCredit = 3,
