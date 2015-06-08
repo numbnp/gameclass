@@ -406,7 +406,7 @@ begin
   ASSERT(Assigned(FSetConfigProc));
   if FhLibrary <> 0 then
     if Assigned(FSetConfigProc) then begin
-      FSetConfigProc(PChar(strConfig));
+      FSetConfigProc(PAnsiChar(strConfig));
     end;
 end; // TKKMPlugin.GetConfig
 
@@ -420,7 +420,7 @@ begin
   ASSERT(Assigned(FInternalConfigProc));
   if FhLibrary <> 0 then
     if Assigned(FInternalConfigProc) then begin
-      FInternalConfigProc(AnApplicationHandle, PChar(strExt));
+      FInternalConfigProc(AnApplicationHandle, PAnsiChar(strExt));
     end;
 end; // TKKMPlugin.GetConfig
 
@@ -481,8 +481,8 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FOpenShiftProc) then
-      Result := FOpenShiftProc(AnOperatorNum, PChar(strOperatorName),
-          PChar(strExt));
+      Result := FOpenShiftProc(AnOperatorNum, PAnsiChar(strOperatorName),
+          PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.IsShiftOpened(const AstrExt: String = ''): Boolean;
@@ -495,7 +495,7 @@ begin
   Result := False;
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FIsShiftOpenedProc) then begin
-      Result := FIsShiftOpenedProc(PChar(strExt));
+      Result := FIsShiftOpenedProc(PAnsiChar(strExt));
     end;
 end; // TKKMPlugin.
 
@@ -509,7 +509,7 @@ begin
   Result := False;
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FXReportProc) then begin
-      Result := FXReportProc(PChar(strExt));
+      Result := FXReportProc(PAnsiChar(strExt));
     end;
 end; // TKKMPlugin.
 
@@ -523,7 +523,7 @@ begin
   Result := False;
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FZReportProc) then begin
-      Result := FZReportProc(PChar(strExt));
+      Result := FZReportProc(PAnsiChar(strExt));
     end;
 end; // TKKMPlugin.
 
@@ -542,8 +542,8 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FCashInProc) then
-      Result := FCashInProc(AfSum, PChar(strAccount),
-          PChar(strExt));
+      Result := FCashInProc(AfSum, PAnsiChar(strAccount),
+          PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.CashOut(const AfSum: Currency;
@@ -561,8 +561,8 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FCashOutProc) then
-      Result := FCashOutProc(AfSum, PChar(strAccount),
-          PChar(strExt));
+      Result := FCashOutProc(AfSum, PAnsiChar(strAccount),
+          PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.StartSale(const AstrExt: String = ''): Boolean;
@@ -576,7 +576,7 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FStartSaleProc) then
-      Result := FStartSaleProc(PChar(strExt));
+      Result := FStartSaleProc(PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.StartRefund(const AstrExt: String = ''): Boolean;
@@ -590,7 +590,7 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FStartRefundProc) then
-      Result := FStartRefundProc(PChar(strExt));
+      Result := FStartRefundProc(PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.AddItem(const AstrName: String;
@@ -619,10 +619,10 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FAddItemProc) then
-      Result := FAddItemProc(PChar(strName),
+      Result := FAddItemProc(PAnsiChar(strName),
           AfPrice, AbIsTare, AnDepartment, AnCode, AnQuantity,
-          AnQuantityPerc, AnTaxIndex, PChar(strUnitName),
-          AfPercent, AfAmount, PChar(strExt));
+          AnQuantityPerc, AnTaxIndex, PAnsiChar(strUnitName),
+          AfPercent, AfAmount, PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.EndSale(
@@ -644,7 +644,7 @@ begin
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FEndSaleProc) then
       Result := FEndSaleProc(Integer(AnType), AfCash, AfCashless, AnTaxIndex,
-          AfPercent, AfAmount, PChar(strExt));
+          AfPercent, AfAmount, PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.EndRefund(const AstrExt: String = ''): Boolean;
@@ -658,7 +658,7 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FEndRefundProc) then
-      Result := FEndRefundProc(PChar(strExt));
+      Result := FEndRefundProc(PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.PrintNonFiscal(const AstrText: String;
@@ -675,8 +675,8 @@ begin
 
   if FhLibrary <> 0 then
     if _CheckConnect and Assigned(FPrintNonFiscalProc) then
-      Result := FPrintNonFiscalProc(PChar(strText),
-          PChar(strExt));
+      Result := FPrintNonFiscalProc(PAnsiChar(strText),
+          PAnsiChar(strExt));
 end;
 
 function TKKMPlugin.GetLastError: String;
