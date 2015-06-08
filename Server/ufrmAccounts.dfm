@@ -322,15 +322,6 @@ object frmAccounts: TfrmAccounts
       Visible = False
       OnChange = editReferalChange
     end
-    object imgAccountPhoto: TDBImage
-      Left = 9
-      Top = 19
-      Width = 105
-      Height = 105
-      DataField = 'photo'
-      DataSource = dsrcAccounts
-      TabOrder = 16
-    end
   end
   object gbBalanceInfo: TGroupBox
     Left = 264
@@ -799,6 +790,15 @@ object frmAccounts: TfrmAccounts
     Caption = #1059#1076#1072#1083#1080#1090#1100
     TabOrder = 9
     OnClick = butAccountDeleteClick
+  end
+  object imgAccountPhoto: TJvDBImage
+    Left = 273
+    Top = 22
+    Width = 105
+    Height = 105
+    DataField = 'photo'
+    DataSource = dsrcAccounts
+    TabOrder = 10
   end
   object dsrcAccounts: TDataSource
     Left = 448

@@ -8,7 +8,7 @@ uses
   GCLangUtils, Grids, DBGridEh, DB, Mask, DBCtrlsEh, DBCtrls,
   ADODB, {EDBImage,} RxGIF, rxToolEdit, RXDBCtrl,
   uTariffication, uCardReader, uZ2CardReader, DBGridEhGrouping, ToolCtrlsEh,
-  DBGridEhToolCtrls, GridsEh, DBAxisGridsEh;
+  DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DynVarsEh, JvDBImage, EhLibVCL;
 
 type
   TfrmAccounts = class(TForm)
@@ -83,7 +83,7 @@ type
     editHardCode: TDBEditEh;
     cbIgnoreHardCode: TDBCheckBoxEh;
     butGetCode: TButton;
-    imgAccountPhoto: TDBImage;
+    imgAccountPhoto: TJvDBImage;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure butCloseClick(Sender: TObject);
