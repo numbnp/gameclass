@@ -13,4 +13,5 @@ default_diagram.tvsconfig
 */*.identcache
 *.~pas
 *.dcu
+*.log
 
