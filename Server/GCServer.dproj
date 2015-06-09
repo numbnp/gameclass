@@ -98,7 +98,7 @@
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_ExeOutput>C:\Project\Free\Output\Release\</DCC_ExeOutput>
+        <DCC_ExeOutput>..\Output\Release\</DCC_ExeOutput>
         <VerInfo_MinorVer>0</VerInfo_MinorVer>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
         <VerInfo_Release>0</VerInfo_Release>
@@ -517,12 +517,7 @@
                     <VersionInfoKeys Name="ProductName">GameClass3</VersionInfoKeys>
                     <VersionInfoKeys Name="ProductVersion">3.85.7 Free</VersionInfoKeys>
                 </VersionInfoKeys>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k180.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp180.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                </Excluded_Packages>
+                <Excluded_Packages/>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>

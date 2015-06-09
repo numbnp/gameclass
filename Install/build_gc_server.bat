@@ -9,6 +9,7 @@ if not -%GCMakePath%==- goto PathAlreadySet
 for /d %%i in (Install\Src\Batch\) do set GCMakePath=%%~dpi
 set Path=%GCMakePath%;%Path%
 :PathAlreadySet
+set PRootDir=k:\Projects\gameclass
 rem -------------------- Конец шапки ------------------------------------
 
 set BASE_VERSION=3.85.7

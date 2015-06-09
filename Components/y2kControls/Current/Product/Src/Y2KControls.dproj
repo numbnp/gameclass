@@ -139,7 +139,7 @@
                     <Source Name="MainSource">Y2KControls.dpk</Source>
                 </Source>
                 <Language>
-                    <Language Name="RootDir">C:\Users\numb\Desktop\dev\DelphiComponents\y2kControls\Current\Product\Src\</Language>
+                    <Language Name="RootDir">K:\Projects\gameclass\Components\y2kControls\Current\Product\Src\</Language>
                 </Language>
                 <VersionInfo>
                     <VersionInfo Name="IncludeVerInfo">True</VersionInfo>

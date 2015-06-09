@@ -117,7 +117,7 @@
                     <Source Name="MainSource">Win2KTray.dpk</Source>
                 </Source>
                 <Language>
-                    <Language Name="RootDir">K:\DelphiComponents\Win2KTray\</Language>
+                    <Language Name="RootDir">..\..\Projects\gameclass\Components\Win2KTray\</Language>
                 </Language>
                 <VersionInfo>
                     <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
