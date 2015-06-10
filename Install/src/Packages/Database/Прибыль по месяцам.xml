@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Прибыль по месяцам" description="Прибыль клуба по месяцам. Рекомендуется поверх этого отчета применять фильтрацию за текущий год. 
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="if object_id('tempdb..#tpm') is not null  DROP TABLE #tpm
+
+CREATE TABLE #tpm (
+[id] [int] NOT NULL ,   
+[name] [varchar] (25) COLLATE Cyrillic_General_CI_AS NULL 
+) ON [PRIMARY]   
+INSERT INTO #tpm (id, name) VALUES (1, N'Январь')
+INSERT INTO #tpm (id, name) VALUES (2, N'Февраль')
+INSERT INTO #tpm (id, name) VALUES (3, N'Март')
+INSERT INTO #tpm (id, name) VALUES (4, N'Апрель')
+INSERT INTO #tpm (id, name) VALUES (5, N'Май')
+INSERT INTO #tpm (id, name) VALUES (6, N'Июнь')
+INSERT INTO #tpm (id, name) VALUES (7, N'Июль')
+INSERT INTO #tpm (id, name) VALUES (8, N'Август')
+INSERT INTO #tpm (id, name) VALUES (9, N'Сентябрь')
+INSERT INTO #tpm (id, name) VALUES (10, N'Октябрь')
+INSERT INTO #tpm (id, name) VALUES (11, N'Ноябрь')
+INSERT INTO #tpm (id, name) VALUES (12, N'Декабрь')
+
+select  
+#tpm.Name as [Месяц],
+SUM([summa]) as [Сумма]  
+from [repDetails]  
+inner join #tpm on (#tpm.[id] =  DATEPART(month, [moment]))
+GROUP BY #tpm.Name, DATEPART(month, [moment])
+order by DATEPART(month, [moment]) asc " author="NodaSoft" guid="{F5307319-3B0C-4ecb-BB1F-A27AFFA6F633}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

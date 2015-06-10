@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="УЗ-Пополнение" description="Отчет по учетным записям - пополнение баланса по дням 
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="select  
+CONVERT(varchar(10),AccountsHistory.[moment],111) as [Дата], 
+Accounts.[name] as [Имя учетной записи], 
+SUM(AccountsHistory.[summa]) as [Сумма]  
+from AccountsHistory 
+inner join Accounts on (AccountsHistory.[idAccounts] = Accounts.[id]) 
+where ([moment]  &gt;= %TIME-START%) and ([moment]&lt;=%TIME-STOP%) 
+and AccountsHistory.[what]=0 
+GROUP BY 
+Accounts.[name], 
+CONVERT(varchar(10),AccountsHistory.[moment],111) 
+order by [Дата] desc " author="NodaSoft" guid="{A9967CF8-ABF0-40e1-93F0-D07891EF9C85}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

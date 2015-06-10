@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Трафик по часам" description="Name: Отчет по трафику, показывает объем в МБ по часам за указанный интервал времени
+Author: NodaSoft
+E-mail: support@gameclass.ru" code="if object_id('tempdb..#tth') is not null  DROP TABLE #tth
+
+CREATE TABLE #tth (
+[id] [int] NOT NULL ,
+[name] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL
+) ON [PRIMARY]
+
+INSERT INTO #tth (id, name) VALUES (0, N'00:00')
+INSERT INTO #tth (id, name) VALUES (1, N'01:00')
+INSERT INTO #tth (id, name) VALUES (2, N'02:00')
+INSERT INTO #tth (id, name) VALUES (3, N'03:00')
+INSERT INTO #tth (id, name) VALUES (4, N'04:00')
+INSERT INTO #tth (id, name) VALUES (5, N'05:00')
+INSERT INTO #tth (id, name) VALUES (6, N'06:00')
+INSERT INTO #tth (id, name) VALUES (7, N'07:00')
+INSERT INTO #tth (id, name) VALUES (8, N'08:00')
+INSERT INTO #tth (id, name) VALUES (9, N'09:00')
+INSERT INTO #tth (id, name) VALUES (10, N'10:00')
+INSERT INTO #tth (id, name) VALUES (11, N'11:00')
+INSERT INTO #tth (id, name) VALUES (12, N'12:00')
+INSERT INTO #tth (id, name) VALUES (13, N'13:00')
+INSERT INTO #tth (id, name) VALUES (14, N'14:00')
+INSERT INTO #tth (id, name) VALUES (15, N'15:00')
+INSERT INTO #tth (id, name) VALUES (16, N'16:00')
+INSERT INTO #tth (id, name) VALUES (17, N'17:00')
+INSERT INTO #tth (id, name) VALUES (18, N'18:00')
+INSERT INTO #tth (id, name) VALUES (19, N'19:00')
+INSERT INTO #tth (id, name) VALUES (20, N'20:00')
+INSERT INTO #tth (id, name) VALUES (21, N'21:00')
+INSERT INTO #tth (id, name) VALUES (22, N'22:00')
+INSERT INTO #tth (id, name) VALUES (23, N'23:00')
+
+select #tth.name as [Час суток],
+  CAST(sum(SessionsAdd.Traffic)/1024/1024 as [numeric] (12,2)) [traffic in MB],
+  CAST(sum(SessionsAdd.Traffic)/1024 as [numeric] (12,2)) [traffic in KB]
+  from [Sessions]
+  inner join SessionsAdd on (SessionsAdd.idSessions = Sessions.id)
+
+inner join #tth on (#tth.[id] = DATEPART(hour, [started]))
+where ([started]  &gt;= %TIME-START%) and ([started]&lt;=%TIME-STOP%)
+GROUP BY #tth.name
+order by  [Час суток]
+" author="NodaSoft" guid="{812A136B-D52B-4654-9C5A-078A104BD662}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

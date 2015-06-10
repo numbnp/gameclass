@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="УЗ-Суммарно" description="Отчет по учетным записям - сумма потраченных денег за определенный интервал
+--- 
+Author: NodaSoft
+support@nodasoft.com" code="select
+ Accounts.[name] as [Имя учетной записи],
+ SUM(AccountsHistory.[summa]) as [Сумма]
+from AccountsHistory
+inner join Accounts on (AccountsHistory.[idAccounts] = Accounts.[id])
+where ([moment]  &gt;= %TIME-START%) and ([moment]&lt;=%TIME-STOP%)
+ and AccountsHistory.[what]=0
+GROUP BY
+ Accounts.[name]
+order by Accounts.[name] asc" author="NodaSoft" guid="{136E1972-C1AA-4867-A310-0482B5BBA452}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

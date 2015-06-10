@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Трафик по тарифам" description="Name: Отчет по трафику, показывает объем в МБ по тарифам за указанный интервал времени
+Author: NodaSoft
+E-mail: support@gameclass.ru" code="if object_id('tempdb..#ttt') is not null DROP TABLE #ttt
+
+        CREATE TABLE #ttt (
+[id] [int] IDENTITY (1, 1) NOT NULL ,
+[name] [varchar] (50) COLLATE Cyrillic_General_CI_AS NULL ,
+[traffic] numeric(12,2)
+) ON [PRIMARY]
+
+insert into #ttt (name, traffic)
+select
+ TR.[name] as [Тариф],
+ CAST(sum(SessionsAdd.Traffic)/1024/1024  as numeric(12,2)) as [Трафик]
+from Sessions
+ inner join SessionsAdd on (Sessions.id = SessionsAdd.idSessions)
+ inner join (select id, name from Tarifs
+   UNION ALL
+   select 0 id, 'Ремонт' name) TR
+ on (SessionsAdd.idTarif = TR.id)
+where
+ (SessionsAdd.[Start] &gt;= %TIME-START%) and
+ (SessionsAdd.[Stop] &lt;= %TIME-STOP%)
+
+group by
+ TR.[name]
+
+insert into #ttt (name, traffic) values ('------',0)
+
+insert into #ttt (name, traffic)
+select
+ 'Итого:',
+  CAST(sum(SessionsAdd.Traffic)/1024/1024  as numeric(12,2)) as [Трафик]
+  from Sessions
+ inner join SessionsAdd on (Sessions.id = SessionsAdd.idSessions)
+where
+ (SessionsAdd.[Start] &gt;= %TIME-START%) and
+ (SessionsAdd.[Stop] &lt;= %TIME-STOP%)
+select
+ name [Тариф],
+ traffic [Трафик в МБ]
+from #ttt order by id
+
+" author="NodaSoft" guid="{C099DA61-2152-433e-A7C6-2C2ACE3C6179}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

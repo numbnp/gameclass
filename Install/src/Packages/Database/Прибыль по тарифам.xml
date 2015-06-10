@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Прибыль по тарифам" description="Распределение прибыли по тарифам 
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="select Tarifs.[name] as [Тариф], sum(Sessions.[CommonPay]) as [Сумма] from Sessions
+inner join SessionsAdd on (Sessions.[id] = SessionsAdd.[idSessions]) 
+inner join Tarifs on (SessionsAdd.[idTarif] = Tarifs.[id]) 
+where 
+sessions.[started] &gt; %TIME-START% and 
+sessions.[started] &lt; %TIME-STOP% 
+group by Tarifs.[name] " author="NodaSoft" guid="{3ABF492A-DEFE-435a-A321-4BCE600195E9}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>
