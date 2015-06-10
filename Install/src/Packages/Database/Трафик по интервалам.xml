@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Трафик по интервалам" description="Name: Отчет по трафику, показывает объем в МБ по временным интервалам за указанный интервал времени
+Author: NodaSoft
+E-mail: support@gameclass.ru" code="CREATE TABLE #tti (
+[id] [int] NOT NULL ,
+[min] [int] NOT NULL ,
+[max] [int] NOT NULL ,
+[name] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL
+) ON [PRIMARY]
+
+INSERT INTO #tti (id, min, max, name) VALUES (0, 0, 2, N'00:00-01:59')
+INSERT INTO #tti (id, min, max, name) VALUES (1, 2, 6, N'02:00-05:59')
+INSERT INTO #tti (id, min, max, name) VALUES (2, 6, 8, N'06:00-07:59')
+INSERT INTO #tti (id, min, max, name) VALUES (3, 8, 20, N'08:00-19:59')
+INSERT INTO #tti (id, min, max, name) VALUES (4, 20, 24, N'20:00-23:59')
+
+select #tti.name as [Час суток],
+  CAST(sum(SessionsAdd.Traffic)/1024/1024 as [numeric] (12,2)) [traffic in MB],
+  CAST(sum(SessionsAdd.Traffic)/1024 as [numeric] (12,2)) [traffic in KB]
+  from [Sessions]
+  inner join SessionsAdd on (SessionsAdd.idSessions = Sessions.id)
+inner join #tti on ((#tti.[min] &lt;= DATEPART(hour, [started]))
+and (#tti.[max] &gt; DATEPART(hour, [started])))
+where ([started]  &gt;= %TIME-START%) and ([started]&lt;=%TIME-STOP%)
+GROUP BY #tti.name
+order by  [Час суток]
+
+if object_id('tempdb..#tti') is not null  DROP TABLE #tti" author="NodaSoft" guid="{B0520421-95F6-4758-8590-B5803B7D4E74}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

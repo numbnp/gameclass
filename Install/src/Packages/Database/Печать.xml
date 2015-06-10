@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Печать" description="Отчет по принтеру (модуль GCPrinterControl) 
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="select 
+dt as [Время], 
+printer as [Принтер], 
+ip as [ip-Адрес], 
+doc as [Имя_документа], 
+pbytes as [Байт], 
+ppages as [Страниц], 
+copies as [Копий], 
+status as [Статус] 
+from Jobs  
+where ([dt] between %TIME-START% and %TIME-STOP%) " author="NodaSoft" guid="{E1E61FB9-9B01-46ee-9CE5-418897961A61}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

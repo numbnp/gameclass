@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Детальный отчет" description="Детальный отчет менеджера" code=" 
+if object_id('tempdb..#t51') is not null DROP TABLE #t51 
+CREATE TABLE #t51 ( 
+[№] [varchar] (3) COLLATE Cyrillic_General_CI_AS NULL, 
+[IP] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL, 
+[Тариф] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL, 
+[Начало] [datetime] NULL, 
+[Конец] [datetime] NULL, 
+[Время] [datetime] NULL, 
+[Сумма] [numeric] (12,2) NULL, 
+[Длительность] [varchar] (5) COLLATE Cyrillic_General_CI_AS NULL, 
+[Оператор] [varchar] (10) COLLATE Cyrillic_General_CI_AS NULL, 
+[Комментарий] [varchar] (30) COLLATE Cyrillic_General_CI_AS NULL, 
+[Трафик в МБ] [numeric] (12,2) NULL, 
+[Трафик в $] [numeric] (12,2) NULL, 
+[Штраф] [varchar] (3) COLLATE Cyrillic_General_CI_AS NULL, 
+[idClient] [int], 
+[Клиент] [varchar] (15) COLLATE Cyrillic_General_CI_AS NULL 
+) ON [PRIMARY] 
+insert into #t51 
+select 
+number, 
+convert(varchar(15), ipaddress), 
+convert(varchar(15), name), 
+start, 
+stop, 
+moment, 
+convert(numeric(12,2) ,CAST(summa as money)), 
+convert(varchar(5), (case WHEN (length &gt; 0) THEN length ELSE 0 END)), 
+convert(varchar(10), operator), 
+convert(varchar(30), description), 
+convert(numeric(12,2) ,Traffic)/1024/1024, 
+convert(numeric(12,2) ,TrafficCost + SeparateTrafficCost), 
+convert(varchar(3), -AdditionalMinutes), 
+idClients, 
+convert(varchar(15), AccountName) 
+from 
+[repDetails] 
+where 
+[moment] between %TIME-START% and %TIME-STOP% 
+order by 
+[moment] 
+select 
+[№], 
+[Тариф], 
+[Время], 
+[Начало], 
+[Конец], 
+[Длительность], 
+[Трафик в МБ], 
+[Трафик в $], 
+[Сумма], 
+[idClient], 
+[Клиент], 
+[Штраф], 
+[Оператор], 
+[IP], 
+[Комментарий] 
+from 
+#t51 
+" author="NodaSoft" guid="{431B783B-C9D0-4241-8B26-2C5F42B3B30E}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

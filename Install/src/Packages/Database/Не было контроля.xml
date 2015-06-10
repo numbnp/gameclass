@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Не было контроля" description="Отчет показывает интервалы времени, в течение которых не было контроля клиентских компьютеров  
+---  
+Author: GameClass Software  
+support@gameclass.ru 
+" code="select  
+number as [Компьютер], 
+ipaddress as [ip-Адрес], 
+start as [Начало], 
+stop as [Конец], 
+length as [Минут]  
+from [repUncontrol]  
+where   
+([repUncontrol].[start] &gt;= %TIME-START%) and   
+([repUncontrol].[stop]  &lt;= %TIME-STOP%) 
+" author="NodaSoft" guid="{8308EFF1-41F5-4da3-9973-3FD5D0EB8731}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>

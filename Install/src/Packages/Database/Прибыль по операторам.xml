@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="Windows-1251" standalone="no"?>
+<REPORTS version="2.0"><REPORT name="Прибыль по операторам" description="Отчет показывает распределение доходов по месяцам по всем операторам. Отчет основывается на записях в журнале операторов. 
+--- 
+Author: GameClass Software  
+support@gameclass.ru 
+" code="set nocount on 
+CREATE TABLE #tpo (   
+[id] [int] NOT NULL ,   
+[name] [varchar] (25) COLLATE Cyrillic_General_CI_AS NULL 
+) ON [PRIMARY]   
+INSERT INTO #tpo (id, name) VALUES (1, N'Январь') 
+INSERT INTO #tpo (id, name) VALUES (2, N'Февраль') 
+INSERT INTO #tpo (id, name) VALUES (3, N'Март') 
+INSERT INTO #tpo (id, name) VALUES (4, N'Апрель') 
+INSERT INTO #tpo (id, name) VALUES (5, N'Май') 
+INSERT INTO #tpo (id, name) VALUES (6, N'Июнь') 
+INSERT INTO #tpo (id, name) VALUES (7, N'Июль') 
+INSERT INTO #tpo (id, name) VALUES (8, N'Август') 
+INSERT INTO #tpo (id, name) VALUES (9, N'Сентябрь') 
+INSERT INTO #tpo (id, name) VALUES (10, N'Октябрь') 
+INSERT INTO #tpo (id, name) VALUES (11, N'Ноябрь') 
+INSERT INTO #tpo (id, name) VALUES (12, N'Декабрь') 
+select  
+#tpo.Name as [Месяц],  
+sum(JournalOp.summa) as [Сумма],  
+users.name as [Оператор] 
+from JournalOp 
+inner join users on (JournalOp.operator = users.[id]) 
+inner join #tpo on (#tpo.[id] =  DATEPART(month, JournalOp.moment)) 
+GROUP BY #tpo.Name, DATEPART(month, JournalOp.moment), users.name 
+order by DATEPART(month, JournalOp.moment) asc 
+if object_id('tempdb..#tpo') is not null   
+DROP TABLE #tpo " author="NodaSoft" guid="{7CD04CE0-6A0B-4018-8F70-EDA3E1E968B6}" isfolder="False" version="1"><REPORTCOLUMNS/></REPORT></REPORTS>
