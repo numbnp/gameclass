@@ -87,7 +87,11 @@ begin
     Comps[ClientIndex].IcmpPingable:= true;
     Comps[ClientIndex].control := true;
   end else
+  begin
     Comps[ClientIndex].IcmpPingable := Comps[ClientIndex].RealIcmpPingable;
+    if not Comps[ClientIndex].IcmpPingable then
+      Comps[ClientIndex].control := false;
+  end;
   if Comps[ClientIndex].RealIcmpPingable then
     Comps[ClientIndex].CheckState;
 end;
