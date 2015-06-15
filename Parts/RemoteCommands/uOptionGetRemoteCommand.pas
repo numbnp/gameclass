@@ -54,6 +54,8 @@ uses
 {$IFDEF GC3SERVER}
   gccomputers,
   uAccountSystem,
+  uGCSendRecieve,
+  uCommandReceiver,
 {$ENDIF}
   uY2KCommon,
   uProtocol,
@@ -97,7 +99,6 @@ var
   bAll: Boolean;
   strDefaultBlock: String;
   lstTarifNames: TStringList;
-//  tmpStringList: TStringList;
 begin
   bAll := False;
   if CompareText(FstrOptionName,'All') = 0 then
@@ -306,8 +307,10 @@ procedure TOptionGetRemoteCommand._SendOption(const AstrOptionName: String;
     const AstrOptionValue: String);
 begin
 {$IFDEF GC3SERVER}
-    SendDataTo(FstrHostForResend, STR_CMD_OPTION_SET + '='
-      + AstrOptionName + '/' + AstrOptionValue, False);
+    if GCSendRecieve<>nil then
+      GCSendRecieve.SendData(FstrHostForResend,DEF_PORT_FOR_UDPSERVER,
+        AstrOptionName + '/' + AstrOptionValue);
+
 {$ELSE}
 {$IFDEF MSWINDOWS}
     LocalSendDataTo(STR_CMD_OPTION_SET + '=' + AstrOptionName + '/'
