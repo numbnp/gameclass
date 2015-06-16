@@ -17,9 +17,9 @@ uses
   Math,
   Types,
   Classes,
-  SysUtils,
-  uY2KString in '..\..\Parts\Y2KCommon\uY2KString.pas',
-  uY2KCommon in '..\..\Parts\Y2KCommon\uY2KCommon.pas';
+  SysUtils;
+//  uY2KString in '..\..\Parts\Y2KCommon\uY2KString.pas',
+//  uY2KCommon in '..\..\Parts\Y2KCommon\uY2KCommon.pas';
 
 const
   PLUGIN_NAME = 'ִנאגונ ְׂ־ֻ הכÿ ÊÊּ';
@@ -44,7 +44,6 @@ var
 
 {$R *.res}
 
-{$LIBSUFFIX '116'}
 
 procedure _AddError(AstrError: String);
 begin
