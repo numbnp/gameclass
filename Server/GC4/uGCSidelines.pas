@@ -186,7 +186,7 @@ begin
   if (ATypeCost = stcSeparate) and GRegistry.Modules.KKM.Active then
     if AbUseCustomCost then
       PrintService(AnServiceId, Sideline.GetName(AnServiceId),
-          AnCount, AbUseCustomCost, strCompNumber)
+          AnCount, AfCustomCost, strCompNumber)
     else
       PrintService(AnServiceId, Sideline.GetName(AnServiceId),
           AnCount, Sideline.GetPrice(AnServiceId), strCompNumber);
