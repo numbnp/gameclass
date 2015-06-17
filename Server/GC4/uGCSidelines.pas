@@ -181,9 +181,16 @@ begin
   strCompNumber := '';
   if (AnComputerId <> -1) then
     strCompNumber := Comps[ComputersGetIndex(AnComputerId)].GetStrNumber;
+
+// Пробиваем покупку на ККМ если ККМ активно.
   if (ATypeCost = stcSeparate) and GRegistry.Modules.KKM.Active then
-    PrintService(AnServiceId, Sideline.GetName(AnServiceId),
-        AnCount, Sideline.GetPrice(AnServiceId), strCompNumber);
+    if AbUseCustomCost then
+      PrintService(AnServiceId, Sideline.GetName(AnServiceId),
+          AnCount, AbUseCustomCost, strCompNumber)
+    else
+      PrintService(AnServiceId, Sideline.GetName(AnServiceId),
+          AnCount, Sideline.GetPrice(AnServiceId), strCompNumber);
+
   Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1, strConsole);
   RunServerScript(aService, strInfo);
 end;
