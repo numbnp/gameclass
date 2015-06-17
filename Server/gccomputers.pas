@@ -1128,14 +1128,14 @@ begin
       ComputersGetIndexByIp := i;
       break;
     end;
-  if (res = false) then
+ { if (res = false) then
   begin
     Console.AddEvent(EVENT_ICON_ERROR, LEVEL_ERROR, 'ComputersGetIndexByIp: unknown sender-ip ('+ip+')!');
     formGCMessageBox.memoInfo.Text := translate('HighCryticalError');
     formGCMessageBox.SetDontShowAgain(false);
     formGCMessageBox.ShowModal;
 //    DoEvent(FN_EXIT);
-  end;
+  end;}
 end;
 
 function ComputerGroupsGetName(AnId: Integer):String;
@@ -1410,7 +1410,7 @@ begin
     UDPSend(ipaddr,STR_CMD_OPTION_SET + '=' + 'RunPadLockStation' + '/0');
 end;
 
-function GetMAC(Value: TMacAddress; Length: integer): String;
+function MACtoString(Value: TMacAddress; Length: integer): String;
 var
   I: Integer;
 begin
@@ -1433,7 +1433,7 @@ begin
   DestIP := inet_addr(IPAddr);
   PhyAddrLen := 6;
   SendArp(DestIP, 0, @pMacAddr, PhyAddrLen);
-  Result := GetMAC(pMacAddr, PhyAddrLen);
+  Result := MACtoString(pMacAddr, PhyAddrLen);
 end;
 
 // Процедура для посылки WOL пакета
@@ -1495,7 +1495,7 @@ begin
   compIndex := ComputersGetIndexByIp(AstrIP);
 
   if compIndex > -1 then
-    if not Comps[ComputersGetIndexByIp(AstrIP)].IcmpPingable then exit;
+    if not Comps[ComputersGetIndexByIp(AstrIP)].RealIcmpPingable then exit;
   try
     Debug.Trace1(AstrIP + ' : ' + AstrData);
     strData := AstrData;
