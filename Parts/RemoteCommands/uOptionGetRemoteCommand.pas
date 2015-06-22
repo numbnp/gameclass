@@ -307,9 +307,10 @@ procedure TOptionGetRemoteCommand._SendOption(const AstrOptionName: String;
     const AstrOptionValue: String);
 begin
 {$IFDEF GC3SERVER}
-    if GCSendRecieve<>nil then
-      GCSendRecieve.SendData(FstrHostForResend,DEF_PORT_FOR_UDPSERVER,
-        AstrOptionName + '/' + AstrOptionValue);
+//    if GCSendRecieve<>nil then
+//      GCSendRecieve.SendData(FstrHostForResend,DEF_PORT_FOR_UDPSERVER,
+//        AstrOptionName + '/' + AstrOptionValue);
+    UDPSend(FstrHostForResend,AstrOptionName + '/' + AstrOptionValue);
 
 {$ELSE}
 {$IFDEF MSWINDOWS}

@@ -185,17 +185,16 @@ begin
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
   SendMail.MailMessage.From.Name:='GameClass';
-  SendMail.MailMessage.Subject:=('Тест'); // тема
+  SendMail.MailMessage.CharSet := 'UTF-8';
+  SendMail.MailMessage.IsEncoded := true;
+  SendMail.MailMessage.Subject:=UTF8Encode('Тест email'); // тема
   SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
   SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
   SendMail.MailMessage.Body.Text:='Это тестовое сообщение.' + #13 + #10 + #13 + #10 + #13 + #10
                                   + 'Для тех кто щедр :-)' + #13 + #10
-                                  + 'R132190888483 Web money wmr' + #13 + #10
-                                  + 'Z119160413439 Web money wmz' + #13 + #10
                                   + '410011118323719 Яндекс деньги' + #13 + #10
                                   + '89094029393 QIWI' + #13 + #10
-                                  + '40817810952450033835 Счет Сбербанк' + #13 + #10
-                                  + '4276852037570655 Карта Сбербанк' + #13 + #10
+                                  + '5469 5200 1701 7237 Карта Сбербанк' + #13 + #10
                                   + '                                     numb)';
   SendMail.Send;
   SendMail.Destroy;

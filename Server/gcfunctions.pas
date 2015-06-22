@@ -551,20 +551,8 @@ procedure ehsLogon;
 var
   CurrBaseVersion: string;
   i: integer;
-//  strTemp: String;
-//  lstTemp: TStringList;
-//  info: TFileCheckSumInfo;
   frmLogon: TfrmLogon;
-//  pMem, pBuf: ^TBuf;
-//  pBuf: PByte;
-//  b: Int64;
- // c: Byte;
-//  s: Boolean;
-//  mem: TMemoryStream;
-
 begin
-//  bNeedShowTrial := False;
-  // если же дни еще есть, то подсчет трафа еще работает
   frmLogon := TfrmLogon.Create(formMain, dmMain.cnnMain);
   frmLogon.OnError := formMain.Error;
   if (frmLogon.ShowModal = mrOk) then begin
@@ -659,8 +647,6 @@ begin
     GSessions := TGCSessions.Create;
     GSessions.Load;
     Application.ProcessMessages;
-{    if not isManager then
-      dsSendOptionsToClients;}
     if (not FunctionAmIRight(FN_REMOTE_CONTROL)) then
       dsControlClubStart
     else
@@ -687,8 +673,6 @@ begin
     formMain.mnuColor.Enabled := True;
     formMain.mnuFont.Enabled := True;
     formMain.mnuTableOpt.Enabled := True;
-{    if bNeedShowTrial then
-      ShowTrialWarning;}
     if (FunctionAmIRight(FN_REMOTE_CONTROL)
         and not GRegistry.UserInterface.DontShow.ManagerFirstLogon) then begin
       formGCMessageBox.memoInfo.Text := translate('EventMonitorModeOn');
@@ -727,9 +711,6 @@ begin
 
     if (CompsCount > 0) then begin
       StartPingThread(Round(GRegistry.Options.ClientQueryTime * 1000 / CompsCount));
-//      formMain.tmrCyclicCompAction.Interval := Round
-//          (GRegistry.Options.ClientQueryTime * 1000 / CompsCount);
-      //formMain.tmrCyclicCompAction.Enabled := True;
       formMain.tmrFileSynchronization.Interval := Round
           (GRegistry.Options.ClientQueryTime * 1000 * 20 / CompsCount);
       formMain.tmrFileSynchronization.Enabled := True;
@@ -751,9 +732,7 @@ begin
     end;
     formMain.FfrmReports.InitData;
     // загрузим внешний вид текущего оператора
-//    NoRestoreCompsGrid := true;
     OperatorProfile.Load;
-//    NoRestoreCompsGrid := false;
     Application.ProcessMessages;
     if not isManager then
       GRegistry.Info.LastOperatorName := CurOperatorName;
@@ -767,7 +746,6 @@ end;
 procedure ehsLogout;
 begin
   StopPingThread;
-//  formMain.tmrCyclicCompAction.Enabled := False;
   formMain.tmrFileSynchronization.Enabled := False;
   formMain.timerCompsList.Enabled := false;
   formMain.DisableSockets();
@@ -942,11 +920,6 @@ var
  nNumber: Integer;
 // iOldRow: Integer;
 begin
-//   formMain.gridComps.SaveBookmark;
-
-//   iOldRow := TMyDBGrid(formMain.gridComps).Row;
-
-//   formMain.gridComps.SaveBookmark;
    formMain.cdsComps.DisableControls;
    bookmark := formMain.cdsComps.Bookmark;
    if ( CompsCount = 0 ) or (formMain.cdsComps.RecordCount <> CompsCount) then begin
@@ -1065,14 +1038,7 @@ begin
    SortDataSet(True);
 
    formMain.cdsComps.Bookmark := bookmark;
-//   formMain.gridComps.RestoreBookmark;
    formMain.cdsComps.EnableControls;
-
-//      formMain.gridComps.RestoreBookmark;
-   //   if not NoRestoreCompsGrid then
-//    ScrollActiveToRow(formMain.gridComps,iOldRow);
-//   formMain.gridComps.Row := iOldRow;
-
 end;
 
 // PreLogon actions
@@ -1084,11 +1050,6 @@ begin
 end;
 
 procedure ehsCompStart;
-//var
-//  i: integer;
-//  index : integer;
-//  session: TGCSession;
-//  strMessage: String;
 begin
   if (isManager) then exit;
   if (not FunctionAmIRight(FN_COMP_START)) then exit;
@@ -1103,7 +1064,6 @@ begin
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
     DoInterfaceComps;
-//    ehsPingComputers;
   end;
 end;
 
@@ -1111,7 +1071,6 @@ procedure ehsCompBackPartMoney;
 var
   i: integer;
   session: TGCSession;
-//  bActionCanceled: Boolean;
   dMoneyBack: double;
 begin
   if (isManager) then exit;
@@ -1124,17 +1083,6 @@ begin
       formMain.StopUpdate;
 
       session := Comps[i].session;
-      {if (session <> nil) and (session.Status <> ssFinished) then begin
-        bActionCanceled := False;
-        if GRegistry.Modules.KKM.Active then begin
-          bActionCanceled := not PrintCheckStop(session)
-            and GRegistry.Modules.KKM.DisconnectBlock;
-        end;
-        if bActionCanceled then
-          Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
-            'Операция отменена из-за ошибки ККМ: ' + GKKMPlugin.GetLastError)
-        else begin}
-
  { TODO : Реализовать этот код внутри класса comp }
           Console.AddEvent(EVENT_ICON_WARNING, LEVEL_1,
             translate('ActionBackPartMoney') + ' '
@@ -1144,11 +1092,6 @@ begin
             + FloatToStr(session.CommonPay - session.CommonCost ) + GRegistry.Options.Currency
             );
           session.UpdateOnDB(-dMoneyBack,0, 0, 0, 0, 0, 0, 0);
-
-{          Stop(False);
-          QueryAuthGoState1(ComputersGetIndex(CompsSel[i]));
-          end;
-      end;}
       formMain.StartUpdate;
   end;
   dmActions.actLoadSessions.Execute;
@@ -1270,8 +1213,6 @@ begin
     dmActions.actRedrawComps.Execute;
     Comps[index0].CheckState;
     Comps[index1].CheckState;
-//    PingComputer(index0);
-//    PingComputer(index1);
     SendAllOptionsToClient(index0);
     SendAllOptionsToClient(index1);
     Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
@@ -1287,7 +1228,6 @@ procedure ehsCompAdd;
 begin
   if (isManager) then exit;
   if (not FunctionAmIRight(FN_COMP_ADD)) then exit;
-  //index := ComputersGetIndex(CompsSel[0]);
   Application.CreateForm(TformCompAdd, formCompAdd);
   if (formCompAdd.ShowModal = mrOK) then begin
     dmActions.actLoadSessions.Execute;
@@ -1431,14 +1371,7 @@ begin
   if (formRemontLong.ShowModal = mrOK) then
   begin
     index := ComputersGetIndex(CompsSel[0]);
-{  session := GSessions.Add(0, 0, Comps[index].id, Comps[index].a.number,
-      GetVirtualTime, GetVirtualTime,
-      IncMinute(GetVirtualTime,GRegistry.Options.MinutsForLongRepair),
-      ID_TARIF_REMONT, 0, False, 0,
-      FilterString(formRemontLong.editRemontReason.Text),
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      ClientState_OperatorSession, ssActive);}
-  session := GSessions.Add(0, 0, Comps[index].id, GUEST_ID,
+    session := GSessions.Add(0, 0, Comps[index].id, GUEST_ID,
       GetVirtualTime, GetVirtualTime,
       IncMinute(GetVirtualTime,GRegistry.Options.MinutsForLongRepair),
       ID_TARIF_REMONT, 0, False, 0,
@@ -1456,7 +1389,6 @@ begin
     dmActions.actLoadSessions.Execute;
     dmActions.actRedrawComps.Execute;
     Comps[index].CheckState;
-//    PingComputer(index);
     SendAllOptionsToClient(index);
   end;
   formRemontLong.Destroy;
@@ -1724,13 +1656,12 @@ end;
 
 
 procedure MakeAndSendCurrentReportEx();
-//var
+var
 
-//  FReportParameters:TReportParameters;
-//  SendMail:TSendMail;
+  FReportParameters:TReportParameters;
+  SendMail:TSendMail;
 begin
  { TODO : Вытащить код из формы отправки почты в млдуль }
-  {
   FReportParameters.dtCurrent := GetVirtualTime;
   FReportParameters.dtBegin := 0;
   FReportParameters.dtEnd  := 0;
@@ -1747,20 +1678,14 @@ begin
   SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
   // установка сообщения
   if GRegistry.Mail.SMTPUseAuth then
-    SendMail.Smtp.AuthenticationType:=atLogin  // atLogin
+    SendMail.Smtp.AuthType:=satDefault  // atLogin
   else
-    SendMail.Smtp.AuthenticationType:=atNone; // atNone
+    SendMail.Smtp.AuthType:=satNone; // atNone
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
-
   SendMail.MailMessage.CharSet := 'UTF-8';
-
   SendMail.MailMessage.IsEncoded := true;
-
   SendMail.MailMessage.From.Name:='GameClass';
-
-//  SendMail.MailMessage.AddHeader('Subject: ' + EncodeSubj('Отчет за смену'));
-
   SendMail.MailMessage.Subject:=('Отчет за смену'); // тема
   SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
   SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
@@ -1777,7 +1702,6 @@ begin
 
 
   SendMail.Destroy;
-  }
 end;
 
 

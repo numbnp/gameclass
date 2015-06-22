@@ -168,7 +168,7 @@ begin
 
  MailMessage.Clear;
  MailMessage.From.Name:=cbFrom.Text;
- MailMessage.Subject:=EncodeSubj(cbSubject.Text); // тема
+ MailMessage.Subject:=cbSubject.Text; // тема
  MailMessage.From.Address:=cbFrom.Text; // адрес отправителя
  MailMessage.Recipients.EMailAddresses:=cbTo.Text+','+ledCC.Text; // получатель + копия
  MailMessage.Body.Text:=Memo2.Text; // текст сообщения
@@ -239,11 +239,4 @@ begin
   FreeAndNil( FlstSubject);
 end;
 
-{procedure TfrmMailSend.MailMessageInitializeISO(
-  var VTransferHeader: TTransfer; var VHeaderEncoding: Char;
-  var VCharSet: String);
-begin
-  VCharSet := 'windows-1251';
-end;
-}
 end.

@@ -1,2 +1,9 @@
 <?xml version="1.0"?>
-<TgConfig Version="3" SubLevelDisabled="False" />
+<TgConfig Version="3" SubLevelDisabled="False">
+  <Option Name="namespaceFolder.ufrmMailSend" Type="System.String" Value="ufrmMailSend" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ufrmLogon" Type="System.String" Value="ufrmLogon" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.gccomputers" Type="System.String" Value="gccomputers" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.uGCSendRecieve" Type="System.String" Value="uGCSendRecieve" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.uSnmp" Type="System.String" Value="uSnmp" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.uOptionGetRemoteCommand" Type="System.String" Value="uOptionGetRemoteCommand" Category="General" IsBrowsable="False" />
+</TgConfig>
