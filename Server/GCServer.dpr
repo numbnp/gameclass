@@ -14,8 +14,10 @@ program GCServer;
 {$ENDIF}
 
 uses
+{$IFOPT D+}
   FastMM4,
   FastMM4Messages,
+{$ENDIF}
   Forms,
   SysUtils,
   Windows,

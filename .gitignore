@@ -13,5 +13,6 @@ default_diagram.tvsconfig
 *.dcu
 *.log
 *.DCU
+*.dproj.local
 
 /Install/src/Packages
