@@ -141,7 +141,7 @@ begin
       + ', @idAccount = ' + IntToStr(AnAccountId)
       + ', @TypeCost = ' + IntToStr(Integer(ATypeCost))
       + ', @UseCustomCost = ' + BoolToStr(AbUseCustomCost)
-      + ', @CustomCost = ''' + FloatToStr(AfCustomCost) + '''');
+      + ', @CustomCost = ' + ProtectFloatToStr(AfCustomCost) );
   if AbUseCustomCost then
     fCost := AfCustomCost * AnCount
   else
