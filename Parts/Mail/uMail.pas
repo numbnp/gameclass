@@ -29,13 +29,7 @@ type
 
     constructor Create;
     destructor Destroy; override;
-
-
-
   end;
-
-function EncodeSubj(instr:string):string;
-
 implementation
 
 { TSendMail }
@@ -67,16 +61,12 @@ end;
 function TSendMail.Send: boolean;
 var
   res:Boolean;
-//  IdEmailAddressItem: TIdEmailAddressItem;
 begin
   res := False;
-  FMessage.Subject := EncodeSubj(FMessage.Subject);
   try
     try
       FSMTP.Connect;
       sleep(200);
-
-//      IdEmailAddressItem := FMessage.Recipients.Add;
 
       FSMTP.Send(FMessage);
       _AddLog('Письмо отправлено!');
@@ -100,15 +90,6 @@ procedure TSendMail._AddLog(str: string);
 begin
  if @AddLog <> nil then
     AddLog(str);
-end;
-
-function EncodeSubj(instr:string):string;
-var
-  IdEncoderMIME: TIdEncoderMIME;
-begin
-  IdEncoderMIME := TIdEncoderMIME.Create(nil);
-  Result := '=?Windows-1251?B?' + IdEncoderMIME.Encode(instr) + '?=';
-  IdEncoderMIME.Free;
 end;
 
 end.
