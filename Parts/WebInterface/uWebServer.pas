@@ -17,13 +17,17 @@ type
     Headers:TStringList;
     end;
 
+  TExecuteClientEvent = function (Sender: TObject; Request:HttpRequest):boolean of object;
+  TPrepareFileEvent = function (Sender: TObject; FilePath:String): TMemoryStream of object;
+
   TClientThread = class(TThread)
   private
+    FExecuteClientEvent :TExecuteClientEvent;
+    FPrepareFileEvent :TPrepareFileEvent;
+
     procedure SendStr(s:TSocket;str:ansiString);
     procedure SendFile(s:TSocket;FileStream:TMemoryStream);
     Function PrepareFile(FilePath:String): TMemoryStream;
-
-//    function GetFilePath(FilePath:string):string;
     function GetTypeContent(FilePath:ansistring):ansistring;
     function ParseHttpRequest(recv:ansistring): HttpRequest;
   public
@@ -31,8 +35,9 @@ type
     DocumentRoot :String;
     DirectoryIndex :String;
     AddLog:procedure (str:string); stdcall;
-    ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
-    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
+    property ExecuteClientEvent : TExecuteClientEvent read FExecuteClientEvent write FExecuteClientEvent;
+    property PrepareFileEvent : TPrepareFileEvent read FPrepareFileEvent write FPrepareFileEvent;
+
   protected
     procedure AddToLog(str:string);
     procedure Execute; override;
@@ -41,14 +46,15 @@ type
 
   TListerningThread = class(TThread)
   private
-
+    FExecuteClientEvent :TExecuteClientEvent;
+    FPrepareFileEvent :TPrepareFileEvent;
   public
     ListenPort:integer;
     DocumentRoot:String;
     DirectoryIndex:String;
     AddLog:procedure (str:string); stdcall;
-    ExecuteClient:function (Request:HttpRequest):boolean; stdcall;
-    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
+    property ExecuteClientEvent : TExecuteClientEvent read FExecuteClientEvent write FExecuteClientEvent;
+    property PrepareFileEvent : TPrepareFileEvent read FPrepareFileEvent write FPrepareFileEvent;
   protected
       procedure Execute; override;
   end;
@@ -57,14 +63,16 @@ type
   TMyWebServer = class
   private
     _listenThread:TListerningThread;
+    FExecuteClientEvent :TExecuteClientEvent;
+    FPrepareFileEvent :TPrepareFileEvent;
   public
     RootFolder: string;
     Port: integer;
     IndexPageName: string;
 
     AddLog:procedure (str:string);  stdcall;
-    ExecuteClient:function (Request:HttpRequest):boolean;  stdcall;
-    ParceAndReplaceLine:procedure (var Str:Ansistring); stdcall;
+    property ExecuteClientEvent : TExecuteClientEvent read FExecuteClientEvent write FExecuteClientEvent;
+    property PrepareFileEvent : TPrepareFileEvent read FPrepareFileEvent write FPrepareFileEvent;
 
     constructor Create();
     procedure start();
@@ -107,8 +115,10 @@ begin
   _listenThread.DocumentRoot := RootFolder;
   _listenThread.DirectoryIndex := IndexPageName;
   _listenThread.AddLog := AddLog;
-  _listenThread.ExecuteClient := ExecuteClient;
-  _listenThread.ParceAndReplaceLine := ParceAndReplaceLine;
+  if Assigned(FPrepareFileEvent) then
+    _listenThread.PrepareFileEvent := FPrepareFileEvent;
+  if Assigned(FExecuteClientEvent) then
+    _listenThread.ExecuteClientEvent := FExecuteClientEvent;
   _listenThread.Resume;
 end;
 
@@ -168,8 +178,10 @@ begin
     _clientThread.DocumentRoot := DocumentRoot;
     _clientThread.DirectoryIndex := DirectoryIndex;
     _clientThread.AddLog := AddLog;
-    _clientThread.ExecuteClient := ExecuteClient;
-    _clientThread.ParceAndReplaceLine := ParceAndReplaceLine;
+    if Assigned(FPrepareFileEvent) then
+      _clientThread.PrepareFileEvent := FPrepareFileEvent;
+    if Assigned(FExecuteClientEvent) then
+      _clientThread.ExecuteClientEvent := FExecuteClientEvent;
     _clientThread.Resume;
   end;
 end;
@@ -208,8 +220,8 @@ begin
   AddToLog('-----------------------------------------------');
   _httpRequest := ParseHttpRequest(_request);
 
-  if @ExecuteClient <> nil then
-    if not ExecuteClient(_httpRequest) then
+  if Assigned(FExecuteClientEvent) then
+    if not FExecuteClientEvent(Self,_httpRequest) then
     begin
       CloseSocket(_client);
       exit;
@@ -228,7 +240,10 @@ begin
 
   if (FileExists(_Path)) Then
   begin
-    _FileStream := PrepareFile(_path);
+    if Assigned(FPrepareFileEvent) then
+      _FileStream := FPrepareFileEvent(Self,_path)
+    else
+      _FileStream := PrepareFile(_path);
 
     SendStr(_Client, 'HTTP/1.0 200 OK');
     SendStr(_Client, 'Server: GameClassClient');
@@ -294,48 +309,6 @@ begin
   if (ex='.CSS') then Result := 'text/css';
 end;
 
-function UnpackKeyValue(const Str:AnsiString; var Key,Value:AnsiString):boolean;
-var
-  DelimeterPos:integer;
-  _Result:Boolean;
-begin
-  _Result:=false;
-  Key :='';
-  Value :='';
-  DelimeterPos := Pos('=',Str);
-  if (DelimeterPos > 1) and (DelimeterPos < length(Str)) then
-  begin
-    Key := LeftStr(Str,DelimeterPos-1);
-    Value := RightStr(Str, Length(Str)-DelimeterPos);
-    _Result := True;
-  end;
-  Result := _Result;
-end;
-
-procedure StrBreakApart(const Source, Delimeter: AnsiString; Parts: TStrings);
-var
- curPos: Integer;
- curStr: AnsiString;
-begin
- Parts.Clear;
- if Length(Source) = 0 then
-   Exit;
- Parts.BeginUpdate;
- try
-   CurStr:= Source;
-   repeat
-     CurPos:= Pos(Delimeter, CurStr);
-     if CurPos > 0 then begin
-       Parts.Add(String(Copy(CurStr, 1, Pred(CurPos))));
-       CurStr:= Copy(CurStr, CurPos+Length(Delimeter),
-         Length(CurStr)-CurPos-Length(Delimeter)+1);
-     end else
-       Parts.Add(String(CurStr));
-   until CurPos=0;
- finally
-   Parts.EndUpdate;
- end;
-end;
 
 function TClientThread.ParseHttpRequest(recv: AnsiString): HttpRequest;
 var
@@ -412,6 +385,15 @@ begin
 
 end;
 
+Function TClientThread.PrepareFile(FilePath:String): TMemoryStream;
+var
+  msResultFile: TMemoryStream;
+begin
+  msResultFile := TMemoryStream.Create;
+  msResultFile.LoadFromFile(FilePath);
+  Result := msResultFile;
+end;
+
 
 function ReplaceSlash(Str: string): string;
 begin
@@ -431,40 +413,48 @@ begin
 end;
 
 
-{ TODO : ¬ынести обработку строк из веб сервера }
-Function TClientThread.PrepareFile(FilePath:String): TMemoryStream;
+function UnpackKeyValue(const Str:AnsiString; var Key,Value:AnsiString):boolean;
 var
-  msResultFile: TMemoryStream;
-  sFileType: AnsiString;
-  fFile: TextFile;
-  sBuf:AnsiString;
-  _Out_buff:array [0..5000] of ansichar;
-  iBufSize:integer;
+  DelimeterPos:integer;
+  _Result:Boolean;
 begin
-  msResultFile := TMemoryStream.Create;
-  sFileType := AnsiString(UpperCase(ExtractFileExt(FilePath)));
-  if (sFileType='.HTM') or (sFileType='.HTML') or (sFileType='.CSS') then
+  _Result:=false;
+  Key :='';
+  Value :='';
+  DelimeterPos := Pos('=',Str);
+  if (DelimeterPos > 1) and (DelimeterPos < length(Str)) then
   begin
-    AssignFile (fFile,FilePath);
-    Reset(fFile);
-    While not EOF(fFile)do
-    begin
-      readln(fFile,sBuf);
-      if @ParceAndReplaceLine <> nil then
-        ParceAndReplaceLine(sBuf);
-      StrPCopy(_Out_buff, sBuf);
-      iBufSize := Length(sBuf);
-      _Out_buff[iBufSize] := #10;
-      msResultFile.WriteBuffer(_Out_buff,iBufSize + 1);
-    end;
-    CloseFile(fFile);
-    msResultFile.Seek(0,soBeginning);
-  end else begin
-    msResultFile.LoadFromFile(FilePath);
+    Key := LeftStr(Str,DelimeterPos-1);
+    Value := RightStr(Str, Length(Str)-DelimeterPos);
+    _Result := True;
   end;
-  Result := msResultFile;
+  Result := _Result;
 end;
 
+procedure StrBreakApart(const Source, Delimeter: AnsiString; Parts: TStrings);
+var
+ curPos: Integer;
+ curStr: AnsiString;
+begin
+ Parts.Clear;
+ if Length(Source) = 0 then
+   Exit;
+ Parts.BeginUpdate;
+ try
+   CurStr:= Source;
+   repeat
+     CurPos:= Pos(Delimeter, CurStr);
+     if CurPos > 0 then begin
+       Parts.Add(String(Copy(CurStr, 1, Pred(CurPos))));
+       CurStr:= Copy(CurStr, CurPos+Length(Delimeter),
+         Length(CurStr)-CurPos-Length(Delimeter)+1);
+     end else
+       Parts.Add(String(CurStr));
+   until CurPos=0;
+ finally
+   Parts.EndUpdate;
+ end;
+end;
 
 
 
