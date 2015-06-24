@@ -418,33 +418,6 @@ begin
   Result := ReplaceStr(str,'/','\');
 end;
 
-//function ReplaceStr(Str, X, Y: AnsiString): AnsiString;
-{Str - строка, в которой будет производиться замена.
- X - подстрока, которая должна быть заменена.
- Y - подстрока, на которую будет произведена заменена}
-{
-var
-  buf1, buf2, buffer: AnsiString;
-
-begin
-  buf1 := '';
-  buf2 := Str;
-  Buffer := Str;
-
-  while Pos(X, buf2) > 0 do
-  begin
-    buf2 := Copy(buf2, Pos(X, buf2), (Length(buf2) - Pos(X, buf2)) + 1);
-    buf1 := Copy(Buffer, 1, Length(Buffer) - Length(buf2)) + Y;
-    Delete(buf2, Pos(X, buf2), Length(X));
-    Buffer := buf1 + buf2;
-  end;
-
-  ReplaceStr := Buffer;
-end;
-}
-
-
-
 function ReplaceWebCode(Str: AnsiString): AnsiString;
 var
   ss: string;
