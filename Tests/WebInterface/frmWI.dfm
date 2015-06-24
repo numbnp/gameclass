@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 545
-  ClientWidth = 775
+  ClientHeight = 640
+  ClientWidth = 959
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,18 +17,22 @@ object Form1: TForm1
   object pnlWeb: TPanel
     Left = 0
     Top = 0
-    Width = 590
-    Height = 545
+    Width = 774
+    Height = 640
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 590
+    ExplicitHeight = 545
   end
   object pnlControl: TPanel
-    Left = 590
+    Left = 774
     Top = 0
     Width = 185
-    Height = 545
+    Height = 640
     Align = alRight
     TabOrder = 1
+    ExplicitLeft = 590
+    ExplicitHeight = 545
     object Button1: TButton
       Left = 24
       Top = 40
