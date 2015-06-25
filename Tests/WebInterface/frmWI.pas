@@ -17,10 +17,13 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    edtCommand: TEdit;
+    Button4: TButton;
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,6 +57,11 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   crm.ShowUnblock;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  crm.DoJsCommand(edtCommand.Text);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
