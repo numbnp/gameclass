@@ -31,6 +31,7 @@ type
       procedure ReloadSkin();
       procedure ShowUnblock();
       procedure Start;
+      procedure DoJsCommand(Command:string);
 
       function ExecuteClientEvent (Sender: TObject; Request:HttpRequest):boolean;
       function PrepareFile (Sender: TObject; FilePath:String): TMemoryStream;
@@ -40,6 +41,11 @@ implementation
 
 uses
   SysUtils;
+
+procedure TWebInterface.DoJsCommand(Command: string);
+begin
+  _MyWebBrowser.ExecuteJavaScript(Command);
+end;
 
 function TWebInterface.ExecuteClientEvent(Sender: TObject;
   Request: HttpRequest): boolean;
