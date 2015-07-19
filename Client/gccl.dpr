@@ -1,13 +1,8 @@
 program gccl;
 
 uses
-  //FastMM4,
-  //FastMM4Messages,
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
+  FastMM4,
+  FastMM4Messages,
   ceflib,
   Forms,
   Windows,
@@ -73,11 +68,11 @@ uses
   MMDevApi_tlb in '..\Parts\ControlVolume\MMDevApi_tlb.pas',
   Mixer in '..\Parts\ControlVolume\Mixer.pas',
   uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
-  uWebExec in '..\Parts\Web\uWebExec.pas',
-  uWebServer in '..\Parts\Web\uWebServer.pas',
   uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas',
-  uClientWebInterface in '..\Parts\ClientWebInterface\uClientWebInterface.pas',
-  dzurl in '..\Parts\Web\dzurl.pas';
+  dzurl in '..\Parts\WebInterface\dzurl.pas',
+  uClientWebInterface in '..\Parts\WebInterface\uClientWebInterface.pas',
+  uMyWebBrowser in '..\Parts\WebInterface\uMyWebBrowser.pas',
+  uWebServer in '..\Parts\WebInterface\uWebServer.pas';
 
 {$R *.res}
 const
@@ -120,8 +115,8 @@ begin
 
     Application.Title := 'GCCL';
     Application.CreateForm(TfrmMain, frmMain);
-    Application.CreateForm(TfrmMessage, frmMessage);
-    GWinhkg.SetClientHandle(frmMain.Handle);
+  Application.CreateForm(TfrmMessage, frmMessage);
+  GWinhkg.SetClientHandle(frmMain.Handle);
     Application.CreateForm(TdmMain, dmMain);
     Application.CreateForm(TfrmSmallInfo, frmSmallInfo);
     Application.ShowMainForm := False;

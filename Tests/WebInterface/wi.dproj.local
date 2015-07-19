@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.780,=K:\Projects\Free\Parts\WebInterface\uWebExec.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.879,=K:\Projects\Free\Parts\WebInterface\uWebExec.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.833,=K:\Projects\Free\Parts\WebInterface\dzurl.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.780,=K:\Projects\Free\Parts\WebInterface\uWebExec.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.866,C:\Users\napad\Documents\Embarcadero\Studio\Projects\Unit1.dfm=K:\Projects\Free\Tests\WebInterface\frmWI.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.191,K:\Projects\Free\Parts\WebInterface\uWebExec.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.236,=K:\Projects\Free\Tests\WebInterface\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.825,C:\Users\napad\Documents\Embarcadero\Studio\Projects\Project1.dproj=K:\Projects\Free\Tests\WebInterface\wi.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.142,K:\Projects\Free\Tests\WebInterface\Unit2.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.825,K:\Projects\Free\Tests\WebInterface\wi.dproj=C:\Users\napad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.236,=K:\Projects\Free\Tests\WebInterface\Unit2.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.301,=C:\Users\napad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.866,K:\Projects\Free\Tests\WebInterface\frmWI.pas=C:\Users\napad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.089,=K:\Projects\Free\Parts\WebInterface\uMyWebBrowser.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.857,=K:\Projects\Free\Parts\WebInterface\uClientWebInterface.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.940,=K:\Projects\Free\Parts\WebInterface\uWebServer.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.089,=K:\Projects\Free\Parts\WebInterface\uMyWebBrowser.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.866,C:\Users\napad\Documents\Embarcadero\Studio\Projects\Unit1.pas=K:\Projects\Free\Tests\WebInterface\frmWI.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.915,=K:\Projects\Free\Parts\WebInterface\uWebServer.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.866,K:\Projects\Free\Tests\WebInterface\frmWI.dfm=C:\Users\napad\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.940,=K:\Projects\Free\Parts\WebInterface\uWebServer.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.833,=K:\Projects\Free\Parts\WebInterface\dzurl.pas</Transaction>
   </Transactions>
 </BorlandProject>

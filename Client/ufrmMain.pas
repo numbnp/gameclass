@@ -6,11 +6,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 unit ufrmMain;
-                         
+
 interface
 
 uses
-{$IFDEF MSWINDOWS}
   Windows,
   Messages,
   Graphics,
@@ -24,31 +23,10 @@ uses
   ExtCtrls,
   Buttons,
   Mask,
-  {ToolEdit,
-  CurrEdit,}
   ieConst,
-//  IEDocHostUIHandler,
   Menus,
   uClientWebInterface,
   cefvcl,ceflib,
-{$ENDIF}
-{$IFDEF LINUX}
-  Xlib,
-  Qt,
-  QForms,
-  QDialogs,
-  QStdCtrls,
-  QControls,
-  QTypes,
-  QExtCtrls,
-  QMask,
-  uDateTimePicker,
-  uCurrencyEdit,
-  QComCtrls,
-  uWebBrowser,
-uCrossPlatformBlocking,
-uCrossPlatformVKCodes,  
-{$ENDIF}
   uSafeStorage,
   SysUtils,
   Variants,
@@ -60,7 +38,7 @@ uCrossPlatformVKCodes,
   ufrmSmallInfo, ImgList, ToolWin,
   uClientFunctions;
 
-type                               
+type
 
   //
   // TformMain
@@ -160,11 +138,11 @@ type
     mnuShutdown: TMenuItem;
     mnuReboot: TMenuItem;
     mnuLogoff: TMenuItem;
-    webSkin: TChromium;
     edtSum: TEdit;
     edtAddTimeSum: TEdit;
     edtAddTrafficSum: TEdit;
     edtAddTrafficSize: TEdit;
+    pnlWeb: TPanel;
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -197,18 +175,6 @@ type
     procedure edtAddTrafficSizeEnter(Sender: TObject);
     procedure edtAddTrafficSizeExit(Sender: TObject);
     procedure memInfoChange(Sender: TObject);
-{$IFDEF MSWINDOWS}
-   { procedure wbAccountNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);
-    procedure wbAccountCompFreeNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);
-    procedure wbTopNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);
-    procedure wbAgreementNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);
-    procedure wbCompFreeNavigateComplete2(Sender: TObject;
-      const pDisp: IDispatch; var URL: OleVariant);}
-{$ENDIF}
     procedure btnGuestClick(Sender: TObject);
     procedure btnAddTimeClick(Sender: TObject);
     procedure edtAddTimeSumEnter(Sender: TObject);
@@ -218,32 +184,16 @@ type
     procedure edtAddTimeSumChange(Sender: TObject);
     procedure dtpAddTimeLengthChange(Sender: TObject);
     procedure tmrSafeOpearationTimer(Sender: TObject);
-//    procedure tmrUnblockByPasswordHideTimer(Sender: TObject);
-//    procedure btnUnblockClick(Sender: TObject);
-//    procedure btnBlockClick(Sender: TObject);
-//    procedure btnUnblockCancelClick(Sender: TObject);
-//    procedure tmrChangePasswordHideTimer(Sender: TObject);
-//    procedure editNewPassChange(Sender: TObject);
-//    procedure btnChangePasswordOkClick(Sender: TObject);
-//    procedure btnChangePasswordCancelClick(Sender: TObject);
     procedure edtLoginKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtPasswordKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-//    procedure editOldPassKeyDown(Sender: TObject; var Key: Word;
-//      Shift: TShiftState);
-//    procedure editNewPassKeyDown(Sender: TObject; var Key: Word;
-//      Shift: TShiftState);
-//    procedure editRepeatKeyDown(Sender: TObject; var Key: Word;
-//      Shift: TShiftState);
     procedure mnuShutdownClick(Sender: TObject);
     procedure mnuRebootClick(Sender: TObject);
     procedure mnuLogoffClick(Sender: TObject);
     procedure pnlClockClick(Sender: TObject);
     procedure pnlCompNumberClick(Sender: TObject);
     procedure tbCompShutdownClick(Sender: TObject);
-    procedure webSkinLoadEnd(Sender: TObject; const browser: ICefBrowser;
-      const frame: ICefFrame; httpStatusCode: Integer);
     procedure pnlBlockedClick(Sender: TObject);
   private
     { Private declarations }
@@ -259,14 +209,11 @@ type
     FbBeforeFirstFormShow: Boolean;
     FbAfterFirstFormShow: Boolean;
     FbShutdownAlt:integer;
-{$IFDEF LINUX}
-    FbBlocked: Boolean;
-{$ENDIF}
   protected
     procedure _PasswordHotKey;
-//    procedure _ChangePasswordHide;
   public
     { Public declarations }
+    GCClientWebInterface: TWebInterface;
     procedure InitializeApplicationWindows;
     procedure Show;
     procedure NavigateWebBrousers;
@@ -285,44 +232,25 @@ type
     property EdtAddTimeSumFocused: Boolean read FbEdtAddTimeSumFocused;
     property DtpAddTimeLengthFocused: Boolean read FbDtpAddTimeLengthFocused;
     property AfterFirstFormShow: Boolean read FbAfterFirstFormShow;
-
-{$IFDEF MSWINDOWS}
     procedure ActivateInfo(var Message: TMessage);
         message WM_USER_ACTIVATE_INFO;
     procedure HotKey(var Message: TMessage);
         message WM_HOTKEY;
-{$ENDIF}
-{$IFDEF LINUX}
-    procedure BlockKeyboardAndMouse(AbLock: Boolean);
-{$ENDIF}
     procedure EnableSafeOperation;
 
   end;        // TformMain
 
 var
   frmMain: TfrmMain;
-{$IFDEF MSWINDOWS}
-//  GDocHostUIHandler: TDocHostUIHandler;
-{$ENDIF}
 
 implementation
-{$IFDEF MSWINDOWS}
-  {$R *.dfm}
-{$ENDIF}
-{$IFDEF LINUX}
-  {$R *.xfm}
-{$ENDIF}
+
+{$R *.dfm}
 
 uses
-{$IFDEF MSWINDOWS}
   ActiveX,
   uRunPadTools,
   uClientInstallDirectory,
-  uWebExec,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics,
-{$ENDIF}
   uLocalCommandSender,
   uProtocol,
   uRemoteCommand,
@@ -346,21 +274,11 @@ begin
   if FbBeforeFirstFormShow then begin
     Debug.Trace5('Show 1');
     FbBeforeFirstFormShow := False;
-{$IFDEF LINUX}
-    Application.NormalizeTopMosts;
-    FormStyle := fsStayOnTop;
-{$ENDIF}
   end;
- // Изза Position не работает WebBrouser
- // Position := poScreenCenter;
-//  Left := (GetSystemMetrics(SM_CXFULLSCREEN) - Width) div 2;
-//  Top := (GetSystemMetrics(SM_CYFULLSCREEN) - Height) div 2;
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
   inherited Show;
-{$IFDEF MSWINDOWS}
   ShowWindow(Application.Handle,SW_HIDE);  // Скрываем программу в таскбаре
-{$ENDIF}
   Debug.Trace5('Show 2');
   if not FbAfterFirstFormShow then begin
     SetFocus;
@@ -374,12 +292,9 @@ var
 begin
   if FbBeforeFirstFormShow then begin
     nLeft := Left;
-//    Left := GetSystemMetrics(SM_CXSCREEN);
     Left := Screen.Width;
     inherited Show;
-{$IFDEF MSWINDOWS}
     ShowWindow(Application.Handle,SW_HIDE);  // Скрываем программу в таскбаре
-{$ENDIF}
     Hide;
     Left := nLeft;
     FbBeforeFirstFormShow := False;
@@ -396,22 +311,18 @@ procedure TfrmMain.btnSendMessageClick(Sender: TObject);
 var
   strSendData: String;
 begin
-  //SendDataTo('v01.'+STR_CMD_SENDMESSAGE+'=a/b/'+edtMessage.Text,False);
   memMessages.Lines.Add(GClientInfo.Login + ': ' + edtMessage.Text);
   strSendData := STR_CMD_SENDMESSAGE + '=//' + edtMessage.Text;
   LocalSendDataTo(strSendData,False);
   edtMessage.Text := '';
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TfrmMain.ActivateInfo(var Message: TMessage);
 begin
   TSafeStorage.Instance().Push(ThreadSafeOperation_MainFormAction,
       Integer(FormAction_Show));
 end;
-{$ENDIF}
 
-{$IFDEF MSWINDOWS}
 procedure TfrmMain.HotKey(var Message: TMessage);
 begin
   GClientInfo.LastKeyDown := Now;
@@ -421,24 +332,10 @@ begin
   if (Message.LParam = MakeLong(MOD_ALT or MOD_CONTROL, $55{U})) then
       _PasswordHotKey;
 end;
-{$ENDIF}
 
 
 procedure TfrmMain.NavigateWebBrousers;
 begin
-{$IFDEF LINUX}
-  wbTop.Picture.LoadFromFile(
-      FstrURLPath + 'Top.bmp');
-  wbAgreement.Picture.LoadFromFile(
-      FstrURLPath + 'Agreement.bmp');
-  wbCompFree.Picture.LoadFromFile(
-      FstrURLPath + 'CompFree.bmp');
-  wbAccountCompFree.Picture.LoadFromFile(
-      FstrURLPath + 'AccountCompFree.bmp');
-  wbAccount.Picture.LoadFromFile(
-      FstrURLPath + 'Account.bmp');
-{$ENDIF}
-{$IFDEF MSWINDOWS}
   if pnlMain.Visible then
   begin
     //wbFullScreen.Stop;
@@ -493,20 +390,21 @@ begin
     wbAccount.Enabled := False;
 
   end;
-
-{$ENDIF}
 end;
 
 procedure TfrmMain.UpdateData;
 begin
   FbOnChangeEnabled := False;
   lblLoggedAs.Caption := GClientInfo.Login;
-  GCClientWebInterface.SetInterfaceData('{"login": "' + GClientInfo.Login +'"}');
   lblBalance.Caption := FloatToStr(GClientInfo.Balance);
-  GCClientWebInterface.SetInterfaceData('{"balance": "' + FloatToStr(GClientInfo.Balance) +'"}');
-  GCClientWebInterface.SetInterfaceData('{"balance_limit": "' + FloatToStr(GClientInfo.BalanceLimit) +'"}');
-  GCClientWebInterface.SetInterfaceData('{"accumulated": "' + FloatToStr(GClientInfo.Spent) +'"}');
-
+  if Assigned(GCClientWebInterface) then
+  begin
+    GCClientWebInterface.SetInterfaceData('{"login": "' + GClientInfo.Login +'"}');
+    GCClientWebInterface.SetInterfaceData('{"balance": "' + FloatToStr(GClientInfo.Balance) +'"}');
+    GCClientWebInterface.SetInterfaceData('{"balance_limit": "' + FloatToStr(GClientInfo.BalanceLimit) +'"}');
+    GCClientWebInterface.SetInterfaceData('{"accumulated": "' + FloatToStr(GClientInfo.Spent) +'"}');
+    GCClientWebInterface.SetInterfaceData('{"session_info": "' + GClientInfo.FullInfo +'"}');
+  end;
   if GClientInfo.Spent > 0 then
   begin
     lblSpent.Visible := True;
@@ -517,7 +415,6 @@ begin
     lblSpentCaption.Visible := False;
   end;
   memInfo.Text := GClientInfo.FullInfo;
-  GCClientWebInterface.SetInterfaceData('{"session_info": "' + GClientInfo.FullInfo +'"}');
   memBalanceHistory.Text := GClientInfo.BalanceHistory;
   FbOnChangeEnabled := True;
 end;
@@ -544,7 +441,7 @@ try
   case GClientInfo.ClientState of
     ClientState_Blocked: begin
       pgctrlMain.ActivePage := tabScreenCompFree;
-      GCClientWebInterface.SetState(0);
+      GCClientWebInterface.SetClientState(0);
     end;
     ClientState_Authentication: begin
       Debug.Trace5('DoDesign a1');
@@ -558,7 +455,7 @@ try
       pnlButtonsGuest.Visible := GClientOptions.GuestSession;
       pnlButtonsLeft.Visible := not pnlButtonsGuest.Visible;
       Debug.Trace5('DoDesign a5');
-      GCClientWebInterface.SetState(1);
+      GCClientWebInterface.SetClientState(1);
     end;
     ClientState_Order: begin
       pgctrlMain.ActivePage := tabScreenClientInfo;
@@ -568,7 +465,7 @@ try
       tabSendMess.TabVisible := True;
       tabAccountInfo.TabVisible := True;
       cboTarifs.Enabled := True;
-      GCClientWebInterface.SetState(2);
+      GCClientWebInterface.SetClientState(2);
       DoDesignStartStop;
 
     end;
@@ -588,12 +485,12 @@ try
       edtSum.Enabled := False;
       dtpTime.Enabled := False;
       cboTarifs.Enabled := False;
-      GCClientWebInterface.SetState(3);
+      GCClientWebInterface.SetClientState(3);
     end;
     ClientState_Agreement: begin
       pgctrlMain.ActivePage := tabScreenAgreement;
       butNotAgree.Enabled := True;
-      GCClientWebInterface.SetState(4);
+      GCClientWebInterface.SetClientState(4);
     end;
     ClientState_OperatorSession: begin
       pgctrlMain.ActivePage := tabScreenClientInfo;
@@ -601,12 +498,12 @@ try
       tabAccountInfo.TabVisible := False;
       tabStartStop.TabVisible := False;
       tabAdd.TabVisible := False;
-      GCClientWebInterface.SetState(5);
+      GCClientWebInterface.SetClientState(5);
     end;
     ClientState_OperatorAgreement: begin
       pgctrlMain.ActivePage := tabScreenAgreement;
       butNotAgree.Enabled := False;
-      GCClientWebInterface.SetState(6);
+      GCClientWebInterface.SetClientState(6);
     end;
   end;
 
@@ -647,10 +544,6 @@ begin
       and (fSum > 0)
       and (fSum <= GClientInfo.Balance - GClientInfo.BalanceLimit)
       and (not ((HourOf(frmMain.dtpTime.Time) = 0 ) and (MinuteOf(frmMain.dtpTime.Time)=0)));
-
-
-
-//  edtSum.E
   btnSessionStop.Enabled := False;
   tabAdd.TabVisible := False;
   if (Length(cboTarifs.Text)=0) then begin
@@ -677,42 +570,21 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  //PixelsPerInch := Screen.PixelsPerInch;
-//  PixelsPerInch := 75;
-{$IFDEF LINUX}
-  FbBlocked := False;
-  QWidget_size(Handle, @size);
-  QWidget_setBaseSize(Handle, @size);
-  QWidget_setFixedSize(Handle, @size);
-{$ENDIF}
   FbBeforeFirstFormShow := True;
   FbAfterFirstFormShow := False;
-{$IFDEF MSWINDOWS}
 //  GDocHostUIHandler := TDocHostUIHandler.Create;
-{$ENDIF}
   FbOnChangeEnabled := True;
-{$IFDEF MSWINDOWS}
   FstrURLPath := InstallDirectory + '\Skins\';
-{$ENDIF}
-{$IFDEF LINUX}
-  FstrURLPath := ExtractFilePath(ParamStr(0)) + '/Skins/';
-{$ENDIF}
-{$IFDEF MSWINDOWS}
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
-  StartWebServer;
-  GCClientWebInterface := TGCClientWebInterface.Create(webSkin);
-  GCClientWebInterface.ReloadSkin;
-{$ENDIF}
-//{$IFDEF LINUX}                    Убираем всякие триалы
-//  if YearOf(Now) > 2009 then      Из-за этого я ломал голову 2 дня
-//    Application.Terminate;
-//{$ENDIF}
+//  GCClientWebInterface.ReloadSkin;
+  GCClientWebInterface.Create(self.pnlWeb);
+  GCClientWebInterface.Start;
+
   TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
-{$IFDEF MSWINDOWS}
   TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
       Integer(RunPadAction_HideTabs));
-{$ENDIF}
+
   RunClientScript(caClientStart);
 end;
 
@@ -750,38 +622,23 @@ begin
 {  SendMessage(frmMain.Handle,WM_USER_THREADSAFE_UPDATE,
       lParam(ThreadSafeOperation_RunPadAction),
       wParam(RunPadAction_EndVipSession));}
-{$IFDEF MSWINDOWS}
   if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
     TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
         Integer(RunPadAction_VipLogout));
   end;
-{$ENDIF}
 end;
 
 procedure TfrmMain.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   GClientInfo.LastKeyDown := Now;
-{$IFDEF MSWINDOWS}
   if (Key = VK_ESCAPE)
-{$ENDIF}
-{$IFDEF LINUX}
-  if (Key = Key_Escape)
-{$ENDIF}
       and Visible and not GClientInfo.ResultBlocking then
     Hide;
-{$IFDEF MSWINDOWS}
   if not (ssShift in Shift)
       and (ssAlt in Shift)
       and (ssCtrl in Shift)
       and (Key = $55{U}) then begin
-{$ENDIF}
-{$IFDEF LINUX}
-  if not (ssShift in Shift)
-      and (ssAlt in Shift)
-      and (ssCtrl in Shift)
-      and (Key = Key_U) then begin
-{$ENDIF}
     _PasswordHotKey;
   end;
 end;
@@ -802,14 +659,14 @@ begin
     QueryCostTime(cboTarifs.Text,edtSum.Text);
     DoDesignStartStop;
   end;
-end;                             
+end;
 
 procedure TfrmMain.dtpTimeChange(Sender: TObject);
 begin
   if IsOnChangeEnabled then begin
     LocalSendDataTo(STR_CMD_AUTH_QUERYCOSTTIME_2 + '=' + cboTarifs.Text + '//'
         + DateTimeToStr(dtpTime.Time),False);
-    DoDesignStartStop;         
+    DoDesignStartStop;
   end;
 end;
 
@@ -880,11 +737,7 @@ end;
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
   tmrSafeOpearation.Enabled := False;
-{$IFDEF LINUX}
-{$ENDIF}
-{$IFDEF MSWINDOWS}
 //  GDocHostUIHandler.Free;
-{$ENDIF}
 end;
 
 procedure TfrmMain.edtMessageKeyUp(Sender: TObject; var Key: Word;
@@ -898,9 +751,7 @@ procedure TfrmMain.tmrClockTimer(Sender: TObject);
 
 begin
   pnlClock.Caption := TimeToStr(Time);
-{$IFDEF MSWINDOWS}
   //modernTrayIcon.Active := FindWindow('Shell_TrayWnd','')<>0;
-{$ENDIF}
 //  modernTrayIcon.Active := false;
 //  modernTrayIcon.Active := true;
 //  GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
@@ -979,68 +830,6 @@ begin
   DoDesignAdd;
 end;
 
-
-{$IFDEF MSWINDOWS}
-{procedure TfrmMain.wbAccountNavigateComplete2(Sender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-var
-  hr: HResult;
-  CustDoc: ICustomDoc;
-begin
-  hr := wbAccount.Document.QueryInterface(ICustomDoc, CustDoc);
-//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
-end;
-
-procedure TfrmMain.wbAccountCompFreeNavigateComplete2(Sender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-var
-  hr: HResult;
-  CustDoc: ICustomDoc;
-begin
-  hr := wbAccountCompFree.Document.QueryInterface(ICustomDoc, CustDoc);
-//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
-end;
-
-procedure TfrmMain.wbTopNavigateComplete2(Sender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-var
-  hr: HResult;
-  CustDoc: ICustomDoc;
-begin
-  hr := wbTop.Document.QueryInterface(ICustomDoc, CustDoc);
-//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
-end;
-
-
-
-procedure TfrmMain.wbAgreementNavigateComplete2(Sender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-var
-  hr: HResult;
-  CustDoc: ICustomDoc;
-begin
-  hr := wbAgreement.Document.QueryInterface(ICustomDoc, CustDoc);
-//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
-end;
-
-procedure TfrmMain.wbCompFreeNavigateComplete2(Sender: TObject;
-  const pDisp: IDispatch; var URL: OleVariant);
-var
-  hr: HResult;
-  CustDoc: ICustomDoc;
-begin
-  hr := wbCompFree.Document.QueryInterface(ICustomDoc, CustDoc);
-//  if hr = S_OK then CustDoc.SetUIHandler(GDocHostUIHandler);
-end;
-}
-procedure TfrmMain.webSkinLoadEnd(Sender: TObject; const browser: ICefBrowser;
-  const frame: ICefFrame; httpStatusCode: Integer);
-begin
-  GCClientWebInterface.Loaded := True;
-  //Design;
-end;
-{$ENDIF}
-
 procedure TfrmMain.btnGuestClick(Sender: TObject);
 begin
   lblWrongNameOrPassword.Visible := False;
@@ -1078,33 +867,6 @@ begin
   end;
 end;
 
-{$IFDEF LINUX}
-procedure TfrmMain.BlockKeyboardAndMouse(AbLock: Boolean);
-var
-  event: XEvent;
-  nThreadId: cardinal;
-  wndMain : TWindow;
-begin
-  FbBlocked := AbLock;
-  if AbLock then begin
-    wndMain := QWidget_WinID(QApplication_desktop);
-    XGrabPointer(Application.Display, wndMain,
-        XTrue,
-        ButtonPressMask or ButtonReleaseMask or PointerMotionMask,
-        GrabModeAsync,
-        GrabModeAsync, None, None, CurrentTime);
-    XGrabKeyboard(Application.Display,
-        wndMain,
-        XTrue,
-        GrabModeAsync, GrabModeAsync, CurrentTime);
-  end else begin
-    XUngrabPointer(Application.Display, CurrentTime);
-    XUngrabKeyboard(Application.Display, CurrentTime);
-  end;
-end;
-{$ENDIF}
-
-
 procedure TfrmMain.tmrSafeOpearationTimer(Sender: TObject);
 begin
   try
@@ -1117,36 +879,10 @@ begin
 
 end;
 
-
-{
-
-procedure TfrmMain.btnBlockClick(Sender: TObject);
-begin
-//  if GClientOptions.UnblockPassword and btnBlock.Enabled then
-  begin
-
-
-
-    BlockedByPassword();
-
-  end;
-end;
- }
-
 procedure TfrmMain.EnableSafeOperation;
 begin
   tmrSafeOpearation.Enabled := True;
 end;
-
-
-
-
-
-
-
-
-
-
 
 procedure TfrmMain._PasswordHotKey;
 begin
@@ -1170,12 +906,6 @@ procedure TfrmMain.edtPasswordKeyDown(Sender: TObject; var Key: Word;
 begin
   if key = VK_RETURN then butLogonClick(nil);
 end;
-
-
-
-
-
-
 
 procedure TfrmMain.mnuShutdownClick(Sender: TObject);
 begin
@@ -1213,8 +943,6 @@ begin
   if GClientOptions.ShutdownButton> 0 then
     LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=' + inttostr(GClientOptions.ShutdownButton), False);
 end;
-
-
 
 end. ////////////////////////// end of file //////////////////////////////////
 

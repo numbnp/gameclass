@@ -68,8 +68,9 @@ type
       procedure HideChangePassword();
 
       procedure ShowMessages(msg:string);
-
       procedure SetClientState(state:integer);
+      procedure SetInterfaceData(str: string);
+
 
       procedure Start;
       procedure DoJsCommand(Command:string);
@@ -233,6 +234,13 @@ begin
   _MyWebBrowser.ExecuteJavaScript('gcclient_set_state('+IntToStr(state)+');');
 end;
 
+procedure TWebInterface.SetInterfaceData(str: string);
+var
+  buffer :string;
+begin
+  buffer := ReplaceStr(str,#$D#$A,'<br>');
+  _MyWebBrowser.ExecuteJavaScript('update_info(' + buffer + ');');
+end;
 procedure TWebInterface.ShowChangePassword;
 begin
   _MyWebBrowser.ExecuteJavaScript('show_change_password_window();');
@@ -270,5 +278,7 @@ begin
                                         + IntToStr(Port)
                                         + '/' + IndexFile );
 end;
+
+
 
 end.

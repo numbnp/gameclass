@@ -447,7 +447,7 @@ begin
         str :='';
         for i:=0 to GetParamCountFromString(AOperation.Parameters)-1 do
           str := str + '"' + inttostr(i) +'": "' + GetParamFromString(AOperation.Parameters,i) +'",';
-        GCClientWebInterface.SetInterfaceData('{tariffs:{' + str +'}}');
+        frmMain.GCClientWebInterface.SetInterfaceData('{tariffs:{' + str +'}}');
         frmMain.EnableOnChange
       end;
     end;
@@ -461,24 +461,24 @@ begin
           AOperation.Parameters, 2));
       DateTimeToString(str, DATE_FORMAT, dtStart);
       frmMain.edtStart.Text := str;
-      GCClientWebInterface.SetInterfaceData('{ "booking_time_start": "' + str + '" }');
+      frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_time_start": "' + str + '" }');
       DateTimeToString(str, DATE_FORMAT, dtStop);
       frmMain.edtStop.Text := str;
-      GCClientWebInterface.SetInterfaceData('{ "booking_time_stop": "' + str + '" }');
+      frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_time_stop": "' + str + '" }');
       if Not frmMain.DtpTimeFocused then
       begin
         frmMain.dtpTime.Time := TimeOf(dtStop - dtStart);
         DateTimeToString(str, 'hh:mm', dtStop - dtStart);
-        GCClientWebInterface.SetInterfaceData('{ "booking_time": "' + str + '" }');
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_time": "' + str + '" }');
       end;
 
       if (Length(GClientInfo.BookingTariff)>0)
         and (GClientInfo.BookingSum > 0)
         and (GClientInfo.BookingSum <= GClientInfo.Balance - GClientInfo.BalanceLimit)
         and (not ((HourOf(frmMain.dtpTime.Time) = 0 ) and (MinuteOf(frmMain.dtpTime.Time)=0))) then
-        GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "1" }')
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "1" }')
       else
-        GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "0" }');
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "0" }');
       if StrToBool(GetParamFromString(AOperation.Parameters, 3)) then begin
         frmMain.edtSum.Enabled := False;
         frmMain.dtpTime.Enabled := False;
@@ -497,7 +497,7 @@ begin
       if Not frmMain.EdtAddTrafficSizeFocused then
         frmMain.edtAddTrafficSize.Text := GetParamFromString(
             AOperation.Parameters,1);
-        GCClientWebInterface.SetInterfaceData('{ "booking_add_traffic": "' + GetParamFromString(AOperation.Parameters,1) + '" }');
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_add_traffic": "' + GetParamFromString(AOperation.Parameters,1) + '" }');
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_RecalcCostAddTime: begin
@@ -512,24 +512,23 @@ begin
 }
       DateTimeToString(str, 'hh:mm', StrToDateTimeDefWithReplace(GetParamFromString(AOperation.Parameters,1)));
 
-      GCClientWebInterface.SetInterfaceData('{ "booking_add_time": "' + str + '" }');
+      frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_add_time": "' + str + '" }');
 
       if (GClientInfo.BookingAddSum> 0) and (GClientInfo.BookingAddSum <= GClientInfo.Balance - GClientInfo.BalanceLimit) then
-        GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "1" }')
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "1" }')
       else
-        GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "0" }');
+        frmMain.GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "0" }');
 
 
       frmMain.DoDesignAdd;
       frmMain.EnableOnChange;
     end;
     ThreadSafeOperation_UpdateCompNumber: begin
-      GCClientWebInterface.SetInterfaceData('{ "comp_num": "' + GClientOptions.CompNumber+ '" }');
+      frmMain.GCClientWebInterface.SetInterfaceData('{ "comp_num": "' + GClientOptions.CompNumber+ '" }');
     end;
     ThreadSafeOperation_MainFormAction:
       case AOperation.FormAction of
         FormAction_Show:
-{$IFDEF MSWINDOWS}
           begin
           if not frmMain.Visible then
             frmMain.Show;
@@ -558,11 +557,6 @@ begin
           //  ShowWindow(frmMain.Handle,SW_SHOWDEFAULT);
 
           end;
-{$ENDIF}
-{$IFDEF LINUX}
-          if not frmMain.Visible then
-            frmMain.Show;
-{$ENDIF}
         FormAction_Hide:
           if frmMain.Visible then begin
             frmMain.Hide;
@@ -590,19 +584,12 @@ begin
 //      Application.MessageBox(PChar(AOperation.Parameters),'Îøèáêà');
       frmMain.lblWrongNameOrPassword.Caption := AOperation.Parameters;
       frmMain.lblWrongNameOrPassword.Visible := True;
-      GCClientWebInterface.ShowMessages(AOperation.Parameters);
+      frmMain.GCClientWebInterface.ShowMessages(AOperation.Parameters);
     end;
     ThreadSafeOperation_RunPadAction: begin
-{$IFDEF MSWINDOWS}
       RunPadAction(AOperation.RunPadAction, AOperation.Parameters);
-{$ENDIF}
     end;
     ThreadSafeOperation_Blocking: begin
-{$IFDEF LINUX}
-      frmMain.BlockKeyboardAndMouse(
-          (AOperation.BlockingAction = BlockingAction_BlockKeyboard)
-          or (AOperation.BlockingAction = BlockingAction_BlockMouse));
-{$ENDIF}
     end;
     ThreadSafeOperation_CtrAltU: begin
     end;

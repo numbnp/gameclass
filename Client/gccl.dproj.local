@@ -5,5 +5,15 @@
     <Transaction>1899.12.30 00:00:00.000.775,C:\Project\Free\Output\Debug\gccl\Skins\new\css\styles.css=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.449,=C:\Project\Free\Output\Debug\gccl\Skins\new\main.html</Transaction>
     <Transaction>1899.12.30 00:00:00.000.650,C:\Project\Free\Output\Debug\gccl\Skins\new\main.html=</Transaction>
+    <Transaction>2015.07.17 14:17:58.377,K:\Projects\gameclass\Parts\Web\dzurl.pas=</Transaction>
+    <Transaction>2015.07.17 14:18:52.839,=K:\Projects\gameclass\Parts\Web\dzurl.pas</Transaction>
+    <Transaction>2015.07.17 14:24:42.459,K:\Projects\gameclass\Parts\Web\uWebServer.pas=</Transaction>
+    <Transaction>2015.07.17 14:24:53.846,K:\Projects\gameclass\Parts\Web\dzurl.pas=</Transaction>
+    <Transaction>2015.07.17 14:25:04.988,K:\Projects\gameclass\Parts\Web\uWebExec.pas=</Transaction>
+    <Transaction>2015.07.17 14:29:32.532,=K:\Projects\gameclass\Parts\WebInterface\dzurl.pas</Transaction>
+    <Transaction>2015.07.17 14:31:02.729,K:\Projects\gameclass\Parts\ClientWebInterface\uClientWebInterface.pas=</Transaction>
+    <Transaction>2015.07.17 14:31:17.051,=K:\Projects\gameclass\Parts\WebInterface\uClientWebInterface.pas</Transaction>
+    <Transaction>2015.07.17 14:31:35.214,=K:\Projects\gameclass\Parts\WebInterface\uMyWebBrowser.pas</Transaction>
+    <Transaction>2015.07.17 14:31:35.245,=K:\Projects\gameclass\Parts\WebInterface\uWebServer.pas</Transaction>
   </Transactions>
 </BorlandProject>
