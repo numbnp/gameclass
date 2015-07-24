@@ -3,14 +3,13 @@ program gccl;
 uses
   FastMM4,
   FastMM4Messages,
-  ceflib,
   Forms,
   Windows,
   ActiveX,
   ComObj,
   DateUtils,
   SysUtils,
-  AbsoluteAlone in 'AbsoluteAlone.pas',
+  ceflib,
   RS_APILib_TLB in '..\Parts\RunPadShell\RS_APILib_TLB.pas',
   uBlockingsAndNotifications in '..\Parts\Blocking\uBlockingsAndNotifications.pas',
   uBlockRemoteCommand in '..\Parts\RemoteCommands\uBlockRemoteCommand.pas',
@@ -80,24 +79,16 @@ const
 var
   hMutex :THandle;
 
-function CreateLockMutex(const AstrMutex: String;
-    var AhMutex: THandle): Boolean;
 begin
-  Result := FALSE;
-  AhMutex := CreateMutex(nil, TRUE, PChar(AstrMutex));
-  if GetlastError() = 0 then begin
-    Result := TRUE;
-  end;
-end; // CreateLockMutex
+  CefSingleProcess := False;
 
-begin
   hMutex := CreateMutex(nil, False, Pchar(ExtractFileName(Application.ExeName)));
-  if ((GetLastError = ERROR_ALREADY_EXISTS) or (hMutex = 0)) then
+  if (GetLastError = ERROR_ALREADY_EXISTS) or (hMutex = 0) then
   begin
-	  if not CefLoadLibDefault then Exit;
-  end else begin
-    CefCache := 'cache';
-    CefSingleProcess := True;
+    if not CefLoadLibDefault then Exit;
+  end
+  else
+  begin
 
     Debug.Level := DEF_DEBUG_LEVEL;
   //  Debug.Level := 9;
@@ -106,11 +97,11 @@ begin
     GWinhkg.Init();
     BlockingsAndNotifications := TBlockingsAndNotifications.Create();
     frmMain := Nil;
-      GClientOptions.Load;
-      if GClientOptions.RestoreClientInfo then
-        GClientInfo.Load
-      else
-        GClientInfo.Init;
+    GClientOptions.Load;
+    if GClientOptions.RestoreClientInfo then
+      GClientInfo.Load
+    else
+      GClientInfo.Init;
     BlockingsAndNotifications.StartChecking();
 
     Application.Title := 'GCCL';

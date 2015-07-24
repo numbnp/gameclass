@@ -192,7 +192,10 @@ var
 begin
   msResultFile := TMemoryStream.Create;
   sFileType := AnsiString(UpperCase(ExtractFileExt(FilePath)));
-  if (sFileType='.HTM') or (sFileType='.HTML') or (sFileType='.CSS') then
+  if (sFileType='.HTM')
+    or (sFileType='.HTML')
+    or (sFileType='.CSS')
+    or (sFileType='.JS') then
   begin
     AssignFile (fFile,FilePath);
     Reset(fFile);

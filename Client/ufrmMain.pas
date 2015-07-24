@@ -578,9 +578,8 @@ begin
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
 //  GCClientWebInterface.ReloadSkin;
-  GCClientWebInterface.Create(self.pnlWeb);
+  GCClientWebInterface := TWebInterface.Create(self.pnlWeb);
   GCClientWebInterface.Start;
-
   TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
   TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
       Integer(RunPadAction_HideTabs));
