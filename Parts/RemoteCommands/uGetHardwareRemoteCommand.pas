@@ -40,7 +40,7 @@ uses
   Classes,
   // project units
 {$IFDEF MSWINDOWS}
-  uHardwareManager,
+//  uHardwareManager,
   ComObj,
   ActiveX,
   Windows,
@@ -75,11 +75,11 @@ function DoGetHardware: DWORD;
 var
   strSendData: String;
 begin
-  CoInitialize(Nil);
-  strSendData :=  STR_CMD_RET_GETHARDWARE + '='
-      + THardwareManager.Instance().GetHardwareAsString;
+//  CoInitialize(Nil);
+  strSendData :=  STR_CMD_RET_GETHARDWARE + '=';
+//      + THardwareManager.Instance().GetHardwareAsString;
   SendDataTo(FstrHostForSend, strSendData);
-  CoUninitialize;
+//  CoUninitialize;
   Result := 0;
 end; // DoGetHardware
 {$ENDIF}

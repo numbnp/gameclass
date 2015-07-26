@@ -1,10 +1,5 @@
 program gcclsrv_dev;
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   SvcMgr,
   SysUtils,
   ActiveX,
@@ -39,7 +34,6 @@ uses
   uGetHardwareRemoteCommand in '..\Parts\RemoteCommands\uGetHardwareRemoteCommand.pas',
   uGetTasksListRemoteCommand in '..\parts\RemoteCommands\uGetTasksListRemoteCommand.pas',
   uHardwareAccessories in '..\Parts\HardwareWMI\uHardwareAccessories.pas',
-  uHardwareManager in '..\Parts\HardwareWMI\uHardwareManager.pas',
   uHWCDROMs in '..\Parts\HardwareWMI\uHWCDROMs.pas',
   uHWCollection in '..\Parts\HardwareWMI\uHWCollection.pas',
   uHWConst in '..\Parts\HardwareWMI\uHWConst.pas',
