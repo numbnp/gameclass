@@ -752,7 +752,7 @@ begin
       UDPSend(Comps[index].ipaddr, STR_CMD_SETTIME + '='
         + curtime);
     end;
-    cmd := TOptionGetRemoteCommand.Create('all',Comps[index].ipaddr);
+    cmd := TOptionGetRemoteCommand.Create('All',Comps[index].ipaddr);
     cmd.Execute;
     cmd.Free;
     SendAccountAndSessionInfoToClient(index);
