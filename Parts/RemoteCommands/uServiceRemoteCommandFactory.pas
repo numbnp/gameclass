@@ -179,9 +179,6 @@ begin
     cmd :=  TLocalResendRemoteCommand.Create(AstrCommand);
     (Result as TCompositeRemoteCommand).Commands.Add(cmd);
 {$ENDIF}
-{$IFDEF LINUX}
-    dmMain.LocalCommandDataReceived(AstrCommand);
-{$ENDIF}
     if _IsClientInfoConstrainedCommand(strCommand) then begin
       cmd := TClientInfoConstrainedCommand.Create(strCommand, strParameters);
       (Result as TCompositeRemoteCommand).Commands.Add(cmd);

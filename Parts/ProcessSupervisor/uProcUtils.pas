@@ -198,8 +198,8 @@ var
   strRunnedProcessList: PChar;
   strTerminatedProcessList: PChar;
 begin
-  ASSERT(FhHookLib <> 0);
-  ASSERT(Assigned(FProcessReportProc));
+//  ASSERT(FhHookLib <> 0);
+//  ASSERT(Assigned(FProcessReportProc));
 
   if FhHookLib <> 0 then
     if Assigned(FProcessReportProc) then begin

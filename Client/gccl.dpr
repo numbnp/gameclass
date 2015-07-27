@@ -1,8 +1,13 @@
 program gccl;
 
 uses
-  FastMM4,
+{  FastMM4,
   FastMM4Messages,
+{  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,}
   Forms,
   Windows,
   ActiveX,

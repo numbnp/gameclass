@@ -159,7 +159,7 @@ begin
 {$IFDEF MSWINDOWS}
           CommBlock.Command := AstrData;
 //          tcpClient.IOHandler.
-          tcpClient.IOHandler.WriteLn(CommBlock.Command,IndyTextEncoding_UTF8 );
+          tcpClient.IOHandler.WriteLn(CommBlock.Command,IndyTextEncoding_OSDefault );
 {$ENDIF}
 {$IFDEF LINUX}
           tcpClient.Disconnect();

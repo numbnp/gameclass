@@ -24,7 +24,6 @@ set DCCLib=%DCCLib%;%PRootDir%\Components\dcef3\src
 set DCCLib=%DCCLib%;%PRootDir%\Components\FastMM\
 set DCCLib=%DCCLib%;%PRootDir%\Components\Ehlibv7\RADStudioXE7
 set DCCLib=%DCCLib%;%PRootDir%\Components\ExtControll
-set DCCLib=%DCCLib%;%PRootDir%\Components\FastMM
 set DCCLib=%DCCLib%;%PRootDir%\Components\rxlib\units
 set DCCLib=%DCCLib%;%PRootDir%\Components\SynEdit\Source
 set DCCLib=%DCCLib%;%PRootDir%\Components\VirtualTreeviewV5.3.0\Source

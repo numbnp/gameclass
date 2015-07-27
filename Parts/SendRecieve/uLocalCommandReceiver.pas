@@ -154,7 +154,7 @@ begin
 //        if strTest = 'sYNc' then
         begin
         CommBlock.Command:='';
-        CommBlock.Command := AContext.Connection.IOHandler.ReadLn;
+        CommBlock.Command := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_OSDefault);
 {          nLength := ReadInteger();
           strLine := ReadString(nLength);
           strTest := ReadString(2);}

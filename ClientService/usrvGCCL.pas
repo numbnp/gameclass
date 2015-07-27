@@ -286,10 +286,8 @@ procedure TsrvGCCL._FinalAndDestroyFileReceiver();
 begin
   if Assigned(FFileReceiver) then begin
     FFileReceiver.StopReceive();
+    FreeAndNilWithAssert(FFileReceiver);
   end;
-
-  FreeAndNilWithAssert(FFileReceiver);
-
 end; // TsrvGCCL._FinalAndDestroyFileReceiver
 
 

@@ -6,9 +6,9 @@
     <Transaction>1899.12.30 00:00:00.000.363,=K:\Projects\gameclass\Server\ModelSupport_GCServer\GCServer\default.txvpck</Transaction>
     <Transaction>1899.12.30 00:00:00.000.291,=K:\Projects\gameclass\Server\ModelSupport_GCServer\default.txvpck</Transaction>
     <Transaction>1899.12.30 00:00:00.000.111,=K:\Projects\gameclass\Server\ModelSupport_GCServer\uLocal\default.txvpck</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.847,=K:\Projects\gameclass\Server\ModelSupport_GCServer\gccomputers\default.txaPackage</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.955,=K:\Projects\gameclass\Server\ModelSupport_GCServer\uOptionGetRemoteCommand\default.txvpck</Transaction>
     <Transaction>1899.12.30 00:00:00.000.426,=K:\Projects\gameclass\Server\ModelSupport_GCServer\uOptionGetRemoteCommand\default.txaPackage</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.955,=K:\Projects\gameclass\Server\ModelSupport_GCServer\uOptionGetRemoteCommand\default.txvpck</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.847,=K:\Projects\gameclass\Server\ModelSupport_GCServer\gccomputers\default.txaPackage</Transaction>
     <Transaction>1899.12.30 00:00:00.000.645,C:\Project\Free\Server\frmMail.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.618,=K:\Projects\gameclass\Server\ModelSupport_GCServer\uKKMPlugin\default.txvpck</Transaction>
     <Transaction>1899.12.30 00:00:00.000.147,=K:\Projects\gameclass\Server\ModelSupport_GCServer\default.txaPackage</Transaction>
