@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 rem -------------------- Начало шапки ------------------------------------
 rem ВЫход в корневую директорию проета
 for /l %%i in (1,1,8) do if not exist rootdir cd ..
@@ -30,7 +30,7 @@ copy Docs\Russian.lng Output\Release\
 Tools\LngRecoder\LngRecoder.exe Output\Release\Russian.lng Server\GCServer.drc
 
 rem Подготовка файлов для создания дистрибутива:
-call copy_packages_files.bat
+call copy_packages_files_server.bat
 rem Кодирование sql-файлов в sqp
 call encode_sql.bat
 
