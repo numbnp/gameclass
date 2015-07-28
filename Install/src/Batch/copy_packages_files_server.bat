@@ -1,4 +1,4 @@
-rem @echo off
+rem @echo on
 rem -------------------- Начало шапки ------------------------------------
 rem ВЫход в корневую директорию проета
 for /l %%i in (1,1,8) do if not exist rootdir cd ..
@@ -10,23 +10,7 @@ for /d %%i in (Install\Src\Batch\) do set GCMakePath=%%~dpi
 set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
-echo Подготовка файлов для создания дистрибутива:
-ech "  Удаление старых файлов ..."
-del /s /q Install\Src\Packages\*.* >nul 2>nul
-echo  OK
-ech "  Создание структуры каталогов ..."
-if not exist Install\Src\Packages\Presetup md Install\Src\Packages\Presetup| ech .
-if not exist Install\Src\Packages\Database md Install\Src\Packages\Database| ech .
-if not exist Install\Src\Packages\Client md Install\Src\Packages\Client| ech .
-if not exist Install\Src\Packages\Client\Skins md Install\Src\Packages\Client\Skins| ech .
-if not exist Install\Src\Packages\Client\Sounds md Install\Src\Packages\Client\Sounds| ech .
-if not exist Install\Src\Packages\Client\Files md Install\Src\Packages\Client\Files| ech .
-if not exist Install\Src\Packages\Server md Install\Src\Packages\Server| ech .
-if not exist Install\Src\Packages\Server\Scripts md Install\Src\Packages\Server\Scripts| ech .
-if not exist "Install\Src\Packages\Server\Traffic Inspector Plug-In" md "Install\Src\Packages\Server\Traffic Inspector Plug-In"| ech .
-if not exist "Install\Src\Packages\Server\UserGate Plug-In" md "Install\Src\Packages\Server\UserGate Plug-In"| ech .
-if not exist Install\Src\Packages\Presetup md Install\Src\Packages\Presetup| ech .
-echo  OK
+call create_directories.cmd
 
 rem Инициализация обрабатки лог-файлы
 del Install\Src\Logs\CopyPackagesFiles.log >nul 2>nul
@@ -46,7 +30,7 @@ copy DataBase\Reports\*.xml Install\Src\Packages\DataBase >>Install\Src\Logs\Cop
 copy Output\Release\GCosql.exe Install\Src\Packages\DataBase >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 rem Server
 copy Output\Release\GCServer.exe Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
-copy Output\Release\GCKern.dll Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
+rem copy Output\Release\GCKern.dll Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Output\Release\GCBackupRestore.exe Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Output\Debug\server\GCServer.lng Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Output\Debug\server\FastMM_FullDebugMode.dll Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
@@ -57,7 +41,7 @@ copy Install\Src\Files\Server\*.* Install\Src\Packages\Server >>Install\Src\Logs
 copy Install\Src\Files\Scripts\*.* Install\Src\Packages\Server\Scripts >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Docs\WhatsNew.txt Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy Docs\readme.txt Install\Src\Packages\Server >>Install\Src\Logs\CopyPackagesFiles.log| ech .
-copy Output\Setup\gcti.2.0.5.exe "Install\Src\Packages\Server\Traffic Inspector Plug-In" >>Install\Src\Logs\CopyPackagesFiles.log| ech .
+copy "Install\src\Files\Traffic Inspector Plug-In"\*.* "Install\Src\Packages\Server\Traffic Inspector Plug-In" >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 copy "Install\Src\Files\UserGate Plug-In"\*.* "Install\Src\Packages\Server\UserGate Plug-In" >>Install\Src\Logs\CopyPackagesFiles.log| ech .
 
 :lab

@@ -10,14 +10,7 @@ for /d %%i in (Install\Src\Batch\) do set GCMakePath=%%~dpi
 set Path=%GCMakePath%;%Path%
 :PathAlreadySet
 rem -------------------- Конец шапки ------------------------------------
-echo Подготовка файлов для создания дистрибутива:
-ech "  Удаление старых файлов ..."
-del /s /q Install\Src\Packages\Tools\*.* >nul 2>nul
-echo  OK
-ech "  Создание структуры каталогов ..."
-if not exist Install\Src\Packages\Tools md Install\Src\Packages\Tools| ech .
-if not exist Install\Src\Packages\Presetup md Install\Src\Packages\Presetup| ech .
-echo  OK
+call create_directories.cmd
 
 rem Инициализация обрабатки лог-файлы
 del Install\Src\Logs\CopyPackagesFiles.log >nul 2>nul

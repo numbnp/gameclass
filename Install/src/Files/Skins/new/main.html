@@ -1,0 +1,352 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=cp1251" />
+        <link rel="stylesheet" type="text/css" href="css/styles.css" />
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-migrate-1.1.1.js"></script>
+        <script src="js/gc.js"></script>
+    </head>
+    <body style="margin:0 0 0 0; overflow:hidden"  bgcolor="#f0f0f0">
+        <div id="top_panel">
+            
+            <div id="comp_number" class="comp_number text_center">
+                <p class="TreeD_text">
+                    <span id="comp_num">
+                        27
+                    </span>
+                </p>
+            </div>
+            
+        </div>
+        
+        <div id="bottom_panel" class="bottom_panel">
+            <div class="gc_fon">
+                <div class="text_center comp_free_text hide">
+                    Компьютер свободен
+                </div>
+                <!-- Логин панель -->
+                <div id="login" class="div_circle div_login hide">
+                    <form action="#" method="POST">
+                        <table class="login two_row">
+                            <tr>
+                                <td class="text">Login</td>
+                                <td><input id="text_login" type="text" name="login" value="" size=15></td>
+                            </tr>
+                            <tr>
+                                <td class="text">Password</td>
+                                <td><input id="text_password" type="password" name="password" value="" size=15></td>
+                            </tr>
+                            <tr>
+                                <td class="td_button" colspan="2">
+                                    <input id="start_work" type="submit" class="f18px button_ex button-blue" value="Начать работу">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div id="login_info" class="div_circle  div_left_panels div_login_info hide">
+                    <div class="title text_center_h">
+                        test
+                    </div>
+                    <div class="h80p ">
+                        <table class="two_row">
+                            <tr>
+                                <td class="text">Login</td>
+                                <td class="text"><span class="label_login">Guest</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text">Balance</td>
+                                <td class="text"><span id="label_balance">0</span></td>
+                            </tr>
+                            <tr class="accumulated" >
+                                <td class="text">Accumulated</td>
+                                <td class="text"><span id="label_accumulated">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="disconnect" type="submit" class="f14px button_ex button-blue" value="Отключится">
+                                </td>
+                                <td>
+                                    <input id="show_change_password" type="submit" class="f14px button_ex button-blue" value="Сменить пароль">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>                    
+                </div>
+
+                <div id="session_info" class="div_circle  div_left_panels div_session_info hide">
+                    <div class="title text_center_h">
+                        Информация о сеансе
+                    </div>
+                    <div id="session_info_content" class="h80p f12px">
+                        
+                    </div>                    
+                </div>
+
+
+                <div id="div_session_booking" class="div_circle div_right_panels div_session_booking hide">
+                    <table class="booking">
+                        <tr>
+                            <td class="title text_center_h" colspan="2">
+                                Начало сеанса
+                            </td>    
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                Тариф
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <select id="select_booking_tariff" size="1" name="tariff">
+                                   
+                                </select>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>
+                                Сумма
+                            </td>
+                            <td>
+                                Время
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="text_booking_money" type="text" name="money" value="" size=14>
+                            </td>
+                            <td>
+                                <input id="text_booking_time" disabled="disabled" type="text" name="time" value="" size=14>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>
+                                Начало
+                            </td>
+                            <td>
+                                Конец
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="text_booking_time_start" disabled="disabled" type="text" name="time_start" value="" size=14>
+                            </td>
+                            <td>
+                                <input id="text_booking_time_stop" disabled="disabled" type="text" name="time_stop" value="" size=14>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                                <input id="do_start_session" type="submit" class="f18px button_ex button-blue" value="Начать сеанс">
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                
+                <div id="div_session_info" class="div_circle div_right_panels div_session_booking hide">
+       
+              <table class="booking">
+                        <tr>
+                            <td class="title text_center_h" colspan="2">
+                                Сеанс
+                            </td>    
+                        </tr>
+                        
+
+                        <tr>
+                            <td class="title" colspan="2">
+                                Добавить время
+                            </td>    
+                        </tr>
+                        <tr>
+                            <td>
+                                Сумма
+                            </td>
+                            <td>
+                                Время
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="text_add_money" type="text" name="money" value="" size=8>
+                            </td>
+                            <td>
+                                <input id="text_add_time" disabled="disabled" type="text" name="time" value="" size=8>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                                <input id="do_add_times" disabled="disabled" type="submit" class="f18px button_ex button-blue" value="Добавить время">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                                
+                            </td>
+                        </tr>
+                        <tr class="add_traffic_block hide">
+                            <td class="title" colspan="2">
+                                Добавить трафик
+                            </td>    
+                        </tr>
+                        <tr class="add_traffic_block hide">
+                            <td>
+                                Сумма
+                            </td>
+                            <td>
+                                Трафик
+                            </td>                            
+                        </tr>
+                        <tr class="add_traffic_block hide">
+                            <td>
+                                <input id="text_add_money_traffic" type="text" name="money" value="" size=8>
+                            </td>
+                            <td>
+                                <input id="text_add_traffic" disabled="disabled" type="text" name="time" value="" size=8>
+                            </td>                            
+                        </tr>
+                        <tr class="add_traffic_block hide">
+                            <td class="text_center_h" colspan="2">
+                                <input id="do_add_traffic" type="submit" class="f18px button_ex button-blue" value="Добавить трафик">
+                            </td>
+                        </tr>
+                        </div>
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                                
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="text_center_h" colspan="2">
+                                <input id="do_stop_session" type="submit" class="f18px button_ex button-blue" value="Остановить сеанс">
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                
+                <div id="div_eula" class="div_circle div_eula hide">
+                    <table class="eula">
+                        <tr>
+                            <td class="title text_center_h" colspan="2">
+                                Соглашение
+                            </td>    
+                        </tr>
+                        <tr class="content">
+                            <td colspan="2">
+                                <div id="eula_content">
+                                %EULA%
+                                </div>
+                            </td>
+                        <tr>
+                            <td class="text_center_h">
+                                <input id="do_accept_eula" type="submit" class="f18px button_ex button-blue" value="Принять">
+                            </td>
+                            <td class="text_center_h">
+                                <input id="do_not_accept_eula" type="submit" class="f18px button_ex button-blue" value="Отказаться">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+        
+        
+                <div id="unblock_station" class="div_circle div_unblock_station hide">
+                    <form action="#" method="POST">
+                        <table class="unblock two_row">
+                            <tr>
+                                <td colspan="2">
+                                    Введите код разблокировки
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input id="unblock_code" type="text" name="unblock_code" value="" size=50>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text_center_h">
+                                    <input id="do_unblock" type="submit" class="f18px button_ex button-blue" value="Разблокировать">
+                                </td>
+                                <td class="text_center_h">
+                                    <input id="cancel_unblock" type="submit" class="f18px button_ex button-blue" value="Отмена">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                
+                <div id="messages" class="div_circle div_messages hide">
+                        <table class="messages two_row">
+                            <tr>
+                                <td class="title text_center_h" >
+                                    Внимание
+                                </td>    
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <span id="messages_content">
+                                        Ололо
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text_center_h">
+                                    <input id="ok_messages" type="submit" class="f18px button_ex button-blue" value="ОК">
+                                </td>
+                            </tr>
+                        </table>
+                </div>
+                
+        	    <div id="change_password" class="div_circle div_change_password hide">
+                        <table class="two_row">
+                            <tr>
+                                <td colspan="2">
+                                    Смена пароля
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Старый пароль
+        			            </td>
+        			            <td>
+                                    <input id="old_password" type="password" name="old_password" value="" size=20>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Новый пароль
+        			            </td>
+        			            <td>
+                                    <input id="new_password" type="password" name="old_password" value="" size=20>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Повтор нового пароля
+        			            </td>
+        			            <td>
+                                    <input id="retype_password" type="password" name="old_password" value="" size=20>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text_center_h">
+                                    <input id="do_change_password" type="submit" class="f18px button_ex button-blue" value="Сменить">
+                                </td>
+                                <td class="text_center_h">
+                                    <input id="cancel_change_password" type="submit" class="f18px button_ex button-blue" value="Отмена">
+                                </td>
+                            </tr>
+                        </table>
+                </div>
+            </div>    
+        </div>
+        
+    </body>
+</html>
