@@ -1,13 +1,13 @@
 object framTarifs: TframTarifs
   Left = 0
   Top = 0
-  Width = 752
-  Height = 496
+  Width = 906
+  Height = 623
   TabOrder = 0
   object lblComputerGroup: TLabel
     Left = 8
     Top = 6
-    Width = 80
+    Width = 83
     Height = 13
     Caption = 'Computers group'
   end
@@ -25,7 +25,7 @@ object framTarifs: TframTarifs
     Left = 8
     Top = 48
     Width = 129
-    Height = 441
+    Height = 572
     Columns = <
       item
         Caption = 'Tarif'
@@ -44,55 +44,54 @@ object framTarifs: TframTarifs
     Width = 129
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 2
     OnSelect = cbComputerGroupSelect
   end
   object gbTarif: TGroupBox
     Left = 144
     Top = 6
-    Width = 601
-    Height = 483
+    Width = 759
+    Height = 614
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1090#1072#1088#1080#1092#1072
     TabOrder = 3
     object lblTarifName: TLabel
       Left = 8
       Top = 12
-      Width = 28
+      Width = 27
       Height = 13
       Caption = 'Name'
     end
     object lblRoundT: TLabel
       Left = 222
       Top = 12
-      Width = 42
+      Width = 40
       Height = 13
       Caption = 'Round T'
     end
     object lblRoundMoney: TLabel
       Left = 141
       Top = 12
-      Width = 41
+      Width = 40
       Height = 13
       Caption = 'Round $'
     end
     object lblUserLevel: TLabel
       Left = 8
       Top = 53
-      Width = 161
+      Width = 162
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
     end
     object lblOperatorLevel: TLabel
       Left = 8
       Top = 79
-      Width = 143
+      Width = 145
       Height = 13
       Caption = #1059#1088#1086#1074#1077#1085#1100' '#1076#1086#1089#1090#1091#1087#1072' '#1086#1087#1077#1088#1072#1090#1086#1088#1072
     end
     object butMoveUp: TButton
-      Left = 291
-      Top = 442
+      Left = 451
+      Top = 578
       Width = 70
       Height = 25
       Caption = 'Move up'
@@ -101,8 +100,8 @@ object framTarifs: TframTarifs
       OnClick = butMoveUpClick
     end
     object butTarifUpdate: TButton
-      Left = 442
-      Top = 442
+      Left = 602
+      Top = 578
       Width = 70
       Height = 25
       Caption = 'update'
@@ -111,8 +110,8 @@ object framTarifs: TframTarifs
       OnClick = butTarifUpdateClick
     end
     object butTarifDelete: TButton
-      Left = 517
-      Top = 442
+      Left = 677
+      Top = 578
       Width = 70
       Height = 25
       Caption = 'delete'
@@ -120,8 +119,8 @@ object framTarifs: TframTarifs
       OnClick = butTarifDeleteClick
     end
     object butTarifAdd: TButton
-      Left = 366
-      Top = 442
+      Left = 526
+      Top = 578
       Width = 70
       Height = 25
       Caption = 'add'
@@ -130,7 +129,7 @@ object framTarifs: TframTarifs
       OnClick = butTarifAddClick
     end
     object gbInternet: TGroupBox
-      Left = 300
+      Left = 463
       Top = 12
       Width = 289
       Height = 74
@@ -139,7 +138,7 @@ object framTarifs: TframTarifs
       object lblBytesInMB: TLabel
         Left = 7
         Top = 20
-        Width = 52
+        Width = 50
         Height = 13
         Caption = #1041#1072#1081#1090' '#1074' MB'
       end
@@ -162,14 +161,14 @@ object framTarifs: TframTarifs
         object lblPluginGroup: TLabel
           Left = 88
           Top = 12
-          Width = 35
+          Width = 36
           Height = 13
           Caption = #1043#1088#1091#1087#1087#1072
         end
         object lblSpeedLimitInKB: TLabel
           Left = 8
           Top = 12
-          Width = 69
+          Width = 68
           Height = 13
           Caption = #1054#1075#1088'. '#1089#1082#1086#1088'. KB'
         end
@@ -218,7 +217,7 @@ object framTarifs: TframTarifs
       OnChange = editRoundMoneyChange
     end
     object cbInternet: TCheckBox
-      Left = 306
+      Left = 469
       Top = 9
       Width = 77
       Height = 17
@@ -231,7 +230,6 @@ object framTarifs: TframTarifs
       Top = 53
       Width = 75
       Height = 21
-      ItemHeight = 13
       TabOrder = 9
       OnChange = cbUserLevelChange
       Items.Strings = (
@@ -256,7 +254,7 @@ object framTarifs: TframTarifs
       object lblStartMoneyMin: TLabel
         Left = 8
         Top = 26
-        Width = 64
+        Width = 65
         Height = 13
         Caption = #1052#1080#1085'. '#1086#1087#1083#1072#1090#1099
       end
@@ -270,14 +268,14 @@ object framTarifs: TframTarifs
       object lblAddMoneyMin: TLabel
         Left = 8
         Top = 50
-        Width = 73
+        Width = 75
         Height = 13
         Caption = #1052#1080#1085'. '#1076#1086#1087#1083#1072#1090#1099' '
       end
       object lblAddMoneyMax: TLabel
         Left = 149
         Top = 50
-        Width = 76
+        Width = 77
         Height = 13
         Caption = #1052#1072#1082#1089'. '#1076#1086#1087#1083#1072#1090#1099
       end
@@ -348,7 +346,6 @@ object framTarifs: TframTarifs
       Top = 79
       Width = 75
       Height = 21
-      ItemHeight = 13
       TabOrder = 12
       OnChange = cbUserLevelChange
       Items.Strings = (
@@ -367,67 +364,75 @@ object framTarifs: TframTarifs
     object pgctrlDetails: TPageControl
       Left = 5
       Top = 202
-      Width = 588
-      Height = 235
+      Width = 751
+      Height = 370
       ActivePage = tabTarifSelected
       Style = tsFlatButtons
       TabOrder = 13
       object tabNoTarif: TTabSheet
         Caption = 'tabNoTarif'
         TabVisible = False
+        ExplicitWidth = 580
+        ExplicitHeight = 225
         object panelFuck: TPanel
           Left = 0
           Top = 0
-          Width = 445
-          Height = 231
+          Width = 743
+          Height = 360
           Align = alClient
           Caption = '.......'
           TabOrder = 0
+          ExplicitWidth = 580
+          ExplicitHeight = 225
         end
       end
       object tabTarifSelected: TTabSheet
         Caption = 'tabTarifSelected'
         ImageIndex = 1
         TabVisible = False
+        ExplicitWidth = 580
+        ExplicitHeight = 225
         object gbTarifVariants: TGroupBox
           Left = 0
           Top = 0
-          Width = 580
-          Height = 225
+          Width = 743
+          Height = 360
           Align = alClient
           Caption = #1058#1072#1088#1080#1092#1085#1072#1103' '#1089#1077#1090#1082#1072' '#1087#1086' '#1074#1099#1073#1088#1072#1085#1085#1086#1084#1091' '#1090#1072#1088#1080#1092#1091
           TabOrder = 0
+          ExplicitLeft = -3
+          ExplicitTop = -1
           object lblStart: TLabel
-            Left = 151
-            Top = 100
-            Width = 22
+            Left = 310
+            Top = 236
+            Width = 24
             Height = 13
             Caption = 'Start'
           end
           object lblVariantsName: TLabel
             Left = 8
-            Top = 100
-            Width = 28
+            Top = 236
+            Width = 27
             Height = 13
             Caption = 'Name'
           end
           object lblVariantsCost: TLabel
-            Left = 266
-            Top = 100
-            Width = 21
+            Left = 425
+            Top = 236
+            Width = 22
             Height = 13
             Caption = 'Cost'
           end
           object lblStop: TLabel
-            Left = 209
-            Top = 100
+            Left = 368
+            Top = 236
             Width = 22
             Height = 13
             Caption = 'Stop'
           end
           object butVariantsAdd: TButton
-            Left = 352
-            Top = 188
+            Left = 512
+            Top = 324
             Width = 70
             Height = 25
             Caption = 'add'
@@ -435,8 +440,8 @@ object framTarifs: TframTarifs
             OnClick = butVariantsAddClick
           end
           object butVariantsDelete: TButton
-            Left = 502
-            Top = 188
+            Left = 662
+            Top = 324
             Width = 70
             Height = 25
             Caption = 'delete'
@@ -444,8 +449,8 @@ object framTarifs: TframTarifs
             OnClick = butVariantsDeleteClick
           end
           object butVariantsUpdate: TButton
-            Left = 427
-            Top = 188
+            Left = 587
+            Top = 324
             Width = 70
             Height = 25
             Caption = 'update'
@@ -454,7 +459,7 @@ object framTarifs: TframTarifs
           end
           object cbFriday: TCheckBox
             Left = 152
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1055#1090
@@ -463,23 +468,23 @@ object framTarifs: TframTarifs
           end
           object editVariantsName: TEdit
             Left = 8
-            Top = 114
-            Width = 129
+            Top = 250
+            Width = 289
             Height = 21
             TabOrder = 4
             OnChange = editVariantsNameChange
           end
           object editVariantsCost: TEdit
-            Left = 263
-            Top = 114
+            Left = 422
+            Top = 250
             Width = 45
             Height = 21
             TabOrder = 5
             OnChange = editVariantsCostChange
           end
           object dtpVariantsStop: TDateTimePicker
-            Left = 203
-            Top = 114
+            Left = 362
+            Top = 250
             Width = 54
             Height = 21
             Date = 37684.022612083300000000
@@ -491,8 +496,8 @@ object framTarifs: TframTarifs
             OnChange = dtpVariantsStopChange
           end
           object dtpVariantsStart: TDateTimePicker
-            Left = 144
-            Top = 114
+            Left = 303
+            Top = 250
             Width = 53
             Height = 21
             Date = 37787.438875023100000000
@@ -504,8 +509,8 @@ object framTarifs: TframTarifs
             OnChange = dtpVariantsStartChange
           end
           object checkPacket: TCheckBox
-            Left = 316
-            Top = 146
+            Left = 476
+            Top = 282
             Width = 113
             Height = 17
             Caption = #1055#1072#1082#1077#1090#1085#1099#1081' '#1088#1077#1078#1080#1084
@@ -514,7 +519,7 @@ object framTarifs: TframTarifs
           end
           object cbWednesday: TCheckBox
             Left = 80
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1057#1088
@@ -523,7 +528,7 @@ object framTarifs: TframTarifs
           end
           object cbTuesday: TCheckBox
             Left = 44
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1042#1090
@@ -532,7 +537,7 @@ object framTarifs: TframTarifs
           end
           object cbThursday: TCheckBox
             Left = 116
-            Top = 140
+            Top = 276
             Width = 35
             Height = 17
             Caption = #1063#1090
@@ -541,7 +546,7 @@ object framTarifs: TframTarifs
           end
           object cbSunday: TCheckBox
             Left = 224
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1042#1089
@@ -550,7 +555,7 @@ object framTarifs: TframTarifs
           end
           object cbSaturday: TCheckBox
             Left = 188
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1057#1073
@@ -559,7 +564,7 @@ object framTarifs: TframTarifs
           end
           object cbMonday: TCheckBox
             Left = 8
-            Top = 139
+            Top = 275
             Width = 35
             Height = 17
             Caption = #1055#1085
@@ -567,8 +572,8 @@ object framTarifs: TframTarifs
             OnClick = cbMondayClick
           end
           object gbCondition: TGroupBox
-            Left = 316
-            Top = 100
+            Left = 479
+            Top = 236
             Width = 123
             Height = 44
             Caption = '   '
@@ -605,7 +610,7 @@ object framTarifs: TframTarifs
           end
           object gbTraffic: TGroupBox
             Left = 8
-            Top = 155
+            Top = 291
             Width = 201
             Height = 56
             Caption = 'Traffic'
@@ -613,7 +618,7 @@ object framTarifs: TframTarifs
             object lblTrafficCost: TLabel
               Left = 8
               Top = 12
-              Width = 21
+              Width = 22
               Height = 13
               Caption = 'Cost'
             end
@@ -627,14 +632,14 @@ object framTarifs: TframTarifs
               object lblKB: TLabel
                 Left = 108
                 Top = 19
-                Width = 14
+                Width = 12
                 Height = 13
                 Caption = 'KB'
               end
               object lblTrafficFree: TLabel
                 Left = 8
                 Top = 18
-                Width = 34
+                Width = 33
                 Height = 13
                 Caption = #1041#1077#1089#1087#1083'.'
               end
@@ -668,8 +673,8 @@ object framTarifs: TframTarifs
           object lvVariants: TListView
             Left = 8
             Top = 16
-            Width = 565
-            Height = 81
+            Width = 721
+            Height = 213
             Columns = <
               item
                 Caption = 'Name'
@@ -706,8 +711,8 @@ object framTarifs: TframTarifs
             OnClick = lvVariantsClick
           end
           object checkCondition: TCheckBox
-            Left = 326
-            Top = 99
+            Left = 486
+            Top = 235
             Width = 81
             Height = 14
             Caption = #1059#1089#1083#1086#1074#1080#1077
@@ -715,8 +720,8 @@ object framTarifs: TframTarifs
             OnClick = checkConditionClick
           end
           object cbxFreePacket: TCheckBox
-            Left = 316
-            Top = 162
+            Left = 476
+            Top = 298
             Width = 113
             Height = 17
             Caption = #1053#1077#1079#1072#1082#1088#1077#1087#1083#1077#1085#1085#1099#1081
@@ -727,7 +732,7 @@ object framTarifs: TframTarifs
       end
     end
     object gbAditionalOptions: TGroupBox
-      Left = 300
+      Left = 463
       Top = 88
       Width = 289
       Height = 113
@@ -745,7 +750,6 @@ object framTarifs: TframTarifs
         Top = 16
         Width = 85
         Height = 21
-        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Disabled'

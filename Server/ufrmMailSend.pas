@@ -5,14 +5,10 @@ interface
 uses
   inifiles, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, IdComponent, IdTCPConnection, IdTCPClient, IdMessageClient,IdCoderHeader,
-  IdSMTP, ComCtrls, StdCtrls, Buttons, ExtCtrls, IdBaseComponent, IdMessage,Registry,
-  uMail, IdExplicitTLSClientServerBase, IdSMTPBase,IdGlobal,IdEMailAddress, IdAttachment,
-  IdAttachmentFile;
+  IdSMTP, ComCtrls, StdCtrls, Buttons, ExtCtrls, IdBaseComponent, IdMessage,Registry;
 
 type
   TfrmMailSend = class(TForm)
-    MailMessage: TIdMessage;
-    SMTP: TIdSMTP;
     AttachmentDialog: TOpenDialog;
     ledCC: TLabeledEdit;
     ledAttachment: TLabeledEdit;
@@ -20,7 +16,6 @@ type
     Label1: TLabel;
     btnSendMail: TBitBtn;
     Button1: TButton;
-    Memo1: TMemo;
     cbFrom: TComboBox;
     lblFrom: TLabel;
     lblTo: TLabel;
@@ -29,8 +24,6 @@ type
     cbSubject: TComboBox;
 
     procedure btnSendMailClick(Sender: TObject);
-    procedure SMTPStatus(ASender: TObject; const AStatus: TIdStatus;
-      const AStatusText: string);
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MRUListsLoad();
@@ -56,7 +49,11 @@ implementation
 
 {$R *.dfm}
 
-uses uRegistry, uRegistryMail, Math;
+uses
+  uRegistry,
+  uRegistryMail,
+  Math,
+  uMail;
 
 procedure TfrmMailSend.MRUListsLoad;
 var
@@ -144,64 +141,27 @@ begin
 end;
 
 procedure TfrmMailSend.btnSendMailClick(Sender: TObject);
+var
+  SendMail:TSendMail;
 begin
-
- // Проверяем настройку SMTP
- if GRegistry.Mail.SMTPHost='' then
- begin
-    Memo1.Lines.Insert(0,'Сервер SMTP не указан в настройка GameClass!!!');
-    ShowMessage('Сервер SMTP не указан в настройка GameClass!!!');
-    exit;
-
- end;
-
- // установка SMTP
- SMTP.Host:=GRegistry.Mail.SMTPHost;
- SMTP.Port:=GRegistry.Mail.SMTPPort;
- // установка сообщения
- If GRegistry.Mail.SMTPUseAuth then
-   Smtp.AuthType:=satDefault
- else
-   Smtp.AuthType:=satNone;
- Smtp.Username:=GRegistry.Mail.SMTPUserName;
- Smtp.Password:=GRegistry.Mail.SMTPPassword;
-
- MailMessage.Clear;
- MailMessage.From.Name:=cbFrom.Text;
- MailMessage.Subject:=cbSubject.Text; // тема
- MailMessage.From.Address:=cbFrom.Text; // адрес отправителя
- MailMessage.Recipients.EMailAddresses:=cbTo.Text+','+ledCC.Text; // получатель + копия
- MailMessage.Body.Text:=Memo2.Text; // текст сообщения
+ SendMail := TSendMail.Create;
+ SendMail.MailMessage.Clear;
+ SendMail.MailMessage.From.Name:=cbFrom.Text;
+ SendMail.MailMessage.Subject:=cbSubject.Text; // тема
+ SendMail.MailMessage.From.Address:=cbFrom.Text; // адрес отправителя
+ SendMail.MailMessage.Recipients.EMailAddresses:=cbTo.Text+','+ledCC.Text; // получатель + копия
+ SendMail.MailMessage.Body.Text:=Memo2.Text; // текст сообщения
 
  if FileExists(ledAttachment.Text) then
-    TIdAttachmentFile.Create(MailMessage.MessageParts,ledAttachment.Text);
-
- // отправка почты
- try
-  try
-   SMTP.Connect;
-   sleep(200);
-   Application.ProcessMessages;
-   SMTP.Send(MailMessage);
-   ShowMessage('Письмо отправлено!');
-  except on E:Exception do
-   begin
-    sleep(200);
-    Memo1.Lines.Insert(0,'Статус отправки: ERROR - '+E.Message);
+    SendMail.AddAttachment(ledAttachment.Text);
+  // отправка почты
+  if SendMail.Send then
+    ShowMessage('Письмо отправлено!')
+  else
     ShowMessage('Письмо не отправлено!');
-   end;
-  end;
- finally
-  if SMTP.Connected then SMTP.Disconnect;
- end;
- MRUListsSave();
+  SendMail.Destroy;
+  MRUListsSave();
 
-end;
-
-procedure TfrmMailSend.SMTPStatus(ASender: TObject; const AStatus: TIdStatus;
-  const AStatusText: string);
-begin
- Memo1.Lines.Insert(0,'Статус отправки: '+AStatusText);
 end;
 
 procedure TfrmMailSend.Button1Click(Sender: TObject);

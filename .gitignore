@@ -3,7 +3,6 @@ Release
 Setup
 __history
 Debug
-/Install/src/Logs
 Thumbs.db
 default.txaPackage
 default.txvpck
@@ -14,5 +13,6 @@ default_diagram.tvsconfig
 *.log
 *.DCU
 *.dproj.local
-
 /Install/src/Packages
+/Install/src/Logs
+/Components/jedi

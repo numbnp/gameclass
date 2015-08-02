@@ -4,7 +4,7 @@ object frmMailSend: TfrmMailSend
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1054#1090#1087#1088#1072#1074#1082#1072' '#1086#1090#1095#1077#1090#1072'...'
-  ClientHeight = 559
+  ClientHeight = 466
   ClientWidth = 585
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -135,58 +135,26 @@ object frmMailSend: TfrmMailSend
     TabOrder = 4
     OnClick = Button1Click
   end
-  object Memo1: TMemo
-    Left = 8
-    Top = 464
-    Width = 569
-    Height = 89
-    Enabled = False
-    Lines.Strings = (
-      #1057#1090#1072#1090#1091#1089' '#1086#1090#1087#1088#1072#1074#1082#1080':')
-    ReadOnly = True
-    ScrollBars = ssVertical
-    TabOrder = 5
-  end
   object cbFrom: TComboBox
     Left = 168
     Top = 24
     Width = 409
     Height = 21
-    TabOrder = 6
+    TabOrder = 5
   end
   object cbTo: TComboBox
     Left = 168
     Top = 64
     Width = 409
     Height = 21
-    TabOrder = 7
+    TabOrder = 6
   end
   object cbSubject: TComboBox
     Left = 8
     Top = 142
     Width = 569
     Height = 21
-    TabOrder = 8
-  end
-  object MailMessage: TIdMessage
-    AttachmentEncoding = 'MIME'
-    BccList = <>
-    CCList = <>
-    Encoding = meMIME
-    FromList = <
-      item
-      end>
-    Recipients = <>
-    ReplyTo = <>
-    ConvertPreamble = True
-    Left = 176
-    Top = 416
-  end
-  object SMTP: TIdSMTP
-    OnStatus = SMTPStatus
-    SASLMechanisms = <>
-    Left = 208
-    Top = 416
+    TabOrder = 7
   end
   object AttachmentDialog: TOpenDialog
     Options = [ofReadOnly, ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]

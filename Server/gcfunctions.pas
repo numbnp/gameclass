@@ -1674,23 +1674,27 @@ begin
   SendMail:= TSendMail.Create;
 // SendMail.AddLog := @AddLog;
 
-  SendMail.SMTP.Host:=GRegistry.Mail.SMTPHost;
-  SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
+//  SendMail.SMTP.Host:=GRegistry.Mail.SMTPHost;
+//  SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
+
+
   // установка сообщения
-  if GRegistry.Mail.SMTPUseAuth then
+{  if GRegistry.Mail.SMTPUseAuth then
     SendMail.Smtp.AuthType:=satDefault  // atLogin
   else
     SendMail.Smtp.AuthType:=satNone; // atNone
+
   SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
   SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
   SendMail.MailMessage.CharSet := 'UTF-8';
   SendMail.MailMessage.IsEncoded := true;
+
   SendMail.MailMessage.From.Name:='GameClass';
-  SendMail.MailMessage.Subject:=('Отчет за смену'); // тема
   SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
   SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
   SendMail.MailMessage.Body.Text:=''; // текст сообщения
-
+}
+  SendMail.MailMessage.Subject:=('Отчет за смену'); // тема
   SendMail.AddAttachment(GetEnvironmentVariable('TEMP') + '\report.html');
 
   if SendMail.Send then
@@ -1699,8 +1703,6 @@ begin
   else
     Console.AddEvent(EVENT_ICON_INFORMATION, LEVEL_1,
           translate('ErrorSendedReport'));
-
-
   SendMail.Destroy;
 end;
 

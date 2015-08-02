@@ -25,6 +25,10 @@ type
     function GetSMTPUseAuth: Boolean;
     procedure SetSMTPUseAuth(AValue: Boolean);
 
+    function LocateSMTPSSL: Boolean;
+    function GetSMTPSSL: integer;
+    procedure SetSMTPSSL(AValue: integer);
+
     function LocateSMTPUserName: Boolean;
     function GetSMTPUserName: String;
     procedure SetSMTPUserName(AValue: String);
@@ -57,6 +61,9 @@ type
       read GetSMTPUserName write SetSMTPUserName;
     property SMTPPassword: String
       read GetSMTPPassword write SetSMTPPassword;
+
+    property SMTPSSL: Integer
+      read GetSMTPSSL write SetSMTPSSL;
 
     property MailFrom: String
       read GetMailFrom write SetMailFrom;
@@ -144,22 +151,42 @@ begin
   FRegistryRecord.ValueAsBoolean:= AValue;
 end;
 
+
+//---------------------------SMTPSSL-------------------------------
+function TRegistryMail.LocateSMTPSSL: Boolean;
+begin
+  Result := FRegistryDataSet.LocateByKey('SMTP\UseSSL','0');
+end;
+
+procedure TRegistryMail.SetSMTPSSL(AValue: Integer);
+begin
+  LocateSMTPSSL;
+  FRegistryRecord.ValueAsInteger:= AValue;
+end;
+
+function TRegistryMail.GetSMTPSSL: Integer;
+begin
+  LocateSMTPSSL;
+  Result := FRegistryRecord.ValueAsInteger;
+end;
+
+
 //----------------------------SMTPUserName------------------------------
 function TRegistryMail.LocateSMTPUserName: Boolean;
 begin
   Result := FRegistryDataSet.LocateByKey('SMTP\UserName','');
 end;
 
-function TRegistryMail.GetSMTPUserName: String;
-begin
-  LocateSMTPUserName;
-  Result := FRegistryRecord.Value ;
-end;
-
 procedure TRegistryMail.SetSMTPUserName(AValue: String);
 begin
   LocateSMTPUserName;
   FRegistryRecord.Value:= AValue;
+end;
+
+function TRegistryMail.GetSMTPUserName: String;
+begin
+  LocateSMTPUserName;
+  Result := FRegistryRecord.Value ;
 end;
 
 //----------------------------SMTPPassword------------------------------

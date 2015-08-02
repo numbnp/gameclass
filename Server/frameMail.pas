@@ -17,6 +17,8 @@ type
     ledFrom: TLabeledEdit;
     ledTo: TLabeledEdit;
     butTest: TButton;
+    cbSSL: TComboBox;
+    lblSSL: TLabel;
     procedure chbAuthenticationClick(Sender: TObject);
     procedure ledHostChange(Sender: TObject);
     procedure ledPortChange(Sender: TObject);
@@ -25,6 +27,7 @@ type
     procedure ledFromChange(Sender: TObject);
     procedure ledToChange(Sender: TObject);
     procedure butTestClick(Sender: TObject);
+    procedure cbSSLChange(Sender: TObject);
   private
     FbControlsEnabled: Boolean;
     procedure ResetFrame;
@@ -84,6 +87,8 @@ begin
   ledTo.EditLabel.Caption := translate('mail_to');
   butTest.Caption := translate('test');
 
+  lblSSL.Caption := translate('mail_ssl');
+
 
   ledHost.Text :='';
   ledPort.Text :='';
@@ -120,6 +125,12 @@ begin
   ledPassword.Enabled := (chbAuthentication.State = cbChecked);
   ledFrom.Text := GRegistry.Mail.MailFrom;
   ledTo.Text := GRegistry.Mail.MailTo;
+  cbSSL.ItemIndex := GRegistry.Mail.SMTPSSL;
+end;
+
+procedure TframMail.cbSSLChange(Sender: TObject);
+begin
+  GRegistry.Mail.SMTPSSL := cbSSL.ItemIndex;
 end;
 
 procedure TframMail.chbAuthenticationClick(Sender: TObject);
@@ -174,22 +185,8 @@ var
 begin
   SendMail:= TSendMail.Create;
   SendMail.AddLog := @AddLog;
-
-  SendMail.SMTP.Host:=GRegistry.Mail.SMTPHost;
-  SendMail.SMTP.Port:=GRegistry.Mail.SMTPPort;
   // установка сообщения
-  if GRegistry.Mail.SMTPUseAuth then
-    SendMail.Smtp.AuthType:=satDefault  // atLogin
-  else
-    SendMail.Smtp.AuthType:=satNone; // atNone
-  SendMail.Smtp.Username:=GRegistry.Mail.SMTPUserName;
-  SendMail.Smtp.Password:=GRegistry.Mail.SMTPPassword;
-  SendMail.MailMessage.From.Name:='GameClass';
-  SendMail.MailMessage.CharSet := 'UTF-8';
-  SendMail.MailMessage.IsEncoded := true;
   SendMail.MailMessage.Subject:=UTF8Encode('Тест email'); // тема
-  SendMail.MailMessage.From.Address:=GRegistry.Mail.MailFrom; // адрес отправителя
-  SendMail.MailMessage.Recipients.EMailAddresses:=GRegistry.Mail.MailTo; // получатель + копия
   SendMail.MailMessage.Body.Text:='Это тестовое сообщение.' + #13 + #10 + #13 + #10 + #13 + #10
                                   + 'Для тех кто щедр :-)' + #13 + #10
                                   + '410011118323719 Яндекс деньги' + #13 + #10
