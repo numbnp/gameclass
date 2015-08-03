@@ -44,10 +44,6 @@ object frmMain: TfrmMain
         Caption = 'tabScreenAgreement'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object pnlScreenAgreement: TPanel
           Left = 0
           Top = 0
@@ -371,10 +367,6 @@ object frmMain: TfrmMain
             object tabSendMess: TTabSheet
               Caption = #1054#1090#1087#1088#1072#1074#1080#1090#1100' '#1089#1086#1086#1073#1097#1077#1085#1080#1077' '#1072#1076#1084#1080#1085#1080#1089#1090#1088#1072#1090#1086#1088#1091
               ImageIndex = 2
-              ExplicitLeft = 0
-              ExplicitTop = 0
-              ExplicitWidth = 0
-              ExplicitHeight = 0
               object pnlSendMessageBottom: TPanel
                 Left = 0
                 Top = 225
@@ -592,10 +584,6 @@ object frmMain: TfrmMain
         Caption = 'tabScreenCompFree'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object pnlScreenCompFree: TPanel
           Left = 0
           Top = 0
@@ -624,10 +612,6 @@ object frmMain: TfrmMain
         Caption = 'tabScreenLogin'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object pnlScreenLogin: TPanel
           Left = 0
           Top = 0
@@ -948,7 +932,7 @@ object frmMain: TfrmMain
     Left = 464
     Top = 380
     Bitmap = {
-      494C01010300040038001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C0101030004003C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       000000000000000000000000000000000000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000

@@ -206,7 +206,7 @@ begin
 //    DataStringStream := TStringStream.Create('');
     try
 //      DataStringStream.CopyFrom(AData, AData.Size);
-      strData := TrimLeft(TrimRight(BytesToString(AData)));
+      strData := TrimLeft(TrimRight(BytesToString(AData,IndyTextEncoding_OSDefault)));
 
       strProtocol := _ExtractProtocolInfo(strData);
       if not FbCheckProtocol or _IsValidProtocol(strProtocol) then begin

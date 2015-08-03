@@ -238,6 +238,8 @@ type
         message WM_HOTKEY;
     procedure EnableSafeOperation;
 
+    procedure WIActionLogoff(Sender: TObject);
+
   end;        // TformMain
 
 var
@@ -419,6 +421,22 @@ begin
   FbOnChangeEnabled := True;
 end;
 
+procedure TfrmMain.WIActionLogoff(Sender: TObject);
+begin
+  memMessages.Lines.Clear;
+  edtLogin.Text := '';
+  edtPassword.Text := '';
+  edtSecCode.Text := '';
+  ClientLogoff;
+{  SendMessage(frmMain.Handle,WM_USER_THREADSAFE_UPDATE,
+      lParam(ThreadSafeOperation_RunPadAction),
+      wParam(RunPadAction_EndVipSession));}
+  if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
+        Integer(RunPadAction_VipLogout));
+  end;
+end;
+
 procedure TfrmMain.DoDesign;
 begin
 try
@@ -579,6 +597,7 @@ begin
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
 //  GCClientWebInterface.ReloadSkin;
   GCClientWebInterface := TWebInterface.Create(self.pnlWeb);
+  GCClientWebInterface.ActionLogoff := WIActionLogoff;
   GCClientWebInterface.Start;
   TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
   TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
@@ -613,18 +632,7 @@ end;
 
 procedure TfrmMain.butLogoffClick(Sender: TObject);
 begin
-  memMessages.Lines.Clear;
-  edtLogin.Text := '';
-  edtPassword.Text := '';
-  edtSecCode.Text := '';
-  ClientLogoff;
-{  SendMessage(frmMain.Handle,WM_USER_THREADSAFE_UPDATE,
-      lParam(ThreadSafeOperation_RunPadAction),
-      wParam(RunPadAction_EndVipSession));}
-  if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
-    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
-        Integer(RunPadAction_VipLogout));
-  end;
+  WIActionLogoff(Sender);
 end;
 
 procedure TfrmMain.FormKeyDown(Sender: TObject; var Key: Word;
