@@ -98,6 +98,8 @@ function gcclient_set_state(state){
             $('#login_info').show(600);
             $('#session_info').show(600);
             $('#div_session_info').show(600);
+			$('#text_add_money').val('0');
+			etdAddSumm_edit();			
             break;
         case 4: // ������������ ����������
             $('#do_not_accept_eula').show(1);            
@@ -276,6 +278,10 @@ function update_info(data){
     if ('booking_time_start' in data){$('#text_booking_time_start').val(data.booking_time_start);}
     if ('booking_time_stop' in data){$('#text_booking_time_stop').val(data.booking_time_stop);}
 
+	if ('booking_money' in data){$('#text_booking_money').val(data.booking_money);}
+	if ('add_money' in data){$('#text_add_money').val(data.add_money);}
+
+	
     if ('booking_add_time' in data){$('#text_add_time').val(data.booking_add_time);}
     if ('booking_add_traffic' in data){$('#text_add_traffic').val(data.booking_add_traffic);}
 
@@ -321,6 +327,9 @@ function update_info(data){
             cbTariff_edit();
             });
             //alert('ololo');
+    }
+	if ('select_tariff' in data){
+            $('#select_booking_tariff').val(data.select_tariff);
     }
 }
 

@@ -26,13 +26,23 @@ type
   TActionQueryAddTrafficCost = procedure (Sender: TObject;sSumm:string) of object;
   TActionAddTraffic = procedure (Sender: TObject;sSumm:string) of object;
   TActionUnblock = procedure (Sender: TObject;Code:string) of object;
-  TActionChangePpassword = procedure (Sender: TObject;OldPassword,NewPassword:string) of object;
+  TActionChangePassword = procedure (Sender: TObject;OldPassword,NewPassword:string) of object;
   TWebInterface = class
     private
       _MyWebBrowser :TMyWebBrowser;
       _MyWebServer:TMyWebServer;
       _Parent:TWinControl;
-    procedure Show_unlock_window;
+
+      FstrTarifName : string;
+      FfSum: Double;
+      FfAddTimeSum: Double;
+
+      procedure Show_unlock_window;
+    protected
+      procedure SetTarifName(const AstrTarifName: String);
+      procedure SetSum(const AfSum: Double);
+      procedure SetAddTimeSum(const AfAddTimeSum: Double);
+
     public
       Port:Integer;
       IndexFile:string;
@@ -51,14 +61,23 @@ type
       ActionAddTraffic:TActionAddTraffic;
       ActionUnblock:TActionUnblock;
       ActionLogoff:TNoParamsProcedure;
-      ActionClientSessionStop:TNoParamsProcedure;
+      ActionStopSession:TNoParamsProcedure;
       ActionAgreeEula:TNoParamsProcedure;
       ActionNotAgreeEula:TNoParamsProcedure;
-      ActionChangePpassword:TActionChangePpassword;
+      ActionChangePassword:TActionChangePassword;
       ActionGetTariffs:TNoParamsProcedure;
       ActionLoadComplete:TNoParamsProcedure;
 
       constructor Create (Parent:TWinControl);
+
+      // имя тарифа
+      property TarifName: String
+        read FstrTarifName write SetTarifName;
+      property Sum: Double
+        read FfSum write SetSum;
+      property AddTimeSum: Double
+        read FfAddTimeSum write SetAddTimeSum;
+
       procedure ShowDevTools;
       procedure ReloadSkin();
       procedure ShowUnblock();
@@ -101,14 +120,19 @@ begin
                 Request.Parametrs.Values['password'],
                 Request.Parametrs.Values['seccode']);
   if Request.Parametrs.Values['action'] = 'querytimecost' then
-    if Assigned(ActionQueryCostTime) then
-      ActionQueryCostTime(Sender,
+    begin
+      FfSum := StrToFloatDef(Request.Parametrs.Values['money'],0);
+      if Assigned(ActionQueryCostTime) then
+        ActionQueryCostTime(Sender,
                 Request.Parametrs.Values['tariff'],
                 Request.Parametrs.Values['money']);
+    end;
   if Request.Parametrs.Values['action'] = 'changetariff' then
-    if Assigned(ActionChangeTariff) then
-      ActionChangeTariff(Sender,
-                Request.Parametrs.Values['tariff']);
+    begin
+      FstrTarifName := Request.Parametrs.Values['tariff'];
+      if Assigned(ActionChangeTariff) then
+        ActionChangeTariff(Sender, Request.Parametrs.Values['tariff']);
+    end;
   // Старт Сессии
   if Request.Parametrs.Values['action'] = 'start_session' then
     if Assigned(ActionStartSession) then
@@ -117,9 +141,11 @@ begin
                 Request.Parametrs.Values['money']);
   //Запрос кол-ва доп. времени на указанную сумму
   if Request.Parametrs.Values['action'] = 'queryaddtimecost' then
-    if Assigned(ActionQueryAddTimeCost) then
-      ActionQueryAddTimeCost(Sender,
-                Request.Parametrs.Values['money']);
+    begin
+      FfAddTimeSum := StrToFloatDef(Request.Parametrs.Values['money'],0);
+      if Assigned(ActionQueryAddTimeCost) then
+        ActionQueryAddTimeCost(Sender, Request.Parametrs.Values['money']);
+    end;
   //Добавить деньги в текущую сессию
   if Request.Parametrs.Values['action'] = 'addmoney' then
     if Assigned(ActionAddMoney) then
@@ -140,7 +166,7 @@ begin
     if Assigned(ActionLogoff) then ActionLogoff(Sender);
   // Остановка сессии
   if Request.Parametrs.Values['action'] = 'stop_session' then
-    if Assigned(ActionClientSessionStop) then ActionClientSessionStop(Sender);
+    if Assigned(ActionStopSession) then ActionStopSession(Sender);
   //Принимаем соглашение
   if Request.Parametrs.Values['action'] = 'accept_eula' then
     if Assigned(ActionAgreeEula) then ActionAgreeEula(Sender);
@@ -148,13 +174,13 @@ begin
   if Request.Parametrs.Values['action'] = 'no_accept_eula' then
     if Assigned(ActionNotAgreeEula) then ActionNotAgreeEula(Sender);
   //Запрос ручной разблокировки
-  if Request.Parametrs.Values['action'] = 'addtraffic' then
+  if Request.Parametrs.Values['action'] = 'unblock' then
     if Assigned(ActionUnblock) then
       ActionUnblock(Sender, Request.Parametrs.Values['unblock_code']);
   //Смена пароля
-  if Request.Parametrs.Values['action'] = 'addtraffic' then
-    if Assigned(ActionChangePpassword) then
-      ActionChangePpassword(Sender,
+  if Request.Parametrs.Values['action'] = 'change_password' then
+    if Assigned(ActionChangePassword) then
+      ActionChangePassword(Sender,
                 Request.Parametrs.Values['old_password'],
                 Request.Parametrs.Values['new_password']);
   //Запрос на обновление тарифов
@@ -232,6 +258,13 @@ begin
 end;
 
 
+procedure TWebInterface.SetAddTimeSum(const AfAddTimeSum: Double);
+begin
+  FfAddTimeSum := AfAddTimeSum;
+  SetInterfaceData('{ "add_money": "' + FloatToStr(FfAddTimeSum) +'" }');
+
+end;
+
 procedure TWebInterface.SetClientState(state: integer);
 begin
   _MyWebBrowser.ExecuteJavaScript('gcclient_set_state('+IntToStr(state)+');');
@@ -244,6 +277,18 @@ begin
   buffer := ReplaceStr(str,#$D#$A,'<br>');
   _MyWebBrowser.ExecuteJavaScript('update_info(' + buffer + ');');
 end;
+procedure TWebInterface.SetSum(const AfSum: Double);
+begin
+  FfSum := AfSum;
+  SetInterfaceData('{ "booking_money": "' + FloatToStr(FfSum) +'" }');
+end;
+
+procedure TWebInterface.SetTarifName(const AstrTarifName: String);
+begin
+  FstrTarifName := AstrTarifName;
+  SetInterfaceData('{ "select_tariff": "' + AstrTarifName +'" }');
+end;
+
 procedure TWebInterface.ShowChangePassword;
 begin
   _MyWebBrowser.ExecuteJavaScript('show_change_password_window();');

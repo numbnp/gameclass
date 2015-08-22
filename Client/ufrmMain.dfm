@@ -114,7 +114,7 @@ object frmMain: TfrmMain
             Top = 10
             Width = 338
             Height = 330
-            ActivePage = tabAdd
+            ActivePage = tabSendMess
             Align = alRight
             MultiLine = True
             TabOrder = 0
@@ -169,7 +169,7 @@ object frmMain: TfrmMain
               end
               object cboTarifs: TComboBox
                 Left = 15
-                Top = 44
+                Top = 47
                 Width = 278
                 Height = 21
                 Style = csDropDownList
@@ -301,6 +301,7 @@ object frmMain: TfrmMain
                   Alignment = taRightJustify
                   TabOrder = 2
                   Text = '0,00'
+                  OnChange = edtAddTimeSumChange
                 end
               end
               object gbTraffic: TGroupBox
@@ -932,7 +933,7 @@ object frmMain: TfrmMain
     Left = 464
     Top = 380
     Bitmap = {
-      494C0101030004003C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010300040048001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       000000000000000000000000000000000000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000

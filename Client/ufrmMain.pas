@@ -239,6 +239,17 @@ type
     procedure EnableSafeOperation;
 
     procedure WIActionLogoff(Sender: TObject);
+    procedure WIActionClientSessionStop(Sender: TObject);
+    procedure WIActionLoadComplete(Sender: TObject);
+    procedure WIActionChangePassword(Sender: TObject;OldPassword,NewPassword:string);
+    procedure WIActionChangeTariff(Sender: TObject;sTariff:string);
+    procedure WIActionLogon(Sender: TObject;sLogin,sPassword,sSecCode:string);
+    procedure WIActionQueryCostTime (Sender: TObject;sTariff,sSumm:string);
+    procedure WIActionStartSession (Sender: TObject;sTariff,sSumm:string);
+    procedure WIActionQueryAddTimeCost( Sender: TObject;sSumm:string);
+    procedure WIActionAddMoney (Sender: TObject;sSumm:string);
+    procedure WIActionUnblock (Sender: TObject;Code:string);
+
 
   end;        // TformMain
 
@@ -421,6 +432,53 @@ begin
   FbOnChangeEnabled := True;
 end;
 
+procedure TfrmMain.WIActionAddMoney(Sender: TObject; sSumm: string);
+begin
+  if IsOnChangeEnabled then begin
+    FbOnChangeEnabled := False;
+    SessionAddMoney(sSumm);
+    btnAddTime.Enabled := False;
+    edtAddTimeSum.Enabled := False;
+    dtpAddTimeLength.Enabled := False;
+    edtAddTimeSum.Text := '0';
+    dtpAddTimeLength.Time := 0;
+
+    GCClientWebInterface.AddTimeSum := 0;
+    FbOnChangeEnabled := True;
+
+    WIActionQueryAddTimeCost(Sender,FloatToStr(GCClientWebInterface.AddTimeSum));
+  end;
+end;
+
+procedure TfrmMain.WIActionChangePassword(Sender: TObject; OldPassword,
+  NewPassword: string);
+begin
+  ChangePassword(OldPassword,NewPassword);
+end;
+
+procedure TfrmMain.WIActionChangeTariff(Sender: TObject; sTariff: string);
+begin
+  if IsOnChangeEnabled then begin
+    edtSum.Text := '1,00';
+    GCClientWebInterface.Sum := 1;
+    dtpTime.Time := FIRST_DATE; // 01.01.2000 0:00:00
+    DoDesignStartStop;
+    WIActionQueryCostTime(Sender,sTariff,FloatToStr(GCClientWebInterface.Sum));
+  end;
+end;
+
+procedure TfrmMain.WIActionClientSessionStop(Sender: TObject);
+begin
+  ClientSessionStop;
+end;
+
+procedure TfrmMain.WIActionLoadComplete(Sender: TObject);
+begin
+  TSafeStorage.Instance().Push(ThreadSafeOperation_DoDesign,0);
+  TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData,0);
+  TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber,0);
+end;
+
 procedure TfrmMain.WIActionLogoff(Sender: TObject);
 begin
   memMessages.Lines.Clear;
@@ -435,6 +493,48 @@ begin
     TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
         Integer(RunPadAction_VipLogout));
   end;
+end;
+
+procedure TfrmMain.WIActionLogon(Sender: TObject; sLogin, sPassword,
+  sSecCode: string);
+begin
+  ClientLogon(sLogin, sPassword, sSecCode);
+end;
+
+procedure TfrmMain.WIActionQueryAddTimeCost(Sender: TObject; sSumm: string);
+begin
+  if IsOnChangeEnabled then begin
+    QueryCostAddTime(sSumm);
+    DoDesignAdd;
+  end;
+
+end;
+
+procedure TfrmMain.WIActionQueryCostTime(Sender: TObject; sTariff,
+  sSumm: string);
+begin
+  if IsOnChangeEnabled then begin
+    QueryCostTime(sTariff,sSumm);
+    DoDesignStartStop;
+  end;
+end;
+
+procedure TfrmMain.WIActionStartSession(Sender: TObject; sTariff,
+  sSumm: string);
+begin
+  ClientSessionStart(sTariff,sSumm);
+end;
+
+procedure TfrmMain.WIActionUnblock(Sender: TObject; Code: string);
+begin
+  UnblockedByPassword(Code);
+  if GClientInfo.UnblockedByPassword then
+  begin
+    GCClientWebInterface.HideUnblock;
+    GCClientWebInterface.ShowMessages('Разблокировано');
+  end else
+    GCClientWebInterface.ShowMessages('Ошибка');
+
 end;
 
 procedure TfrmMain.DoDesign;
@@ -569,6 +669,13 @@ begin
     dtpTime.Enabled := False;
   end;
 
+  fSum := GCClientWebInterface.Sum;
+  if (Length(GCClientWebInterface.TarifName)>0) and (fSum > 0)
+      and (fSum <= GClientInfo.Balance - GClientInfo.BalanceLimit) then
+    GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "1" }')
+  else
+    GCClientWebInterface.SetInterfaceData('{ "enable_start_session": "0" }');
+
   EnableOnChange;
 end;
 
@@ -583,6 +690,14 @@ begin
       and (fSumTime <= GClientInfo.Balance - GClientInfo.BalanceLimit);
   butAddTraffic.Enabled := (fSumTraffic > 0)
       and (fSumTraffic <= GClientInfo.Balance - GClientInfo.BalanceLimit);
+
+  fSumTime := GCClientWebInterface.AddTimeSum;
+  if (fSumTime > 0)
+      and (fSumTime <= GClientInfo.Balance - GClientInfo.BalanceLimit) then
+    GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "1" }')
+  else
+    GCClientWebInterface.SetInterfaceData('{ "enable_add_money": "0" }');
+
   EnableOnChange;
 end;
 
@@ -598,8 +713,19 @@ begin
 //  GCClientWebInterface.ReloadSkin;
   GCClientWebInterface := TWebInterface.Create(self.pnlWeb);
   GCClientWebInterface.ActionLogoff := WIActionLogoff;
+  GCClientWebInterface.ActionChangePassword := WIActionChangePassword;
+  GCClientWebInterface.ActionChangeTariff := WIActionChangeTariff;
+  GCClientWebInterface.ActionLogon := WIActionLogon;
+  GCClientWebInterface.ActionQueryCostTime := WIActionQueryCostTime;
+  GCClientWebInterface.ActionStartSession := WIActionStartSession;
+  GCClientWebInterface.ActionStopSession := WIActionClientSessionStop;
+  GCClientWebInterface.ActionLoadComplete := WIActionLoadComplete;
+  GCClientWebInterface.ActionQueryAddTimeCost := WIActionQueryAddTimeCost;
+  GCClientWebInterface.ActionAddMoney := WIActionAddMoney;
+  GCClientWebInterface.ActionUnblock := WIActionUnblock;
   GCClientWebInterface.Start;
-  TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
+
+    TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
   TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
       Integer(RunPadAction_HideTabs));
 
@@ -617,7 +743,7 @@ end;
 procedure TfrmMain.butLogonClick(Sender: TObject);
 begin
   //lblWrongNameOrPassword.Visible := False;
-  ClientLogon(edtLogin.Text, edtPassword.Text, edtPassword.Text);
+  WIActionLogon(Sender,edtLogin.Text, edtPassword.Text, edtPassword.Text );
 end;
 
 procedure TfrmMain.butAgreeClick(Sender: TObject);
@@ -652,20 +778,12 @@ end;
 
 procedure TfrmMain.cboTarifsChange(Sender: TObject);
 begin
-  if IsOnChangeEnabled then begin
-    edtSum.Text := '1,00';
-    dtpTime.Time := FIRST_DATE; // 01.01.2000 0:00:00
-    DoDesignStartStop;
-    edtSumChange(Sender); //Отослать сумму, чтобы узнать пакетность
-  end;
+  WIActionChangeTariff(Sender,cboTarifs.Text);
 end;
 
 procedure TfrmMain.edtSumChange(Sender: TObject);
 begin
-  if IsOnChangeEnabled then begin
-    QueryCostTime(cboTarifs.Text,edtSum.Text);
-    DoDesignStartStop;
-  end;
+  WIActionQueryCostTime(Sender,GCClientWebInterface.TarifName,edtSum.Text);
 end;
 
 procedure TfrmMain.dtpTimeChange(Sender: TObject);
@@ -679,12 +797,12 @@ end;
 
 procedure TfrmMain.btnSessionStartClick(Sender: TObject);
 begin
-  ClientSessionStart(cboTarifs.Text,edtSum.Text);
+  WIActionStartSession(Sender,cboTarifs.Text,edtSum.Text);
 end;
 
 procedure TfrmMain.btnSessionStopClick(Sender: TObject);
 begin
-  ClientSessionStop;
+  WIActionClientSessionStop(Sender);
 end;
 
 procedure TfrmMain.edtAddTrafficSumChange(Sender: TObject);
@@ -845,24 +963,12 @@ end;
 
 procedure TfrmMain.btnAddTimeClick(Sender: TObject);
 begin
-  if IsOnChangeEnabled then begin
-    FbOnChangeEnabled := False;
-    SessionAddMoney(edtAddTimeSum.Text);
-    btnAddTime.Enabled := False;
-    edtAddTimeSum.Enabled := False;
-    dtpAddTimeLength.Enabled := False;
-    edtAddTimeSum.Text := '0';
-    dtpAddTimeLength.Time := 0;
-    FbOnChangeEnabled := True;
-  end;
+  WIActionAddMoney(Sender,edtAddTimeSum.Text);
 end;
 
 procedure TfrmMain.edtAddTimeSumChange(Sender: TObject);
 begin
-  if IsOnChangeEnabled then begin
-    QueryCostAddTime(edtAddTimeSum.Text);
-    DoDesignAdd;
-  end;
+  WIActionQueryAddTimeCost(Sender,edtAddTimeSum.Text);
 end;
 
 procedure TfrmMain.dtpAddTimeLengthChange(Sender: TObject);
@@ -896,6 +1002,7 @@ begin
   if GClientInfo.UnblockedByPassword then
   begin
     BlockedByPassword();
+    GCClientWebInterface.ShowMessages('Заблокировано');
   end else begin
     GCClientWebInterface.ShowUnblock;
   end;

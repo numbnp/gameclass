@@ -8,5 +8,10 @@ mkdir Install\src\Logs
 mkdir Output\dcu\Release
 mkdir Output\Release
 mkdir Output\Setup
+mkdir Output\Debug\server
+
+copy Install\Src\Files\Server\*.* Output\Debug\server
+
+
 
 

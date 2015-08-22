@@ -434,21 +434,24 @@ begin
     end;
     ThreadSafeOperation_UpdateTarifs: begin
       if frmMain.IsOnChangeEnabled then begin
-        {frmMain.DisableOnChange;
+        frmMain.DisableOnChange;
         str := frmMain.cboTarifs.Text;
         frmMain.cboTarifs.Clear;
         for i:=0 to GetParamCountFromString(AOperation.Parameters)-1 do
           frmMain.cboTarifs.Items.Add(
               GetParamFromString(AOperation.Parameters,i));
         frmMain.EnableOnChange;
-        frmMain.cboTarifs.ItemIndex := frmMain.cboTarifs.Items.IndexOf(str);
-        frmMain.cboTarifsChange(Nil);}
+
         frmMain.DisableOnChange;
         str :='';
         for i:=0 to GetParamCountFromString(AOperation.Parameters)-1 do
           str := str + '"' + inttostr(i) +'": "' + GetParamFromString(AOperation.Parameters,i) +'",';
         frmMain.GCClientWebInterface.SetInterfaceData('{tariffs:{' + str +'}}');
-        frmMain.EnableOnChange
+        frmMain.EnableOnChange;
+
+        frmMain.cboTarifs.ItemIndex := frmMain.cboTarifs.Items.IndexOf(str);
+        frmMain.cboTarifsChange(Nil);
+
       end;
     end;
     ThreadSafeOperation_RecalcCostTime: begin
