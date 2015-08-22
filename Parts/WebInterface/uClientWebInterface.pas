@@ -37,7 +37,6 @@ type
       FfSum: Double;
       FfAddTimeSum: Double;
 
-      procedure Show_unlock_window;
     protected
       procedure SetTarifName(const AstrTarifName: String);
       procedure SetSum(const AfSum: Double);
@@ -307,11 +306,6 @@ end;
 procedure TWebInterface.ShowMessages(msg: string);
 begin
   _MyWebBrowser.ExecuteJavaScript('show_messages(''' + msg + ''');');
-end;
-
-procedure TWebInterface.Show_unlock_window;
-begin
-
 end;
 
 procedure TWebInterface.Start;

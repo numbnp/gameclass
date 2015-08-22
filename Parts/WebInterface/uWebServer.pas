@@ -10,6 +10,8 @@ const
   RT_POST = 2;
 
 type
+  TBuff = array of Byte;
+
   HttpRequest = record
     FilePath:string;
     RequestType:integer;
@@ -29,7 +31,7 @@ type
     procedure SendFile(s:TSocket;FileStream:TMemoryStream);
     Function PrepareFile(FilePath:String): TMemoryStream;
     function GetTypeContent(FilePath:ansistring):ansistring;
-    function ParseHttpRequest(recv:ansistring): HttpRequest;
+    function ParseHttpRequest(recv:string): HttpRequest;
   public
     _Client :TSocket;
     DocumentRoot :String;
@@ -83,14 +85,14 @@ Var
   MyWebServer: TMyWebServer;
 
 //function HexToInt(HexStr : string) : Int64;
-procedure StrBreakApart(const Source, Delimeter: ansistring; Parts: TStrings);
-function UnpackKeyValue(const Str:ansistring; var Key,Value:ansistring):boolean;
+function UnpackKeyValue(const Str:string; var Key,Value:string):boolean;
 
+function MySplit(Delimiter:String;DelimitedText:string):TStringList;
 
 
 function ReplaceSlash(Str: string): string;
 //function ReplaceStr(Str, X, Y: ansistring): ansistring;
-function ReplaceWebCode(Str: ansistring): ansistring;
+function ReplaceWebCode(Str: string): string;
 
 
 implementation
@@ -119,7 +121,7 @@ begin
     _listenThread.PrepareFileEvent := FPrepareFileEvent;
   if Assigned(FExecuteClientEvent) then
     _listenThread.ExecuteClientEvent := FExecuteClientEvent;
-  _listenThread.Resume;
+  if _listenThread.Suspended then _listenThread.Start;
 end;
 
 procedure TMyWebServer.stop;
@@ -182,7 +184,7 @@ begin
       _clientThread.PrepareFileEvent := FPrepareFileEvent;
     if Assigned(FExecuteClientEvent) then
       _clientThread.ExecuteClientEvent := FExecuteClientEvent;
-    _clientThread.Resume;
+    if _clientThread.Suspended then _clientThread.Start;
   end;
 end;
 
@@ -197,7 +199,8 @@ end;
 procedure TClientThread.Execute;
 var
  _buff: array [0..1024] of AnsiChar;
- _request:AnsiString;
+ _Arequest:AnsiString;
+ _request:string;
  _path: String;
  _FileStream : TMemoryStream;
  _httpRequest : HttpRequest;
@@ -205,9 +208,10 @@ var
 // _fileSize:integer;
 begin
   inherited;
-
   Recv(_client, _buff, 1024, 0);
-  _request:=ansistring(_buff);
+  _Arequest:=ansistring(_buff);
+  _request := string(_Arequest);
+ // _request:=TEncoding.UTF8.GetString(_buff);
 
   if _request='' then
   begin
@@ -215,7 +219,7 @@ begin
     exit;
   end;
 
-  AddToLog(string(_request));
+  AddToLog(_request);
 
   AddToLog('-----------------------------------------------');
   _httpRequest := ParseHttpRequest(_request);
@@ -310,41 +314,38 @@ begin
 end;
 
 
-function TClientThread.ParseHttpRequest(recv: AnsiString): HttpRequest;
+function TClientThread.ParseHttpRequest(recv: String): HttpRequest;
 var
-  tmp_slist,tmp_slist1:TStringList;
-  tmp_str:AnsiString;
+  tmp_slist:TStringList;
+  tmp_slist_fistHeader:TStringList;
+  tmp_slist_split:TStringList;
   Res:HttpRequest;
   i:integer;
-  parametrs:AnsiString;
-  Key,Value:AnsiString;
+  parametrs:String;
+  Key,Value:String;
   CurrentRequestLineNumber: integer;
   Content_Length:integer;
 begin
   Content_Length := 0;
   // Разбиваем запрос на строки
-  tmp_slist := TStringList.Create;
-  StrBreakApart(recv,#13+#10,tmp_slist);
+  tmp_slist := MySplit(#13+#10,recv);
   parametrs := '';
 
   //Парсим первую строку
+  tmp_slist_fistHeader := MySplit(' ',tmp_slist.Strings[0]);
 
   // Определяем тип запроса
-  if pos('GET',tmp_slist.Strings[0])>0 then Res.RequestType := RT_GET;
-  if pos('POST',tmp_slist.Strings[0])>0 then Res.RequestType := RT_POST;
+  if 'GET'=tmp_slist_fistHeader.Strings[0] then Res.RequestType := RT_GET;
+  if 'POST'=tmp_slist_fistHeader.Strings[0] then Res.RequestType := RT_POST;
 
   //Разбор запрашиваемого файла на имя файла и параметры
-  tmp_str:= Copy(tmp_slist.Strings[0],
-                  Pos(' ',tmp_slist.Strings[0])+1,
-                  length(tmp_slist.Strings[0])-Pos(' ',tmp_slist.Strings[0])
-                );
-  tmp_str := LeftStr(tmp_str,ansiPos(' ',tmp_str)-1);
-  if AnsiPos('?',tmp_str)>0 then
+  tmp_slist_split := MySplit('?',tmp_slist_fistHeader.Strings[1]);
+  Res.FilePath := tmp_slist_split.Strings[0];
+  if tmp_slist_split.Count >1 then
   begin
-    parametrs := RightStr(tmp_str,length(tmp_str) - AnsiPos('?',tmp_str));
-    tmp_str := LeftStr(tmp_str,AnsiPos('?',tmp_str)-1);
+    parametrs := tmp_slist_split.Strings[0];
   end;
-  Res.FilePath := string(tmp_str);
+  FreeAndNil(tmp_slist_split);
 
   // Вытаскиваем все Http заголовки
   Res.Headers := TStringList.Create;
@@ -365,24 +366,33 @@ begin
     for i:=CurrentRequestLineNumber to tmp_slist.Count -1 do
     if pos('=', tmp_slist.Strings[i])>0 then
       if length(parametrs)>0 then
-        parametrs := parametrs + '&' + AnsiString(LeftStr(tmp_slist.Strings[i],Content_Length))
+        parametrs := parametrs + '&' + Copy(tmp_slist.Strings[i],1,Content_Length)
       else
-        parametrs := AnsiString(LeftStr(tmp_slist.Strings[i],Content_Length));
+        parametrs := Copy(tmp_slist.Strings[i],1,Content_Length);
 
-  tmp_slist1 := TStringList.Create;
   if length(parametrs)>0 then
   begin
-    StrBreakApart(parametrs,'&',tmp_slist1);
-    for i:= 0 to tmp_slist1.Count -1 do
-      if UnpackKeyValue(AnsiString(tmp_slist1.Strings[i]),Key,Value) then
-        Res.Parametrs.Values[string(Key)]:= string(ReplaceWebCode(Value));
+    tmp_slist_split := MySplit('&',parametrs);
+    for i:= 0 to tmp_slist_split.Count -1 do
+      if UnpackKeyValue(tmp_slist_split.Strings[i],Key,Value) then
+        Res.Parametrs.Values[Key]:= ReplaceWebCode(Value);
+    FreeAndNil(tmp_slist_split);
   end;
 
-  tmp_slist1.Free;
   tmp_slist.Free;
 
   Result := Res;
 
+end;
+
+function MySplit(Delimiter:String;DelimitedText:string):TStringList;
+var
+  split_sl:TStringList;
+begin
+  split_sl:= TStringList.Create;
+  split_sl.LineBreak := Delimiter;
+  split_sl.Text := DelimitedText;
+  Result := split_sl;
 end;
 
 Function TClientThread.PrepareFile(FilePath:String): TMemoryStream;
@@ -400,20 +410,18 @@ begin
   Result := ReplaceStr(str,'/','\');
 end;
 
-function ReplaceWebCode(Str: AnsiString): AnsiString;
+function ReplaceWebCode(Str: String): String;
 var
-  ss: string;
   _Result: string;
 begin
-  ss:= string(Str);
-  _Result:=Utf8ToAnsi(dzurl.UrlDecode(ss));
+  _Result:=dzurl.UrlDecode(Str);
   _Result:=StringReplace(_Result,'&lt;','<',[rfReplaceAll]);
   _Result:=StringReplace(_Result,'&gt;','>',[rfReplaceAll]);
-  Result := AnsiString(_Result);
+  Result := _Result;
 end;
 
 
-function UnpackKeyValue(const Str:AnsiString; var Key,Value:AnsiString):boolean;
+function UnpackKeyValue(const Str:String; var Key,Value:String):boolean;
 var
   DelimeterPos:integer;
   _Result:Boolean;
@@ -424,38 +432,11 @@ begin
   DelimeterPos := Pos('=',Str);
   if (DelimeterPos > 1) and (DelimeterPos < length(Str)) then
   begin
-    Key := LeftStr(Str,DelimeterPos-1);
-    Value := RightStr(Str, Length(Str)-DelimeterPos);
+    Key := Copy(Str,1,DelimeterPos-1);
+    Value := Copy(Str,DelimeterPos+1,Length(Str)-DelimeterPos);
     _Result := True;
   end;
   Result := _Result;
 end;
-
-procedure StrBreakApart(const Source, Delimeter: AnsiString; Parts: TStrings);
-var
- curPos: Integer;
- curStr: AnsiString;
-begin
- Parts.Clear;
- if Length(Source) = 0 then
-   Exit;
- Parts.BeginUpdate;
- try
-   CurStr:= Source;
-   repeat
-     CurPos:= Pos(Delimeter, CurStr);
-     if CurPos > 0 then begin
-       Parts.Add(String(Copy(CurStr, 1, Pred(CurPos))));
-       CurStr:= Copy(CurStr, CurPos+Length(Delimeter),
-         Length(CurStr)-CurPos-Length(Delimeter)+1);
-     end else
-       Parts.Add(String(CurStr));
-   until CurPos=0;
- finally
-   Parts.EndUpdate;
- end;
-end;
-
-
 
 end.

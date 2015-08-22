@@ -27,9 +27,7 @@ var
 
 function GetInstallDirectory: String;
 var
-  Reg: TRegIniFile;
   FstrKey: String;
-  AstrValue: String;
 begin
   Result := '';
   FstrKey := '\' + 'Software' + '\' + PRODUCT_NAME;
