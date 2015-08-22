@@ -241,6 +241,9 @@ type
     procedure WIActionLogoff(Sender: TObject);
     procedure WIActionClientSessionStop(Sender: TObject);
     procedure WIActionLoadComplete(Sender: TObject);
+    procedure WIActionAgreeEula(Sender: TObject);
+    procedure WIActionNotAgreeEula(Sender: TObject);
+
     procedure WIActionChangePassword(Sender: TObject;OldPassword,NewPassword:string);
     procedure WIActionChangeTariff(Sender: TObject;sTariff:string);
     procedure WIActionLogon(Sender: TObject;sLogin,sPassword,sSecCode:string);
@@ -249,6 +252,7 @@ type
     procedure WIActionQueryAddTimeCost( Sender: TObject;sSumm:string);
     procedure WIActionAddMoney (Sender: TObject;sSumm:string);
     procedure WIActionUnblock (Sender: TObject;Code:string);
+    procedure WIParceAndReplaceLine (Sender: TObject; var sBuf:String);
 
 
   end;        // TformMain
@@ -277,7 +281,8 @@ uses
   uDebugLog,
   uClientScripting,
   uKillTaskRemoteCommand,
-  uLogoffRemoteCommand;
+  uLogoffRemoteCommand,
+  uParseAndReplase;
 
 const
   DATE_FORMAT = 'dd mmm yy hh:mm:ss';
@@ -450,6 +455,11 @@ begin
   end;
 end;
 
+procedure TfrmMain.WIActionAgreeEula(Sender: TObject);
+begin
+  AgreeEula;
+end;
+
 procedure TfrmMain.WIActionChangePassword(Sender: TObject; OldPassword,
   NewPassword: string);
 begin
@@ -501,6 +511,11 @@ begin
   ClientLogon(sLogin, sPassword, sSecCode);
 end;
 
+procedure TfrmMain.WIActionNotAgreeEula(Sender: TObject);
+begin
+  NotAgreeEula;
+end;
+
 procedure TfrmMain.WIActionQueryAddTimeCost(Sender: TObject; sSumm: string);
 begin
   if IsOnChangeEnabled then begin
@@ -535,6 +550,11 @@ begin
   end else
     GCClientWebInterface.ShowMessages('Ошибка');
 
+end;
+
+procedure TfrmMain.WIParceAndReplaceLine(Sender: TObject; var sBuf: String);
+begin
+  sBuf:=ParseAndReplase(sBuf);
 end;
 
 procedure TfrmMain.DoDesign;
@@ -723,6 +743,10 @@ begin
   GCClientWebInterface.ActionQueryAddTimeCost := WIActionQueryAddTimeCost;
   GCClientWebInterface.ActionAddMoney := WIActionAddMoney;
   GCClientWebInterface.ActionUnblock := WIActionUnblock;
+  GCClientWebInterface.ParceAndReplaceLine := WIParceAndReplaceLine;
+  GCClientWebInterface.ActionAgreeEula := WIActionAgreeEula;
+  GCClientWebInterface.ActionNotAgreeEula := WIActionNotAgreeEula;
+
   GCClientWebInterface.Start;
 
     TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateCompNumber, 0);
@@ -748,12 +772,12 @@ end;
 
 procedure TfrmMain.butAgreeClick(Sender: TObject);
 begin
-  AgreeEula;
+  WIActionAgreeEula(Sender);;
 end;
 
 procedure TfrmMain.butNotAgreeClick(Sender: TObject);
 begin
-  NotAgreeEula;
+  WIActionNotAgreeEula(Sender);
 end;
 
 procedure TfrmMain.butLogoffClick(Sender: TObject);

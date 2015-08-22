@@ -15,7 +15,7 @@ uses
   uWebServer;
 
 type
-  TParceAndReplaceLine = procedure (Sender: TObject; FilePath:AnsiString) of object;
+  TParceAndReplaceLine = procedure (Sender: TObject; sBuf:String) of object;
   TNoParamsProcedure = procedure (Sender: TObject) of object;
   TActionLogon  = procedure (Sender: TObject;sLogin,sPassword,sSecCode:string) of object;
   TActionQueryCostTime = procedure (Sender: TObject;sTariff,sSumm:string) of object;
@@ -212,6 +212,7 @@ var
   sFileType: AnsiString;
   fFile: TextFile;
   sBuf:AnsiString;
+  ssBuf:string;
   _Out_buff:array [0..5000] of ansichar;
   iBufSize:integer;
 begin
@@ -228,7 +229,11 @@ begin
     begin
       readln(fFile,sBuf);
       if Assigned(ParceAndReplaceLine) then
-        ParceAndReplaceLine(Self,sBuf);
+      begin
+        ssBuf := string(sBuf);
+        ParceAndReplaceLine(Self,ssBuf);
+        sBuf := AnsiString(ssBuf);
+      end;
       StrPCopy(_Out_buff, sBuf);
       iBufSize := Length(sBuf);
       _Out_buff[iBufSize] := #10;
