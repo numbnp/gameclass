@@ -1,10 +1,5 @@
 program gcclsrv_dev;
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   SvcMgr,
   SysUtils,
   ActiveX,

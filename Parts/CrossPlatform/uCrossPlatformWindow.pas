@@ -345,11 +345,6 @@ begin
   end;
 end;
 
-{$IFDEF LINUX}
-initialization
-  GWindowManager := TWindowManager_Unknown;
-{$ENDIF}
-
 end.
 
 

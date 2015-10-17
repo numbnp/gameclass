@@ -18,7 +18,7 @@ uses
 
 const
   // идентификатор для Memory Mapped File
-  GLOBAL_MAP_ID = 'Winhkg - {3B9482B0-FF86-4066-9524-C429EDC60ADC}';
+  GLOBAL_MAP_ID = 'Winhkg_gc - {3B9482B0-FF86-4066-9524-C429EDC60ADC}';
   // константы для низкоуровневых хуков, неописанные в Windows.pas
   WH_KEYBOARD_LL = 13;
   WH_MOUSE_LL    = 14;
@@ -148,7 +148,7 @@ begin
   if nCode < 0 then
     Result := CallNextHookEx(GShareInf^.hMouseHook, nCode, nWParam, nLParam)
   else
-    Result := -1;
+    Result := 1;
 end; // MouseProc
 
 
@@ -164,7 +164,6 @@ begin
   end else begin
     uMessage := WM_KEYDOWN;
   end;
-
   if GShareInf^.dwProcessId <> 0 then begin
     hWindow := GetFocus();
 		if (GetWindowThreadProcessId(hWindow,LPDWORD(nil))
@@ -176,7 +175,7 @@ begin
   if nCode < 0 then
     Result := CallNextHookEx(GShareInf^.hKeyboardHook, nCode, nWParam, nLParam)
   else
-    Result := -1;
+    Result := 1;
 end; // KeyProc
 
 
@@ -243,7 +242,7 @@ begin
     Result := CallNextHookEx(GShareInf^.hLLKeyboardHook,
         nCode, nWParam, nLParam)
   else
-    Result := -1;
+    Result := 1;
 end; // KeyProc
 
 

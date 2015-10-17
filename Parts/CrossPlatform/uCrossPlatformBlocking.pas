@@ -17,6 +17,7 @@ uses
   Windows,
   Forms,
   Messages,
+  ufrmMain,
 {$ENDIF}
 {$IFDEF LINUX}
   Xlib,
@@ -35,6 +36,7 @@ var
 {$IFDEF MSWINDOWS}
 procedure BlockKeyboard(const AbLock: Boolean = True);
 begin
+  GWinhkg.SetClientHandle(frmMain.Handle);
   if AbLock then
     GWinhkg.LockKeyboard
   else

@@ -5,8 +5,8 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'GameClass3 Client'
-  ClientHeight = 625
-  ClientWidth = 1270
+  ClientHeight = 467
+  ClientWidth = 637
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -907,10 +907,14 @@ object frmMain: TfrmMain
   object pnlWeb: TPanel
     Left = 0
     Top = 0
-    Width = 636
-    Height = 625
+    Width = 637
+    Height = 467
     Align = alLeft
+    BevelOuter = bvNone
+    Ctl3D = True
+    ParentCtl3D = False
     TabOrder = 2
+    ExplicitHeight = 625
   end
   object tmrClock: TTimer
     OnTimer = tmrClockTimer
@@ -933,7 +937,7 @@ object frmMain: TfrmMain
     Left = 464
     Top = 380
     Bitmap = {
-      494C0101030004004C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010300040054001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       000000000000000000000000000000000000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000

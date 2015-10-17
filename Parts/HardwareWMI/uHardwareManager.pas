@@ -197,17 +197,19 @@ const
   WMI_SERVER = '.';
   WMI_NAMESPACE = 'root\CIMV2';
 var
-  SWbemLocator: TSWbemLocator;
+//  SWbemLocator: TSWbemLocator;
   WMIServices: ISWbemServices;
 begin
+
   ASSERT(Assigned(AHardwareAccessories));
 
   AHardwareAccessories.Clear();
 
-  SWbemLocator := TSWbemLocator.Create(nil);
+  exit;
+  //SWbemLocator := TSWbemLocator.Create(nil);
   try
-    WMIServices := SWbemLocator.ConnectServer(WMI_SERVER,
-        WMI_NAMESPACE, '', '', '', '', 0, nil);
+    //WMIServices := SWbemLocator.ConnectServer(WMI_SERVER,
+    //    WMI_NAMESPACE, '', '', '', '', 0, nil);
 
     if Assigned(WMIServices) then begin
       _GetSystemInfo(WMIServices, {in/out}AHardwareAccessories);
@@ -221,10 +223,10 @@ begin
       _GetSoundDevicesInfo(WMIServices, {in/out}AHardwareAccessories);
       _GetFloppyDrivesInfo(WMIServices, {in/out}AHardwareAccessories);
       _GetNetworkAdaptersInfo(WMIServices, {in/out}AHardwareAccessories);
-      SWbemLocator.Disconnect();
+//      SWbemLocator.Disconnect();
     end;
   finally
-    FreeAndNil(SWbemLocator);
+//    FreeAndNil(SWbemLocator);
   end;
 
 end; // THardwareManager.GetHardware

@@ -90,29 +90,30 @@ begin
   hMutex := CreateMutex(nil, False, Pchar(ExtractFileName(Application.ExeName)));
   if (GetLastError = ERROR_ALREADY_EXISTS) or (hMutex = 0) then
   begin
-    if not CefLoadLibDefault then Exit;
+    if not CefLoadLibDefault then exit;
   end
   else
   begin
-
     Debug.Level := DEF_DEBUG_LEVEL;
   //  Debug.Level := 9;
     Application.Initialize;
-    GWinhkg := TWinhkg.Create(InstallDirectory + '\' + 'winhkg.dll');
+    GWinhkg := TWinhkg.Create(InstallDirectory + '\winhkg.dll');
     GWinhkg.Init();
-    BlockingsAndNotifications := TBlockingsAndNotifications.Create();
     frmMain := Nil;
     GClientOptions.Load;
     if GClientOptions.RestoreClientInfo then
       GClientInfo.Load
     else
       GClientInfo.Init;
-    BlockingsAndNotifications.StartChecking();
 
     Application.Title := 'GCCL';
     Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmMessage, frmMessage);
-  GWinhkg.SetClientHandle(frmMain.Handle);
+    Application.CreateForm(TfrmMessage, frmMessage);
+    GWinhkg.SetClientHandle(frmMain.Handle);
+
+    BlockingsAndNotifications := TBlockingsAndNotifications.Create();
+    BlockingsAndNotifications.StartChecking();
+
     Application.CreateForm(TdmMain, dmMain);
     Application.CreateForm(TfrmSmallInfo, frmSmallInfo);
     Application.ShowMainForm := False;

@@ -46,8 +46,7 @@ var
 
 implementation
 
-uses
-  DirectInput8;
+
 
 
 {$R *.dfm}
@@ -57,26 +56,24 @@ uses
 // Константы и глобальные переменные
 //------------------------------------------------------------------------------
 var
-  lpDI8:        IDirectInput8       = nil;
-  lpDIKeyboard: IDirectInputDevice8 = nil;
 
-  nXPos, 
-  nYPos:         Integer; 
+  nXPos,
+  nYPos:         Integer;
 
 
 
 
-//------------------------------------------------------------------------------ 
-// Имя:      InitDirectInput() 
-// Описание: Производит инициализацию объектов DirectInput в программе 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
+// Имя:      InitDirectInput()
+// Описание: Производит инициализацию объектов DirectInput в программе
+//------------------------------------------------------------------------------
 function InitDirectInput( hWnd: HWND ): Boolean;
-var
+{var
   lpdf: TDIDataFormat;
-begin 
-  Result := FALSE; 
+begin
+  Result := FALSE;
 
-  // Создаём главный объект DirectInput 
+  // Создаём главный объект DirectInput
   if FAILED( DirectInput8Create( GetModuleHandle( nil ), DIRECTINPUT_VERSION,
                                  IID_IDirectInput8, lpDI8, nil ) ) then
      Exit;
@@ -95,46 +92,49 @@ begin
      Exit;
 
   // Устанавливаем уровень кооперации. Подробности о флагах смотри в DirectX SDK
-//  DISCL_FOREGROUND 
+//  DISCL_FOREGROUND
   if FAILED( lpDIKeyboard.SetCooperativeLevel( hWnd, DISCL_BACKGROUND or
                                                      DISCL_NONEXCLUSIVE ) ) then
-     Exit; 
+     Exit;
 
-  // Захвытываем клавиатуру 
-  lpDIKeyboard.Acquire(); 
+  // Захвытываем клавиатуру
+  lpDIKeyboard.Acquire();
 
-  Result := TRUE; 
-end; 
+  Result := TRUE;
+end;}
+begin
+  Result := False;
+end;
 
-     
 
 
-//------------------------------------------------------------------------------ 
-// Имя:      ReleaseDirectInput() 
-// Описание: Производит удаление объектов DirectInput 
-//------------------------------------------------------------------------------ 
-procedure ReleaseDirectInput(); 
-begin 
-  // Удаляем объект для работы с клавиатурой 
-  if lpDIKeyboard <> nil then // Можно проверить if Assigned( DIKeyboard ) 
-  begin 
-    lpDIKeyboard.Unacquire(); // Освобождаем устройство 
-    lpDIKeyboard._Release(); 
-    lpDIKeyboard := nil; 
-  end; 
 
-  // Последним удаляем главный объект DirectInput 
-  if lpDI8 <> nil then 
-  begin 
-    lpDI8._Release(); 
-    lpDI8 := nil; 
-  end; 
+//------------------------------------------------------------------------------
+// Имя:      ReleaseDirectInput()
+// Описание: Производит удаление объектов DirectInput
+//------------------------------------------------------------------------------
+procedure ReleaseDirectInput();
+begin
+{  // Удаляем объект для работы с клавиатурой
+  if lpDIKeyboard <> nil then // Можно проверить if Assigned( DIKeyboard )
+  begin
+    lpDIKeyboard.Unacquire(); // Освобождаем устройство
+    lpDIKeyboard._Release();
+    lpDIKeyboard := nil;
+  end;
+
+  // Последним удаляем главный объект DirectInput
+  if lpDI8 <> nil then
+  begin
+    lpDI8._Release();
+    lpDI8 := nil;
+  end;}
 end;
 
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  FWinhkg := TWinhkg.Create('..\..\output\winhkg.dll');
+  FWinhkg := TWinhkg.Create('winhkg.dll');
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
@@ -165,7 +165,7 @@ end;
 
 procedure TfrmMain.btnKeyboardHookClick(Sender: TObject);
 begin
-  FWinhkg.SetClientHandle(frmMain.Handle);
+ !!!!   FWinhkg.SetClientHandle(frmMain.Handle);
   FWinhkg.LockKeyboard();
 end;
 
@@ -195,10 +195,10 @@ procedure TfrmMain.Button1Click(Sender: TObject);
 begin
   Sleep(40000);
   if not InitDirectInput( frmMain.Handle ) then
-  begin 
+  begin
     MessageBox( frmMain.Handle, 'Ошибка при инициализации DirectInput!',
                 'Ошибка!', MB_ICONHAND );
-    ReleaseDirectInput(); 
+    ReleaseDirectInput();
     Halt;
   end;
   FWinhkg.LockKeyboard();

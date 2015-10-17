@@ -2,11 +2,8 @@ program tstHook;
 
 uses
   Forms,
-  ufrmMain in 'ufrmMain.pas' {frmMain},
-  uWinhkg in '..\..\include\uwinhkg.pas',
-  DirectInput8 in 'DirectInput8.pas',
-  DirectXGraphics in 'DirectXGraphics.pas',
-  DXCommon in 'dxcommon.pas';
+  ufrmMain in 'ufrmMain.pas' ,
+  uwinhkg in '..\..\uwinhkg.pas';
 
 {$R *.res}
 

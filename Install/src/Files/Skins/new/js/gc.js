@@ -24,7 +24,17 @@ function hide_unblock_window(){
     return false;
     }
 
+function show_shutdown_window(){
+    $('#shutdown_win').show(400);
+    return false;
+    }
+    
+function hide_shutdown_window(){
+    $('#shutdown_win').hide(600);
+    return false;
+    }
 
+	
 function show_change_password_window(){
     $('#change_password').show(400);
     setTimeout("$('#old_password').focus();",800);
@@ -259,6 +269,31 @@ function update_booking_info(data){
     $('#text_booking_time_stop').val(data.time_stop);
 }
 
+function sys_logoff_click(){
+    $.post("/main.html", 
+        {action: "sys_logoff", 
+        cost: "cost"
+    });     
+    return false;
+}
+
+function sys_reboot_click(){
+    $.post("/main.html", 
+        {action: "sys_reboot", 
+        cost: "cost"
+    });     
+    return false;
+}
+
+function sys_shutdown_click(){
+    $.post("/main.html", 
+        {action: "sys_shutdown", 
+        cost: "cost"
+    });     
+    return false;
+}
+
+
 function update_info(data){
     if ('comp_num' in data){$('#comp_num').text(data.comp_num);}
 
@@ -293,6 +328,15 @@ function update_info(data){
         }
 
     }
+	if ('show_shutdown_button' in data){
+        if (data.show_shutdown_button == "1"){
+            $('#shutdown_button').show(1);
+        } else {
+            $('#shutdown_button').hide(1);
+        }
+
+    }
+	
 
     if ('enable_start_session' in data){
         if (data.enable_start_session == "1"){
@@ -370,6 +414,14 @@ function gc_init(){
     
     $('#do_unblock').on('click', unblock_click);
 
+    $('#shutdown_button').on('click', show_shutdown_window);
+
+    $('#cancel_shutdown').on('click', hide_shutdown_window);
+
+	$('#do_sys_logoff').on('click', sys_logoff_click);
+	$('#do_sys_reboot').on('click', sys_reboot_click);
+	$('#do_sys_shutdown').on('click', sys_shutdown_click);
+	
     gcclient_set_state(0);
     }
 

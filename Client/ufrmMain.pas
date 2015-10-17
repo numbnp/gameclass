@@ -243,6 +243,9 @@ type
     procedure WIActionLoadComplete(Sender: TObject);
     procedure WIActionAgreeEula(Sender: TObject);
     procedure WIActionNotAgreeEula(Sender: TObject);
+    procedure WIActionSysLogoff(Sender: TObject);
+    procedure WIActionSysReboot(Sender: TObject);
+    procedure WIActionSysShutdown(Sender: TObject);
 
     procedure WIActionChangePassword(Sender: TObject;OldPassword,NewPassword:string);
     procedure WIActionChangeTariff(Sender: TObject;sTariff:string);
@@ -540,6 +543,21 @@ begin
   ClientSessionStart(sTariff,sSumm);
 end;
 
+procedure TfrmMain.WIActionSysLogoff(Sender: TObject);
+begin
+  QuerySysLogoff;
+end;
+
+procedure TfrmMain.WIActionSysReboot(Sender: TObject);
+begin
+  QuerySysReboot;
+end;
+
+procedure TfrmMain.WIActionSysShutdown(Sender: TObject);
+begin
+  QuerySysShutdown;
+end;
+
 procedure TfrmMain.WIActionUnblock(Sender: TObject; Code: string);
 begin
   UnblockedByPassword(Code);
@@ -573,6 +591,12 @@ try
     frmSmallInfo.Show;
 //    frmSmallInfo.Hide;
   end;
+
+  if GClientOptions.ShutdownButton > -1 then
+        GCClientWebInterface.SetInterfaceData('{ "show_shutdown_button": "1" }')
+      else
+        GCClientWebInterface.SetInterfaceData('{ "show_shutdown_button": "0" }');
+
   Debug.Trace5('DoDesign 2');
   Debug.Trace5('DoDesign State' + IntToStr(Integer(GClientInfo.ClientState)));
 
@@ -746,6 +770,9 @@ begin
   GCClientWebInterface.ParceAndReplaceLine := WIParceAndReplaceLine;
   GCClientWebInterface.ActionAgreeEula := WIActionAgreeEula;
   GCClientWebInterface.ActionNotAgreeEula := WIActionNotAgreeEula;
+  GCClientWebInterface.ActionSysLogoff := WIActionSysLogoff;
+  GCClientWebInterface.ActionSysReboot := WIActionSysReboot;
+  GCClientWebInterface.ActionSysShutdown := WIActionSysShutdown;
 
   GCClientWebInterface.Start;
 
@@ -1047,17 +1074,17 @@ end;
 
 procedure TfrmMain.mnuShutdownClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=1' , False);
+  WIActionSysShutdown(Sender);
 end;
 
 procedure TfrmMain.mnuRebootClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=2' , False);
+  WIActionSysReboot(Sender);
 end;
 
 procedure TfrmMain.mnuLogoffClick(Sender: TObject);
 begin
-  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=3' , False);
+  WIActionSysLogoff(Sender);
 end;
 
 procedure TfrmMain.pnlBlockedClick(Sender: TObject);

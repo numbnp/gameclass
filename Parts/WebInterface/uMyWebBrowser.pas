@@ -98,8 +98,8 @@ begin
   inherited;
 end;
 
-initialization
-  CefRemoteDebuggingPort := 9000;
-  CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
-  CefBrowserProcessHandler := TCefBrowserProcessHandlerOwn.Create;
+//initialization
+//  CefRemoteDebuggingPort := 9000;
+//  CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
+//  CefBrowserProcessHandler := TCefBrowserProcessHandlerOwn.Create;
 end.

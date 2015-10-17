@@ -406,9 +406,11 @@ begin
     ThreadSafeOperation_TestBlockingInvalidate: begin
       frmMain.pnlBlocked.Visible := True;
       if GClientInfo.Blocked then begin
-        frmMain.pnlBlocked.Caption := 'BLOCKED'
+        frmMain.pnlBlocked.Caption := 'BLOCKED';
       end else
+      begin
         frmMain.pnlBlocked.Caption := 'Unblocked';
+      end;
     end;
     ThreadSafeOperation_ReceiveMessage: begin
       frmMain.memMessages.Lines.Add(
@@ -785,6 +787,7 @@ begin
       ThreadSafeOperation_WrongPasswordMessage,
       ThreadSafeOperation_UpdateControlFromClientInfo];
 end;
+
 
 initialization
 

@@ -15,7 +15,7 @@ uses
   uWebServer;
 
 type
-  TParceAndReplaceLine = procedure (Sender: TObject; sBuf:String) of object;
+  TParceAndReplaceLine = procedure (Sender: TObject; var sBuf:String) of object;
   TNoParamsProcedure = procedure (Sender: TObject) of object;
   TActionLogon  = procedure (Sender: TObject;sLogin,sPassword,sSecCode:string) of object;
   TActionQueryCostTime = procedure (Sender: TObject;sTariff,sSumm:string) of object;
@@ -66,6 +66,10 @@ type
       ActionChangePassword:TActionChangePassword;
       ActionGetTariffs:TNoParamsProcedure;
       ActionLoadComplete:TNoParamsProcedure;
+      ActionSysLogoff:TNoParamsProcedure;
+      ActionSysReboot:TNoParamsProcedure;
+      ActionSysShutdown:TNoParamsProcedure;
+
 
       constructor Create (Parent:TWinControl);
 
@@ -188,6 +192,15 @@ begin
   //Обновление web-интерфейса выполнено
   if Request.Parametrs.Values['action'] = 'load_complete' then
     if Assigned(ActionLoadComplete) then ActionLoadComplete(Sender);
+  // Запрос на выход из системы
+  if Request.Parametrs.Values['action'] = 'sys_logoff' then
+    if Assigned(ActionSysLogoff) then ActionSysLogoff(Sender);
+  // Запрос на перезагрузку
+  if Request.Parametrs.Values['action'] = 'sys_reboot' then
+    if Assigned(ActionSysReboot) then ActionSysReboot(Sender);
+  // Запрос на Выключение
+  if Request.Parametrs.Values['action'] = 'sys_shutdown' then
+    if Assigned(ActionSysShutdown) then ActionSysShutdown(Sender);
 
   if Assigned(ExecuteClient) then
     Result := ExecuteClient(Sender,Request)

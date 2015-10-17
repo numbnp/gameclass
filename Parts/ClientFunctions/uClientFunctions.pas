@@ -21,6 +21,10 @@ procedure QueryCostTrafficAdd(sSumm:string);
 
 procedure QueryTariffs;
 
+procedure QuerySysLogoff;
+procedure QuerySysReboot;
+procedure QuerySysShutdown;
+
 procedure SessionAddMoney(sSumm:string);
 procedure SessionAddTraffic(sSumm:string);
 
@@ -180,5 +184,21 @@ procedure QueryTariffs;
 begin
   LocalSendDataTo(STR_CMD_AUTH_QUERYTARIFS_2,False);
 end;
+
+procedure QuerySysLogoff;
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=3' , False);
+end;
+
+procedure QuerySysReboot;
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=2' , False);
+end;
+
+procedure QuerySysShutdown;
+begin
+  LocalSendDataTo(STR_CMD_GET_SHUTDOWN + '=1' , False);
+end;
+
 
 end.

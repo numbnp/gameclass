@@ -1,9 +1,9 @@
 object frmMain: TfrmMain
   Left = 192
   Top = 107
-  Width = 246
-  Height = 314
   Caption = 'frmMain'
+  ClientHeight = 276
+  ClientWidth = 230
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -55,7 +55,7 @@ object frmMain: TfrmMain
   end
   object btnKeyboardHook: TButton
     Left = 128
-    Top = 40
+    Top = 41
     Width = 105
     Height = 25
     Caption = 'btnKeyboardHook'

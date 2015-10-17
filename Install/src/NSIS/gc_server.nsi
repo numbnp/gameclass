@@ -49,13 +49,12 @@ InstallDir "$PROGRAMFILES\GameClass3"
 ShowInstDetails show
 ShowUnInstDetails show
 
-InstType "Клиентское рабочее место"
 InstType "Рабочее место менеджера"
 InstType "Главный компьютер установка"
 InstType "Главный компьютер обновление"
 
 Section "Сервер GameClass" SEC01
-  SectionIn 2 3 4
+  SectionIn 1 2 3
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "${PROJECT_FOLDER}\Install\src\Packages\Server\*.*"
@@ -85,7 +84,7 @@ Section "Сервер GameClass" SEC01
 SectionEnd
 
 Section "Создание БД" SEC02
-  SectionIn 3
+  SectionIn 2
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
   File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.sql"
@@ -104,7 +103,7 @@ Section "Создание БД" SEC02
 SectionEnd
 
 Section "Обновление БД" SEC03
-  SectionIn 4
+  SectionIn 3
   SetOutPath "$INSTDIR\SQL"
   SetOverwrite ifnewer
   File "${PROJECT_FOLDER}\Install\src\Packages\Database\*.sql"
