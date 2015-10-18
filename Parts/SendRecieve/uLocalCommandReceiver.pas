@@ -145,8 +145,10 @@ procedure TLocalCommandReceiver._TCPServerRead(AContext: TIdContext);
 var
 {  strTest: string;
   strLine: string; }
-{  nLength: integer;}
+  nLength: integer;
   CommBlock: TCommandPakage;
+  Buffer : TIdBytes;
+  buffsize : Boolean;
 begin
   try
     try
@@ -154,7 +156,18 @@ begin
 //        if strTest = 'sYNc' then
         begin
         CommBlock.Command:='';
-        CommBlock.Command := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_OSDefault);
+//        CommBlock.Command := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_OSDefault);
+//        SetLength(Buffer,100);
+//        buffsize := AContext.Connection.IOHandler.InputBufferIsEmpty;
+
+        AContext.Connection.IOHandler.ReadBytes(Buffer,4);
+        nLength:=PLongInt(@Buffer[0])^;
+        AContext.Connection.IOHandler.ReadBytes(Buffer,nLength,false);
+        CommBlock.Command := TEncoding.UTF8.GetString(TBytes(Buffer));
+
+//        nLength := AContext.Connection.IOHandler.ReadLongInt();
+//        CommBlock.Command := AContext.Connection.IOHandler.ReadString(nLength,IndyTextEncoding_OSDefault);
+
 {          nLength := ReadInteger();
           strLine := ReadString(nLength);
           strTest := ReadString(2);}
@@ -165,7 +178,6 @@ begin
 //        Disconnect();
     end;
 
-//    _SendDataReceiveEvent(strLine);
       _SendDataReceiveEvent(CommBlock.Command);
   except
     on e: Exception do begin

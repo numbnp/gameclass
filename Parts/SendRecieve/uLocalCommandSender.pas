@@ -137,6 +137,9 @@ function TLocalCommandSender.SendCommand(const AstrData: String): boolean;
 {$IFDEF MSWINDOWS}
 var
   CommBlock: TCommandPakage;
+  PacketSize: integer;
+  StrBufer : TBytes;
+  IntBufer : TBytes;
 {$ENDIF}
 begin
   Result := TRUE;
@@ -158,8 +161,20 @@ begin
 {$ENDIF}
 {$IFDEF MSWINDOWS}
           CommBlock.Command := AstrData;
+          StrBufer := TEncoding.UTF8.GetBytes(AstrData);
+          PacketSize := Length(StrBufer);
+          SetLength(IntBufer,4);
+          IntBufer[3] := (PacketSize shr $18) and $FF;
+          IntBufer[2] := (PacketSize shr $10) and $FF;
+          IntBufer[1] := (PacketSize shr $8)  and $FF;
+          IntBufer[0] := PacketSize and $FF;
 //          tcpClient.IOHandler.
-          tcpClient.IOHandler.WriteLn(CommBlock.Command,IndyTextEncoding_OSDefault );
+//          PacketSize :=Length(AstrData)*SizeOf(Char);
+
+          tcpClient.IOHandler.Write(TIdBytes(IntBufer),4);
+          tcpClient.IOHandler.Write(TIdBytes(StrBufer),PacketSize);
+//          tcpClient.IOHandler.WriteLn(AstrData);
+//          tcpClient.IOHandler.WriteLn(CommBlock.Command,IndyTextEncoding_OSDefault );
 {$ENDIF}
 {$IFDEF LINUX}
           tcpClient.Disconnect();

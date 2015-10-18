@@ -120,8 +120,8 @@ const
   SIZE_CENTER_WND = 40;
   SIZE_SECTOR = 8;
 
-  CIRCLE_X_OFFSET = 7;
-  CIRCLE_Y_OFFSET = 2;
+  CIRCLE_X_OFFSET = 70;
+  CIRCLE_Y_OFFSET = 5;
   TRAFFIC_INFO_HEIGHT = 22;
   TRAFFIC_INFO_ADD_WIDTH = 10;
   CLIENT_HEIGHT = 80;
@@ -145,9 +145,6 @@ begin
   if FbBeforeFirstFormShow then begin
     frmMain.InitializeApplicationWindows;
     Application.NormalizeTopMosts;
-{$IFDEF LINUX}
-    BorderStyle := fbsNone;
-{$ENDIF}
     FormStyle := fsStayOnTop;
     FbBeforeFirstFormShow := False;
   end;
@@ -266,12 +263,12 @@ begin
   with rectCircle do begin
     if FbUseTraffic then begin
       Left := CIRCLE_X_OFFSET;
-      Right := Width - CIRCLE_X_OFFSET;
+      Right := Self.Width - CIRCLE_X_OFFSET;
       Top := TEXT_HEIGHT + CIRCLE_Y_OFFSET;
       Bottom := CLIENT_HEIGHT - CIRCLE_Y_OFFSET;
     end else begin
       Left := CIRCLE_Y_OFFSET + 1;
-      Right := Width - CIRCLE_Y_OFFSET - 1;
+      Right := Self.Width - CIRCLE_Y_OFFSET - 1;
       Top := TEXT_HEIGHT + CIRCLE_Y_OFFSET + 1;
       Bottom := CLIENT_HEIGHT - CIRCLE_Y_OFFSET - 1;
     end;
@@ -320,10 +317,6 @@ begin
   X2 := pointCenter.X + nDx;
   Y2 := pointCenter.Y - nDy;
   with Canvas do begin
-{$IFDEF LINUX}
-//Сделать полупрозрачность
-//    Pen.
-{$ENDIF}
     Pen.Color := clBlack;
     Brush.Color := clBtnFace;
     Font.Color := clBlack;
@@ -343,32 +336,14 @@ begin
 {$IFDEF MSWINDOWS}
     DrawText(Handle,PChar(AstrInfo),Length(AstrInfo),rectBorder,DT_CENTER);
 {$ENDIF}
-{$IFDEF LINUX}
-//    Brush.Color := clWhite;
-//    Canvas.TextOut(rectBorder.Left, rectBorder.Top, AstrInfo);
-//    Rectangle(rectBorder.Left, rectBorder.Top,
-//        rectBorder.Right, rectBorder.Bottom);
-    Canvas.TextRect(rectBorder, rectBorder.Left, rectBorder.Top, AstrInfo,
-        Integer(AlignmentFlags_AlignHCenter) +
-        Integer(AlignmentFlags_AlignVCenter));
-
-{$ENDIF}
 
     // Рисуем сектор отработанного времени.
     Pen.Color := clPurple;
     Brush.Color := clPurple;
-{$IFDEF LINUX}
-    nRadius := Round(5760 * fUsedTimePercent);
-{$ENDIF}
     If (fUsedTimePercent <> 0) then
 {$IFDEF MSWINDOWS}
       Pie(rectCircle.Left, rectCircle.Top, rectCircle.Right, rectCircle.Bottom,
           X2, Y2, X1, Y1);
-{$ENDIF}
-{$IFDEF LINUX}
-      Pie(rectCircle.Left, rectCircle.Top, rectCircle.Right - rectCircle.Left,
-          rectCircle.Bottom - rectCircle.Top,
-          1440, -nRadius);
 {$ENDIF}
     Pen.Color := clBlue;
     Brush.Color := clBlue;
@@ -376,11 +351,6 @@ begin
 {$IFDEF MSWINDOWS}
       Pie(rectCircle.Left, rectCircle.Top, rectCircle.Right, rectCircle.Bottom,
           X1, Y1, X2, Y2);
-{$ENDIF}
-{$IFDEF LINUX}
-      Pie(rectCircle.Left, rectCircle.Top, rectCircle.Right - rectCircle.Left,
-          rectCircle.Bottom - rectCircle.Top,
-          1440 - nRadius, -5760 + nRadius);
 {$ENDIF}
     // Рисуем условные сектора, делящие круг на четыре части.
     Pen.Color := clBlack;
@@ -434,14 +404,6 @@ begin
     Font.Color := clBlack;
 {$IFDEF MSWINDOWS}
     DrawText(Handle,PChar(AstrInfo),Length(AstrInfo),rectBorder,DT_CENTER);
-{$ENDIF}
-{$IFDEF LINUX}
-//    Rectangle(rectBorder.Left, rectBorder.Top,
-//        rectBorder.Right, rectBorder.Bottom);
-//    Canvas.TextOut(rectBorder.Left + 8, rectBorder.Top, AstrInfo);
-    Canvas.TextRect(rectBorder, rectBorder.Left, rectBorder.Top, AstrInfo,
-        Integer(AlignmentFlags_AlignHCenter) +
-        Integer(AlignmentFlags_AlignVCenter));
 {$ENDIF}
 
     nDx := Trunc((Width - 2*BAR_OFFSET)*fUsedTrafficPercent);

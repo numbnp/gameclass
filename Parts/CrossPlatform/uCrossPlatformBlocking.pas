@@ -105,6 +105,7 @@ procedure Block(const AbLock: Boolean = True);
 begin
 {$IFOPT D+}
   TSafeStorage.Instance().Push(ThreadSafeOperation_TestBlockingInvalidate, 0);
+//  BlockKeyboard(true);
 {$ELSE}
   if AbLock then begin
     if GClientOptions.BlockKeyboard then

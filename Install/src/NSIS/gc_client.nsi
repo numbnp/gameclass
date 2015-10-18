@@ -70,10 +70,7 @@ Section "Клиентская часть GameClass" SEC01
   
   SetOutPath "$INSTDIR\Client\Skins"
   SetOverwrite on
-  File "${PROJECT_FOLDER}\Install\src\Packages\Client\Skins\*.*"
-  SetOutPath "$INSTDIR\Client\Skins\full"
-  SetOverwrite on
-  File "${PROJECT_FOLDER}\Install\src\Packages\Client\Skins\full\*.*"
+  File /nonfatal /a /r "${PROJECT_FOLDER}\Install\src\Packages\Client\Skins\"
   SetOutPath "$INSTDIR\Client\Sounds"
   SetOverwrite on
   File "${PROJECT_FOLDER}\Install\src\Packages\Client\Sounds\*.*"
