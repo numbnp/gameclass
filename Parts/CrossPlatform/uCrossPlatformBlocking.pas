@@ -17,7 +17,6 @@ uses
   Windows,
   Forms,
   Messages,
-  ufrmMain,
 {$ENDIF}
 {$IFDEF LINUX}
   Xlib,
@@ -32,15 +31,27 @@ uses
 var
   GbMinimized: Boolean;
   GbMonitorDisabled: Boolean;
+  KeyBoardLocked:Boolean;
 
 {$IFDEF MSWINDOWS}
 procedure BlockKeyboard(const AbLock: Boolean = True);
 begin
-  GWinhkg.SetClientHandle(frmMain.Handle);
   if AbLock then
-    GWinhkg.LockKeyboard
+  begin
+    if not KeyBoardLocked then
+    begin
+      GWinhkg.LockKeyboard;
+      KeyBoardLocked := True;
+    end
+  end
   else
-    GWinhkg.UnlockKeyboard
+  begin
+    if KeyBoardLocked then
+    begin
+      GWinhkg.UnlockKeyboard;
+      KeyBoardLocked := False;
+    end
+  end;
 end;
 {$ENDIF}
 

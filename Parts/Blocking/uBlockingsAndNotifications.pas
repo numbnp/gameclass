@@ -22,7 +22,7 @@ uses
 
 const
 {$IFDEF MSWINDOWS}
-  TIMEOUT_DEF = 30; // пауза в опросе блокировки
+  TIMEOUT_DEF = 1000; // пауза в опросе блокировки
 {$ENDIF}
 {$IFDEF LINUX}
   TIMEOUT_DEF = 1000; // пауза в опросе блокировки
@@ -59,8 +59,8 @@ type
     // public methods
     procedure StartChecking();
     procedure StopChecking();
-
   end; // TBlockingsAndNotifications
+
 var
    BlockingsAndNotifications: TBlockingsAndNotifications;
 {$IFDEF MSWINDOWS}
@@ -124,6 +124,10 @@ uses
 
 {$IFDEF MSWINDOWS}
 procedure Timer_SysTimer;
+{$IFDEF GCCL}
+var
+  bBlocked: Boolean;
+{$ENDIF}
 begin
   GClientInfo.NowTime := GClientInfo.NowTime + OneSecond;
 {$IFDEF GCCLSRV}
@@ -140,6 +144,9 @@ begin
     TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
       Integer(RunPadAction_ShowInfoOnDesktop),
       ParseAndReplase(GClientOptions.RunPadShowInfoOnDesktopText));
+
+  bBlocked := GClientInfo.ResultBlocking;
+  Block(bBlocked);
 {$ENDIF}
 end;
 {$ENDIF}
@@ -203,6 +210,7 @@ begin
   FhCheckingThread := BeginThread(
       nil, 0, @DoChecking, Pointer(Self), 0, nThreadId);
   ASSERT(FhCheckingThread <> INVALID_HANDLE_VALUE);
+
 {$ENDIF}
 {$IFDEF LINUX}
   FhCheckingThread := BeginThread(
@@ -237,7 +245,6 @@ end; // TBlockingsAndNotifications.StopThreads
 procedure TBlockingsAndNotifications._DoChecking();
 var
   dwWaitStatus: DWORD;
-  bBlocked: Boolean;
 {$IFDEF GCCLSRV}
   cmd: TRemoteCommand;
   dt: TDateTime;
@@ -321,14 +328,7 @@ begin
               GClientOptions.StartBlockSec));
     end;
 {$ENDIF}
-    bBlocked := GClientInfo.ResultBlocking;
-{$IFDEF LINUX}
-    // иначе пропадает курсор
-    bBlocked := bBlocked and frmMain.AfterFirstFormShow;
-{$ENDIF}
-{$IFDEF GCCL}
-    Block(bBlocked);
-{$ENDIF}
+
 {$IFDEF GCCLSRV}
     if GClientOptions.UseSounds
         and ((GClientInfo.ClientState = ClientState_Session)
@@ -459,7 +459,5 @@ begin
 {$ENDIF}
   end;
 end; // TBlockingsAndNotifications._DoChecking
-
-
 
 end.
