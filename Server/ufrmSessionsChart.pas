@@ -288,7 +288,7 @@ var
 begin
   if ( Sender = chartComps.LeftAxis ) then
     try
-      nIndex := trunc(StrToFloat(LabelText));
+      nIndex := trunc(StrToFloatGC(LabelText));
       if (nIndex>=0) and (nIndex<CompsCount) then
         LabelText := IntToStr(Comps[nIndex].number);
     except;

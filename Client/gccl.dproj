@@ -193,7 +193,6 @@
         <DCCReference Include="..\Parts\ControlVolume\Mixer.pas"/>
         <DCCReference Include="..\Parts\RemoteCommands\uProtocolTcp.pas"/>
         <DCCReference Include="..\Parts\ClientFunctions\uClientFunctions.pas"/>
-        <DCCReference Include="..\Parts\WebInterface\dzurl.pas"/>
         <DCCReference Include="..\Parts\WebInterface\uClientWebInterface.pas"/>
         <DCCReference Include="..\Parts\WebInterface\uMyWebBrowser.pas"/>
         <DCCReference Include="..\Parts\WebInterface\uWebServer.pas"/>

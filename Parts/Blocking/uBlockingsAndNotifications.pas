@@ -357,6 +357,8 @@ begin
           FbIsBaloonsUsed := True;
           //Show Baloons
   {$IFDEF MSWINDOWS}
+          frmMain.TrayIcon.BalloonHint('Предупреждение',
+              'Через 5 минут Ваше время истекает!');
           {frmMain.modernTrayIcon.ShowBalloonHint('Предупреждение',
               'Через 5 минут Ваше время истекает!'); }
   {$ENDIF}

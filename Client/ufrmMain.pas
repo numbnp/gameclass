@@ -36,7 +36,8 @@ uses
   uBlockingsAndNotifications,
   uClientConst,
   ufrmSmallInfo, ImgList, ToolWin,
-  uClientFunctions;
+  uClientFunctions,
+  JvTrayIcon;
 
 type
 
@@ -146,7 +147,6 @@ type
     procedure FormActivate(Sender: TObject);
     procedure btnSendMessageClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure modernTrayIconDblClick(Sender: TObject);
     procedure butLogonClick(Sender: TObject);
     procedure butAgreeClick(Sender: TObject);
     procedure butNotAgreeClick(Sender: TObject);
@@ -209,6 +209,7 @@ type
     FbBeforeFirstFormShow: Boolean;
     FbAfterFirstFormShow: Boolean;
     FbShutdownAlt:integer;
+    FjTrayIcon : TJvTrayIcon;
   protected
     procedure _PasswordHotKey;
   public
@@ -225,6 +226,7 @@ type
     procedure EnableOnChange;
     function IsOnChangeEnabled: Boolean;
 
+    property TrayIcon:TJvTrayIcon read FjTrayIcon;
     property EdtSumFocused: Boolean read FbEdtSumFocused;
     property DtpTimeFocused: Boolean read FbDtpTimeFocused;
     property EdtAddTrafficSumFocused: Boolean read FbEdtAddTrafficSumFocused;
@@ -256,6 +258,8 @@ type
     procedure WIActionAddMoney (Sender: TObject;sSumm:string);
     procedure WIActionUnblock (Sender: TObject;Code:string);
     procedure WIParceAndReplaceLine (Sender: TObject; var sBuf:String);
+
+    procedure TrayIconDblClick(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 
 
   end;        // TformMain
@@ -754,6 +758,12 @@ begin
   FstrURLPath := InstallDirectory + '\Skins\';
   LocalSendDataTo(STR_CMD_OPTION_GET+'=all',False);
   LocalSendDataTo(STR_CMD_CLIENT_INFO_GET+'=all',False);
+
+  FjTrayIcon := TJvTrayIcon.Create(nil);
+  FjTrayIcon.Hint := 'GameClass Client';
+  FjTrayIcon.OnDblClick := TrayIconDblClick;
+  FjTrayIcon.Active := true;
+
 //  GCClientWebInterface.ReloadSkin;
   GCClientWebInterface := TWebInterface.Create(self.pnlWeb);
   GCClientWebInterface.ActionLogoff := WIActionLogoff;
@@ -781,14 +791,6 @@ begin
       Integer(RunPadAction_HideTabs));
 
   RunClientScript(caClientStart);
-end;
-
-procedure TfrmMain.modernTrayIconDblClick(Sender: TObject);
-begin
-  TSafeStorage.Instance().Push(ThreadSafeOperation_MainFormAction,
-      Integer(FormAction_Show));
-  TSafeStorage.Instance().Push(ThreadSafeOperation_DoDesign,0);
-  TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData,0);
 end;
 
 procedure TfrmMain.butLogonClick(Sender: TObject);
@@ -1040,6 +1042,16 @@ begin
       Debug.Trace0('ExecuteNextOperation error! ' + e.Message);
     end;
   end;
+
+end;
+
+procedure TfrmMain.TrayIconDblClick(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  TSafeStorage.Instance().Push(ThreadSafeOperation_MainFormAction,
+      Integer(FormAction_Show));
+  TSafeStorage.Instance().Push(ThreadSafeOperation_DoDesign,0);
+  TSafeStorage.Instance().Push(ThreadSafeOperation_UpdateData,0);
 
 end;
 

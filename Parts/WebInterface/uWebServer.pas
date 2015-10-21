@@ -97,7 +97,7 @@ function ReplaceWebCode(Str: string): string;
 
 implementation
 
-uses StrUtils, DzURL;
+uses StrUtils;
 
 constructor TMyWebServer.Create();
 var
@@ -414,8 +414,7 @@ function ReplaceWebCode(Str: String): String;
 var
   _Result: string;
 begin
-  _Result:=dzurl.UrlDecode(Str);
-  _Result:=TIdURI.URLDecode(Str)
+  _Result:=TIdURI.URLDecode(Str);
   _Result:=StringReplace(_Result,'&lt;','<',[rfReplaceAll]);
   _Result:=StringReplace(_Result,'&gt;','>',[rfReplaceAll]);
   Result := _Result;

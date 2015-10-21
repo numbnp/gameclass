@@ -418,11 +418,10 @@ begin
            + ': '
           + GetParamFromString(AOperation.Parameters,2));
 {$IFDEF MSWINDOWS}
-{      if not frmMain.Visible then
-        frmMain.modernTrayIcon.ShowBalloonHint('Сообщение от '
+      if not frmMain.Visible then
+        frmMain.TrayIcon.BalloonHint('Сообщение от '
             + GetParamFromString(AOperation.Parameters,0),
-            GetParamFromString(AOperation.Parameters,2), 1000);
-}
+            GetParamFromString(AOperation.Parameters,2));
 {$ENDIF}
     end;
     ThreadSafeOperation_ClearMessages: begin

@@ -151,7 +151,7 @@ begin
   end;
   with session do begin
     try
-      editTraffic.Text := IntToStr(Round(StrToFloat(editMoney.Text)
+      editTraffic.Text := IntToStr(Round(StrToFloatGC(editMoney.Text)
           / KBTrafficCost));
     except
     end;
@@ -182,7 +182,7 @@ procedure TformCompTrafficAdd.editTrafficChange(Sender: TObject);
 begin
   with session do begin
     try
-      editMoney.Text := FloatToStr(RoundTo(StrToFloat(editTraffic.Text)
+      editMoney.Text := FloatToStr(RoundTo(StrToFloatGC(editTraffic.Text)
           * KBTrafficCost, -2));
     except
     end;

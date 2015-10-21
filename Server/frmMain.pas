@@ -1423,7 +1423,7 @@ begin
         strParam := GetParamFromString(param,0);
         strParam2 := GetParamFromString(param,1);
         if (Length(strParam) > 0) then begin
-          fSumma := StrToFloat(strParam);
+          fSumma := StrToFloatGC(strParam);
           nTraffic := 0;
           bCalcBySum := True;
         end else if (Length(strParam2)>0) then begin
@@ -1458,7 +1458,7 @@ begin
         strParam := GetParamFromString(param,0);
         strParam2 := GetParamFromString(param,1);
         if (Length(strParam) > 0) then begin
-          fSumma := StrToFloat(strParam);
+          fSumma := StrToFloatGC(strParam);
           dtTime := 0;
           bCalcBySum := True;
         end else if (Length(strParam2)>0) then begin

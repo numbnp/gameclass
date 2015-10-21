@@ -1,13 +1,6 @@
 program gccl;
 
 uses
-{  FastMM4,
-  FastMM4Messages,
-{  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,}
   Forms,
   Windows,
   ActiveX,
@@ -73,7 +66,6 @@ uses
   Mixer in '..\Parts\ControlVolume\Mixer.pas',
   uProtocolTcp in '..\Parts\RemoteCommands\uProtocolTcp.pas',
   uClientFunctions in '..\Parts\ClientFunctions\uClientFunctions.pas',
-  dzurl in '..\Parts\WebInterface\dzurl.pas',
   uClientWebInterface in '..\Parts\WebInterface\uClientWebInterface.pas',
   uMyWebBrowser in '..\Parts\WebInterface\uMyWebBrowser.pas',
   uWebServer in '..\Parts\WebInterface\uWebServer.pas';
@@ -108,8 +100,8 @@ begin
 
     Application.Title := 'GCCL';
     Application.CreateForm(TfrmMain, frmMain);
-    Application.CreateForm(TfrmMessage, frmMessage);
-    GWinhkg.SetClientHandle(frmMain.Handle);
+  Application.CreateForm(TfrmMessage, frmMessage);
+  GWinhkg.SetClientHandle(frmMain.Handle);
 
     BlockingsAndNotifications := TBlockingsAndNotifications.Create();
     BlockingsAndNotifications.StartChecking();
