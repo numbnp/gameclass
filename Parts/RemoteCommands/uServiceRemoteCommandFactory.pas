@@ -241,10 +241,7 @@ begin
         and not StrToBool(GetParamFromString(strParameters,0)) then begin
 // Если винда то при наличии RunPad делаем логоф через его финкции
 {$IFDEF MSWINDOWS}
-          if GClientOptions.ShellMode = ShellMode_Unknown then
-            Result := TLogoffRemoteCommand.Create()
-          else
-            Result := TLocalResendRemoteCommand.Create(AstrCommand);
+          Result := TLocalResendRemoteCommand.Create(AstrCommand);
 {$ENDIF}
 // Если линукс то производим логоф через средства системы
 {$IFDEF LINUX}

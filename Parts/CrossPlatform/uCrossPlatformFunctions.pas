@@ -13,6 +13,7 @@ uses
   // system units
 {$IFDEF MSWINDOWS}
   Windows,
+  JclMiscel,
 {$ENDIF}
   Types;
 
@@ -199,19 +200,19 @@ end; // RebootSystem
 // перегрузить систему
 procedure SystemRestart;
 begin
-  ExitWindows(EWX_REBOOT or EWX_FORCE);
+  RebootOS(klNoSignal);
 end;
 
 // выключить систему
 procedure SystemShutdown;
 begin
-  ExitWindows(EWX_SHUTDOWN or EWX_FORCE);
+  ShutDownOS(klNoSignal);
 end;
 
 // завершить сеанс
 procedure SystemLogoff;
 begin
-  ExitWindows(EWX_LOGOFF or EWX_FORCE);
+  LogOffOS(klNoSignal);
 end;
 
 // выполнить произвольную команду

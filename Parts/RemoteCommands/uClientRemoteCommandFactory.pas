@@ -160,9 +160,9 @@ begin
     end else begin
       if (Length(strParameters) > 0)
           and not StrToBool(GetParamFromString(strParameters,0)) then begin
-        Result := TRestartRemoteCommand.Create();
-      end else
         Result := TLogoffRemoteCommand.Create();
+      end else
+        Result := TRestartRemoteCommand.Create();
       end
   end else begin
     Result := TNullRemoteCommand.Create();

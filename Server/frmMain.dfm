@@ -5,8 +5,8 @@ object formMain: TformMain
   BiDiMode = bdLeftToRight
   BorderWidth = 5
   Caption = 's'
-  ClientHeight = 696
-  ClientWidth = 839
+  ClientHeight = 686
+  ClientWidth = 829
   Color = clBtnFace
   Constraints.MinHeight = 332
   Constraints.MinWidth = 480
@@ -31,7 +31,7 @@ object formMain: TformMain
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 839
+    Width = 829
     Height = 57
     Align = alTop
     BevelOuter = bvNone
@@ -39,7 +39,7 @@ object formMain: TformMain
     object tbActions: TToolBar
       Left = 0
       Top = 0
-      Width = 717
+      Width = 707
       Height = 57
       Align = alClient
       ButtonHeight = 59
@@ -148,7 +148,7 @@ object formMain: TformMain
       end
     end
     object pnlTimer: TPanel
-      Left = 717
+      Left = 707
       Top = 0
       Width = 122
       Height = 57
@@ -222,8 +222,8 @@ object formMain: TformMain
   object PageControl: TPageControl
     Left = 0
     Top = 57
-    Width = 839
-    Height = 639
+    Width = 829
+    Height = 629
     ActivePage = tabComputers
     Align = alClient
     TabOrder = 1
@@ -232,8 +232,8 @@ object formMain: TformMain
       Caption = 'Computers'
       object splitComps: TSplitter
         Left = 0
-        Top = 479
-        Width = 831
+        Top = 469
+        Width = 821
         Height = 6
         Cursor = crVSplit
         Align = alBottom
@@ -243,8 +243,8 @@ object formMain: TformMain
       object gridComps: TDBGridEh
         Left = 0
         Top = 0
-        Width = 772
-        Height = 479
+        Width = 762
+        Height = 469
         Align = alClient
         AutoFitColWidths = True
         DataSource = dsComps
@@ -414,8 +414,8 @@ object formMain: TformMain
       end
       object pnlBottom: TPanel
         Left = 0
-        Top = 485
-        Width = 831
+        Top = 475
+        Width = 821
         Height = 126
         Align = alBottom
         BevelOuter = bvNone
@@ -423,7 +423,7 @@ object formMain: TformMain
         object lvConsole: TListView
           Left = 0
           Top = 0
-          Width = 831
+          Width = 821
           Height = 126
           Align = alClient
           BiDiMode = bdLeftToRight
@@ -444,7 +444,7 @@ object formMain: TformMain
           ViewStyle = vsReport
         end
         object memoClientInfo: TMemo
-          Left = 831
+          Left = 821
           Top = 0
           Width = 0
           Height = 126
@@ -455,10 +455,10 @@ object formMain: TformMain
         end
       end
       object tbRunPad: TToolBar
-        Left = 772
+        Left = 762
         Top = 0
         Width = 59
-        Height = 479
+        Height = 469
         Align = alRight
         AutoSize = True
         ButtonHeight = 54
@@ -541,44 +541,44 @@ object formMain: TformMain
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
-        Width = 831
-        Height = 611
+        Width = 821
+        Height = 601
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 831
-        ExplicitHeight = 611
+        ExplicitWidth = 821
+        ExplicitHeight = 601
         inherited Panel1: TPanel
-          Top = 570
-          Width = 831
+          Top = 560
+          Width = 821
           ExplicitTop = 570
           ExplicitWidth = 831
           DesignSize = (
-            831
+            821
             41)
           inherited edtMessage: TEdit
-            Width = 1939
+            Width = 1929
             ExplicitWidth = 1969
           end
           inherited btnSend: TButton
-            Left = 1961
+            Left = 1951
             OnClick = frameMessagesbtnSendClick
             ExplicitLeft = 1991
           end
         end
         inherited Panel2: TPanel
-          Width = 831
-          Height = 570
+          Width = 821
+          Height = 560
           ExplicitWidth = 831
           ExplicitHeight = 570
           inherited memMessages: TMemo
             Width = 669
             Height = 568
             Lines.Strings = ()
-            ExplicitWidth = 669
-            ExplicitHeight = 568
+            ExplicitWidth = 659
+            ExplicitHeight = 558
           end
           inherited Panel3: TPanel
-            Height = 568
+            Height = 558
             ExplicitHeight = 650
             inherited lvUsers: TListView
               Height = 648
@@ -978,7 +978,7 @@ object formMain: TformMain
     Left = 472
     Top = 168
     Bitmap = {
-      494C01010B000E003C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010B000E0040001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000005D000000010020000000000030B4
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2479,7 +2479,7 @@ object formMain: TformMain
     Left = 472
     Top = 200
     Bitmap = {
-      494C01010C000E003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010C000E00400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3029,7 +3029,7 @@ object formMain: TformMain
     Left = 568
     Top = 200
     Bitmap = {
-      494C0101070009003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107000900400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -3329,7 +3329,7 @@ object formMain: TformMain
     Left = 600
     Top = 202
     Bitmap = {
-      494C0101010004003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000400400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3555,7 +3555,7 @@ object formMain: TformMain
     Left = 356
     Top = 289
     Bitmap = {
-      494C0101040009003C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010400090040001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000003E00000001002000000000002078
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
