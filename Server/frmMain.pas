@@ -1394,7 +1394,7 @@ begin
         strParam := GetParamFromString(param,1);
         strParam2 := GetParamFromString(param,2);
         if (Length(strParam) > 0) then begin
-          fSumma := StrToFloat(strParam);
+          fSumma := StrToFloatGC(strParam);
           bCalcBySum := True;
         end else if (Length(strParam2)>0) then begin
           dtTime := StrToDateTime(strParam2);

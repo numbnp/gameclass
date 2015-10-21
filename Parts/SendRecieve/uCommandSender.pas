@@ -14,7 +14,8 @@ uses
   SyncObjs,
   Classes,
   IdSocketHandle,
-  IdUDPClient;
+  IdUDPClient,
+  IdGlobal;
 
 
 type
@@ -156,7 +157,7 @@ begin
         with UDPClient do begin
           Host := Self.Host;
           Port := self.Port;
-          Send(strData);
+          Send(strData,IndyTextEncoding_OSDefault);
         end;
       finally
         FreeAndNilWithAssert(UDPClient)

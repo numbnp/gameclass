@@ -3,7 +3,7 @@ unit uWebServer;
 interface
 
 uses Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,winsock;
+  Dialogs,winsock, IdURI;
 
 const
   RT_GET = 1;
@@ -415,6 +415,7 @@ var
   _Result: string;
 begin
   _Result:=dzurl.UrlDecode(Str);
+  _Result:=TIdURI.URLDecode(Str)
   _Result:=StringReplace(_Result,'&lt;','<',[rfReplaceAll]);
   _Result:=StringReplace(_Result,'&gt;','>',[rfReplaceAll]);
   Result := _Result;
