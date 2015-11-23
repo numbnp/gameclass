@@ -148,7 +148,8 @@ var
   strData: string;
 begin
   strData := _AddProtocolInfoToData(AstrData);
-  Debug.Trace1('SendCommand:' + AstrData);
+  Debug.Trace1('SendCommand:[Data]:' + AstrData);
+  Debug.Trace1('SendCommand:[HOST:PORT]:' + Self.Host+':'+IntToStr(Port));
   try
     csSendData.Acquire();
     try
@@ -168,7 +169,7 @@ begin
   except
     on e: Exception do begin
       Debug.Trace0('SendCommand(' + IntToStr(Port)
-          +  '): [' + Host + ']:' + AstrData);
+          +  '): [' + Self.Host + ']:' + AstrData);
       Debug.Trace0('TCommandSender.SendCommand error! ' + e.Message);
     end;
   end;

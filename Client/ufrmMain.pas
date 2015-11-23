@@ -476,7 +476,7 @@ end;
 procedure TfrmMain.WIActionChangeTariff(Sender: TObject; sTariff: string);
 begin
   if IsOnChangeEnabled then begin
-    edtSum.Text := '1,00';
+    edtSum.Text := '1.00';
     GCClientWebInterface.Sum := 1;
     dtpTime.Time := FIRST_DATE; // 01.01.2000 0:00:00
     DoDesignStartStop;
@@ -526,7 +526,7 @@ end;
 procedure TfrmMain.WIActionQueryAddTimeCost(Sender: TObject; sSumm: string);
 begin
   if IsOnChangeEnabled then begin
-    QueryCostAddTime(sSumm);
+    QueryCostAddTime(StringReplace(sSumm,',','.',[rfReplaceAll]));
     DoDesignAdd;
   end;
 
@@ -536,7 +536,7 @@ procedure TfrmMain.WIActionQueryCostTime(Sender: TObject; sTariff,
   sSumm: string);
 begin
   if IsOnChangeEnabled then begin
-    QueryCostTime(sTariff,sSumm);
+    QueryCostTime(sTariff,StringReplace(sSumm,',','.',[rfReplaceAll]));
     DoDesignStartStop;
   end;
 end;

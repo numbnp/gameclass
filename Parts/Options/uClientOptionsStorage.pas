@@ -70,8 +70,7 @@ uses
 {$IFDEF MSWINDOWS}
   Registry,
 {$ENDIF}
-  Types,
-  gccommon;
+  Types;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -197,7 +196,7 @@ begin
   Result := _GetOption(AstrFolder, AstrName, strValue);
   if Result = RES_SUCCESS then begin
     try
-      AfValue := StrToFloatGC(strValue);
+      AfValue := StrToFloat(strValue);
     except
       on e: Exception do begin
         Result := RES_ERROR;

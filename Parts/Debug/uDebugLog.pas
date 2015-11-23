@@ -574,8 +574,9 @@ var
   hFile                : THandle;
   nNumberOfBytesWriten : cardinal;
   dwFilePointer        : DWORD;
-  strInfo              : string;
+  strInfo              : AnsiString;
   nLogSize: Cardinal;
+  _AstrInfo            : AnsiString;
 begin
   if not Enable then begin
     Exit;
@@ -587,7 +588,9 @@ begin
       strInfo := DatetimeToStr(Now()) + ' ';
     end;
 
-    strInfo := strInfo + AstrInfo + #13 + #10;
+    _AstrInfo := AnsiString(AstrInfo);
+
+    strInfo := strInfo + _AstrInfo + #13 + #10;
 
     hFile := CreateFile(
         PChar(FstrFileName),

@@ -414,7 +414,8 @@ function ReplaceWebCode(Str: String): String;
 var
   _Result: string;
 begin
-  _Result:=TIdURI.URLDecode(Str);
+  _Result:=StringReplace(Str,'+',' ', [rfReplaceAll]);
+  _Result:=TIdURI.URLDecode(_Result);
   _Result:=StringReplace(_Result,'&lt;','<',[rfReplaceAll]);
   _Result:=StringReplace(_Result,'&gt;','>',[rfReplaceAll]);
   Result := _Result;
