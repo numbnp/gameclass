@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{ED039BFD-7175-4AE6-81FB-1C328F7F013A}</ProjectGuid>
         <MainSource>DCEF_XE5.dpk</MainSource>
-        <ProjectVersion>16.0</ProjectVersion>
+        <ProjectVersion>15.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -40,7 +40,6 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <SanitizedProjectName>DCEF_XE5</SanitizedProjectName>
         <GenDll>true</GenDll>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <GenPackage>true</GenPackage>

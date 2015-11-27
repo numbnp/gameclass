@@ -370,10 +370,11 @@ function update_info(data){
                     .attr('value', index));
             cbTariff_edit();
             });
+			$('#select_booking_tariff').fixCEFSelect();
             //alert('ololo');
     }
 	if ('select_tariff' in data){
-            $('#select_booking_tariff').val(data.select_tariff);
+        $('#select_booking_tariff').val(data.select_tariff);
     }
 }
 

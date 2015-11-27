@@ -133,7 +133,6 @@
         <DCCReference Include="frmWI.pas">
             <Form>Form1</Form>
         </DCCReference>
-        <DCCReference Include="..\..\Parts\WebInterface\dzurl.pas"/>
         <DCCReference Include="..\..\Parts\WebInterface\uClientWebInterface.pas"/>
         <DCCReference Include="..\..\Parts\WebInterface\uMyWebBrowser.pas"/>
         <DCCReference Include="..\..\Parts\WebInterface\uWebServer.pas"/>

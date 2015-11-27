@@ -6,7 +6,6 @@ uses
   ceflib,
   sysutils,
   frmWI in 'frmWI.pas' {Form1},
-  dzurl in '..\..\Parts\WebInterface\dzurl.pas',
   uClientWebInterface in '..\..\Parts\WebInterface\uClientWebInterface.pas',
   uMyWebBrowser in '..\..\Parts\WebInterface\uMyWebBrowser.pas',
   uWebServer in '..\..\Parts\WebInterface\uWebServer.pas';

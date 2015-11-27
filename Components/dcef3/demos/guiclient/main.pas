@@ -11,6 +11,7 @@ uses
 type
   TMainForm = class(TForm)
     crm: TChromium;
+    DevTools: TChromiumDevTools;
     StatusBar: TStatusBar;
     ActionList: TActionList;
     actPrev: TAction;
@@ -54,9 +55,8 @@ type
     actGroup: TAction;
     Googlegroup1: TMenuItem;
     actFileScheme: TAction;
-    actCloseDevTools: TAction;
-    CloseDevTools1: TMenuItem;
     actPrint: TAction;
+    Splitter: TSplitter;
     procedure edAddressKeyPress(Sender: TObject; var Key: Char);
     procedure actPrevExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
@@ -107,8 +107,16 @@ type
       var popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo;
       var client: ICefClient; var settings: TCefBrowserSettings;
       var noJavascriptAccess: Boolean; out Result: Boolean);
-    procedure actCloseDevToolsExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
+    procedure crmBeforeContextMenu(Sender: TObject; const browser: ICefBrowser;
+      const frame: ICefFrame; const params: ICefContextMenuParams;
+      const model: ICefMenuModel);
+    procedure crmContextMenuCommand(Sender: TObject; const browser: ICefBrowser;
+      const frame: ICefFrame; const params: ICefContextMenuParams;
+      commandId: Integer; eventFlags: TCefEventFlags; out Result: Boolean);
+    procedure crmCertificateError(Sender: TObject; certError: Integer;
+      const requestUrl: ustring;
+      const callback: ICefAllowCertificateErrorCallback; out Result: Boolean);
   private
     { Déclarations privées }
     FLoading: Boolean;
@@ -131,16 +139,24 @@ var
 
 implementation
 
-{$R *.dfm}
+const
+  CUSTOMMENUCOMMAND_INSPECTELEMENT = 7241221;
 
-procedure TMainForm.actCloseDevToolsExecute(Sender: TObject);
-begin
-  crm.Browser.Host.CloseDevTools;
-end;
+{$R *.dfm}
 
 procedure TMainForm.actDevToolExecute(Sender: TObject);
 begin
-  crm.ShowDevTools;
+  if actDevTool.Checked then
+  begin
+    DevTools.Visible := True;
+    Splitter.Visible := True;
+    DevTools.ShowDevTools(crm.Browser);
+  end else
+  begin
+    DevTools.CloseDevTools(crm.Browser);
+    Splitter.Visible := False;
+    DevTools.Visible := False;
+  end;
 end;
 
 procedure TMainForm.actDocExecute(Sender: TObject);
@@ -175,7 +191,7 @@ begin
   source := StringReplace(source, '<', '&lt;', [rfReplaceAll]);
   source := StringReplace(source, '>', '&gt;', [rfReplaceAll]);
   source := '<html><body>Source:<pre>' + source + '</pre></body></html>';
-  MainForm.crm.Browser.MainFrame.LoadString(source, '');
+  MainForm.crm.Browser.MainFrame.LoadString(source, 'source://html');
 end;
 
 procedure TMainForm.actGetSourceExecute(Sender: TObject);
@@ -191,7 +207,7 @@ begin
   source := StringReplace(source, '<', '&lt;', [rfReplaceAll]);
   source := StringReplace(source, '>', '&gt;', [rfReplaceAll]);
   source := '<html><body>Text:<pre>' + source + '</pre></body></html>';
-  MainForm.crm.Browser.MainFrame.LoadString(source, '');
+  MainForm.crm.Browser.MainFrame.LoadString(source, 'source://text');
 end;
 
 procedure TMainForm.actGetTextExecute(Sender: TObject);
@@ -298,6 +314,13 @@ begin
     edAddress.Text := url;
 end;
 
+procedure TMainForm.crmBeforeContextMenu(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame;
+  const params: ICefContextMenuParams; const model: ICefMenuModel);
+begin
+  model.AddItem(CUSTOMMENUCOMMAND_INSPECTELEMENT, 'Inspect Element');
+end;
+
 procedure TMainForm.crmBeforeDownload(Sender: TObject;
   const browser: ICefBrowser; const downloadItem: ICefDownloadItem;
   const suggestedName: ustring; const callback: ICefBeforeDownloadCallback);
@@ -329,6 +352,37 @@ begin
       u.host := 'www.google.com';
       request.Url := CefCreateUrl(u);
     end;
+end;
+
+procedure TMainForm.crmCertificateError(Sender: TObject; certError: Integer;
+  const requestUrl: ustring; const callback: ICefAllowCertificateErrorCallback;
+  out Result: Boolean);
+begin
+  // let use untrusted certificates (ex: cacert.org)
+  callback.Cont(True);
+  Result := True;
+end;
+
+procedure TMainForm.crmContextMenuCommand(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame;
+  const params: ICefContextMenuParams; commandId: Integer;
+  eventFlags: TCefEventFlags; out Result: Boolean);
+var
+  mousePoint: TCefPoint;
+begin
+  Result := False;
+  if (commandId = CUSTOMMENUCOMMAND_INSPECTELEMENT) then
+  begin
+    mousePoint.x := params.XCoord;
+    mousePoint.y := params.YCoord;
+    Splitter.Visible := True;
+    DevTools.Visible := True;
+    actDevTool.Checked := True;
+    DevTools.CloseDevTools(crm.Browser);
+    application.ProcessMessages;
+    DevTools.ShowDevTools(crm.Browser,@mousePoint);
+    Result := True;
+  end;
 end;
 
 procedure TMainForm.crmDownloadUpdated(Sender: TObject;
@@ -423,25 +477,25 @@ function TCustomRenderProcessHandler.OnProcessMessageReceived(
   const browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage): Boolean;
 begin
-{$IFDEF DELPHI14_UP}
-  if (message.Name = 'visitdom') then
-    begin
-      browser.MainFrame.VisitDomProc(
-        procedure(const doc: ICefDomDocument) begin
-          doc.Body.AddEventListenerProc('mouseover', True,
-            procedure (const event: ICefDomEvent)
-            var
-              msg: ICefProcessMessage;
-            begin
-              msg := TCefProcessMessageRef.New('mouseover');
-              msg.ArgumentList.SetString(0, getpath(event.Target));
-              browser.SendProcessMessage(PID_BROWSER, msg);
-            end)
-        end);
-        Result := True;
-    end
-  else
-{$ENDIF}
+//{$IFDEF DELPHI14_UP}
+//  if (message.Name = 'visitdom') then
+//    begin
+//      browser.MainFrame.VisitDomProc(
+//        procedure(const doc: ICefDomDocument) begin
+//          doc.Body.AddEventListenerProc('mouseover', True,
+//            procedure (const event: ICefDomEvent)
+//            var
+//              msg: ICefProcessMessage;
+//            begin
+//              msg := TCefProcessMessageRef.New('mouseover');
+//              msg.ArgumentList.SetString(0, getpath(event.Target));
+//              browser.SendProcessMessage(PID_BROWSER, msg);
+//            end)
+//        end);
+//        Result := True;
+//    end
+//  else
+//{$ENDIF}
     Result := False;
 end;
 

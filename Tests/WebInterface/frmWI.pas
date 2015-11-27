@@ -141,7 +141,7 @@ begin
   crm.ActionLogoff := LogoffClick;
   crm.ActionAgreeEula := AgreeEulaClick;
   crm.ActionNotAgreeEula := NotAgreeEulaClick;
-  crm.ActionClientSessionStop := ClientSessionStopClick;
+  crm.ActionStopSession := ClientSessionStopClick;
   crm.ActionLogon := ActionLogon;
   crm.ActionQueryCostTime := ActionQueryCostTime;
   crm.ActionChangeTariff := ActionChangeTariff;

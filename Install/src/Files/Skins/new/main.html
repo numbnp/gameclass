@@ -2,10 +2,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=cp1251" />
         <link rel="stylesheet" type="text/css" href="css/styles.css" />
+
+		
         <script src="js/jquery-1.9.1.js"></script>
         <script src="js/jquery-migrate-1.1.1.js"></script>
-        <script src="js/gc.js"></script>
-    </head>
+		<script src="js/cef-dropdown-fix.js"></script>
+		<script src="js/gc.js"></script>
+	</head>
     <body style="margin:0 0 0 0; overflow:hidden"  bgcolor="#f0f0f0">
         <div id="top_panel">
             
@@ -18,7 +21,7 @@
             </div>
             <div id="shutdown_button" class="shutdown_button hide">
 			</div>
-			
+
         </div>
         
         <div id="bottom_panel" class="bottom_panel">
@@ -268,7 +271,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <input id="unblock_code" type="text" name="unblock_code" value="" size=50>
+									<input style="width:345px" id="unblock_code" type="password" name="unblock_code" value="" >
                                 </td>
                             </tr>
                             <tr>

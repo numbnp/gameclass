@@ -363,3 +363,9 @@ ul.tabs {
     z-index:1500;
 }
 
+
+.cef-dropdown-offset-fix { position: absolute; border: 1px solid #7F9DB9; display: none; cursor: default; -webkit-user-select: none; background-color: white; }
+.cef-select-offset-fix.cef-select-offset-fix-focused { outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px; }
+.cef-dropdown-offset-fix p { margin: 0; padding: 0; padding-left: 3px; font: normal normal normal 13px/normal Arial; }
+.cef-dropdown-offset-fix p.cef-optionhover-offset-fix { background-color: #1E90FF; color: white; }
+
