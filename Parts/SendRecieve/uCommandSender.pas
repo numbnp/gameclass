@@ -147,30 +147,33 @@ var
   UDPClient: TIdUDPClient;
   strData: string;
 begin
+
   strData := _AddProtocolInfoToData(AstrData);
   Debug.Trace1('SendCommand:[Data]:' + AstrData);
-  Debug.Trace1('SendCommand:[HOST:PORT]:' + Self.Host+':'+IntToStr(Port));
-  try
-    csSendData.Acquire();
+  Debug.Trace1('SendCommand:[HOST:PORT]:' + Self.Host+':'+IntToStr(Self.Port));
+  if Self.Host<>'' then
+  begin
     try
-      UDPClient := TIdUDPClient.Create(nil);
       try
-        with UDPClient do begin
-          Host := Self.Host;
-          Port := self.Port;
-          Send(strData,IndyTextEncoding_OSDefault);
+        csSendData.Acquire();
+        UDPClient := TIdUDPClient.Create(nil);
+        try
+          UDPClient.Host := Self.Host;
+          UDPClient.Port := self.Port;
+          UDPClient.Send(strData,IndyTextEncoding_OSDefault);
+        finally
+          FreeAndNilWithAssert(UDPClient)
         end;
+        csSendData.Release();
       finally
-        FreeAndNilWithAssert(UDPClient)
+
       end;
-    finally
-      csSendData.Release();
-    end;
-  except
-    on e: Exception do begin
-      Debug.Trace0('SendCommand(' + IntToStr(Port)
-          +  '): [' + Self.Host + ']:' + AstrData);
-      Debug.Trace0('TCommandSender.SendCommand error! ' + e.Message);
+    except
+      on e: Exception do begin
+        Debug.Trace0('SendCommand(' + IntToStr(Self.Port)
+            +  '): [' + Self.Host + ']:' + AstrData);
+        Debug.Trace0('TCommandSender.SendCommand error! ' + e.Message);
+      end;
     end;
   end;
 end; // TCommandSender.SendCommand

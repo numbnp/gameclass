@@ -25,7 +25,8 @@ uses
   uProcessSupervisor,
   uBlockingsAndNotifications,
   uFileReceiver,
-  uClientScripting;
+  uClientScripting,
+  SyncObjs;
 
 
 type
@@ -46,7 +47,6 @@ type
     FCommandFactory: TServiceRemoteCommandFactory;
     FProcessSupervisor: TProcessSupervisor;
     FBlockingsAndNotifications: TBlockingsAndNotifications;
-    FstrFromHost: String;
 
     // events handlers
     procedure _CommandReceive(const AstrCommand: String;
@@ -78,12 +78,14 @@ type
   public
     // public methods
     function GetServiceController(): TServiceController; override;
-    property ServerHost: String read FstrFromHost;
+    function ServerHost():string;
     procedure NeedRescanProcess;
 
 
   end; // TsrvGCCL
 
+var
+  FstrFromHost: String;
 
 var
   srvGCCL: TsrvGCCL;
@@ -131,9 +133,16 @@ end; // TsrvGCCL.GetServiceController
 //////////////////////////////////////////////////////////////////////////////
 // events handlers
 
+function TsrvGCCL.ServerHost: string;
+begin
+  Result := FstrFromHost;
+end;
+
 procedure TsrvGCCL.ServiceStart(Sender: TService; var Started: Boolean);
 begin
   Debug.Trace0('GCCL service started.');
+
+  FstrFromHost:='';
 
   GProcUtils := TProcUtils.Create;
   GProcUtils.Init();
@@ -218,9 +227,11 @@ end; // TsrvGCCL._CommandReceive
 procedure TsrvGCCL._LocalCommandReceive(const AstrCommand: string);
 var
   cmd: TRemoteCommand;
+  _AstrCommand:string;
 begin
   try
-    cmd := FCommandFactory.CreateCommandFromClient(AstrCommand, FstrFromHost);
+    _AstrCommand := AstrCommand;
+    cmd := FCommandFactory.CreateCommandFromClient(_AstrCommand, FstrFromHost);
     try
       cmd.Execute();
     finally
@@ -361,6 +372,5 @@ procedure TsrvGCCL.NeedRescanProcess;
 begin
   FProcessSupervisor.NeedRescanProcess;
 end;
-
 
 end. ////////////////////////// end of file //////////////////////////////////

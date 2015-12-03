@@ -1,10 +1,14 @@
 program gcclsrv_dev;
 uses
+  {$IFOPT D+}
+  FastMM4,
   madExcept,
   madLinkDisAsm,
   madListHardware,
   madListProcesses,
   madListModules,
+  FastMM4Messages,
+  {$ENDIF}
   SvcMgr,
   SysUtils,
   ActiveX,

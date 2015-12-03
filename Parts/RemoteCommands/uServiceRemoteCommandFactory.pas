@@ -38,8 +38,8 @@ type
     // public methods
     function CreateCommandFromServer(const AstrCommand: String;
         const AstrFromHost: String): TRemoteCommand;
-    function CreateCommandFromClient(const AstrCommand: String;
-        const AstrFromHost: String): TRemoteCommand;
+    function CreateCommandFromClient(var AstrCommand: String;
+        var AstrFromHost: String): TRemoteCommand;
 
   end; // TServiceRemoteCommandFactory
 
@@ -105,18 +105,20 @@ end; // TServiceRemoteCommandFactory.Create
 // public methods
 
 function TServiceRemoteCommandFactory.CreateCommandFromClient(
-    const AstrCommand: String; const AstrFromHost: String): TRemoteCommand;
+    var AstrCommand: String; var AstrFromHost: String): TRemoteCommand;
 var
   strCommand: String;
   strParameters: String;
+
 begin
   Debug.Trace1('C>S>> ' + AstrCommand);
   _ParseCommandString(AstrCommand, {out}strCommand, {out}strParameters);
+  Debug.Trace1('C>S>> Parse:' + AstrCommand);
+  Debug.Trace1('C>S>> Parse:' + strCommand);
+  Debug.Trace1('C>S>> Parse:' + strParameters);
 
   if _IsResendedToServerCommand(strCommand) then begin
-{$IFDEF MSWINDOWS}
     Result := TResendRemoteCommand.Create(AstrFromHost, AstrCommand);
-{$ENDIF}
 
   end else if CompareText(strCommand, STR_CMD_OPTION_GET) = 0 then begin
     Result := TOptionGetRemoteCommand.Create(

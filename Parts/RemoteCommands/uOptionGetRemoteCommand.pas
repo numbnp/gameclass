@@ -309,7 +309,7 @@ begin
 {$IFDEF GC3SERVER}
 //    if GCSendRecieve<>nil then
 //      GCSendRecieve.SendData(FstrHostForResend,DEF_PORT_FOR_UDPSERVER,
-//        AstrOptionName + '/' + AstrOptionValue);
+//        STR_CMD_OPTION_SET + '=' +AstrOptionName + '/' + AstrOptionValue);
     UDPSend(FstrHostForResend,STR_CMD_OPTION_SET + '=' + AstrOptionName + '/' + AstrOptionValue);
 
 {$ELSE}

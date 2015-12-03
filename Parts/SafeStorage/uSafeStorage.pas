@@ -457,8 +457,10 @@ begin
     end;
     ThreadSafeOperation_RecalcCostTime: begin
       frmMain.DisableOnChange;
-      if Not frmMain.EdtSumFocused then
-        frmMain.edtSum.Text := GetParamFromString(AOperation.Parameters,0);
+      //if Not frmMain.EdtSumFocused then
+      //  frmMain.edtSum.Text := GetParamFromString(AOperation.Parameters,0);
+      frmMain.GCClientWebInterface.SetInterfaceData('{ "booking_money": "' +
+        GetParamFromString(AOperation.Parameters,0) + '" }');
       dtStart := StrToDateTimeDefWithReplace(GetParamFromString(
           AOperation.Parameters, 1));
       dtStop := StrToDateTimeDefWithReplace(GetParamFromString(
