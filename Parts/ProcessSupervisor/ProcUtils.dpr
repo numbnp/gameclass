@@ -7,11 +7,6 @@
 library ProcUtils;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Classes,
   Windows,
   SysUtils,
@@ -231,6 +226,7 @@ begin
 
   hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if hSnapshot = INVALID_HANDLE_VALUE then begin
+    Result := '';
     Exit;
   end;
 
@@ -271,6 +267,7 @@ begin
 
   hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if hSnapshot = INVALID_HANDLE_VALUE then begin
+    Result := '';
     Exit;
   end;
 

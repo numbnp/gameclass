@@ -585,7 +585,7 @@ begin
   csWriteDebugLog.Acquire();
   try
     if IsShowDatetime then begin
-      strInfo := DatetimeToStr(Now()) + ' ';
+      strInfo := AnsiString(DatetimeToStr(Now()) + ' ');
     end;
 
     _AstrInfo := AnsiString(AstrInfo);

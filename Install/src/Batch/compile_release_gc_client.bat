@@ -37,6 +37,12 @@ set DCCPType=dll
 set DCCReturnPath=..\..
 call Install\Src\Batch\compile_project.bat
 
+set DCCFlags=ASPROTECT
+set DCCProjectPath=Parts\ProcessSupervisor
+set DCCProjectName=ProcUtils
+set DCCReturnPath=..\..
+call Install\Src\Batch\compile_project.bat
+
 rem Еще компиляция модулей
 
 for /f %%i in (%DCCLogs%\ErrorCheck.txt) DO @SET error_check=%%i
