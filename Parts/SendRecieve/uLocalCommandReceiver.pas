@@ -159,12 +159,10 @@ begin
 //        CommBlock.Command := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_OSDefault);
 //        SetLength(Buffer,100);
 //        buffsize := AContext.Connection.IOHandler.InputBufferIsEmpty;
-
         AContext.Connection.IOHandler.ReadBytes(Buffer,4);
         nLength:=PLongInt(@Buffer[0])^;
         AContext.Connection.IOHandler.ReadBytes(Buffer,nLength,false);
         CommBlock.Command := TEncoding.UTF8.GetString(TBytes(Buffer));
-
 //        nLength := AContext.Connection.IOHandler.ReadLongInt();
 //        CommBlock.Command := AContext.Connection.IOHandler.ReadString(nLength,IndyTextEncoding_OSDefault);
 
@@ -173,52 +171,27 @@ begin
           strTest := ReadString(2);}
         end
     except
-        AContext.Connection.Disconnect();
+        on e: Exception do begin
+          Debug.Trace0('_TCPServerRead error! ' + e.Message);
+          AContext.Connection.Disconnect();
+          StopReceiveProcess();
+          StartReceiveProcess();
+
+        end;
 //      finally
 //        Disconnect();
     end;
-
-      _SendDataReceiveEvent(CommBlock.Command);
+      if CommBlock.Command<>'' then
+        _SendDataReceiveEvent(CommBlock.Command);
   except
     on e: Exception do begin
-      Debug.Trace0('_TCPServerRead error! ' + e.Message);
+      Debug.Trace0('_TCPServerRead error2! ' + e.Message);
     end;
   end;
 
 end; // TLocalCommandReceiver._TCPServerRead
 {$ENDIF}
-{$IFDEF LINUX}
-procedure TLocalCommandReceiver._TCPServerRead(AThread: TIdPeerThread);
-var
-  strTest: string;
-  strLine: string;
-  nLength: integer;
-//  CommBlock: TCommandPakage;
-begin
-  try
-    with AThread.Connection do
-      try
-        strTest := ReadString(4);
-        if strTest = 'sYNc' then
-        begin
-          nLength := ReadInteger();
-          strLine := ReadString(nLength);
-          strTest := ReadString(2);
-        end
-      finally
-        Disconnect();
-      end;
 
-    _SendDataReceiveEvent(strLine);
-
-  except
-    on e: Exception do begin
-      Debug.Trace0('_TCPServerRead error! ' + e.Message);
-    end;
-  end;
-
-end; // TLocalCommandReceiver._TCPServerRead
-{$ENDIF}
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

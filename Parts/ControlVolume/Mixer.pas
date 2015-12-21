@@ -312,7 +312,8 @@ var
 begin
   CoCreateInstance(CLASS_MMDeviceEnumerator , nil, CLSCTX_INPROC_SERVER, IID_IMMDeviceEnumerator, FmmDevEnum);
   FmmDevEnum.GetDefaultAudioEndpoint(eRender, eConsole, FmmDev);
-  FmmDev.Activate(IID_IAudioEndpointVolume, CLSCTX_INPROC_SERVER, ap, Pointer(FmmEndpoint));
+  if FmmDev<>nil then
+    FmmDev.Activate(IID_IAudioEndpointVolume, CLSCTX_INPROC_SERVER, ap, Pointer(FmmEndpoint));
 end;
 
 // ---------------------------------------------------------------------------
@@ -321,7 +322,10 @@ function TvistaMixer.getMute: boolean;
 var 
   locValue: boolean;
 begin
-  FmmEndpoint.GetMute(locValue);
+  if FmmEndpoint<>nil then
+    FmmEndpoint.GetMute(locValue)
+  else
+    locValue := true;
   Result := locValue;
 end;
 
@@ -331,7 +335,10 @@ function TvistaMixer.getVolume: integer;
 var
   VolLevel: Single;
 begin
-  FmmEndpoint.GetMasterVolumeLevelScalar(VolLevel);
+  if FmmEndpoint<>nil then
+    FmmEndpoint.GetMasterVolumeLevelScalar(VolLevel)
+  else
+    VolLevel:=0;
   result := Round(VolLevel * 65535);
 end;
 
@@ -363,6 +370,7 @@ procedure TvistaMixer.setVolume(Value: integer);
 var
   fValue: Single;
 begin
+  if FmmEndpoint=nil then exit;
   if (value < 0) then
     value := 0;
   if (value > 65535) then
