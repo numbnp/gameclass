@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.839,=K:\Projects\gameclass\Parts\Web\dzurl.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.846,K:\Projects\gameclass\Parts\Web\dzurl.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.459,K:\Projects\gameclass\Parts\Web\uWebServer.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.377,K:\Projects\gameclass\Parts\Web\dzurl.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.839,=K:\Projects\gameclass\Parts\Web\dzurl.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.459,K:\Projects\gameclass\Parts\Web\uWebServer.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.846,K:\Projects\gameclass\Parts\Web\dzurl.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.449,=C:\Project\Free\Output\Debug\gccl\Skins\new\main.html</Transaction>
     <Transaction>1899.12.30 00:00:00.000.245,=K:\Projects\gameclass\Parts\WebInterface\uWebServer.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.051,=K:\Projects\gameclass\Parts\WebInterface\uClientWebInterface.pas</Transaction>
