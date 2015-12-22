@@ -401,41 +401,15 @@ var
   frmLogon: TfrmLogon;
 begin
   Result := False;
-  try
-    dmo := CreateOleObject('SQLDMO.SQLServer');
-  except
-     MessageBox(0, 'SQL-сервер не установлен!' + Char(13)
-        + '—мотрите раздел помощи "»нсталл€ци€ GameClass"', 'ќшибка',
-        MB_ICONERROR + MB_OK);
-     exit;
-  end;
+
   frmLogon := TfrmLogon.Create(Nil, Nil, True);
-  repeat
-    if frmLogon.ShowModal = mrOk then begin
-      dmo.Name := frmLogon.ServerName;
-      dmo.LoginTimeout := 300;
-      if frmLogon.WindowsAuthentication then try
-        dmo.LoginSecure := True;
-        dmo.Connect(frmLogon.ServerName);
-        dmo.DisConnect;
-        Result := True;
-      except
-      end else begin try
-        dmo.LoginSecure := False;
-        dmo.Connect(frmLogon.ServerName, frmLogon.UserName,
-            frmLogon.Password);
-        dbUserName := frmLogon.UserName;
-        dbPassword := frmLogon.Password;
-        Result := True;
-        except
-        end;
-      end;
-    end;
-  until Result or (frmLogon.ModalResult = mrCancel);
+  Result := frmLogon.ShowModal = mrOk;
+
   if Result then begin
     AstrServerName := frmLogon.ServerName;
-   end;
-  dmo := null;
+    dbUserName := frmLogon.UserName;
+    dbPassword := frmLogon.Password;
+  end;
 end;
 
 function DetectInstance(const AcnnMain: TADOConnection;
