@@ -37,7 +37,7 @@ uses
   uClientConst,
   ufrmSmallInfo, ImgList, ToolWin,
   uClientFunctions,
-  JvTrayIcon;
+  JvTrayIcon, System.ImageList;
 
 type
 
@@ -506,10 +506,6 @@ begin
 {  SendMessage(frmMain.Handle,WM_USER_THREADSAFE_UPDATE,
       lParam(ThreadSafeOperation_RunPadAction),
       wParam(RunPadAction_EndVipSession));}
-  if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
-    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
-        Integer(RunPadAction_VipLogout));
-  end;
 end;
 
 procedure TfrmMain.WIActionLogon(Sender: TObject; sLogin, sPassword,

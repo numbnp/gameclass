@@ -65,7 +65,11 @@ end;
 
 procedure ClientLogoff();
 begin
-   LocalSendDataTo(STR_CMD_AUTH_QUERYLOGOFF, False);
+  if (GClientOptions.ShellMode = ShellMode_Runpad) then begin
+    TSafeStorage.Instance().Push(ThreadSafeOperation_RunPadAction,
+        Integer(RunPadAction_VipLogout));
+  end;
+  LocalSendDataTo(STR_CMD_AUTH_QUERYLOGOFF, False);
 end;
 
 procedure QueryCostTime(sTariff,sSumm:string);

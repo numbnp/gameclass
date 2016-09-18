@@ -37,7 +37,7 @@ object frmMain: TfrmMain
       Top = 92
       Width = 633
       Height = 360
-      ActivePage = tabScreenAgreement
+      ActivePage = tabScreenClientInfo
       Style = tsFlatButtons
       TabOrder = 0
       object tabScreenAgreement: TTabSheet
@@ -247,6 +247,10 @@ object frmMain: TfrmMain
               BorderWidth = 10
               Caption = #1044#1086#1087#1083#1072#1090#1072
               ImageIndex = 1
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object gbTime: TGroupBox
                 Left = 0
                 Top = 0
@@ -585,6 +589,10 @@ object frmMain: TfrmMain
         Caption = 'tabScreenCompFree'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlScreenCompFree: TPanel
           Left = 0
           Top = 0
@@ -613,6 +621,10 @@ object frmMain: TfrmMain
         Caption = 'tabScreenLogin'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlScreenLogin: TPanel
           Left = 0
           Top = 0
@@ -936,7 +948,7 @@ object frmMain: TfrmMain
     Left = 464
     Top = 380
     Bitmap = {
-      494C0101030004005C001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010300040060001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000001F0000000100200000000000103C
       000000000000000000000000000000000000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000

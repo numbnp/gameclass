@@ -25,7 +25,7 @@ uses
   uReportCommon,
   uReport,
   uReportManager,
-  uReportFormsManager, System.Actions;
+  uReportFormsManager, System.Actions, System.ImageList;
 
 
 type
@@ -1132,7 +1132,7 @@ begin
   ptrNodeData^.Caption := AReport.ReportName;
   ptrNodeData^.IsFolder := AReport.IsFolder;
 
-  tvReportsNavigator.InvalidateNode(ptrNode); 
+  tvReportsNavigator.InvalidateNode(ptrNode);
 
 end; // TfrmReports._AddReportToTree
 
@@ -1145,9 +1145,9 @@ begin
   if Assigned(ptrNode) then begin
     tvReportsNavigator.BeginUpdate();
     try
-      tvReportsNavigator.DeleteNode(ptrNode, False);
+      tvReportsNavigator.DeleteNode(ptrNode);
     finally
-      tvReportsNavigator.EndUpdate();    
+      tvReportsNavigator.EndUpdate();
     end;
   end;
 end; // TfrmReports._DeleteReportFromTree

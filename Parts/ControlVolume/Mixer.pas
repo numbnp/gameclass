@@ -193,6 +193,7 @@ var
   nRVolume: Integer;
   nVolume: Integer;
 begin
+  Result := 0;
   if WaveOutGetDevCaps(WAVE_MAPPER, @WaveOutCaps, sizeof(WaveOutCaps))
       = MMSYSERR_NOERROR then begin
     if WaveOutCaps.dwSupport and WAVECAPS_VOLUME = WAVECAPS_VOLUME then begin
@@ -356,6 +357,7 @@ end;
 
 function TvistaMixer.getWaveVolume: integer;
 begin
+  Result := 0;
 end;
 
 // ---------------------------------------------------------------------------

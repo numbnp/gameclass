@@ -46,7 +46,6 @@ object frmReports: TfrmReports
     OnDragOver = tvReportsNavigatorDragOver
     OnDragDrop = tvReportsNavigatorDragDrop
     OnFreeNode = tvReportsNavigatorFreeNode
-    OnGetImageIndex = tvReportsNavigatorGetImageIndex
     OnInitNode = tvReportsNavigatorInitNode
     OnLoadNode = tvReportsNavigatorLoadNode
     OnSaveNode = tvReportsNavigatorSaveNode
@@ -550,7 +549,7 @@ object frmReports: TfrmReports
     Left = 176
     Top = 80
     Bitmap = {
-      494C010119001D00200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010119001D00240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000007000000001002000000000000070
       000000000000000000000000000000000000D4A77EFFC0936DFFBF926CFFBF92
       6CFFBF926CFFBF926CFFBF926CFFBF926CFFBF926CFFBF926CFFBF926CFFBF92
