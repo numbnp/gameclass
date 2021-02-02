@@ -1,0 +1,75 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                  TSQLEditFrame frame                  }
+{                                                       }
+{    Copyright (c) 2005-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit SQLEditFrameEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  Dialogs, Grids, DBGridEh, ExtCtrls, StdCtrls, ComCtrls, ImgList, Buttons,
+  Variants,
+  DB, MemTableEh, DataDriverEh, GridsEh, MemTableDataEh, StdActns, ActnList,
+  DBGridEhGrouping, DBGridEhToolCtrls, ToolCtrlsEh, DBAxisGridsEh;
+
+type
+  TSQLEditFrame = class(TFrame)
+    Panel1: TPanel;
+    Splitter2: TSplitter;
+    Panel4: TPanel;
+    RichEdit1: TRichEdit;
+    Panel5: TPanel;
+    Button3: TButton;
+    Check: TButton;
+    Button1: TButton;
+    Panel3: TPanel;
+    gridParams: TDBGridEh;
+    ImageList2: TImageList;
+    Panel8: TPanel;
+    SpeedButton2: TSpeedButton;
+    dsParams: TDataSource;
+    mtParams: TMemTableEh;
+    mtParamsParName: TStringField;
+    mtParamsParType: TStringField;
+    mtParamsParValue: TStringField;
+    ActionList1: TActionList;
+    EditCut1: TEditCut;
+    EditCopy1: TEditCopy;
+    EditPaste1: TEditPaste;
+    EditSelectAll1: TEditSelectAll;
+    ImageList1: TImageList;
+    spCut: TSpeedButton;
+    sbCopy: TSpeedButton;
+    spPaste: TSpeedButton;
+    sbSelectAll: TSpeedButton;
+    mtParamsParVarValue: TVariantField;
+    Panel2: TPanel;
+    sbRefresh: TSpeedButton;
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure gridParamsColumns0UpdateData(Sender: TObject; var Text: string;
+      var Value: Variant; var UseText, Handled: Boolean);
+    procedure gridParamsColumns2UpdateData(Sender: TObject; var Text: string;
+      var Value: Variant; var UseText, Handled: Boolean);
+    procedure sbRefreshClick(Sender: TObject);
+  private
+    FCommand: TCustomSQLCommandEh;
+    procedure SetCommand(const Value: TCustomSQLCommandEh);
+    { Private declarations }
+  public
+    Panel3Width: Integer;
+    procedure Created;
+    procedure RefreshFromCommand;
+    procedure PutToCommand;
+    procedure AssignToDesignControls(Command: TCustomSQLCommandEh);
+    property Command: TCustomSQLCommandEh read FCommand write SetCommand;
+  end;
+
+implementation

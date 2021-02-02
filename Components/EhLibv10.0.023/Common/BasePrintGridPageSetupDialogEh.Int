@@ -1,0 +1,99 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit BasePrintGridPageSetupDialogEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  LanguageResManEh, PrintUtilsEh, DBCtrlsEh, ToolCtrlsEh,
+  Mask, Printers, Math, Buttons;
+
+type
+  TfSpreadGridsPrintPageSetupDialogEh = class(TForm)
+    pcPageSetup: TPageControl;
+    tsPage: TTabSheet;
+    tsMargins: TTabSheet;
+    tsHeaderFooter: TTabSheet;
+    bOk: TButton;
+    bCancel: TButton;
+    Label1: TLabel;
+    Bevel1: TBevel;
+    Label2: TLabel;
+    Bevel2: TBevel;
+    Panel1: TPanel;
+    rbPortrait: TRadioButton;
+    rbLandscape: TRadioButton;
+    Image1: TImage;
+    Image2: TImage;
+    Panel2: TPanel;
+    rdAdjust: TRadioButton;
+    rbFit: TRadioButton;
+    lPerNormalSize: TLabel;
+    lPagesWideBy: TLabel;
+    lTall: TLabel;
+    neScale: TDBNumberEditEh;
+    neFitToWide: TDBNumberEditEh;
+    neFitToTall: TDBNumberEditEh;
+    neLeftMargin: TDBNumberEditEh;
+    neTopMargin: TDBNumberEditEh;
+    neBottomMargin: TDBNumberEditEh;
+    neRightMargin: TDBNumberEditEh;
+    neHeader: TDBNumberEditEh;
+    neFooter: TDBNumberEditEh;
+    reHeaderLeft: TDBRichEditEh;
+    reHeaderCenter: TDBRichEditEh;
+    reHeaderRight: TDBRichEditEh;
+    reFooterLeft: TDBRichEditEh;
+    reFooterCenter: TDBRichEditEh;
+    reFooterRight: TDBRichEditEh;
+    Label7: TLabel;
+    spFont: TSpeedButton;
+    spInsertPageNo: TSpeedButton;
+    spInsertPages: TSpeedButton;
+    spInsertDate: TSpeedButton;
+    spInsertShortDate: TSpeedButton;
+    spInsertLongDate: TSpeedButton;
+    spInsertTime: TSpeedButton;
+    Bevel3: TBevel;
+    Bevel4: TBevel;
+    FontDialog1: TFontDialog;
+    Label6: TLabel;
+    procedure spInsertPageNoClick(Sender: TObject);
+    procedure spInsertPagesClick(Sender: TObject);
+    procedure spInsertDateClick(Sender: TObject);
+    procedure spInsertShortDateClick(Sender: TObject);
+    procedure spInsertLongDateClick(Sender: TObject);
+    procedure spInsertTimeClick(Sender: TObject);
+    procedure spFontClick(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
+    procedure Image2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    rdAdjustCaptionDelta: Integer;
+    rbFitCaptionDelta: Integer;
+
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+
+  protected
+    procedure ResourceLanguageChanged; virtual;
+
+  public
+  end;
+
+var
+  fSpreadGridsPrintPageSetupDialogEh: TfSpreadGridsPrintPageSetupDialogEh;
+
+function ShowSpreadGridPageSetupDialog(PrintComponent: TBasePrintServiceComponentEh): Boolean;
+
+implementation

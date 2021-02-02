@@ -1,0 +1,154 @@
+{*******************************************************}
+{                                                       }
+{       Borland Delphi Visual Component Library         }
+{       UpdateSQL Component Editor                      }
+{                                                       }
+{       Copyright (c) 1997,1999 Borland Software Corp.  }
+{                                                       }
+{       Changed by Dmitry V. Bolshakov                  }
+{                                                       }
+{*******************************************************}
+
+unit UpdateSQLEditEh;
+
+{$I EHLIB.INC}
+
+interface
+
+uses Forms, DB, ExtCtrls, StdCtrls, Controls, ComCtrls,
+  Classes, SysUtils, Windows, Menus, DataDriverEh, MemTableEh, Graphics,
+  Variants,
+  EhLibVCL,
+  Mask, DBCtrlsEh, MemTableDataEh;
+
+type
+
+  TWaitMethod = procedure of object;
+
+  TUpdateSQLEditFormEh = class(TForm)
+    OkButton: TButton;
+    CancelButton: TButton;
+    HelpButton: TButton;
+    GenerateButton: TButton;
+    PrimaryKeyButton: TButton;
+    DefaultButton: TButton;
+    UpdateTableName: TComboBox;
+    FieldsPage: TTabSheet;
+    SQLPage: TTabSheet;
+    PageControl: TPageControl;
+    KeyFieldList: TListBox;
+    UpdateFieldList: TListBox;
+    GroupBox1: TGroupBox;
+    Label1: TLabel;
+    FTempTable: TMemTableEh;
+    QuoteFields: TCheckBox;
+    GetTableFieldsButton: TButton;
+    FieldListPopup: TPopupMenu;
+    miSelectAll: TMenuItem;
+    miClearAll: TMenuItem;
+    PageControl1: TPageControl;
+    tsInsert: TTabSheet;
+    tsModify: TTabSheet;
+    tsDelete: TTabSheet;
+    tsGetrec: TTabSheet;
+    MemoInsert: TMemo;
+    MemoModify: TMemo;
+    MemoDelete: TMemo;
+    MemoGetRec: TMemo;
+    cbUpdate: TCheckBox;
+    cbDelete: TCheckBox;
+    cbGetRec: TCheckBox;
+    cbInsert: TCheckBox;
+    cbIncrementField: TComboBox;
+    Label2: TLabel;
+    cbIncrementObject: TComboBox;
+    labelUpdateObjects: TLabel;
+    tsSpecParams: TTabSheet;
+    cbSpecParams: TCheckBox;
+    Panel11: TPanel;
+    Label5: TLabel;
+    Label6: TLabel;
+    cbUpdateFields: TCheckBox;
+    cbKeyFields: TCheckBox;
+    cbTableName: TCheckBox;
+    Label7: TLabel;
+    Panel1: TPanel;
+    Panel10: TPanel;
+    Label8: TLabel;
+    Bevel4: TBevel;
+    bLoadSpecString: TButton;
+    mSpecParams: TMemo;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Bevel3: TBevel;
+    MemoUpdateFields: TMemo;
+    MemoKeyFields: TMemo;
+    dbeTableName: TDBEditEh;
+    procedure FormCreate(Sender: TObject);
+    procedure HelpButtonClick(Sender: TObject);
+    procedure DefaultButtonClick(Sender: TObject);
+    procedure GenerateButtonClick(Sender: TObject);
+    procedure PrimaryKeyButtonClick(Sender: TObject);
+    procedure PageControlChanging(Sender: TObject;
+      var AllowChange: Boolean);
+    procedure GetTableFieldsButtonClick(Sender: TObject);
+    procedure SettingsChanged(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure UpdateTableNameChange(Sender: TObject);
+    procedure UpdateTableNameClick(Sender: TObject);
+    procedure SelectAllClick(Sender: TObject);
+    procedure ClearAllClick(Sender: TObject);
+    procedure cbInsertClick(Sender: TObject);
+    procedure MemoModifyKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    DataDriver: TCustomSQLDataDriverEh;
+    FSettingsChanged: Boolean;
+    FDatasetDefaults: Boolean;
+    function GetTableRef(const TabName, QuoteChar: string): string;
+    function Edit: Boolean;
+    procedure GenWhereClause(const TabAlias, QuoteChar: string; KeyFields, SQL: TStrings);
+    procedure GenDeleteSQL(const TableName, QuoteChar: string; KeyFields, SQL: TStrings);
+    procedure GenInsertSQL(const TableName, QuoteChar: string; UpdateFields, SQL: TStrings);
+    procedure GenModifySQL(const TableName, QuoteChar: string; KeyFields, UpdateFields, SQL: TStrings);
+    procedure GenGetRecSQL(SelectSQL, KeyFields, SQL: TStrings);
+    procedure GenerateSQL;
+    procedure FillMemoFromList(Memo: TMemo; List: TListBox);
+    procedure GenerateSQLViaDBService;
+    procedure GetDataSetFieldNames;
+    procedure GetTableFieldNames;
+    procedure InitGenerateOptions;
+    procedure InitUpdateTableNames;
+    procedure SetButtonStates;
+    procedure SelectPrimaryKeyFields;
+    procedure SetDefaultSelections;
+    procedure ShowWait(WaitMethod: TWaitMethod);
+  end;
+
+{ TSQLParser }
+
+  TSQLToken = (stSymbol, stAlias, stNumber, stComma, stEQ, stOther, stLParen,
+    stRParen, stEnd);
+
+  TSQLParser = class
+  private
+    FText: string;
+    FSourcePtr: Integer;
+    FTokenPtr: Integer;
+    FTokenString: string;
+    FToken: TSQLToken;
+    FSymbolQuoted: Boolean;
+    function NextToken: TSQLToken;
+    function TokenSymbolIs(const S: string): Boolean;
+    procedure Reset;
+  public
+    constructor Create(const Text: string);
+    procedure GetSelectTableNames(List: TStrings);
+    procedure GetUpdateTableName(var TableName: string);
+    procedure GetUpdateFields(List: TStrings);
+    procedure GetWhereFields(List: TStrings);
+  end;
+
+function EditDataDriverUpdateSQL(ADataDriver: TCustomSQLDataDriverEh): Boolean;
+
+implementation

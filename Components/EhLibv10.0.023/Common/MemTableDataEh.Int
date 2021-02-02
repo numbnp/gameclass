@@ -1,0 +1,1557 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{             TMemTableDataEh component                 }
+{                                                       }
+{       Copyright (c) 2003-2020 by EhLib Team and       }
+{                Dmitry V. Bolshakov                    }
+{                                                       }
+{*******************************************************}
+
+unit MemTableDataEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Dialogs,
+{$IFDEF CIL}
+  EhLibVCLNET,
+{$ELSE}
+  {$IFDEF FPC}
+  EhLibLCL, bufdataset_parser,
+  {$ELSE}
+  EhLibVCL, SqlTimSt, DBCommon, DBConsts,
+  {$ENDIF}
+{$ENDIF}
+  Variants, FMTBcd,
+{$IFDEF EH_LIB_17} System.Types, {$ENDIF}
+{$IFDEF MSWINDOWS}
+  ComObj,
+{$ELSE}
+{$ENDIF}
+{$IFDEF EH_LIB_17} System.UITypes, System.Generics.Collections, {$ENDIF}
+  Classes, Db, Contnrs,
+  MemTreeEh, ToolCtrlsEh;
+
+type
+
+  TIntArray = array of Integer;
+  TMemTableDataEh = class;
+  TMTDataStructEh = class;
+  TRecordsViewEh = class;
+  TRecordsListNotificatorEh = class;
+  TMemoryRecordEh = class;
+  TMemRecViewEh = class;
+
+
+  TRecordsRangeEh = record
+    LowIndex: Integer;
+    HighIndex: Integer;
+  end;
+
+  TRecordsRangesEh = array of TRecordsRangeEh;
+
+{ TAutoIncrementEh }
+
+  TAutoIncrementEh = class(TPersistent)
+  private
+    FStep: Integer;
+    FInitValue: Integer;
+    procedure SetInitValue(const Value: Integer);
+  protected
+    FCurValue: Longint;
+  public
+    constructor Create;
+    procedure Assign(Source: TPersistent); override;
+    property CurValue: Longint read FCurValue;
+    function Promote: Longint;
+    procedure Reset;
+  published
+    property InitValue: Integer read FInitValue write SetInitValue default -1;
+    property Step: Integer read FStep write FStep default -1;
+  end;
+
+{ TUpdateErrorEh }
+
+  TUpdateErrorEh = class(TPersistent)
+  private
+    FException: Exception;
+  public
+    constructor Create(AException: Exception);
+    destructor Destroy; override;
+    property ExceptionObject: Exception read FException;
+  end;
+
+{ TDataSetExprParserEh }
+
+  TDataSetExprParserTypeEh = (dsptFilterEh, dsptAggregateEh);
+
+  TDataSetExprParserEh = class
+  private
+    FDataSet: TDataSet;
+    {$IFDEF FPC}
+    FExprData: TBufDatasetParser;
+    {$ELSE}
+    FExprData: TExprData;
+    {$ENDIF}
+    FExprDataSize: Integer;
+    FExprParserType: TDataSetExprParserTypeEh;
+  public
+    constructor Create(ADataSet: TDataSet; ExprParserType: TDataSetExprParserTypeEh);
+    destructor Destroy; override;
+    procedure ParseExpression(const Expr: String);
+    function IsCurRecordInFilter(Rec: TMemoryRecordEh): Boolean;
+{$IFDEF NEXTGEN}
+    function IsCurRecordBufInFilter(Buffer: TRecBuf): Boolean;
+{$ELSE}
+    function IsCurRecordBufInFilter(Buffer: TRecordBuffer): Boolean;
+{$ENDIF}
+    function CalcAggregateValue(RecordsView: TRecordsViewEh): Variant;
+    function HasData: Boolean;
+  end;
+
+{ TMTDataFieldEh }
+
+  TMTDataFieldEh = class(TComponent)
+  private
+    FAlignment: TAlignment;
+    FAutoIncrement: Boolean;
+{$IFDEF NEXTGEN} [Weak] {$ENDIF}
+    FDataStruct: TMTDataStructEh;
+    FDefaultExpression: String;
+    FDisplayLabel: String;
+    FDisplayWidth: Integer;
+    FEditMask: String;
+    FFieldId: Largeint;
+    FFieldName: String;
+    FGUID: String;
+    FReadOnly: Boolean;
+    FRequired: Boolean;
+    FSize: Integer;
+    FVisible: Boolean;
+    FCalculated: Boolean;
+
+    function GetIndex: Integer;
+    function GetName: String;
+    function IsDisplayWidthStored: Boolean;
+
+    procedure SetCalculated(const Value: Boolean);
+    procedure SetDataStruct(const Value: TMTDataStructEh);
+    procedure SetIndex(const Value: Integer);
+
+  protected
+    FVarDataType: TVarType;
+
+    function CreateUniqueName(const FieldName: string): string;
+    function DefaultSize: Integer; virtual;
+    function DefaultAlignment: TAlignment; virtual;
+    function DefValueForDefaultExpression: String; virtual;
+    function DefaultDisplayLabel: String; virtual;
+    function DefaultDisplayWidth: Integer; virtual;
+    function DefaultEditMask: String; virtual;
+    function DefaultRequired: Boolean; virtual;
+    function DefaultVisible: Boolean; virtual;
+    function GetAlignment: TAlignment; virtual;
+    function GetAutoIncrement: Boolean; virtual;
+    function GetDataType: TFieldType; virtual;
+    function GetDefaultExpression: String; virtual;
+    function GetDefaultWidth: Integer; virtual;
+    function GetDisplayLabel: String; virtual;
+    function GetDisplayWidth: Integer; virtual;
+    function GetEditMask: String; virtual;
+    function GetFieldName: String; virtual;
+    function GetReadOnly: Boolean; virtual;
+    function GetRequired: Boolean; virtual;
+    function GetSize: Integer; virtual;
+    function GetVisible: Boolean; virtual;
+
+    procedure SetAlignment(const Value: TAlignment); virtual;
+    procedure SetAutoIncrement(const Value: Boolean); virtual;
+    procedure SetDefaultExpression(const Value: String); virtual;
+    procedure SetDisplayLabel(const Value: String); virtual;
+    procedure SetDisplayWidth(const Value: Integer); virtual;
+    procedure SetEditMask(const Value: String); virtual;
+    procedure SetFieldName(const Value: String); virtual;
+    procedure SetReadOnly(const Value: Boolean); virtual;
+    procedure SetRequired(const Value: Boolean); virtual;
+    procedure SetSize(const Value: Integer); virtual;
+    procedure SetVisible(const Value: Boolean); virtual;
+
+    procedure CheckInactive;
+
+    procedure SetParentComponent(AParent: TComponent); override;
+    procedure ReadState(Reader: TReader); override;
+
+    procedure PropertyChanged;
+    property GUID: String read FGUID;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function GetParentComponent: TComponent; override;
+    function HasParent: Boolean; override;
+    function CanDinaSize: Boolean; virtual;
+    function GetVarDataType: TVarType; virtual;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure AssignDataType(FieldType: TFieldType); virtual;
+    procedure AssignProps(Field: TField); virtual;
+    procedure AssignPropsTo(Field: TField); virtual;
+{$IFDEF CIL}
+    procedure SetParentComponent(AParent: TComponent); override;
+{$ENDIF}
+    procedure WriteDataToWriter(var Value: Variant; Writer: TWriter); virtual;
+    procedure ReadDataFromReader(var Value: Variant; Reader: TReader); virtual;
+
+    property DataStruct: TMTDataStructEh read FDataStruct write SetDataStruct;
+    property DataType: TFieldType read GetDataType;
+    property Size: Integer read GetSize write SetSize;
+
+    property AutoIncrement: Boolean read GetAutoIncrement write SetAutoIncrement;
+    property Alignment: TAlignment read GetAlignment write SetAlignment default taLeftJustify;
+    property DefaultExpression: String read GetDefaultExpression write SetDefaultExpression;
+    property DisplayLabel: String read GetDisplayLabel write SetDisplayLabel;
+    property DisplayWidth: Integer read GetDisplayWidth write SetDisplayWidth stored IsDisplayWidthStored;
+    property EditMask: String read GetEditMask write SetEditMask;
+    property Required: Boolean read GetRequired write SetRequired default False;
+    property Visible: Boolean read GetVisible write SetVisible default True;
+    property Index: Integer read GetIndex write SetIndex;
+
+  published
+{$IFDEF CIL}
+{$ELSE}
+    property Name: String read GetName;
+{$ENDIF}
+    property FieldName: String read GetFieldName write SetFieldName;
+    property Calculated: Boolean read FCalculated write SetCalculated default False;
+  end;
+
+  TStringDataFieldTypesEh = (fdtStringEh, fdtFixedCharEh,
+    fdtWideStringEh, fdtGuidEh
+{$IFDEF EH_LIB_10}
+    , fdtFixedWideCharEh, fdtOraIntervalEh
+{$ENDIF}
+    );
+
+  TMTDataFieldClassEh = class of TMTDataFieldEh;
+
+{ TMTStringDataFieldEh }
+
+  TMTStringDataFieldEh = class(TMTDataFieldEh)
+  private
+    FFixedChar: Boolean;
+    FTransliterate: Boolean;
+    FStringDataType: TStringDataFieldTypesEh;
+    procedure SetStringDataType(const Value: TStringDataFieldTypesEh);
+
+  protected
+    function DefaultSize: Integer; override;
+    function GetDataType: TFieldType; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    function CanDinaSize: Boolean; override;
+    function GetDefaultWidth: Integer; override;
+
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property StringDataType: TStringDataFieldTypesEh read FStringDataType write SetStringDataType;
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property FixedChar: Boolean read FFixedChar write FFixedChar default False;
+    property Size default 20;
+    property Transliterate: Boolean read FTransliterate write FTransliterate default False;
+
+  end;
+
+  TNumericDataFieldTypesEh = (fdtSmallintEh, fdtIntegerEh, fdtWordEh,
+    fdtFloatEh, fdtCurrencyEh, fdtBCDEh, fdtAutoIncEh, fdtLargeintEh
+    ,fdtFMTBcdEh
+{$IFDEF EH_LIB_12}
+    ,fdtLongWordEh, fdtShortintEh, fdtByteEh, fdtExtendedEh
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+    ,fdtSingleEh
+{$ENDIF}
+    );
+
+{ TMTNumericDataFieldEh }
+
+  TMTNumericDataFieldEh = class(TMTDataFieldEh)
+  private
+    FDisplayFormat: string;
+    FEditFormat: string;
+    FCurrency: Boolean;
+    FMaxValue: Double;
+    FMinValue: Double;
+    FPrecision: Integer;
+    FNumericDataType: TNumericDataFieldTypesEh;
+
+    function GetScale: Integer;
+    function IsScaleStored: Boolean;
+
+    procedure SetCurrency(const Value: Boolean);
+    procedure SetDisplayFormat(const Value: string);
+    procedure SetEditFormat(const Value: string);
+    procedure SetMaxValue(const Value: Double);
+    procedure SetMinValue(const Value: Double);
+    procedure SetPrecision(const Value: Integer);
+    procedure SetNumericDataType(const Value: TNumericDataFieldTypesEh);
+    procedure SetScale(const Value: Integer);
+
+  protected
+    function DefaultAlignment: TAlignment; override;
+    function GetDataType: TFieldType; override;
+    function GetDefaultWidth: Integer; override;
+    function DefaultSize: Integer; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    function CanDinaSize: Boolean; override;
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property NumericDataType: TNumericDataFieldTypesEh read FNumericDataType write SetNumericDataType;
+    property AutoIncrement;
+    property Alignment default taRightJustify;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property DisplayFormat: string read FDisplayFormat write SetDisplayFormat;
+    property EditFormat: string read FEditFormat write SetEditFormat;
+    property currency: Boolean read FCurrency write SetCurrency;
+    property MaxValue: Double read FMaxValue write SetMaxValue;
+    property MinValue: Double read FMinValue write SetMinValue;
+    property Precision: Integer read FPrecision write SetPrecision;
+    property Scale: Integer read GetScale write SetScale stored IsScaleStored;
+  end;
+
+  TDateTimeDataFieldTypesEh = (fdtDateEh, fdtTimeEh, fdtDateTimeEh
+   );
+
+{ TMTDateTimeDataFieldEh }
+
+  TMTDateTimeDataFieldEh = class(TMTDataFieldEh)
+  private
+    FDisplayFormat: string;
+    FDateTimeDataType: TDateTimeDataFieldTypesEh;
+    procedure SetDateTimeDataType(const Value: TDateTimeDataFieldTypesEh);
+
+  protected
+    function GetDataType: TFieldType; override;
+    function GetDefaultWidth: Integer; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property DateTimeDataType: TDateTimeDataFieldTypesEh read FDateTimeDataType write SetDateTimeDataType;
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property DisplayFormat: string read FDisplayFormat write FDisplayFormat;
+  end;
+
+{ TMTBlobDataFieldEh }
+
+  TMTBlobDataFieldEh = class(TMTDataFieldEh)
+  private
+    FGraphicHeader: Boolean;
+    FTransliterate: Boolean;
+    {$IFDEF FPC}
+    FBlobType: TFieldType;
+    {$ELSE}
+    FBlobType: TBlobType;
+    {$ENDIF}
+
+    function GetBlobType: TBlobType;
+
+    procedure SetBlobType(const Value: TBlobType);
+    procedure SetGraphicHeader(const Value: Boolean);
+    procedure SetTransliterate(const Value: Boolean);
+
+  protected
+    function GetDataType: TFieldType; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property BlobType: TBlobType read GetBlobType write SetBlobType default ftBlob;
+    property GraphicHeader: Boolean read FGraphicHeader write SetGraphicHeader default True;
+    property Transliterate: Boolean read FTransliterate write SetTransliterate;
+  end;
+
+{ TMTBooleanDataFieldEh }
+
+  TMTBooleanDataFieldEh = class(TMTDataFieldEh)
+  private
+    FDisplayValues: string;
+    procedure SetDisplayValues(const Value: string);
+
+  protected
+    function GetDataType: TFieldType; override;
+    function GetDefaultWidth: Integer; override;
+
+  public
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+    procedure Assign(Source: TPersistent); override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+
+  published
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property DisplayValues: string read FDisplayValues write SetDisplayValues;
+  end;
+
+  { TMTInterfaceDataFieldEh }
+
+  TInterfaceDataFieldTypesEh = (fdtInterfaceEh, fdtIDispatchEh);
+
+  TMTInterfaceDataFieldEh = class(TMTDataFieldEh)
+  private
+    FInterfaceDataType: TInterfaceDataFieldTypesEh;
+    procedure SetInterfaceDataType(const Value: TInterfaceDataFieldTypesEh);
+
+  protected
+    function GetDataType: TFieldType; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+
+  published
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property InterfaceDataType: TInterfaceDataFieldTypesEh read FInterfaceDataType write SetInterfaceDataType;
+    property Required;
+    property Visible;
+  end;
+
+  { TMTVariantDataFieldEh }
+
+  TVariantDataFieldTypesEh = (fdtVariant, fdtBytes, fdtVarBytes);
+
+  TMTVariantDataFieldEh = class(TMTDataFieldEh)
+  private
+    FVariantDataType: TVariantDataFieldTypesEh;
+    procedure SetVariantDataType(const Value: TVariantDataFieldTypesEh);
+
+  protected
+    function GetDataType: TFieldType; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    function CanDinaSize: Boolean; override;
+    function GetDefaultWidth: Integer; override;
+    function IsSizeStored: Boolean;
+    procedure AssignDataType(FieldType: TFieldType); override;
+
+  published
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property VariantDataType: TVariantDataFieldTypesEh read FVariantDataType write SetVariantDataType;
+    property Required;
+    property Size stored IsSizeStored;
+    property Visible;
+  end;
+
+  { TMTRefObjectFieldEh }
+
+  TMTRefObjectFieldEh = class(TMTDataFieldEh)
+  protected
+    function GetDataType: TFieldType; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    function CanDinaSize: Boolean; override;
+    function GetVarDataType: TVarType; override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+
+  published
+    property Alignment;
+    property DisplayLabel;
+    property DisplayWidth;
+    property Required;
+    property Visible;
+  end;
+
+  TSQLTimeStampDataFieldTypesEh = (fdtTimeStampEh
+{$IFDEF EH_LIB_10}
+   ,fdtOraTimeStampEh
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+   ,fdtTimeStampOffsetEh
+{$ENDIF}
+   );
+
+{ TMTSQLTimeStampDataFieldEh }
+
+  TMTSQLTimeStampDataFieldEh = class(TMTDataFieldEh)
+  private
+    FDisplayFormat: string;
+    FSQLTimeStampDataFieldType: TSQLTimeStampDataFieldTypesEh;
+
+  protected
+    function GetDataType: TFieldType; override;
+    procedure SetSQLTimeStampDataFieldType(const Value: TSQLTimeStampDataFieldTypesEh);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure AssignDataType(FieldType: TFieldType); override;
+    procedure AssignProps(Field: TField); override;
+    procedure AssignPropsTo(Field: TField); override;
+
+  published
+    property SQLTimeStampDataFieldType: TSQLTimeStampDataFieldTypesEh read FSQLTimeStampDataFieldType write SetSQLTimeStampDataFieldType;
+    property Alignment;
+    property DefaultExpression;
+    property DisplayLabel;
+    property DisplayWidth;
+    property EditMask;
+    property Required;
+    property Visible;
+
+    property DisplayFormat: string read FDisplayFormat write FDisplayFormat;
+  end;
+
+{ TMTDataStructEh }
+
+  TMTDataStructEh = class(TComponent)
+  private
+    FList: TObjectListEh;
+    FMemTableData: TMemTableDataEh;
+    FNextFieldId: Largeint;
+    FStructChanged: Boolean;
+    FOnStructChanged: TNotifyEvent;
+    FUpdateCount: Integer;
+    function GetCount: Integer;
+    function GetDataField(Index: Integer): TMTDataFieldEh;
+
+  protected
+    function GetChildOwner: TComponent; override;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+    procedure FieldPropertyChanged;
+    procedure ConvertRecordsData(NewDataStruct: TMTDataStructEh);
+
+  public
+    constructor Create(AMemTableData: TMemTableDataEh); reintroduce;
+    destructor Destroy; override;
+
+    function BeginRestructure: TMTDataStructEh;
+    function BuildAndCopyDataFieldForField(AField: TField): TMTDataFieldEh;
+    function BuildDataFieldForDef(const Name: string; DataType: TFieldType; Size, Precision: Integer): TMTDataFieldEh;
+    function BuildDataFieldForField(AField: TField): TMTDataFieldEh;
+    function BuildDataFieldForFieldDef(AFieldDef: TFieldDef): TMTDataFieldEh;
+    function ChangeFieldType(const FieldName: string; FieldClass: TMTDataFieldClassEh): TMTDataFieldEh;
+    function CreateField(FieldClass: TMTDataFieldClassEh): TMTDataFieldEh;
+    function FieldByName(const FieldName: string): TMTDataFieldEh;
+    function FieldIndex(const FieldName: string): Integer;
+    function FieldsIndex(const FieldNames: string): TIntArray;
+    function FindField(const FieldName: string): TMTDataFieldEh;
+    function FindFieldByGIUD(const GUID: string): TMTDataFieldEh;
+    function GetCopy: TMTDataStructEh;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure BeginUpdate;
+    procedure BuildFieldDefsFromStruct(FieldDefs: TFieldDefs);
+    procedure BuildStructFromFieldDefs(FieldDefs: TFieldDefs);
+    procedure BuildStructFromFields(Fields: TFields);
+    procedure CheckFieldName(const FieldName: string);
+    procedure Clear;
+    procedure ClearStructChanged;
+    procedure EndRestructure(NewStrcuture: TMTDataStructEh; ApplyNewStrcuture: Boolean);
+    procedure EndUpdate(AStructChanged: Boolean);
+    procedure GetFieldList(List: TObjectList; const FieldNames: string);
+    procedure InsertField(Field: TMTDataFieldEh);
+    procedure RemoveField(Field: TMTDataFieldEh);
+    procedure StructChanged;
+
+    property Count: Integer read GetCount;
+    property DataFields[Index: Integer]: TMTDataFieldEh read GetDataField; default;
+    property MemTableData: TMemTableDataEh read FMemTableData;
+
+    property OnStructChanged: TNotifyEvent read FOnStructChanged write FOnStructChanged;
+  end;
+
+
+  TRecordsListEh = class;
+
+
+  TRecDataValues = array of Variant;
+  PRecValues = ^TRecDataValues;
+
+  TMemBlobData = Variant;
+  TCompareRecords = function (Rec1, Rec2: TMemoryRecordEh; ParamSort: TObject): Integer of object;
+
+  TRecordsListNotification =
+    (rlnRecAddingEh, rlnRecAddedEh,
+     rlnRecChangingEh, rlnRecChangedEh,
+     rlnRecDeletingEh, rlnRecDeletedEh,
+     rlnListChangingEh, rlnListChangedEh,
+     rlnRecMarkingForDelEh, rlnRecMarkedForDelEh);
+
+  TRecordsListNotificatorDataEventEh =
+    procedure (MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification) of object;
+
+  TDataValueVersionEh = (dvvOldValueEh, dvvCurValueEh, dvvEditValueEh, dvvValueEh,
+    dvvOldestValue, dvvRefreshValue);
+  TRecordEditStateEh = (resBrowseEh, resEditEh, resInsertEh, resEditForRefresh);
+
+{ TMemoryRecordEh }
+
+  TMemoryRecordEh = class(TPersistent)
+  private
+    FData: TRecDataValues;
+{$IFDEF NEXTGEN} [Weak] {$ENDIF}
+    FDataStruct: TMTDataStructEh;
+    FEditChanged: Boolean;
+    FEditState: TRecordEditStateEh;
+    FHashCode: LongWord;
+    FIndex: Integer;
+    FOldData: TRecDataValues;
+{$IFDEF NEXTGEN} [Weak] {$ENDIF}
+    FRecordsList: TRecordsListEh;
+    FTmpOldRecValue: TRecDataValues;
+    FUpdateError: TUpdateErrorEh;
+    FUpdateIndex: Integer;
+    FUpdateStatus: TUpdateStatus;
+
+    function GetAttached: Boolean;
+    function GetDataIndexValues(const FieldIndexes: TIntArray; DataValueVersion: TDataValueVersionEh): Variant;
+    function GetDataStruct: TMTDataStructEh; {$IFDEF EH_LIB_8} inline;{$ENDIF}
+    function GetDataValue(const FieldIndex: Integer; DataValueVersion: TDataValueVersionEh): Variant;
+    function GetDataValues(const FieldNames: string; DataValueVersion: TDataValueVersionEh): Variant;
+    function GetIndex: Integer;
+
+    procedure SetDataIndexValues(const FieldIndexes: TIntArray; DataValueVersion: TDataValueVersionEh; const VarValue: Variant);
+    procedure SetDataValue(const FieldIndex: Integer; DataValueVersion: TDataValueVersionEh; const Value: Variant);
+    procedure SetDataValues(const FieldNames: string; DataValueVersion: TDataValueVersionEh; const VarValue: Variant);
+    procedure SetUpdateStatus(const Value: TUpdateStatus);
+    procedure InernalMergeChanges(RemoveDeleted: Boolean);
+
+  protected
+    procedure ReadData(Reader: TReader);
+    procedure SetIndex(Value: Integer);
+    procedure WriteData(Writer: TWriter);
+
+    property Data: TRecDataValues read FData;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function EditState: TRecordEditStateEh;
+
+    procedure Cancel;
+    procedure Edit;
+    procedure EditForRefresh;
+    procedure MergeChanges;
+    procedure Post;
+    procedure RefreshRecord(Rec: TMemoryRecordEh);
+    procedure RevertRecord;
+
+    property Index: Integer read GetIndex;
+    property Attached: Boolean read GetAttached;
+    property DataValues[const FieldNames: string; DataValueVersion: TDataValueVersionEh]: Variant read GetDataValues write SetDataValues;
+    property DataIndexValues[const FieldIndexes: TIntArray; DataValueVersion: TDataValueVersionEh]: Variant read GetDataIndexValues write SetDataIndexValues;
+    property Value[const FieldIndex: Integer; DataValueVersion: TDataValueVersionEh]: Variant read GetDataValue write SetDataValue;
+    property DataStruct: TMTDataStructEh read GetDataStruct;
+    property HashCode: LongWord read FHashCode;
+    property OldData: TRecDataValues read FOldData;
+    property RecordsList: TRecordsListEh read FRecordsList;
+    property UpdateError: TUpdateErrorEh read FUpdateError write FUpdateError;
+    property UpdateIndex: Integer read FUpdateIndex write FUpdateIndex;
+    property UpdateStatus: TUpdateStatus read FUpdateStatus write SetUpdateStatus;
+  end;
+
+  TMemoryRecordEhClass = class of TMemoryRecordEh;
+
+  TRecordsListFetchRecordsEventEh = function (Count: Integer): Integer of object;
+  TRecordsListApplyUpdatesEventEh = procedure (AMemTableData: TMemTableDataEh) of object;
+  TRecordsListRecordMovedEventEh = procedure (Item: TMemoryRecordEh; OldIndex, NewIndex: Integer) of object;
+  TRecordsListCalcLookupBufferEventEh = procedure (Item: TMemoryRecordEh; RecView: TMemRecViewEh) of object;
+  TMemoryRecordEventEh = procedure (MemRec: TMemoryRecordEh; var FieldValues: TVariantArrayEh) of object;
+
+{ TRecordsListNotificatorEh }
+
+  TRecordsListNotificatorEh = class(TComponent)
+  private
+    FMemTableData: TMemTableDataEh;
+    FOnAfterDataEvent: TRecordsListNotificatorDataEventEh;
+    FOnApplyUpdates: TRecordsListApplyUpdatesEventEh;
+    FOnDataEvent: TRecordsListNotificatorDataEventEh;
+    FOnFetchRecords: TRecordsListFetchRecordsEventEh;
+    FOnRecordMoved: TRecordsListRecordMovedEventEh;
+    FDataObject: TComponent;
+    FOnStructChanged: TRecordsListApplyUpdatesEventEh;
+
+    procedure SetMemTableData(const Value: TMemTableDataEh);
+    procedure SetDataObject(const Value: TComponent);
+
+  protected
+    function FetchRecords(Count: Integer): Integer; virtual;
+
+    procedure AfterDataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); virtual;
+    procedure ApplyUpdates(AMemTableData: TMemTableDataEh);
+    procedure DataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); virtual;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure RecordAdded(MemRec: TMemoryRecordEh; Index: Integer); virtual;
+    procedure RecordChanged(MemRec: TMemoryRecordEh; Index: Integer); virtual;
+    procedure RecordDeleted(MemRec: TMemoryRecordEh; Index: Integer); virtual;
+    procedure RecordListChanged; virtual;
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure StructChanged(AMemTableData: TMemTableDataEh); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property DataObject: TComponent read FDataObject write SetDataObject;
+
+    property OnAfterDataEvent: TRecordsListNotificatorDataEventEh read FOnAfterDataEvent write FOnAfterDataEvent;
+    property OnApplyUpdates: TRecordsListApplyUpdatesEventEh read FOnApplyUpdates write FOnApplyUpdates;
+    property OnDataEvent: TRecordsListNotificatorDataEventEh read FOnDataEvent write FOnDataEvent;
+    property OnFetchRecords: TRecordsListFetchRecordsEventEh read FOnFetchRecords write FOnFetchRecords;
+    property OnRecordMoved: TRecordsListRecordMovedEventEh read FOnRecordMoved write FOnRecordMoved;
+    property OnStructChanged: TRecordsListApplyUpdatesEventEh read FOnStructChanged write FOnStructChanged;
+  end;
+
+  TMTIndexEh = class;
+  TMTIndexesEh = class;
+
+  {TRecordsListEh}
+
+  TRecordsListEh = class(TComponent)
+  private
+    FCachedUpdates: Boolean;
+    FDeletedList: TObjectListEh;
+    FDeltaList: TObjectListEh;
+    FIndexes: TMTIndexesEh;
+    FItemClass: TMemoryRecordEhClass;
+    FMemTableData: TMemTableDataEh;
+    FNewHashCode: LongWord;
+    FRecList: TObjectListEh;
+    FUpdateCount: Integer;
+
+    function GeRecValCount: Integer;
+    function GetCount: Integer;
+    function GetDataStruct: TMTDataStructEh;
+    function GetRec(Index: Integer): TMemoryRecordEh;
+    function GetValue(RecNo, ValNo: Integer): Variant;
+    function IsEmpty: Boolean;
+
+    procedure ReadData(Reader: TReader);
+    procedure SetCachedUpdates(const Value: Boolean);
+    procedure SetRec(Index: Integer; const Value: TMemoryRecordEh);
+    procedure SetValue(RecNo, ValNo: Integer; const Value: Variant);
+    procedure WriteData(Writer: TWriter);
+  protected
+    function AddInsertRecord(Rec: TMemoryRecordEh; Index: Integer; Append: Boolean; Fetching: Boolean): Integer;
+    function Delete(Index: Integer): TMemoryRecordEh;
+    function NewHashCode: LongWord;
+
+    procedure ApplyUpdateFor(Rec: TMemoryRecordEh; UpdateStatus: TUpdateStatus);
+    procedure ApplyUpdates(AMemTableData: TMemTableDataEh);
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure InitRecord(RecValues: TRecDataValues);
+    procedure Notify(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); reintroduce; virtual;
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure ReIndexRecs(FromIndex, ToIndex: Integer);
+    procedure CheckForDestroyRecord(Rec: TMemoryRecordEh);
+    procedure FreeDeletedRecords;
+    procedure RecListExchange(Index1, Index2: Integer);
+    procedure DeleteRecordNilPos(Index: Integer);
+    procedure PackRecList;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function AddRecord(Rec: TMemoryRecordEh): Integer;
+    function FetchRecord(Rec: TMemoryRecordEh): Integer;
+    function HasCachedChanges: Boolean;
+    function IndexOf(Item: TMemoryRecordEh): Integer;
+    function NewRecord: TMemoryRecordEh;
+
+    procedure BeginUpdate; virtual;
+    procedure CancelUpdates;
+    procedure CleanupChangedRecs;
+    procedure Clear;
+    procedure DeleteRecord(Index: Integer);
+    procedure DeleteRecords(const RecordsRanges: array of TRecordsRangeEh);
+    procedure EndUpdate; virtual;
+    procedure InsertRecord(Index: Integer; Rec: TMemoryRecordEh);
+    procedure MergeChangeLog;
+    procedure Move(CurIndex, NewIndex: Integer);
+    procedure PersistDeleteRecord(Index: Integer);
+    procedure PersistDeleteRecords(const RecordsRanges: array of TRecordsRangeEh);
+    procedure PersistRemoveRecord(Index: Integer);
+    procedure QuickSort(L, R: Integer; Compare: TCompareRecords; ParamSort: TObject); virtual;
+    procedure RefreshRecord(Index: Integer; FromRec: TMemoryRecordEh);
+    procedure RevertRecord(Index: Integer);
+    procedure SetAutoIncValue(Rec: TMemoryRecordEh);
+    procedure SortData(Compare: TCompareRecords; ParamSort: TObject);
+
+    property CachedUpdates: Boolean read FCachedUpdates write SetCachedUpdates;
+    property Count: Integer read GetCount;
+    property DataStruct: TMTDataStructEh read GetDataStruct;
+    property DeltaList: TObjectListEh read FDeltaList;
+    property Indexes: TMTIndexesEh read FIndexes;
+    property MemTableData: TMemTableDataEh read FMemTableData;
+    property Rec[Index: Integer]: TMemoryRecordEh read GetRec write SetRec; default;
+    property RecValCount: Integer read GeRecValCount;
+    property Value[RecNo, ValNo: Integer]: Variant read GetValue write SetValue;
+  end;
+
+{ TMemTableDataEh }
+
+  TMemTableDataEh = class(TComponent)
+  private
+    FAutoIncrement: TAutoIncrementEh;
+    FDataStruct: TMTDataStructEh;
+    FIncFieldIndexes: TIntArray;
+    FNewDataStruct: TMTDataStructEh;
+    FNotificators: TObjectListEh;
+    FRecordsList: TRecordsListEh;
+    FRestructMode: Boolean;
+    FStoreStructInStream: Boolean;
+    FStoreRecordsInStream: Boolean;
+    FOnFieldCalculation: TMemoryRecordEventEh;
+
+    function GetIsEmpty: Boolean;
+
+    procedure AncestorNotFound(Reader: TReader; const ComponentName: string; ComponentClass: TPersistentClass; var Component: TComponent);
+    procedure CreateComponent(Reader: TReader; ComponentClass: TComponentClass; var Component: TComponent);
+    procedure ReadAutoIncCurValue(Reader: TReader);
+    procedure WriteAutoIncCurValue(Writer: TWriter);
+    procedure UpdateCalculatedField(MemRec: TMemoryRecordEh);
+    procedure SetOnFieldCalculation(const Value: TMemoryRecordEventEh);
+
+  protected
+    function CheckApplyUpdatesConsumers: Boolean;
+    function CreateRecordsList: TRecordsListEh; virtual;
+    function GetAutoIncrement: TAutoIncrementEh; virtual;
+    function GetDataStruct: TMTDataStructEh; virtual;
+    function GetRecordsList: TRecordsListEh; virtual;
+
+    procedure AddNotificator(RecordsList: TRecordsListNotificatorEh); virtual;
+    procedure ApplyUpdates(AMemTableData: TMemTableDataEh); virtual;
+    procedure CheckInactive;  virtual;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+    procedure Notify(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); reintroduce; virtual;
+    procedure ReadState(Reader: TReader); override;
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure RemoveNotificator(RecordsList: TRecordsListNotificatorEh);
+    procedure Restruct;
+    procedure SetAutoIncrement(const Value: TAutoIncrementEh); virtual;
+    procedure SetAutoIncValue(Rec: TMemoryRecordEh); virtual;
+    procedure StructChanged; virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function BeginRestruct: TMTDataStructEh; virtual;
+    function FetchRecords(Count: Integer): Integer; virtual;
+
+    procedure CancelRestruct; virtual;
+    procedure CommitRestruct; virtual;
+    procedure DestroyTable; virtual;
+    procedure ResetRecords; virtual;
+
+    property AutoIncrement: TAutoIncrementEh read GetAutoIncrement write SetAutoIncrement;
+    property DataStruct: TMTDataStructEh read GetDataStruct;
+    property IsEmpty: Boolean read GetIsEmpty;
+    property RecordsList: TRecordsListEh read GetRecordsList;
+    property StoreStructInStream: Boolean read FStoreStructInStream write FStoreStructInStream;
+    property StoreRecordsInStream: Boolean read FStoreRecordsInStream write FStoreRecordsInStream;
+
+    property OnFieldCalculation: TMemoryRecordEventEh read FOnFieldCalculation write SetOnFieldCalculation;
+  end;
+
+{ TMemTableDataShadowEh }
+
+  TMemTableDataShadowEh = class(TMemTableDataEh)
+  private
+    FMasterTable: TMemTableDataEh;
+  protected
+    function GetDataStruct: TMTDataStructEh; override;
+    procedure SetAutoIncValue(Rec: TMemoryRecordEh); override;
+  public
+    constructor Create(AMasterTable: TMemTableDataEh); reintroduce; virtual;
+    destructor Destroy; override;
+  end;
+
+{ TIndexItemEh }
+
+  TIndexItemEh = class(TObject)
+  public
+    Value: Variant;
+    RecIndex: Integer;
+    constructor Create(AValue: Variant; ARecIndex: Integer);
+  end;
+
+{ EUniqueKeyViolationEh }
+
+  EUniqueKeyViolationEh = class(EDatabaseError)
+  public
+    FieldNames: String;
+    Value: Variant;
+
+    constructor Create(const Msg: string; AFieldNames: String; AValue: Variant);
+  end;
+
+{ TMTIndexEh }
+
+  TMTIndexEh = class(TCollectionItem)
+  private
+    FActive: Boolean;
+    FFields: String;
+    FOldValue: Variant;
+    FPrimary: Boolean;
+    FRecList: TObjectList;
+    FRecordsList: TRecordsListEh;
+    FUnique: Boolean;
+
+    function GetItems(Index: Integer): TIndexItemEh;
+    function GetKeyValue(Index: Integer): Variant;
+
+    procedure SetActive(const Value: Boolean);
+    procedure SetFields(const Value: String);
+    procedure SetKeyValue(Index: Integer; const Value: Variant);
+    procedure SetPrimary(const Value: Boolean);
+    procedure SetUnique(const Value: Boolean);
+
+  protected
+    procedure RLDataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification);
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure InsertIndexItemForValue(InitIndex: Integer; Value: Variant; IndexItem: TIndexItemEh); virtual;
+
+    property RecList: TObjectList read FRecList;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    constructor CreateApart(ARecordsList: TRecordsListEh);
+    destructor Destroy; override;
+
+    function Count: Integer;
+    function FindKeyValueIndex(Value: Variant; var Index: Integer): Boolean;
+    function FindRecordIndexByKey(Value: Variant; var Index: Integer): Boolean;
+    function RecordsList: TRecordsListEh;
+
+    procedure CheckUnique;
+    procedure ClearIndex;
+    procedure FillMatchedKeyList(Value: Variant; List: TObjectList);
+    procedure FillMatchedRecsList(Value: Variant; List: TObjectList);
+    procedure QuickSort(L, R: Integer);
+    procedure RebuildIndex;
+
+    property Active: Boolean read FActive write SetActive default False;
+    property Fields: String read FFields write SetFields;
+    property Item[Index: Integer]: TIndexItemEh read GetItems;
+    property KeyValue[Index: Integer]: Variant read GetKeyValue;
+    property Primary: Boolean read FPrimary write SetPrimary default False;
+    property Unique: Boolean read FUnique write SetUnique default False;
+  end;
+
+{ TMTIndexesEh }
+
+  TMTIndexesEh = class(TCollection)
+  private
+    FRecList: TRecordsListEh;
+    function GetItem(Index: Integer): TMTIndexEh;
+    procedure SetItem(Index: Integer; const Value: TMTIndexEh);
+  protected
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure RLDataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification);
+  public
+    constructor Create(ARecList: TRecordsListEh);
+    destructor Destroy; override;
+
+    function Add: TMTIndexEh;
+    function GetIndexForFields(const Fields: String): TMTIndexEh;
+
+    procedure UpdateIndexes;
+
+    property Items[Index: Integer]: TMTIndexEh read GetItem write SetItem;
+  end;
+
+{ TMTAggregateEh }
+
+  TMTAggregatesEh = class;
+
+  TMTAggregateEh = class(TCollectionItem)
+  private
+    FActive: Boolean;
+    FAggrExpr: TDataSetExprParserEh;
+    FDataSet: TDataSet;
+    FDataType: TFieldType;
+    FExpression: string;
+    FInUse: Boolean;
+    FValue: Variant;
+    procedure SetActive(Value: Boolean);
+    procedure SetExpression(const Text: string);
+
+  public
+    constructor Create(Aggregates: TMTAggregatesEh; ADataSet: TDataSet); reintroduce; overload;
+    destructor Destroy; override;
+
+    function Aggregates: TMTAggregatesEh;
+    function GetDisplayName: string; override;
+    function Value: Variant;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure Recalc;
+    procedure Reset;
+
+    property DataSet: TDataSet read FDataSet;
+    property DataType: TFieldType read FDataType;
+
+  published
+    property Active: Boolean read FActive write SetActive default False;
+    property Expression: string read FExpression write SetExpression;
+  end;
+
+{ TMTAggregatesEh }
+
+  TMTAggregatesEh = class(TCollection)
+  private
+    FActive: Boolean;
+    FOwner: TPersistent;
+
+    function GetItem(Index: Integer): TMTAggregateEh;
+
+    procedure SetActive(const Value: Boolean);
+    procedure SetItem(Index: Integer; Value: TMTAggregateEh);
+  protected
+    function GetOwner: TPersistent; override;
+  public
+    constructor Create(Owner: TPersistent);
+
+    function Add: TMTAggregateEh;
+    function DataSet: TDataSet;
+
+    procedure Clear;
+    procedure Recalc;
+    procedure Reset;
+
+    property Active: Boolean read FActive write SetActive;
+    property Items[Index: Integer]: TMTAggregateEh read GetItem write SetItem; default;
+    property UpdateCount;
+  end;
+
+  TMemoryTreeListEh = class;
+
+  { TMemoryTreeListOrderByList }
+
+  TMemoryTreeListOrderByList = class(TOrderByList)
+  protected
+    FTreeList: TMemoryTreeListEh;
+    function FindFieldIndex(const FieldName: String): Integer; override;
+    procedure AssignFieldIndex(OrderItem: TOrderByItemEh; const FieldIndex: Integer); override;
+  public
+    constructor Create(ATreeList: TMemoryTreeListEh);
+  end;
+
+{ TMemRecViewEh }
+
+  TMemRecViewEh = class(TBaseTreeNodeEh)
+  private
+    FInSortedListIndex: Integer;
+    FLookupBuffer: TRecDataValues;
+{$IFDEF NEXTGEN} [Weak] {$ENDIF}
+    FRecordsView: TRecordsViewEh;
+    FLockUpdate: Boolean;
+
+    function GetInSortedListIndex: Integer;
+    function GetItem(const Index: Integer): TMemRecViewEh; reintroduce;
+    function GetNodeExpanded: Boolean;
+    function GetNodeHasChildren: Boolean;
+    function GetNodeHasVisibleChildren: Boolean;
+    function GetNodeIndex: Integer;
+    function GetNodeLevel: Integer;
+    function GetNodeOwner: TMemoryTreeListEh;
+    function GetNodeParent: TMemRecViewEh;
+    function GetNodesCount: Integer;
+    function GetNodeVisible: Boolean;
+    function GetRec: TMemoryRecordEh;
+    function GetVisibleNodeIndex: Integer;
+    function GetVisibleNodeItem(const Index: Integer): TMemRecViewEh;
+    function GetVisibleNodesCount: Integer;
+
+    procedure SetNodeExpanded(const Value: Boolean);
+    procedure SetNodeHasChildren(const Value: Boolean);
+    procedure SetNodeHasVisibleChildren(const Value: Boolean);
+    procedure SetNodeParent(const Value: TMemRecViewEh);
+    procedure SetIntenalNodeExpanded(const Value: Boolean);
+
+  protected
+    procedure ExpandedChanged; override;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    procedure SetLookupBufferLength(NewLength: Integer);
+    procedure SortByFields(const SortByStr: string);
+
+    property InSortedListIndex: Integer read GetInSortedListIndex;
+    property LookupBuffer: TRecDataValues read FLookupBuffer;
+    property NodeExpanded: Boolean read GetNodeExpanded write SetNodeExpanded;
+    property NodeHasChildren: Boolean read GetNodeHasChildren write SetNodeHasChildren;
+    property NodeHasVisibleChildren: Boolean read GetNodeHasVisibleChildren write SetNodeHasVisibleChildren;
+    property NodeIndex: Integer read GetNodeIndex;
+    property NodeItems[const Index: Integer]: TMemRecViewEh read GetItem; default;
+    property NodeLevel: Integer read GetNodeLevel;
+    property NodeOwner: TMemoryTreeListEh read GetNodeOwner;
+    property NodeParent: TMemRecViewEh read GetNodeParent write SetNodeParent;
+    property NodesCount: Integer read GetNodesCount;
+    property NodeVisible: Boolean read GetNodeVisible;
+    property Rec: TMemoryRecordEh read GetRec;
+    property RecordsView: TRecordsViewEh read FRecordsView;
+    property VisibleNodeIndex: Integer read GetVisibleNodeIndex;
+    property VisibleNodeItems[const Index: Integer]: TMemRecViewEh read GetVisibleNodeItem;
+    property VisibleNodesCount: Integer read GetVisibleNodesCount;
+  end;
+
+{ TMemoryTreeListEh }
+
+  TMemoryTreeListEh = class(TTreeListEh)
+  private
+    FDefaultNodeExpanded: Boolean;
+    FDefaultNodeHasChildren: Boolean;
+    FDefaultParentNode: TMemRecViewEh;
+    FFilterNodeIfParentVisible: Boolean;
+    FFlatListItems: TObjectList;
+    FFullBuildCheck: Boolean;
+    FInsertedNodeStack: TObjectListEh;
+    FOrderByList: TMemoryTreeListOrderByList;
+    FSortOrder: String;
+    FVisibleExpandedItems: TObjectList;
+    FVisibleItems: TObjectList;
+    FVisibleItemsObsolete: Boolean;
+
+    function GetAccountableCount: Integer;
+    function GetAccountableItem(const Index: Integer): TMemRecViewEh;
+    function GetFlatListCount: Integer;
+    function GetFlatListItem(const Index: Integer): TMemRecViewEh;
+    function GetKeyFieldNames: String;
+    function GetParentFieldNames: String;
+    function GetRoot: TMemRecViewEh;
+    function GetSortOrder: String;
+
+    procedure SetSortOrder(const Value: String);
+
+  protected
+    FRecordsViewEh: TRecordsViewEh;
+
+    function GetVisibleCount: Integer;
+    function GetVisibleExpandedItem(const Index: Integer): TMemRecViewEh; virtual;
+
+    procedure SetChieldVisibleForVisibleParents(Parent: TMemRecViewEh); virtual;
+    procedure SetChieldsVisible(Parent: TMemRecViewEh; Visible: Boolean; ARecurse: Boolean);
+    procedure UpdateOrderCaseInsensitive;
+
+  public
+    constructor Create(ARecordsViewEh: TRecordsViewEh);
+    destructor Destroy; override;
+
+    function AddChild(const Name: string; Parent: TMemRecViewEh; MemRecord: TMemoryRecordEh): TMemRecViewEh;
+    function AddChildAtKey(const Name, KeyFieldNames, ParentFieldNames: String; MemRecord: TMemoryRecordEh): TMemRecViewEh;
+    function CompareTreeNodes(Rec1, Rec2: TBaseTreeNodeEh; ParamSort: TObject): Integer; override;
+    function CheckReferenceLoop(MemRecord: TMemoryRecordEh; NewRefValue: Variant): Boolean;
+    function GetChildNodesForKey(StartNode: TMemRecViewEh; const KeyFieldNames: String; const ParentFieldNames: String; MemRecord: TMemoryRecordEh; ChildList: TObjectList): TMemRecViewEh;
+    function GetIndexForNode(Rec: TMemoryRecordEh; ParentNode: TMemRecViewEh): Integer;
+    function GetNode(StartNode: TMemRecViewEh; MemRecord: TMemoryRecordEh): TMemRecViewEh;
+    function GetNodeAtValue(StartNode: TMemRecViewEh; const FieldNames: String; const Value: Variant): TMemRecViewEh;
+    function GetParentNodeAtKey(StartNode: TMemRecViewEh; const KeyFieldNames: String; const ParentFieldNames: String; MemRecord: TMemoryRecordEh): TMemRecViewEh;
+    function GetParentNodeAtKeyValue(StartNode: TMemRecViewEh; const KeyFieldNames: String; const ParentFieldNames: String; RefKeyValue: Variant): TMemRecViewEh;
+    function GetParentNodeForRec(MemRecord: TMemoryRecordEh): TMemRecViewEh;
+    function GetParentNodeForRefValue(RefValue: Variant): TMemRecViewEh;
+    function UpdateParent(Node: TMemRecViewEh; const KeyFieldNames: String; const ParentFieldNames: String; MemRecord: TMemoryRecordEh; ReIndex: Boolean): TMemRecViewEh;
+    function GetNextVisibleSibling(Node: TMemRecViewEh): TMemRecViewEh;
+    function GetPriorVisibleSibling(Node: TMemRecViewEh): TMemRecViewEh;
+
+    function GetNext(Node: TMemRecViewEh): TMemRecViewEh;
+    function GetPrevious(Node: TMemRecViewEh): TMemRecViewEh;
+
+    procedure BuildVisibleItems;
+    procedure GetRecordsList(List: TObjectList; Node: TMemRecViewEh; ARecurse: Boolean = True);
+    procedure MoveTo(Node: TBaseTreeNodeEh; Destination: TBaseTreeNodeEh; Mode: TNodeAttachModeEh; ReIndex: Boolean); override;
+    procedure Resort; virtual;
+    procedure SortData(CompareProg: TCompareNodesEh; ParamSort: TObject; ARecurse: Boolean = True); override;
+    procedure UpdateNodesState(Parent: TMemRecViewEh);
+    procedure UpdateNodeState(Node: TMemRecViewEh; IsUpdateParent: Boolean);
+    procedure VisibleItemsBecomeObsolete;
+    procedure Collapse(Node: TMemRecViewEh; Recurse: Boolean);
+    procedure Expand(Node: TMemRecViewEh; Recurse: Boolean);
+    procedure UpdateSortedListIndexes;
+
+    property FlatListCount: Integer read GetFlatListCount;
+    property FlatListItem[const Index: Integer]: TMemRecViewEh read GetFlatListItem;
+    property FlatListItems: TObjectList read FFlatListItems;
+
+    property AccountableCount: Integer read GetAccountableCount;
+    property AccountableItem[const Index: Integer]: TMemRecViewEh read GetAccountableItem;
+    property AccountableItems: TObjectList read FVisibleItems;
+
+    property VisibleExpandedCount: Integer read GetVisibleCount;
+    property VisibleExpandedItem[const Index: Integer]: TMemRecViewEh read GetVisibleExpandedItem; default;
+    property VisibleExpandedItems: TObjectList read FVisibleExpandedItems;
+
+    property DefaultNodeExpanded: Boolean read FDefaultNodeExpanded write FDefaultNodeExpanded default False;
+    property DefaultNodeHasChildren: Boolean read FDefaultNodeHasChildren write FDefaultNodeHasChildren default False;
+    property DefaultParentNode: TMemRecViewEh read FDefaultParentNode write FDefaultParentNode;
+    property FullBuildCheck: Boolean read FFullBuildCheck write FFullBuildCheck;
+    property FilterNodeIfParentVisible: Boolean read FFilterNodeIfParentVisible write FFilterNodeIfParentVisible;
+    property KeyFieldNames: String read GetKeyFieldNames;
+    property ParentFieldNames: String read GetParentFieldNames;
+
+    property VisibleItemsObsolete: Boolean read FVisibleItemsObsolete;
+    property SortOrder: String read GetSortOrder write SetSortOrder;
+    property Root: TMemRecViewEh read GetRoot;
+
+    property OnExpandedChanged;
+    property OnExpandedChanging;
+  end;
+
+  { TRecordsViewOrderByList }
+
+  TRecordsViewOrderByList = class(TOrderByList)
+  protected
+    FRecordsView: TRecordsViewEh;
+    function FindFieldIndex(const FieldName: String): Integer; override;
+    procedure AssignFieldIndex(OrderItem: TOrderByItemEh; const FieldIndex: Integer); override;
+  public
+    constructor Create(ARecordsView: TRecordsViewEh);
+  end;
+
+{ TRecordsViewEh }
+  TRecordsViewFilterEventEh = function (Rec: TMemoryRecordEh; Node: TMemRecViewEh): Boolean of object;
+  TParseOrderByStrEventEh = function (const OrderByStr: String): TObject of object;
+  TGetPrefilteredListEventEh = function (): TObjectList of object;
+
+  TRecordsViewEh = class(TRecordsListNotificatorEh)
+  private
+    FAggregates: TMTAggregatesEh;
+    FCachedUpdates: Boolean;
+    FCachedUpdatesLockCount: Integer;
+    FCatchChanged: Boolean;
+    FFilterAborted: Boolean;
+    FMemoryTreeList: TMemoryTreeListEh;
+    FMemoryViewList: TObjectList;
+    FNotificators: TObjectListEh;
+    FOrderByList: TRecordsViewOrderByList;
+    FSorderViewList: TObjectListEh;
+    FSortedListIndexesObsolete: Boolean;
+    FSortOrder: String;
+    FSortOrderCaseInsensitive: Boolean;
+    FStatusFilter: TUpdateStatusSet;
+    FTreeViewKeyFieldName: String;
+    FTreeViewKeyFields: TIntArray;
+    FTreeViewRefParentFieldName: String;
+    FTreeViewRefParentFields: TIntArray;
+    FViewAsTreeList: Boolean;
+
+    FOnCalcLookupBuffer: TRecordsListCalcLookupBufferEventEh;
+    FOnCompareRecords: TCompareRecords;
+    FOnCompareTreeNode: TCompareNodesEh;
+    FOnFilterRecord: TRecordsViewFilterEventEh;
+    FOnGetPrefilteredList: TGetPrefilteredListEventEh;
+    FOnParseOrderByStr: TParseOrderByStrEventEh;
+    FOnViewDataEvent: TRecordsListNotificatorDataEventEh;
+    FOnViewRecordMovedEvent: TRecordsListRecordMovedEventEh;
+
+    function CompareRecords(Rec1, Rec2: TMemoryRecordEh): Integer;
+    function CreateMemRecView(Rec: TMemoryRecordEh): TMemRecViewEh;
+    function GetAccountableRecord(Index: Integer): TMemoryRecordEh;
+    function GetCount: Integer;
+    function GetMemTableData: TMemTableDataEh;
+    function GetOldRecVals(Index: Integer): TRecDataValues;
+    function GetRec(Index: Integer): TMemoryRecordEh;
+    function GetRecordView(Index: Integer): TMemRecViewEh;
+    function GetSortedListItem(Index: Integer): TMemRecViewEh;
+    function GetSortedListItemCount: Integer;
+    function GetSortOrder: String;
+    function GetStatusFilter: TUpdateStatusSet;
+    function GetValue(RecNo, ValNo: Integer): Variant;
+    function GetViewAsTreeList: Boolean;
+    function GetViewRecord(Index: Integer): TMemoryRecordEh;
+    function RemoveRecInMemoryViewList(Index: Integer): TMemRecViewEh;
+    function SearchNewPos(SortedList: TObjectList; MemRec: TMemoryRecordEh; OldIndex: Integer): Integer;
+    function SearchRec(SortedList: TObjectList; MemRec: TMemoryRecordEh): Integer;
+
+    procedure AddRecInMemoryViewList(RecView: TMemRecViewEh; Index: Integer);
+    procedure ClearMemoryViewList;
+    procedure DelRecInMemoryViewList(Index: Integer);
+    procedure SetMemTableData(const Value: TMemTableDataEh);
+    procedure SetRec(Index: Integer; const Value: TMemoryRecordEh);
+    procedure SetSortOrder(const Value: String);
+    procedure SetSortOrderCaseInsensitive(const Value: Boolean);
+    procedure SetStatusFilter(const Value: TUpdateStatusSet);
+    procedure SetTreeViewKeyFieldName(const Value: String);
+    procedure SetTreeViewRefParentFieldName(const Value: String);
+    procedure SetValue(RecNo, ValNo: Integer; const Value: Variant);
+    procedure SetViewAsTreeList(const Value: Boolean);
+    procedure UpdateOrderCaseInsensitive;
+    procedure UpdateSorderViewListIndexes;
+
+    procedure FillSortedList;
+    function AddToSortedList(MemRec: TMemoryRecordEh; Index: Integer): TMemRecViewEh;
+  protected
+
+    FDataSet: TDataSet;
+    FDisableFilterCount: Integer;
+
+    function  FilterRecord(MemRec: TMemoryRecordEh; Index: Integer; Node: TMemRecViewEh): Boolean; virtual;
+    procedure AddNotificator(RecordsList: TRecordsListNotificatorEh); virtual;
+    procedure RemoveNotificator(RecordsList: TRecordsListNotificatorEh);
+    procedure ClearMemoryTreeList;
+    procedure DataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); override;
+    procedure StructChanged(AMemTableData: TMemTableDataEh); override;
+    procedure Notify(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification); virtual;
+    procedure NotifyRecordMoved(MemRec: TMemoryRecordEh; OldIndex, NewIndex: Integer); virtual;
+    procedure RecordMoved(Item: TMemoryRecordEh; OldIndex, NewIndex: Integer); override;
+    procedure Resort; virtual;
+    procedure ResortList; virtual;
+    procedure ResortTreeList; virtual;
+
+    procedure UpdateLookupBuffer(RecView: TMemRecViewEh);
+  public
+    constructor Create(ADataSet: TDataSet); reintroduce;
+    destructor Destroy; override;
+
+
+    function AccountableItemsCount: Integer;
+    function AddRecord(Rec: TMemoryRecordEh): Integer;
+    function CalcAggrFieldFunc(const FieldName, AggrFuncName: String): Variant;
+    function IndexOfRec(Rec: TMemoryRecordEh): Integer;
+    function IndexOfSortedListRec(Rec: TMemoryRecordEh): Integer;
+    function NewRecord: TMemoryRecordEh;
+    function ViewItemsCount: Integer;
+
+    procedure CancelUpdates;
+    procedure DeleteRecord(Index: Integer);
+    procedure InsertRecord(Index: Integer; Rec: TMemoryRecordEh);
+    procedure InstantDisableFilter;
+    procedure InstantEnableFilter;
+    procedure LockCachedUpdates;
+    procedure MergeChangeLog;
+    procedure RebuildMemoryTreeList;
+    procedure RefreshFilteredRecsList(NotifyListChanged: Boolean);
+    procedure RefreshFilteredRecsTreeList;
+    procedure RefreshRecord(Index: Integer; Rec: TMemoryRecordEh);
+    procedure RevertRecord(Index: Integer);
+    procedure UnlockCachedUpdates;
+    procedure UpdateAllLookupBuffer;
+    procedure UpdateFields; virtual;
+    procedure UpdateSortedListIndexes;
+
+    procedure QuickSort(ViewList: TObjectList; L, R: Integer; Compare: TCompareRecords; ParamSort: TObject);
+    procedure SortData(Compare: TCompareRecords; ParamSort: TObject);
+
+    property AccountableRecord[Index: Integer]: TMemoryRecordEh read GetAccountableRecord;
+    property Aggregates: TMTAggregatesEh read FAggregates;
+    property CatchChanged: Boolean read FCatchChanged write FCatchChanged;
+    property Count: Integer read GetCount;
+    property FilterAborted: Boolean read FFilterAborted write FFilterAborted;
+    property MemoryTreeList: TMemoryTreeListEh read FMemoryTreeList;
+    property MemoryViewList: TObjectList read FMemoryViewList;
+    property MemTableData: TMemTableDataEh read GetMemTableData write SetMemTableData;
+    property OldRecVals[Index: Integer]: TRecDataValues read GetOldRecVals;
+    property Rec[Index: Integer]: TMemoryRecordEh read GetRec write SetRec;
+    property RecordView[Index: Integer]: TMemRecViewEh read GetRecordView;
+    property SortedListIndexesObsolete: Boolean read FSortedListIndexesObsolete;
+    property SortedListItem[Index: Integer]: TMemRecViewEh read GetSortedListItem;
+    property SortedListItemCount: Integer read GetSortedListItemCount;
+    property SortOrder: String read GetSortOrder write SetSortOrder;
+    property SortOrderCaseInsensitive: Boolean read FSortOrderCaseInsensitive write SetSortOrderCaseInsensitive;
+    property StatusFilter: TUpdateStatusSet read GetStatusFilter write SetStatusFilter default [usUnmodified, usModified, usInserted];
+    property TreeViewKeyFieldName: String read FTreeViewKeyFieldName write SetTreeViewKeyFieldName;
+    property TreeViewKeyFields: TIntArray read FTreeViewKeyFields;
+    property TreeViewRefParentFieldName: String read FTreeViewRefParentFieldName write SetTreeViewRefParentFieldName;
+    property TreeViewRefParentFields: TIntArray read FTreeViewRefParentFields;
+    property Value[RecNo, ValNo: Integer]: Variant read GetValue write SetValue;
+    property ViewAsTreeList: Boolean read GetViewAsTreeList write SetViewAsTreeList;
+    property ViewRecord[Index: Integer]: TMemoryRecordEh read GetViewRecord; default;
+
+    property OnCompareRecords: TCompareRecords read FOnCompareRecords write FOnCompareRecords;
+    property OnCompareTreeNode: TCompareNodesEh read FOnCompareTreeNode write FOnCompareTreeNode;
+    property OnFilterRecord: TRecordsViewFilterEventEh read FOnFilterRecord write FOnFilterRecord;
+    property OnGetPrefilteredList: TGetPrefilteredListEventEh read FOnGetPrefilteredList write FOnGetPrefilteredList;
+    property OnParseOrderByStr: TParseOrderByStrEventEh read FOnParseOrderByStr write FOnParseOrderByStr;
+    property OnViewDataEvent: TRecordsListNotificatorDataEventEh read FOnViewDataEvent write FOnViewDataEvent;
+    property OnViewRecordMovedEvent: TRecordsListRecordMovedEventEh read FOnViewRecordMovedEvent write FOnViewRecordMovedEvent;
+    property OnCalcLookupBuffer: TRecordsListCalcLookupBufferEventEh read FOnCalcLookupBuffer write FOnCalcLookupBuffer;
+  end;
+
+const
+  mrEditStatesEh = [resEditEh, resInsertEh, resEditForRefresh];
+  StringDataFieldsToFields: array[TStringDataFieldTypesEh] of TFieldType =
+    (ftString, ftFixedChar, ftWideString, ftGuid
+{$IFDEF EH_LIB_10}
+     , ftFixedWideChar, ftOraInterval
+{$ENDIF}
+    );
+  NumericDataFieldsToFields: array[TNumericDataFieldTypesEh] of TFieldType =
+    (ftSmallint, ftInteger, ftWord, ftFloat, ftCurrency, ftBCD, ftAutoInc,
+     ftLargeint
+     ,ftFMTBcd
+{$IFDEF EH_LIB_12}
+    ,ftLongWord, ftShortint, ftByte, ftExtended
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+    ,ftSingle
+{$ENDIF}
+     );
+  DateTimeDataFieldsToFields: array[TDateTimeDataFieldTypesEh] of TFieldType =
+    (ftDate, ftTime, ftDateTime
+     );
+   InterfaceDataFieldsToFields: array[TInterfaceDataFieldTypesEh] of TFieldType =
+    (ftInterface, ftIDispatch);
+   VariantDataFieldsToFields: array[TVariantDataFieldTypesEh] of TFieldType =
+    (ftVariant, ftBytes, ftVarBytes);
+  SQLTimeStampDataFieldsToFields: array[TSQLTimeStampDataFieldTypesEh] of TFieldType =
+    (ftTimeStamp
+{$IFDEF EH_LIB_10}
+     ,ftOraTimeStamp
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+     ,ftTimeStampOffset
+{$ENDIF}
+     );
+
+var
+  DefaultDataFieldClasses: array[TFieldType] of TMTDataFieldClassEh = (
+    TMTRefObjectFieldEh,        { ftUnknown }
+    TMTStringDataFieldEh,       { ftString }
+    TMTNumericDataFieldEh,      { ftSmallint }
+    TMTNumericDataFieldEh,      { ftInteger }
+    TMTNumericDataFieldEh,      { ftWord }
+    TMTBooleanDataFieldEh,      { ftBoolean }
+    TMTNumericDataFieldEh,      { ftFloat }
+    TMTNumericDataFieldEh,      { ftCurrency }
+    TMTNumericDataFieldEh,      { ftBCD }
+    TMTDateTimeDataFieldEh,     { ftDate }
+    TMTDateTimeDataFieldEh,     { ftTime }
+    TMTDateTimeDataFieldEh,     { ftDateTime }
+    TMTVariantDataFieldEh,      { ftBytes }
+    TMTVariantDataFieldEh,      { ftVarBytes }
+    TMTNumericDataFieldEh,      { ftAutoInc }
+    TMTBlobDataFieldEh,         { ftBlob }
+    TMTBlobDataFieldEh,         { ftMemo }
+    TMTBlobDataFieldEh,         { ftGraphic }
+    TMTBlobDataFieldEh,         { ftFmtMemo }
+    TMTBlobDataFieldEh,         { ftParadoxOle }
+    TMTBlobDataFieldEh,         { ftDBaseOle }
+    TMTBlobDataFieldEh,         { ftTypedBinary }
+    nil,                        { ftCursor }
+    TMTStringDataFieldEh,       { ftFixedChar }
+    TMTStringDataFieldEh,       { ftWideString }
+    TMTNumericDataFieldEh,      { ftLargeInt }
+    nil{TADTField},             { ftADT }
+    nil{TArrayField},           { ftArray }
+    nil{TReferenceField},       { ftReference }
+    nil{TDataSetField},         { ftDataSet }
+    TMTBlobDataFieldEh,         { ftOraBlob }
+    TMTBlobDataFieldEh,         { ftOraClob }
+    TMTVariantDataFieldEh,      { ftVariant }
+    TMTInterfaceDataFieldEh,    { ftInterface }
+    TMTInterfaceDataFieldEh,    { ftIDispatch }
+    TMTStringDataFieldEh        { ftGuid }
+    ,TMTSQLTimeStampDataFieldEh { ftTimeStamp }
+    ,TMTNumericDataFieldEh      { ftFMTBCD }
+  {$IFDEF FPC}
+    ,nil
+    ,nil
+  {$ELSE}
+  {$ENDIF}
+{$IFDEF EH_LIB_10}
+    ,TMTStringDataFieldEh       { ftFixedWideChar }
+    ,TMTBlobDataFieldEh         { ftWideMemo }
+    ,TMTSQLTimeStampDataFieldEh { ftOraTimeStamp }
+    ,TMTStringDataFieldEh       { ftOraInterval }
+{$ENDIF}
+{$IFDEF EH_LIB_12}
+    ,TMTNumericDataFieldEh      { ftLongWord }
+    ,TMTNumericDataFieldEh      { ftShortint }
+    ,TMTNumericDataFieldEh      { ftByte }
+    ,TMTNumericDataFieldEh      { ftExtended }
+    ,nil { ftConnection }
+    ,nil { ftParams }
+    ,nil { ftStream}
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+    ,TMTSQLTimeStampDataFieldEh { ftTimeStampOffset }
+    ,nil                        { ftObject }
+    ,TMTNumericDataFieldEh      { ftSingle }
+{$ENDIF}
+    );
+
+function CalcAggregateValue(Aggregate: TMTAggregateEh; DataSet: TDataSet; Records: TRecordsViewEh): Variant;
+function RecordsRangeEh(LowIndex, HighIndex: Integer): TRecordsRangeEh;
+
+var
+  VarArrayOfBytesVarType: TVarType;
+  UnuseOneCharLikeWildcardEh: Boolean = False;
+  WideStringVarType: TVarType;
+
+implementation

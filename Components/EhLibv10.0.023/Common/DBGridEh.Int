@@ -1,0 +1,3854 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{       TDBGridEh component from DBAxisGridsEh          }
+{              w ith support of IMemTableEh             }
+{                                                       }
+{    Copyright (c) 1998-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBGridEh;
+
+interface
+
+uses
+{$IFDEF EH_LIB_17} System.Generics.Defaults, System.Generics.Collections, {$ENDIF}
+{$IFDEF EH_LIB_17} System.UITypes, System.Rtti, {$ENDIF}
+{$IFDEF EH_LIB_20} SettingsKeepersEh,  {$ENDIF} 
+  Messages,
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows, Win32Extra, CommCtrl,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBConsts, RTLConsts, Windows, UxTheme, CommCtrl,
+  {$ENDIF}
+  SysUtils, Classes, Controls, Forms, StdCtrls,
+  Contnrs,  Variants, Types, Themes,
+  Graphics, DBCtrls, Db, Menus, DBSumLst, DBCtrlsEh,
+{$IFDEF MSWINDOWS}
+  Registry,
+{$ELSE}
+{$ENDIF}
+  GridsEh, GridToolCtrlsEh, SearchPanelsEh,
+  DBAxisGridsEh,
+  DBLookupUtilsEh,
+  DBGridEhToolCtrls,
+  DBGridEhGrouping,
+  PropFilerEh, MemTreeEh,
+  IniFiles, ToolCtrlsEh, ImgList, StdActns, ActnList,
+  ExtCtrls, DynVarsEh;
+
+type
+
+  TDBGridOption = (dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator,
+    dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect,
+    dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect);
+  TDBGridOptions = set of TDBGridOption;
+
+  TColumnFooterEhValue = (cvFooterAlignment, cvFooterFont, cvFooterColor, cvFooterToolTips);
+  TColumnFooterValues = set of TColumnFooterEhValue;
+
+  TColumnEhRestoreParam = (crpColIndexEh, crpColWidthsEh, crpSortMarkerEh, crpColVisibleEh,
+    crpDropDownRowsEh, crpDropDownWidthEh, crpRowPanelColPlacementEh);
+  TColumnEhRestoreParams = set of TColumnEhRestoreParam;
+
+  TDBGridEhRestoreParam = (grpColIndexEh, grpColWidthsEh, grpSortMarkerEh, grpColVisibleEh,
+    grpRowHeightEh, grpDropDownRowsEh, grpDropDownWidthEh, grpRowPanelColPlacementEh);
+  TDBGridEhRestoreParams = set of TDBGridEhRestoreParam;
+
+  TDBGridEhSettingsKeeperOption = (gskoRowHeightEh, gskoSearchPanelScopesEh,
+    gskoSearchPanelCaseSensitiveEh, gskoSearchPanelWholeWordsEh, gskoSearchPanelBeginsWithEh);
+  TDBGridEhSettingsKeeperOptions = set of TDBGridEhSettingsKeeperOption;
+
+  TColumnEhSettingsKeeperOption = (cskoColIndexEh, cskoColWidthsEh, cskoSortMarkerEh, cskoColVisibleEh,
+    cskoDropDownRowsEh, cskoDropDownWidthEh, cskoRowPanelColPlacementEh, cskoColSTFilterEh);
+  TColumnEhSettingsKeeperOptions = set of TColumnEhSettingsKeeperOption;
+
+const
+  ColumnEhFooterValues = [cvFooterAlignment..cvFooterColor];
+
+type
+
+  TColumnEh = class;
+  TCustomDBGridEh = class;
+  TDBGridEhStyle = class;
+  TDBGridEhCenter = class;
+  TDBGridEhDataGroupLevelEh = class;
+  TDBGridEhDataGroupsEh = class;
+  TSuperTitleEh = class;
+  TDBGridMultiTitleNodeEh = class;
+  TDBGridCellButtonEh = class;
+
+  TCheckTitleEhBtnEvent = procedure(Sender: TObject; ACol: Longint;
+    Column: TColumnEh; var Enabled: Boolean) of object;
+  TDrawColumnEhCellEvent = procedure(Sender: TObject; const Rect: TRect;
+    DataCol: Integer; Column: TColumnEh; State: TGridDrawState) of object;
+  TGetCellEhParamsEvent = procedure(Sender: TObject; Column: TColumnEh;
+    AFont: TFont; var Background: TColor; State: TGridDrawState) of object;
+  TTitleEhClickEvent = procedure(Sender: TObject; ACol: Longint;
+    Column: TColumnEh) of object;
+
+  TOnColumnCheckDrawRequiredStateEventEh = procedure(Sender: TObject;
+    Text: String; var DrawState: Boolean) of object;
+  TGridMoveRecordsEventEh = function(Sender: TObject; BookmarkList: TBMListEh;
+    ToRecNo: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean of object;
+  TDBGridEhBuildIndicatorTitleMenu = procedure (Grid: TCustomDBGridEh;
+    var PopupMenu: TPopupMenu) of object;
+  TDBGridEhGetColorEvent = procedure (Grid: TCustomDBGridEh; var Color: TColor)
+    of object;
+
+  TGridDataGroupFooterItemAggregateValueEvent = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh;
+    FooterColumnItem: TGridDataGroupFooterColumnItemEh;
+    var AValue: Variant; Node: TGroupDataTreeNodeEh; var Processed: Boolean) of object;
+
+  TGridDataGroupFooterItemFinalizeValueEvent = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh;
+    FooterColumnItem: TGridDataGroupFooterColumnItemEh;
+    var AValue: Variant; var Processed: Boolean) of object;
+
+  TGridDataGroupFooterItemToDisplayTextEvent = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh;
+    FooterColumnItem: TGridDataGroupFooterColumnItemEh;
+    var AValue: Variant; var DisplayValue: String; var Processed: Boolean) of object;
+
+  TDBGridSimpleTextApplyFilterEh = procedure (Sender: TCustomDBGridEh;
+    Column: TColumnEh; DataSet: TDataSet; FieldName: String;
+    Operation: TLSAutoFilterTypeEh; FilterText: String) of object;
+
+  TDBGridNavigatorPanelButtonClickEventEh = procedure (Sender: TCustomDBGridEh;
+     AButton: TNavigateBtnEh; var Processed: Boolean) of object;
+
+  TDBGridSelectedRowsItemChangedEh = procedure (Sender: TCustomDBGridEh;
+    Item: TUniBookmarkEh; Action: TListNotification) of object;
+
+  TGridSearchEditChangeEventEh = procedure(Grid: TCustomDBGridEh;
+    SearchEdit: TDBGridSearchPanelTextEditEh) of object;
+  TGridSearchEditKeyPressEventEh = procedure(Grid: TCustomDBGridEh;
+    SearchEdit: TDBGridSearchPanelTextEditEh; var Key: Char) of object;
+  TGridSearchEditKeyEventEh = procedure(Grid: TCustomDBGridEh;
+    SearchEdit: TDBGridSearchPanelTextEditEh; var Key: Word;
+      Shift: TShiftState) of object;
+  TCheckColumnValueAcceptEventEh = procedure (Column: TColumnEh;
+    var Accept: Boolean; SearchText: String) of object;
+  TGridSearchPanelCheckColumnValueAcceptEventEh = procedure (Grid: TCustomDBGridEh;
+    Column: TColumnEh; var Accept: Boolean) of object;
+  TDBGridGetHighlightStringsEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; var Strings: TStringDynArray) of object;
+
+  TDBGridCellButtonGetEnabledStateEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; CellButton: TDBGridCellButtonEh; var ButtonEnabled: Boolean) of object;
+  TDrawDBGridCellButtonEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; CellButton: TDBGridCellButtonEh; Canvas: TCanvas;
+    Cell, AreaCell: TGridCoord; const ARect: TRect;
+    ButtonDrawParams: TCellButtonDrawParamsEh; var Handled: Boolean) of object;
+  TMouseDBGridCellButtonEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; CellButton: TDBGridCellButtonEh; MouseButton: TMouseButton;
+    Shift: TShiftState; InButtonPos: TPoint; ButtonMouseParams: TCellButtonMouseParamsEh;
+    var Handled: Boolean) of object;
+
+  TFooterValues = array of Currency;
+
+  TDBGridMultiTitleExportNodeEh = class(TObject)
+    Text: String;
+    MergeColCount: Integer;
+    MergeRowCount: Integer;
+    Column: TColumnEh;
+  end;
+
+  TDBGridMultiTitleExportNodeMatrixEh = array of array of TDBGridMultiTitleExportNodeEh;
+
+{ TDBGridCellButtonEh }
+
+  TDBGridCellButtonEh = class(TCellButtonEh)
+  private
+    function GetOnDraw: TDrawDBGridCellButtonEventEh;
+    function GetOnGetEnabledState: TDBGridCellButtonGetEnabledStateEventEh;
+    function GetOnMouseClick: TMouseDBGridCellButtonEventEh;
+    function GetOnMouseDown: TMouseDBGridCellButtonEventEh;
+
+    procedure SetOnDraw(const Value: TDrawDBGridCellButtonEventEh);
+    procedure SetOnGetEnabledState(const Value: TDBGridCellButtonGetEnabledStateEventEh);
+    procedure SetOnMouseClick(const Value: TMouseDBGridCellButtonEventEh);
+    procedure SetOnMouseDown(const Value: TMouseDBGridCellButtonEventEh);
+  published
+
+    property OnGetEnabledState: TDBGridCellButtonGetEnabledStateEventEh read GetOnGetEnabledState write SetOnGetEnabledState;
+    property OnDraw: TDrawDBGridCellButtonEventEh read GetOnDraw write SetOnDraw;
+    property OnMouseClick: TMouseDBGridCellButtonEventEh read GetOnMouseClick write SetOnMouseClick;
+    property OnMouseDown: TMouseDBGridCellButtonEventEh read GetOnMouseDown write SetOnMouseDown;
+  end;
+
+{ TDBGridCellButtonsEh }
+
+  TDBGridCellButtonsEh = class(TCellButtonsEh)
+    function GetCellButton(Index: Integer): TDBGridCellButtonEh;
+    procedure SetCellButton(Index: Integer; const Value: TDBGridCellButtonEh);
+  public
+    function Add: TDBGridCellButtonEh;
+
+    property Items[Index: Integer]: TDBGridCellButtonEh read GetCellButton write SetCellButton; default;
+  end;
+
+{ TColCellParamsEh }
+
+  TColCellParamsEh = class(TAxisColCellParamsEh)
+
+  end;
+
+{ TColumnTitleEh }
+
+  TColumnTitleEh = class(TAxisBarTitleEh)
+  private
+    FSortIndex: Integer;
+    FShowImageAndTextStored: Boolean;
+    FShowImageAndText: Boolean;
+
+    function DefaultShowImageAndText: Boolean;
+    function GetColumn: TColumnEh;
+    function GetShowImageAndText: Boolean;
+    function IsShowImageAndTextStored: Boolean;
+
+    procedure SetShowImageAndText(const Value: Boolean);
+    procedure SetSortIndex(Value: Integer);
+  protected
+    FSortMarker: TSortMarkerEh;
+    procedure SetSortMarker(Value: TSortMarkerEh);
+  public
+    constructor Create(Column: TColumnEh);
+    destructor Destroy; override;
+
+    function GetSortMarkingWidth: Integer;
+    function GetFilterButtonAreaWidth: Integer;
+    function ImageAreaWidth: Integer;
+    procedure Assign(Source: TPersistent); override;
+    procedure RestoreDefaults; override;
+    procedure SetNextSortMarkerValue(KeepMulti: Boolean);
+    property Column: TColumnEh read GetColumn;
+
+  published
+    property Alignment;
+    property Caption;
+    property Color;
+    property EndEllipsis;
+    property Font;
+    property Hint;
+    property ImageIndex;
+    property Orientation;
+    property PopupMenu;
+    property ShowImageAndText: Boolean read GetShowImageAndText write SetShowImageAndText stored IsShowImageAndTextStored;
+    property SortIndex: Integer read FSortIndex write SetSortIndex default 0;
+    property SortMarker: TSortMarkerEh read FSortMarker write SetSortMarker default smNoneEh;
+    property TitleButton;
+    property ToolTips;
+  end;
+
+{ TColumnFooterEh }
+
+  TFooterValueType = (fvtNon, fvtSum, fvtAvg, fvtCount, fvtFieldValue, fvtStaticText);
+
+  TColumnFooterEh = class(TCollectionItem)
+  private
+    FAlignment: TAlignment;
+    FAssignedValues: TColumnFooterValues;
+    FColor: TColor;
+    FColumn: TColumnEh;
+    FDisplayFormat: String;
+    FEndEllipsis: Boolean;
+    FFieldName: string;
+    FFont: TFont;
+    FToolTips: Boolean;
+    FValue: String;
+    FValueType: TFooterValueType;
+    FWordWrap: Boolean;
+
+    function GetAlignment: TAlignment;
+    function GetColor: TColor;
+    function GetFont: TFont;
+    function GetSumValue: Variant;
+    function GetToolTips: Boolean;
+    function IsAlignmentStored: Boolean;
+    function IsColorStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsToolTipsStored: Boolean;
+
+    procedure FontChanged(Sender: TObject);
+    procedure SetAlignment(Value: TAlignment);
+    procedure SetColor(Value: TColor);
+    procedure SetDisplayFormat(const Value: String);
+    procedure SetEndEllipsis(const Value: Boolean);
+    procedure SetFieldName(const Value: String);
+    procedure SetFont(Value: TFont);
+    procedure SetToolTips(const Value: Boolean);
+    procedure SetValue(const Value: String);
+    procedure SetValueType(const Value: TFooterValueType);
+    procedure SetWordWrap(const Value: Boolean);
+
+  protected
+    FDBSum: TDBSum;
+    procedure RefreshDefaultFont;
+  public
+
+    constructor Create(Collection: TCollection); override;
+    constructor CreateApart(Column: TColumnEh);
+    destructor Destroy; override;
+
+    function DefaultAlignment: TAlignment;
+    function DefaultColor: TColor;
+    function DefaultFont: TFont;
+    function DefaultToolTips: Boolean;
+    procedure Assign(Source: TPersistent); override;
+    procedure EnsureSumValue;
+    procedure RestoreDefaults; virtual;
+
+    property AssignedValues: TColumnFooterValues read FAssignedValues;
+    property Column: TColumnEh read FColumn;
+    property SumValue: Variant read GetSumValue;
+
+  published
+    property Alignment: TAlignment read GetAlignment write SetAlignment stored IsAlignmentStored;
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property DisplayFormat: String read FDisplayFormat write SetDisplayFormat;
+    property EndEllipsis: Boolean read FEndEllipsis write SetEndEllipsis default False;
+    property FieldName: String read FFieldName write SetFieldName;
+    property Font: TFont read GetFont write SetFont stored IsFontStored;
+    property ToolTips: Boolean read GetToolTips write SetToolTips stored IsToolTipsStored;
+    property Value: String read FValue write SetValue;
+    property ValueType: TFooterValueType read FValueType write SetValueType default fvtNon;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
+  end;
+
+  TColumnFooterEhClass = class of TColumnFooterEh;
+
+ { TColumnFootersEh }
+
+  TColumnFootersEh = class(TCollection)
+  private
+    FColumn: TColumnEh;
+    function GetFooter(Index: Integer): TColumnFooterEh;
+    procedure SetFooter(Index: Integer; Value: TColumnFooterEh);
+  protected
+    function GetOwner: TPersistent; override;
+    procedure Update(Item: TCollectionItem); override;
+  public
+    constructor Create(Column: TColumnEh; FooterClass: TColumnFooterEhClass);
+    function Add: TColumnFooterEh;
+    property Column: TColumnEh read FColumn;
+    property Items[Index: Integer]: TColumnFooterEh read GetFooter write SetFooter; default;
+  end;
+
+{ TColumnTitleDefValuesEh }
+
+  TColumnTitleDefValuesEh = class(TAxisBarCaptionDefValuesEh)
+  private
+    FShowImageAndText: Boolean;
+    procedure SetShowImageAndText(const Value: Boolean);
+  published
+    property Alignment;
+    property Color;
+    property EndEllipsis;
+    property Orientation;
+    property ShowImageAndText: Boolean read FShowImageAndText write SetShowImageAndText default False;
+    property TitleButton;
+    property ToolTips;
+  end;
+
+{ TColumnDefValuesEh }
+
+  TColumnDefValuesEh = class(TCustomColumnDefValuesEh)
+  private
+    FFooter: TColumnFooterDefValuesEh;
+    procedure SetFooter(const Value: TColumnFooterDefValuesEh);
+    function GetTitle: TColumnTitleDefValuesEh;
+    procedure SetTitle(const Value: TColumnTitleDefValuesEh);
+  protected
+    function CreateAxisBarCaptionDefValues: TAxisBarCaptionDefValuesEh; override;
+  public
+    constructor Create(Grid: TCustomDBGridEh);
+    destructor Destroy; override;
+  published
+    property AlwaysShowEditButton;
+    property AutoDropDown;
+    property DblClickNextVal;
+    property DropDownShowTitles;
+    property DropDownSizing;
+    property EditButtonDrawBackTime;
+    property EndEllipsis;
+    property Footer: TColumnFooterDefValuesEh read FFooter write SetFooter;
+    property HighlightRequired;
+    property Layout;
+    property Title: TColumnTitleDefValuesEh read GetTitle write SetTitle;
+    property ToolTips;
+  end;
+
+{ TSTColumnFilterEh }
+
+  TSTFilterDefaultOperatorEh = (
+    fdoAuto, fdoEqual, fdoNotEqual,
+    fdoGreaterThan, fdoLessThan, fdoGreaterOrEqual, fdoLessOrEqual,
+    fdoLike, fdoNotLike,
+    fdoIn, fdoNotIn,
+    fdoBeginsWith, fdoDoesntBeginWith,
+    fdoEndsWith, fdoDoesntEndWith,
+    fdoContains, fdoDoesntContain);
+
+  TSTFilterOperatorEh = (
+    foNon, foEqual, foNotEqual,
+    foGreaterThan, foLessThan, foGreaterOrEqual, foLessOrEqual,
+    foLike, foNotLike,
+    foIn, foNotIn,
+    foNull, foNotNull,
+    foAND, foOR,
+    foValue,
+    foEqualToNull, foNotEqualToNull);
+
+  TSTOperandTypeEh = (botNon, botString, botNumber, botDateTime, botBoolean);
+
+  TSTFilterExpressionEh = record
+    ExpressionType: TSTOperandTypeEh;
+    Operator1: TSTFilterOperatorEh;
+    Operand1: Variant;
+    Relation: TSTFilterOperatorEh; 
+    Operator2: TSTFilterOperatorEh;
+    Operand2: Variant;
+  end;
+
+  TSTColumnFilterEh = class(TPersistent)
+  private
+    FColumn: TColumnEh;
+    FDataField: String;
+    FDropDownListRows: Integer;
+    FDropDownListWidth: Integer;
+    FKeyCommaText: String;
+    FKeyField: String;
+    FKeys: TStrings;
+    FKeyValues: Variant;
+    FList: TStrings;
+    FListField: String;
+    FListLink: TFieldDataLink;
+    FPopupFilterItems: TStrings;
+    FPopupListboxDownIndex: Integer;
+    FPopupListboxDragHoverIndex: Integer;
+    FPopupListboxItemData: TObject;
+    FVisible: Boolean;
+
+    function GetExpression: TSTFilterExpressionEh;
+    function GetGrid: TCustomDBGridEh;
+    function GetListIsLookup: Boolean;
+    function GetListSource: TDataSource;
+    function ParseExpression(const Exp: String): String;
+    procedure ListLinkActiveChange(Sender: TObject);
+    procedure SetExpression(const Value: TSTFilterExpressionEh);
+    procedure SetExpressionStr(const Value: String);
+    procedure SetListSource(const Value: TDataSource);
+    procedure SetVisible(const Value: Boolean);
+  protected
+    FDropDownFormParams: TDropDownFormCallParamsEh;
+    FEnterNotClearData: Boolean;
+    FExpression: TSTFilterExpressionEh;
+    FExpressionStr: String;
+    FInFilterListBox: Boolean;
+    FListValuesCheckingState: TBooleanDynArray;
+
+    function GetExpressionAsString: String; virtual;
+    function DropDownButtonVisible: Boolean; virtual;
+    procedure InternalSetExpressionStr(const Value: String); virtual;
+    procedure UpdateFilterFromValuesCheckingState(ss: TStrings; CheckStates: TBooleanDynArray);
+    procedure UpdateValuesCheckingStateFromFilter(ss: TStrings; CheckStates: TBooleanDynArray);
+  public
+    constructor Create(AColumn: TColumnEh);
+    destructor Destroy; override;
+
+    function GetFieldValueList: IMemTableDataFieldValueListEh;
+    function GetFilterFieldName: String; virtual;
+    function GetOperand1: Variant; virtual;
+    function GetOperand2: Variant; virtual;
+    function CurrentKeyField: String;
+    function CurrentDataField: String;
+    function CurrentListDataSet: TDataSet;
+    function CurrentListField: String;
+    function GetOperandAsString(Operator: TSTFilterOperatorEh; v: Variant): String;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure CheckRecodeKeyList(var FExpression: TSTFilterExpressionEh; DisplayToData: Boolean); virtual;
+    procedure Clear;
+    procedure SetKeyListValues(const AText: String; KeyVals: Variant);
+    procedure SetKeysFromListValues(ss: TStrings);
+
+    property Column: TColumnEh read FColumn;
+    property DropDownListRows: Integer read FDropDownListRows write FDropDownListRows default 0;
+    property DropDownListWidth: Integer read FDropDownListWidth write FDropDownListWidth default 0;
+    property Expression: TSTFilterExpressionEh read GetExpression write SetExpression;
+    property ExpressionStr: String read FExpressionStr write SetExpressionStr;
+    property Grid: TCustomDBGridEh read GetGrid;
+    property KeyCommaText: String read FKeyCommaText write FKeyCommaText;
+    property ListIsLookup: Boolean read GetListIsLookup;
+
+  published
+    property DataField: String read FDataField write FDataField;
+    property KeyField: String read FKeyField write FKeyField;
+    property ListField: String read FListField write FListField;
+    property ListSource: TDataSource read GetListSource write SetListSource;
+    property Visible: Boolean read FVisible write SetVisible default True;
+  end;
+
+{ TDBGridColumnLookupDataEh }
+
+  TDBGridColumnLookupDataEh = class(TDBLookupDataEh)
+  private
+    function GetLookupValuesCached: Boolean;
+  protected
+    FLookupValues: TVariantArrayEh;
+  public
+    procedure RefreshLookupData;
+
+    property LookupValuesCached: Boolean read GetLookupValuesCached;
+  end;
+
+{ TColumnEh }
+
+  TDBGridEhDataHintParams = class(TDBAxisGridDataHintParamsEh)
+  end;
+
+  TDBGridEhHintShowPauseEvent = procedure(Sender: TCustomDBGridEh;
+    CursorPos: TPoint; Cell: TGridCoord; InCellCursorPos: TPoint;
+    Column: TColumnEh; var HintPause: Integer;
+    var Processed: Boolean) of object;
+
+  TDBGridEhDataHintShowEvent = procedure(Sender: TCustomDBGridEh;
+    CursorPos: TPoint; Cell: TGridCoord; InCellCursorPos: TPoint;
+    Column: TColumnEh; var Params: TDBGridEhDataHintParams;
+    var Processed: Boolean) of object;
+
+  TDBGridEhAdvDrawColumnDataEvent = procedure(Sender: TCustomDBGridEh;
+    Cell, AreaCell: TGridCoord; Column: TColumnEh; const ARect: TRect;
+    var Params: TColCellParamsEh; var Processed: Boolean) of object;
+
+  TColumnEhInRowPanelPlacement = record
+    Left: Integer;
+    Top: Integer;
+    Width: Integer;
+    Height: Integer;
+    DataCellLeft: Integer;
+    DataCellWidth: Integer;
+  end;
+
+  TDBGridEhFillSTFilterListValuesEvent = procedure(Sender: TCustomDBGridEh;
+    Column: TColumnEh; Items: TStrings; var Processed: Boolean) of object;
+
+  TDBGridEhColumnGroupGetKeyValueEvent = procedure(Sender: TCustomDBGridEh;
+    Column: TColumnEh; var KeyValue: Variant) of object;
+
+  TDBGridEhDataGroupGetKeyValueAsTextEvent = procedure(Sender: TCustomDBGridEh;
+    GroupDataTreeNode: TGroupDataTreeNodeEh; const KeyValue: Variant; var KeyValueAsText: String) of object;
+
+  TGetColCellParamsEventEh = procedure(Sender: TObject; EditMode: Boolean;
+    Params: TColCellParamsEh) of object;
+
+  TDBGridEhDropDownBoxCheckTitleEhBtnEvent = procedure(Sender: TObject; ACol: Longint;
+    Column: TColumnEh; var Enabled: Boolean) of object;
+  TDBGridEhDropDownBoxDrawColumnEhCellEvent = procedure(Sender: TObject; const Rect: TRect;
+    DataCol: Integer; Column: TColumnEh; State: TGridDrawState) of object;
+  TDBGridEhDropDownBoxGetCellEhParamsEvent = procedure(Sender: TObject; Column: TColumnEh;
+    AFont: TFont; var Background: TColor; State: TGridDrawState) of object;
+  TDBGridEhDropDownBoxTitleEhClickEvent = procedure(Sender: TObject; ACol: Longint;
+    Column: TColumnEh) of object;
+
+  TDBGridEhDropDownBoxDBGridSimpleTextApplyFilterEh = procedure (Sender: TCustomDBGridEh;
+    Column: TColumnEh; DataSet: TDataSet; FieldName: String;
+    Operation: TLSAutoFilterTypeEh; FilterText: String) of object;
+
+  TDBGridShowDropDownFormEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; Button: TEditButtonEh; var DropDownForm: TCustomForm;
+    DynParams: TDynVarsEh) of object;
+
+  TDBGridCloseDropDownFormEventEh = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; Button: TEditButtonEh; Accept: Boolean;
+    DropDownForm: TCustomForm; DynParams: TDynVarsEh) of object;
+
+  TDBGridColumnNotifyEventEh = procedure(Grid: TCustomDBGridEh; Column: TColumnEh) of object;
+
+  TColumnEh = class(TBaseColumnEh)
+  private
+    FCheckedDuplicates: array of Boolean;
+    FFieldValueList: IMemTableDataFieldValueListEh;
+    FFooter: TColumnFooterEh;
+    FFooters: TColumnFootersEh;
+    FHeight: Integer;
+    FHideDuplicates: Boolean;
+    FInRowTabIndex: Integer;
+    FMaxWidth: Integer;
+    FMinWidth: Integer;
+    FNotInWidthRange: Boolean;
+    FRowLine: Integer;
+    FSTFilter: TSTColumnFilterEh;
+    FWidth: Integer;
+
+    FOnAdvDrawDataCell: TDBGridEhAdvDrawColumnDataEvent;
+    FOnCheckDrawRequiredState: TOnColumnCheckDrawRequiredStateEventEh;
+    FOnDataGroupFooterAggregateValue: TGridDataGroupFooterItemAggregateValueEvent;
+    FOnDataGroupFooterFinalizeValue: TGridDataGroupFooterItemFinalizeValueEvent;
+    FOnDataGroupFooterToDisplayText: TGridDataGroupFooterItemToDisplayTextEvent;
+    FOnDataHintShow: TDBGridEhDataHintShowEvent;
+    FOnDropDownBoxApplyTextFilter: TDBGridEhDropDownBoxDBGridSimpleTextApplyFilterEh;
+    FOnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent;
+    FOnGetCellParams: TGetColCellParamsEventEh;
+    FOnGetHideDuplicatesValue: TDBGridEhColumnGroupGetKeyValueEvent;
+    FOnGroupGetKeyValue: TDBGridEhColumnGroupGetKeyValueEvent;
+    FOnGroupGetKeyValueAsText: TDBGridEhDataGroupGetKeyValueAsTextEvent;
+    FOnHintShowPause: TDBGridEhHintShowPauseEvent;
+
+    function GetCellButtons: TDBGridCellButtonsEh;
+    function GetGrid: TCustomDBGridEh;
+    function GetInRowLineHeight: Integer;
+    function GetInRowLinePos: Integer;
+    function GetLookupParams: TDBGridColumnLookupDataEh;
+    function GetOnCellDataLinkClick: TDBGridColumnNotifyEventEh;
+    function GetOnCloseDropDownForm: TDBGridCloseDropDownFormEventEh;
+    function GetOnDropDownBoxCheckButton: TDBGridEhDropDownBoxCheckTitleEhBtnEvent;
+    function GetOnDropDownBoxDrawColumnCell: TDBGridEhDropDownBoxDrawColumnEhCellEvent;
+    function GetOnDropDownBoxGetCellParams: TDBGridEhDropDownBoxGetCellEhParamsEvent;
+    function GetOnDropDownBoxTitleBtnClick: TDBGridEhDropDownBoxTitleEhClickEvent;
+    function GetOnOpenDropDownForm: TDBGridShowDropDownFormEventEh;
+    function GetTitle: TColumnTitleEh;
+    function IsWidthStored: Boolean;
+
+    procedure SetCellButtons(const Value: TDBGridCellButtonsEh);
+    procedure SetFooter(const Value: TColumnFooterEh);
+    procedure SetFooters(const Value: TColumnFootersEh);
+    procedure SetInRowLineHeight(const Value: Integer);
+    procedure SetInRowLinePos(const Value: Integer);
+    procedure SetLookupParams(const Value: TDBGridColumnLookupDataEh);
+    procedure SetOnCellDataLinkClick(const Value: TDBGridColumnNotifyEventEh);
+    procedure SetOnCloseDropDownForm(const Value: TDBGridCloseDropDownFormEventEh);
+    procedure SetOnDropDownBoxCheckButton(const Value: TDBGridEhDropDownBoxCheckTitleEhBtnEvent);
+    procedure SetOnDropDownBoxDrawColumnCell(const Value: TDBGridEhDropDownBoxDrawColumnEhCellEvent);
+    procedure SetOnDropDownBoxGetCellParams(const Value: TDBGridEhDropDownBoxGetCellEhParamsEvent);
+    procedure SetOnDropDownBoxTitleBtnClick(const Value: TDBGridEhDropDownBoxTitleEhClickEvent);
+    procedure SetOnGetCellParams(const Value: TGetColCellParamsEventEh);
+    procedure SetOnOpenDropDownForm(const Value: TDBGridShowDropDownFormEventEh);
+    procedure SetSTFilter(const Value: TSTColumnFilterEh);
+    procedure SetTitle(const Value: TColumnTitleEh);
+
+  protected
+    FAutoFitColWidth: Boolean;
+    FInitWidth: Integer;
+    FRowPlacement: TColumnEhInRowPanelPlacement;
+
+    function CreateCellButtons: TCellButtonsEh; override;
+    function CreateLookupData: TDBLookupDataEh; override;
+    function CreateTitle: TAxisBarTitleEh; override;
+    function DefaultCellHeight: Integer; override;
+    function GetAutoFitColWidth: Boolean; override;
+    function GetField: TField; override;
+    function GetWidth: Integer; override;
+    function IsDrawEditButton(ACol, ARow: Integer): Boolean; override;
+
+    function AllowableWidth(TryWidth: Integer): Integer;
+    function CreateFooter: TColumnFooterEh; virtual;
+    function CreateFooters: TColumnFootersEh; virtual;
+    function CreateSTFilter: TSTColumnFilterEh; virtual;
+    function InternalGetLookupValue(RowNum: Integer): Variant; virtual;
+    function IsInRowLineHeightStored: Boolean;
+    function IsInRowLinePosStored: Boolean;
+
+    procedure Changed(AllItems: Boolean); override;
+    procedure RecordChanged(AField: TField); override;
+    procedure SetAutoFitColWidth(const Value: Boolean); override;
+    procedure SetField(Value: TField); override;
+    procedure SetMaxWidth(const Value: Integer); override;
+    procedure SetMinWidth(const Value: Integer); override;
+    procedure SetTextArea(var CellRect: TRect); override;
+    procedure SetWidth(const Value: Integer); override;
+    procedure SpecRowChanged(Sender: TObject); override;
+
+    procedure EnsureSumValue;
+    procedure MTViewDataEvent(RowNum: Integer; Event: TMTViewEventTypeEh; OldRowNum: Integer);
+    procedure ReadInRowLineHeight(Reader: TReader);
+    procedure ReadInRowLinePos(Reader: TReader);
+    procedure SetHideDuplicates(Value: Boolean); virtual;
+    procedure WriteInRowLineHeight(Writer: TWriter);
+    procedure WriteInRowLinePos(Writer: TWriter);
+
+    property FieldValueList: IMemTableDataFieldValueListEh read FFieldValueList write FFieldValueList;
+
+  protected
+    { ILookupGridOwner }
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function CalcRowHeight: Integer; override;
+    function CanApplyAggregateFunction(FooterValueType: TGroupFooterValueTypeEh): Boolean;
+    function CurLineWordWrap(RowHeight: Integer): Boolean; override;
+    function DefaultAlignment: TAlignment; override;
+    function DefaultWidth: Integer;
+    function DisplayText: String; override;
+    function FullWidth: Integer;
+    function GetCellEditorLeftMargin: Integer; override;
+    function GetCellHeight(Row: Integer): Integer; override;
+    function GetCurrentFieldValueList: IMemTableDataFieldValueListEh;
+    function GetLookupValue: Variant;
+    function GetTextValue(IsDisplayText: Boolean): String; override;
+    function UsedFooter(Index: Integer): TColumnFooterEh;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DropDownBoxApplyTextFilter(DataSet: TDataSet; const FieldName: String; Operation: TLSAutoFilterTypeEh; const FilterText: String); override;
+    procedure GetColCellParams(EditMode: Boolean; ColCellParamsEh: TAxisColCellParamsEh); override;
+    procedure OptimizeWidth; virtual;
+
+    property Grid: TCustomDBGridEh read GetGrid;
+    property LookupParams: TDBGridColumnLookupDataEh read GetLookupParams write SetLookupParams;
+    property RowPlacement: TColumnEhInRowPanelPlacement read FRowPlacement;
+
+  public
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property Alignment;
+    property AlignmentStored;
+    property AlwaysShowEditButton;
+    property AutoDropDown;
+    property AutoFitColWidth: Boolean read GetAutoFitColWidth write SetAutoFitColWidth default True;
+    property BiDiMode;
+    property ButtonStyle;
+    property CaseInsensitiveTextSearch;
+    property Checkboxes;
+    property Color;
+    property DblClickNextVal;
+    property DisplayFormat;
+    property DropDownBox;
+    property DropDownFormParams;
+    property DropDownRows; 
+    property DropDownShowTitles;
+    property DropDownSizing;
+    property DropDownSpecRow;
+    property DropDownWidth;
+    property DynProps;
+    property EditButton;
+    property EditButtonPressed;
+    property EditButtons;
+    property CellButtons: TDBGridCellButtonsEh read GetCellButtons write SetCellButtons;
+    property EditMask;
+    property EndEllipsis;
+    property FieldName;
+    property Font;
+    property Footer: TColumnFooterEh read FFooter write SetFooter;
+    property Footers: TColumnFootersEh read FFooters write SetFooters;
+    property HideDuplicates: Boolean read FHideDuplicates write SetHideDuplicates default False;
+    property HighlightRequired;
+    property ImageList;
+    property Increment;
+    property InRowLineHeight: Integer read GetInRowLineHeight write SetInRowLineHeight;
+    property InRowLinePos: Integer read GetInRowLinePos write SetInRowLinePos;
+    property InRowTabIndex: Integer read FInRowTabIndex;
+    property KeyList;
+    property Layout;
+    property LimitTextToListValues;
+    property LimitTextToListValuesStored;
+    property LookupDisplayFields;
+    property MaxWidth: Integer read FMaxWidth write SetMaxWidth default 0;
+    property MinWidth: Integer read FMinWidth write SetMinWidth default 0;
+    property MRUList;
+    property Name;
+    property NotInKeyListIndex;
+    property PickList;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowImageAndText;
+    property STFilter: TSTColumnFilterEh read FSTFilter write SetSTFilter;
+    property Tag;
+    property TextEditing;
+    property Title: TColumnTitleEh read GetTitle write SetTitle;
+    property ToolTips;
+    property Visible;
+    property Width: Integer read GetWidth write SetWidth stored IsWidthStored;
+    property WordWrap;
+
+    property OnAdvDrawDataCell: TDBGridEhAdvDrawColumnDataEvent read FOnAdvDrawDataCell write FOnAdvDrawDataCell;
+    property OnCellDataLinkClick: TDBGridColumnNotifyEventEh read GetOnCellDataLinkClick write SetOnCellDataLinkClick;
+    property OnCheckDrawRequiredState: TOnColumnCheckDrawRequiredStateEventEh read FOnCheckDrawRequiredState write FOnCheckDrawRequiredState;
+    property OnCloseDropDownForm: TDBGridCloseDropDownFormEventEh read GetOnCloseDropDownForm write SetOnCloseDropDownForm;
+    property OnDataGroupFooterAggregateValue: TGridDataGroupFooterItemAggregateValueEvent read FOnDataGroupFooterAggregateValue write FOnDataGroupFooterAggregateValue;
+    property OnDataGroupFooterFinalizeValue: TGridDataGroupFooterItemFinalizeValueEvent read FOnDataGroupFooterFinalizeValue write FOnDataGroupFooterFinalizeValue;
+    property OnDataGroupFooterToDisplayText: TGridDataGroupFooterItemToDisplayTextEvent read FOnDataGroupFooterToDisplayText write FOnDataGroupFooterToDisplayText;
+    property OnDataHintShow: TDBGridEhDataHintShowEvent read FOnDataHintShow write FOnDataHintShow;
+    property OnDropDownBoxApplyTextFilter: TDBGridEhDropDownBoxDBGridSimpleTextApplyFilterEh read FOnDropDownBoxApplyTextFilter write FOnDropDownBoxApplyTextFilter;
+    property OnDropDownBoxCheckButton: TDBGridEhDropDownBoxCheckTitleEhBtnEvent read GetOnDropDownBoxCheckButton write SetOnDropDownBoxCheckButton;
+    property OnDropDownBoxDrawColumnCell: TDBGridEhDropDownBoxDrawColumnEhCellEvent read GetOnDropDownBoxDrawColumnCell write SetOnDropDownBoxDrawColumnCell;
+    property OnDropDownBoxGetCellParams: TDBGridEhDropDownBoxGetCellEhParamsEvent read GetOnDropDownBoxGetCellParams write SetOnDropDownBoxGetCellParams;
+    property OnDropDownBoxSortMarkingChanged;
+    property OnDropDownBoxTitleBtnClick: TDBGridEhDropDownBoxTitleEhClickEvent read GetOnDropDownBoxTitleBtnClick write SetOnDropDownBoxTitleBtnClick;
+    property OnEditButtonClick;
+    property OnEditButtonDown;
+    property OnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent read FOnFillSTFilterListValues write FOnFillSTFilterListValues;
+    property OnGetCellParams: TGetColCellParamsEventEh read FOnGetCellParams write SetOnGetCellParams;
+    property OnGetHideDuplicatesValue: TDBGridEhColumnGroupGetKeyValueEvent read FOnGetHideDuplicatesValue write FOnGetHideDuplicatesValue;
+    property OnGroupGetKeyValue: TDBGridEhColumnGroupGetKeyValueEvent read FOnGroupGetKeyValue write FOnGroupGetKeyValue;
+    property OnGroupGetKeyValueAsText: TDBGridEhDataGroupGetKeyValueAsTextEvent read FOnGroupGetKeyValueAsText write FOnGroupGetKeyValueAsText;
+    property OnHintShowPause: TDBGridEhHintShowPauseEvent read FOnHintShowPause write FOnHintShowPause;
+    property OnNotInList;
+    property OnOpenDropDownForm: TDBGridShowDropDownFormEventEh read GetOnOpenDropDownForm write SetOnOpenDropDownForm;
+    property OnUpdateData;
+  end;
+
+  TColumnEhClass = class of TColumnEh;
+
+  TDBGridColumnEh = class(TColumnEh)
+  published
+    property Alignment;
+    property AlignmentStored;
+    property AlwaysShowEditButton;
+    property AutoDropDown;
+    property AutoFitColWidth;
+    property BiDiMode;
+    property ButtonStyle;
+    property CaseInsensitiveTextSearch;
+    property CellButtons;
+    property CellDataIsLink;
+    property Checkboxes;
+    property Color;
+    property DblClickNextVal;
+    property DisplayFormat;
+    property DropDownBox;
+    property DropDownFormParams;
+    property DropDownRows;
+    property DropDownShowTitles;
+    property DropDownSizing;
+    property DropDownSpecRow;
+    property DropDownWidth;
+    property DynProps;
+    property EditButton;
+    property EditButtons;
+    property EditMask;
+    property EndEllipsis;
+    property FieldName;
+    property Font;
+    property Footer;
+    property Footers;
+    property HideDuplicates;
+    property HighlightRequired;
+    property ImageList;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property Increment;
+    property KeyList;
+    property Layout;
+    property LimitTextToListValues;
+    property LimitTextToListValuesStored;
+    property LookupDisplayFields;
+    property LookupParams;
+    property MaxWidth;
+    property MinWidth;
+    property MRUList;
+    property NotInKeyListIndex;
+    property PickList;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowImageAndText;
+    property STFilter;
+    property Tag;
+    property TextEditing;
+    property Title;
+    property ToolTips;
+    property Visible;
+    property Width;
+    property WordWrap;
+
+    property OnAdvDrawDataCell;
+    property OnCellDataLinkClick;
+    property OnCheckDrawRequiredState;
+    property OnCloseDropDownForm;
+    property OnDataGroupFooterAggregateValue;
+    property OnDataGroupFooterFinalizeValue;
+    property OnDataGroupFooterToDisplayText;
+    property OnDataHintShow;
+    property OnDropDownBoxApplyTextFilter;
+    property OnDropDownBoxCheckButton;
+    property OnDropDownBoxDrawColumnCell;
+    property OnDropDownBoxGetCellParams;
+    property OnDropDownBoxSortMarkingChanged;
+    property OnDropDownBoxTitleBtnClick;
+    property OnEditButtonClick;
+    property OnEditButtonDown;
+    property OnFillSTFilterListValues;
+    property OnGetCellParams;
+    property OnGetHideDuplicatesValue;
+    property OnGroupGetKeyValue;
+    property OnGroupGetKeyValueAsText;
+    property OnHintShowPause;
+    property OnNotInList;
+    property OnOpenDropDownForm;
+    property OnUpdateData;
+  end;
+
+
+ { TDBGridColumnsEh }
+
+  TDBGridColumnsEh = class(TBaseColumnsEh)
+  private
+
+    FUpDownBaseColumn: TColumnEh;
+    FFirstScrollVisibleColumn: TColumnEh;
+    FFirstFrozenVisibleColumn: TColumnEh;
+    FFirstContraVisibleColumn: TColumnEh;
+    FLastScrollVisibleColumn: TColumnEh;
+    FLastFrozenVisibleColumn: TColumnEh;
+    FLastContraVisibleColumn: TColumnEh;
+
+    function GetColumn(Index: Integer): TColumnEh;
+    procedure SetColumn(Index: Integer; const Value: TColumnEh);
+    function GetGrid: TCustomDBGridEh;
+  protected
+    procedure Update(Item: TCollectionItem); override;
+  public
+    constructor Create(Grid: TCustomDBGridEh; ColumnClass: TColumnEhClass);
+
+    function Add: TColumnEh;
+    function ExistFooterValueType(AFooterValueType: TFooterValueType): Boolean;
+    function FindColumnByName(const ColumnName: String): TColumnEh;
+    function FirstContraVisibleColumn: TColumnEh;
+    function FirstFrozenVisibleColumn: TColumnEh;
+    function FirstScrollVisibleColumn: TColumnEh;
+    function GetBottomColumn(ForColumn: TColumnEh): TColumnEh;
+    function GetFirstTabColumn: TColumnEh;
+    function GetLastTabColumn: TColumnEh;
+    function GetNextHorzColumn(ForColumn: TColumnEh; GoForward, TillTheLastCol, CheckTabStop: Boolean): TColumnEh;
+    function GetNextTabColumn(ForColumn: TColumnEh; GoForward: Boolean): TColumnEh;
+    function GetNextVertColumn(ForColumn: TColumnEh; GoForward: Boolean): TColumnEh;
+    function GetTopColumn(ForColumn: TColumnEh): TColumnEh;
+    function LastContraVisibleColumn: TColumnEh;
+    function LastFrozenVisibleColumn: TColumnEh;
+    function LastScrollVisibleColumn: TColumnEh;
+
+    procedure ActiveChanged; override;
+
+    procedure AddAllColumns(DeleteExisting: Boolean);
+    procedure FixupAutoFitColWidths(GridWidth: Integer);
+    procedure GetColumnNames(List: TStrings);
+    procedure RebuildColumns;
+
+    property Grid: TCustomDBGridEh read GetGrid;
+    property Items[Index: Integer]: TColumnEh read GetColumn write SetColumn; default;
+
+    procedure RelayoutCellsInRowPanel;
+    procedure ScaleWidths(Multiplier, Divisor: Integer);
+  end;
+
+{ TColumnsEhList }
+
+  TColumnsEhList = class(TAxisBarsEhList)
+  private
+    function GetColumn(Index: Integer): TColumnEh;
+    procedure SetColumn(Index: Integer; const Value: TColumnEh);
+  public
+    constructor Create; overload;
+
+    property Items[Index: Integer]: TColumnEh read GetColumn write SetColumn; default;
+  end;
+
+{ TGridDataLinkEh }
+
+  TGridDataLinkEh = class(TAxisGridDataLinkEh)
+  protected
+    procedure ActiveChanged; override;
+  end;
+
+{ TBookmarkListEh }
+
+  TBookmarkListEh = class(TBMListEh)
+  private
+    FGrid: TCustomDBGridEh;
+    FRowsRef: TObjectListEh;
+  protected
+    function GetDataSet: TDataSet; override;
+
+    procedure AppendItem(Item: TUniBookmarkEh); override;
+    procedure InsertItem(Index: Integer; Item: TUniBookmarkEh); override;
+    procedure Invalidate; override;
+    procedure ListChanged(); override;
+    procedure SetCurrentRowSelected(Value: Boolean); override;
+    procedure UpdateState; override;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function SelectionToGridRect: TGridRect;
+
+    procedure Assign(Rows: TBookmarkListEh);
+    procedure AssignAsBaseRef(Rows: TBookmarkListEh);
+    procedure Clear; override;
+    procedure DeleteItem(Index: Integer); override;
+  end;
+
+{ THeadTreeNode }
+
+  LeafCol = record
+    FLeaf: TDBGridMultiTitleNodeEh;
+    FColumn: TColumnEh;
+  end;
+
+  PLeafCol = ^LeafCol;
+  PTLeafCol = array of LeafCol;
+
+  TDBGridMultiTitleNodeTypeEh = (gmtnSuperTitleEh, gmtnColumnTitleEh, gmtnRootEh);
+
+  TDBGridMultiTitleNodeEh = class(TBaseTreeNodeEh)
+  private
+    FSuperTitle: TSuperTitleEh;
+    FColumn: TBaseColumnEh;
+    FNodeType: TDBGridMultiTitleNodeTypeEh;
+    function GetItem(const Index: Integer): TDBGridMultiTitleNodeEh;
+    function GetParent: TDBGridMultiTitleNodeEh;
+    function GetFirstChild: TDBGridMultiTitleNodeEh;
+    function GetNextSibling: TDBGridMultiTitleNodeEh;
+
+  protected
+    FDrawn: Boolean;
+    FHeight: Integer;
+    FHeightPrn: Integer;
+    FText: String;
+    FWidth: Integer;
+    FWidthPrn: Integer;
+    FWIndent: Integer;
+    VLineWidth: Integer;
+
+  public
+    constructor CreateText(const AText: String; const AHeight, AWidth: Integer);
+
+    function GetLevel: Integer;
+
+    property NodeType: TDBGridMultiTitleNodeTypeEh read FNodeType;
+    property SuperTitle: TSuperTitleEh read FSuperTitle;
+    property Column: TBaseColumnEh read FColumn;
+
+    property Items[const Index: Integer]: TDBGridMultiTitleNodeEh read GetItem; default;
+    property Parent: TDBGridMultiTitleNodeEh read GetParent;
+    property Count;
+    property Index;
+    property Level;
+    property FirstChild: TDBGridMultiTitleNodeEh read GetFirstChild;
+    property NextSibling: TDBGridMultiTitleNodeEh read GetNextSibling;
+
+    property Height: Integer read FHeight write FHeight;
+    property Text: String read FText;
+    property Drawn: Boolean read FDrawn write FDrawn;
+    property Width: Integer read FWidth;
+    property WIndent: Integer read FWIndent;
+    property HeightPrn: Integer read FHeightPrn write FHeightPrn;
+    property WidthPrn: Integer read FWidthPrn write FWidthPrn;
+  end;
+
+  TDBGridMultiTitleTreeListEh = class(TTreeListEh)
+  private
+    function GetRoot: TDBGridMultiTitleNodeEh;
+  protected
+  public
+    constructor Create(ItemClass: TTreeNodeClassEh);
+
+    function Add(AAfter: TDBGridMultiTitleNodeEh; const AText: String; AHeight, AWidth: Integer): TDBGridMultiTitleNodeEh;
+    function AddChild(ANode: TDBGridMultiTitleNodeEh; const AText: String; AHeight, AWidth: Integer; Mode: TNodeAttachModeEh): TDBGridMultiTitleNodeEh;
+    function GetDepth(ANode: TDBGridMultiTitleNodeEh): Integer;
+    function CreateChild(const AText: String; AHeight, AWidth: Integer): TDBGridMultiTitleNodeEh;
+
+    procedure CreateFieldTree(AAxisGrid: TCustomDBGridEh);
+    procedure Union(AFrom, ATo: TDBGridMultiTitleNodeEh; const AText: String; AHeight: Integer);
+
+    property Root: TDBGridMultiTitleNodeEh read GetRoot;
+  end;
+
+  TSuperTitleEh = class(TPersistent)
+
+  end;
+
+{ TDBGridEhSumList }
+
+  TDBGridEhSumList = class(TDBSumListProducer)
+  private
+    function GetActive: Boolean;
+    procedure SetActive(const Value: Boolean);
+  protected
+    procedure ReturnEvents; override;
+  public
+    constructor Create(AOwner: TComponent);
+
+    procedure SetDataSetEvents; override;
+    procedure RecalcAll; override;
+  published
+    property Active: Boolean read GetActive write SetActive default False;
+    property ExternalRecalc default False;
+    property SumListChanged;
+    property VirtualRecords default False;
+
+    property OnRecalcAll;
+    property OnAfterRecalcAll;
+  end;
+
+{ TDBGridEhScrollBarPanel }
+
+  TDBGridEhScrollBarPanel = class(TPersistent)
+  private
+    FScrollBar: TGridScrollBarEh;
+    FVisible: Boolean;
+
+    function GetNavigatorButtons: TNavButtonSetEh;
+    function GetVisible: Boolean;
+    function GetVisibleItems: TGridSBItemsEh;
+
+    procedure SetNavigatorButtons(const Value: TNavButtonSetEh);
+    procedure SetVisible(const Value: Boolean);
+    procedure SetVisibleItems(const Value: TGridSBItemsEh);
+
+  public
+    constructor Create(ScrollBar: TGridScrollBarEh);
+    function Grid: TCustomDBGridEh;
+
+  published
+    property NavigatorButtons: TNavButtonSetEh read GetNavigatorButtons write SetNavigatorButtons default [nbFirstEh, nbPriorEh, nbNextEh, nbLastEh, nbInsertEh, nbDeleteEh, nbEditEh, nbPostEh, nbCancelEh, nbRefreshEh];
+    property Visible: Boolean read GetVisible write SetVisible default False;
+    property VisibleItems: TGridSBItemsEh read GetVisibleItems write SetVisibleItems default [gsbiRecordsInfoEh, gsbiNavigator, gsbiSelAggregationInfoEh];
+  end;
+
+{ THorzDBGridEhScrollBar }
+
+  THorzDBGridEhScrollBar = class(TGridScrollBarEh)
+  private
+    FExtraPanel: TDBGridEhScrollBarPanel;
+
+    function GetHeight: Integer;
+    procedure SetExtraPanel(const Value: TDBGridEhScrollBarPanel);
+    procedure SetHeight(const Value: Integer);
+  protected
+    procedure SmoothStepChanged; override;
+    function CheckScrollBarMustBeShown: Boolean;  override;
+
+  public
+    constructor Create(AGrid: TCustomDBGridEh; AKind: TScrollBarKind);
+    destructor Destroy; override;
+
+    function ActualScrollBarBoxSize: Integer; override;
+    function IsKeepMaxSizeInDefault: Boolean; override;
+    function ScrollBarPanel: Boolean; override;
+
+  published
+    property ExtraPanel: TDBGridEhScrollBarPanel read FExtraPanel write SetExtraPanel;
+    property Height: Integer read GetHeight write SetHeight default 0;
+    property SmoothStep default True;
+    property Visible stored False;
+    property VisibleMode;
+  end;
+
+{ TVertDBGridEhScrollBar }
+
+  TVertDBGridEhScrollBar = class(TGridScrollBarEh)
+  private
+    function GetWidth: Integer;
+    procedure SetWidth(const Value: Integer);
+  protected
+    FVertScrollBarVisibleMode: TScrollBarVisibleModeEh;
+    FSysScrollBar: Boolean;
+    procedure SmoothStepChanged; override;
+    procedure SetParams(APosition, AMin, AMax, APageSize: Integer);
+  public
+    constructor Create(AGrid: TCustomDBGridEh; AKind: TScrollBarKind);
+
+  published
+    property SmoothStep;
+    property Visible stored False;
+    property VisibleMode;
+    property Width: Integer read GetWidth write SetWidth default 0;
+  end;
+
+  TDBGridEhSelectionType = (gstRecordBookmarks, gstRectangle, gstColumns, gstAll, gstNon);
+  TDBGridEhAllowedSelection = gstRecordBookmarks..gstAll;
+  TDBGridEhAllowedSelections = set of TDBGridEhAllowedSelection;
+
+  TDBCell = record
+    Col: Longint;
+    Row: TUniBookmarkEh;
+  end;
+
+{ TDBGridEhIndicatorTitle }
+
+  TDBGridEhIndicatorTitle = class(TPersistent)
+  private
+    FDown: Boolean;
+    FDropdownMenu: TPopupMenu;
+    FGrid: TCustomDBGridEh;
+    FShowDropDownSign: Boolean;
+    FTitleButton: Boolean;
+    FUseGlobalMenu: Boolean;
+
+    procedure SetShowDropDownSign(const Value: Boolean);
+    procedure SetDropdownMenu(const Value: TPopupMenu);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+
+    property Down: Boolean read FDown;
+  published
+    property DropdownMenu: TPopupMenu read FDropdownMenu write SetDropdownMenu;
+    property ShowDropDownSign: Boolean read FShowDropDownSign write SetShowDropDownSign default False;
+    property TitleButton: Boolean read FTitleButton write FTitleButton default False;
+    property UseGlobalMenu: Boolean read FUseGlobalMenu write FUseGlobalMenu default True;
+  end;
+
+{ TDBGridEhPopupMenuParams }
+
+  TDBGridEhPopupMenuParams = class(TPersistent)
+  private
+    FGrid: TCustomDBGridEh;
+    FUseGlobalMenu: Boolean;
+    FUseIndicatorMenu: Boolean;
+    FBuildMenuOnPopup: Boolean;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+  published
+    property BuildMenuOnPopup: Boolean read FBuildMenuOnPopup write FBuildMenuOnPopup default False;
+    property UseGlobalMenu: Boolean read FUseGlobalMenu write FUseGlobalMenu default False;
+    property UseIndicatorMenu: Boolean read FUseIndicatorMenu write FUseIndicatorMenu default False;
+  end;
+
+{ TDBGridEhSelectionRect }
+
+  TDBGridEhSelectionRect = class(TObject)
+  private
+    FAnchor: TDBCell;
+    FGrid: TCustomDBGridEh;
+    FShiftCell: TDBCell;
+
+    function BoxRect(ALeft: Longint; ATop: TUniBookmarkEh; ARight: Longint; ABottom: TUniBookmarkEh): TRect;
+    function CheckState: Boolean;
+    function GetBottomRow: TUniBookmarkEh;
+    function GetGrid: TCustomDBGridEh;
+    function GetLeftCol: Longint;
+    function GetRightCol: Longint;
+    function GetTopRow: TUniBookmarkEh;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+
+    function DataCellSelected(DataCol: Longint; DataRow: TUniBookmarkEh): Boolean;
+    function SelectionToGridRect: TGridRect;
+
+    procedure Assign(Rect: TDBGridEhSelectionRect);
+    procedure Clear;
+    procedure Select(ACol: Longint; ARow: TUniBookmarkEh; AddSel: Boolean);
+
+    property Grid: TCustomDBGridEh read GetGrid;
+    property BottomRow: TUniBookmarkEh read GetBottomRow;
+    property LeftCol: Longint read GetLeftCol;
+    property RightCol: Longint read GetRightCol;
+    property TopRow: TUniBookmarkEh read GetTopRow;
+  end;
+
+{ TDBGridEhSelectionCols }
+
+  TDBGridEhSelectionCols = class(TColumnsEhList)
+  private
+    FAnchor: TColumnEh;
+    FGrid: TCustomDBGridEh;
+    FShiftCol: TColumnEh;
+    FShiftSelectedCols: TColumnsEhList;
+    procedure Add(ACol: TColumnEh);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function SelectionToGridRect: TGridRect;
+
+    procedure Clear; override;
+    procedure InvertSelect(ACol: TColumnEh);
+    procedure Refresh;
+    procedure Select(ACol: TColumnEh; AddSel: Boolean);
+    procedure SelectShift(ACol: TColumnEh {; Clear:Boolean});
+  end;
+
+{ TDBGridEhSelection }
+
+  TDBGridEhSelection = class
+  private
+    FColumns: TDBGridEhSelectionCols;
+    FGrid: TCustomDBGridEh;
+    FRect: TDBGridEhSelectionRect;
+    FSelectionType: TDBGridEhSelectionType;
+    FBMList: TBookmarkListEh;
+
+    function GetRows: TBookmarkListEh;
+    procedure LinkActive(Value: Boolean);
+    procedure SetSelectionType(ASelType: TDBGridEhSelectionType);
+  protected
+    FUpdateCount: Integer;
+    FSelectionChanged: Boolean;
+    procedure SelectionChanged; virtual;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function DataCellSelected(DataCol: Longint; DataRow: TUniBookmarkEh): Boolean;
+    function SelectionToGridRect: TGridRect;
+    function Updating: Boolean;
+    procedure BeginUpdate;
+    procedure EndUpdate;
+
+    procedure Clear;
+    procedure Refresh;
+    procedure SelectAll;
+    procedure UpdateState;
+    procedure Assign(Selection: TDBGridEhSelection);
+    procedure AssignAsBaseRef(Selection: TDBGridEhSelection);
+
+    property Columns: TDBGridEhSelectionCols read FColumns;
+    property Rect: TDBGridEhSelectionRect read FRect;
+    property Rows: TBookmarkListEh read GetRows;
+    property SelectionType: TDBGridEhSelectionType read FSelectionType;
+  end;
+
+  TSTFilterLocationEh = (stflUnderTitleFilterEh, stflInTitleFilterEh);
+  TDBGridFilterButtonDrawTimeEh = (fbdtAlwaysEh, fbdtWhenRowHotEh, fbdtWhenCellHotEh);
+
+{ TSTDBGridEhFilter }
+
+  TSTDBGridEhFilter = class(TPersistent)
+  private
+    FColor: TColor;
+    FFilterButtonDrawBackTime: TEditButtonDrawBackTimeEh;
+    FFilterButtonDrawBackTimeStored: Boolean;
+    FFilterButtonDrawTime: TDBGridFilterButtonDrawTimeEh;
+    FFont: TFont;
+    FGrid: TCustomDBGridEh;
+    FHorzLineColor: TColor;
+    FInplaceEditorButtonHeight: Integer;
+    FInstantApply: Boolean;
+    FIsInstantApplyStored: Boolean;
+    FLocal: Boolean;
+    FLocation: TSTFilterLocationEh;
+    FParentFont: Boolean;
+    FRowHeight: Integer;
+    FRowLines: Integer;
+    FUpateCount: Integer;
+    FVertLineColor: TColor;
+    FVisible: Boolean;
+
+    function GetFilterButtonDrawBackTime: TEditButtonDrawBackTimeEh;
+    function GetInstantApply: Boolean;
+    function IsFilterButtonDrawBackTimeStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsInstantApplyStored: Boolean;
+
+    procedure FontChanged(Sender: TObject);
+    procedure RefreshDefaultFont;
+    procedure SetColor(const Value: TColor);
+    procedure SetFilterButtonDrawBackTime(const Value: TEditButtonDrawBackTimeEh);
+    procedure SetFilterButtonDrawBackTimeStored(const Value: Boolean);
+    procedure SetFilterButtonDrawTime(const Value: TDBGridFilterButtonDrawTimeEh);
+    procedure SetFont(const Value: TFont);
+    procedure SetHorzLineColor(const Value: TColor);
+    procedure SetInstantApply(const Value: Boolean);
+    procedure SetLocal(const Value: Boolean);
+    procedure SetLocation(const Value: TSTFilterLocationEh);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetVertLineColor(const Value: TColor);
+    procedure SetVisible(const Value: Boolean);
+
+  protected
+
+    function DefaultFilterButtonDrawBackTime: TEditButtonDrawBackTimeEh;
+
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function DefaultFont: TFont; virtual;
+    function GetColor: TColor; virtual;
+    function GetHorzLineColor: TColor; virtual;
+    function GetVertLineColor: TColor; virtual;
+    function RowFullRowHeight: Integer;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure BeginUpdate;
+    procedure EndUpdate;
+    procedure UpdateInplaceEditorButtonHeight;
+
+    property UpdateCount: Integer read FUpateCount;
+  published
+    property Color: TColor read FColor write SetColor default clDefault;
+    property FilterButtonDrawBackTime: TEditButtonDrawBackTimeEh read GetFilterButtonDrawBackTime write SetFilterButtonDrawBackTime stored IsFilterButtonDrawBackTimeStored;
+    property FilterButtonDrawBackTimeStored: Boolean read IsFilterButtonDrawBackTimeStored write SetFilterButtonDrawBackTimeStored stored False;
+    property FilterButtonDrawTime: TDBGridFilterButtonDrawTimeEh read FFilterButtonDrawTime write SetFilterButtonDrawTime default fbdtAlwaysEh;
+    property Font: TFont read FFont write SetFont stored IsFontStored;
+    property HorzLineColor: TColor read FHorzLineColor write SetHorzLineColor default clDefault;
+    property InstantApply: Boolean read GetInstantApply write SetInstantApply stored IsInstantApplyStored;
+    property Local: Boolean read FLocal write SetLocal default False;
+    property Location: TSTFilterLocationEh read FLocation write SetLocation default stflUnderTitleFilterEh;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property RowHeight: Integer read FRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read FRowLines write SetRowLines default 0;
+    property VertLineColor: TColor read FVertLineColor write SetVertLineColor default clDefault;
+    property Visible: Boolean read FVisible write SetVisible default False;
+
+  end;
+
+  TDBGridEhFillSTFilterListEvent = procedure(Grid: TCustomDBGridEh;
+    Column: TColumnEh; List: TStrings; var Processed: Boolean) of object;
+
+{ TRowDetailPanelEh }
+
+  TRowDetailPanelEh = class(TPersistent)
+  private
+    FGrid: TCustomDBGridEh;
+    FActive: Boolean;
+    FVisible: Boolean;
+    FWidth: Integer;
+    FHeight: Integer;
+    FActiveControl: TWinControl;
+    {$IFDEF FPC}
+    {$ELSE}
+    FBevelEdges: TBevelEdges;
+    FBevelInner: TBevelCut;
+    FBevelOuter: TBevelCut;
+    FBevelKind: TBevelKind;
+    {$ENDIF}
+    FBevelWidth: TBevelWidth;
+    FBorderStyle: TBorderStyle;
+    FColor: TColor;
+    FParentColor: Boolean;
+    FVertSizing: Boolean;
+    FMaxHeight: Integer;
+    FMinHeight: Integer;
+    FSizingBarHeight: Integer;
+    FSizingBarBeveled: Boolean;
+
+    function IsColorStored: Boolean;
+    function GetColor: TColor;
+    function GetParentPopupMenu: Boolean;
+
+    procedure SetActive(const Value: Boolean);
+    procedure SetActiveControl(Control: TWinControl);
+    procedure SetVisible(const Value: Boolean);
+    procedure SetWidth(const Value: Integer);
+    procedure SetHeight(Value: Integer);
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure SetBevelEdges(const Value: TBevelEdges);
+    procedure SetBevelKind(const Value: TBevelKind);
+    procedure SetBevelInner(const Value: TBevelCut);
+    procedure SetBevelOuter(const Value: TBevelCut);
+    {$ENDIF}
+    procedure SetBevelWidth(const Value: TBevelWidth);
+    procedure SetBorderStyle(const Value: TBorderStyle);
+    procedure SetColor(const Value: TColor);
+    procedure SetMaxHeight(const Value: Integer);
+    procedure SetMinHeight(const Value: Integer);
+    procedure SetParentColor(Value: Boolean);
+    procedure SetParentPopupMenu(const Value: Boolean);
+    procedure SetSizingBarBeveled(const Value: Boolean);
+    procedure SetSizingBarHeight(const Value: Integer);
+    procedure SetVertSizing(const Value: Boolean);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    procedure Assign(Source: TPersistent); override;
+    property Visible: Boolean read FVisible write SetVisible;
+  published
+    property Active: Boolean read FActive write SetActive default False;
+    property Width: Integer read FWidth write SetWidth default 0;
+    property Height: Integer read FHeight write SetHeight default 120;
+    property ActiveControl: TWinControl read FActiveControl write SetActiveControl;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges: TBevelEdges read FBevelEdges write SetBevelEdges default [beLeft, beTop, beRight, beBottom];
+    property BevelInner: TBevelCut read FBevelInner write SetBevelInner default bvRaised;
+    property BevelOuter: TBevelCut read FBevelOuter write SetBevelOuter default bvLowered;
+    property BevelKind: TBevelKind read FBevelKind write SetBevelKind default bkNone;
+    {$ENDIF}
+    property BevelWidth: TBevelWidth read FBevelWidth write SetBevelWidth default 1;
+    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property ParentColor: Boolean read FParentColor write SetParentColor default False;
+    property ParentPopupMenu: Boolean read GetParentPopupMenu write SetParentPopupMenu default True;
+    property VertSizing: Boolean read FVertSizing write SetVertSizing default False;
+    property MinHeight: Integer read FMinHeight write SetMinHeight default 1;
+    property MaxHeight: Integer read FMaxHeight write SetMaxHeight default 0;
+    property SizingBarBeveled: Boolean read FSizingBarBeveled write SetSizingBarBeveled default True;
+    property SizingBarHeight: Integer read FSizingBarHeight write SetSizingBarHeight default 8;
+
+  end;
+
+{ TRowDetailPanelControlEh }
+
+  TRowDetailPanelControlEh = class(TScrollingWinControl)
+  private
+    FBorderStyle: TBorderStyle;
+    FCanvas: TCanvas;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    FDownGlobPos: TPoint;
+    FRowDetailPanelHeight: Integer;
+    {$ENDIF}
+    FHitTest: TPoint;
+    FParentPopupMenu: Boolean;
+    FSizeArea: Boolean;
+    FSizingBarBeveled: Boolean;
+    FSizingBarHeight: Integer;
+    FVertSizing: Boolean;
+    FYDelta: Integer;
+
+    procedure CMChildKey(var Message: TCMChildKey); message CM_CHILDKEY;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    {$ENDIF}
+    procedure CMDesignHitTest(var Msg: TCMDesignHitTest); message CM_DESIGNHITTEST;
+
+
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMNCCalcSize(var Message: TWMNCCalcSize); message WM_NCCALCSIZE;
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
+    procedure WMNCLButtonDown(var Message: TWMNCLButtonDown); message WM_NCLBUTTONDOWN;
+    procedure WMNCLButtonUp(var Message: TWMNCLButtonUp); message WM_NCLBUTTONUP;
+    procedure WMNCMouseMove(var Message: TWMNCMouseMove); message WM_NCMOUSEMOVE;
+    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
+    procedure WMSetCursor(var Msg: TWMSetCursor); message WM_SETCURSOR;
+    {$ENDIF}
+
+
+    procedure SetBorderStyle(Value: TBorderStyle); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetVertSizing(const Value: Boolean);
+    procedure SetSizingBarHeight(const Value: Integer);
+    procedure SetSizingBarBeveled(const Value: Boolean);
+  protected
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure DrawSizingBar;
+    procedure RecreateWndHandle;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure DefaultHandler(var Message); override;
+
+    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
+    property Canvas: TCanvas read FCanvas;
+    property ParentPopupMenu: Boolean read FParentPopupMenu write FParentPopupMenu default True;
+    property SizingBarBeveled: Boolean read FSizingBarBeveled write SetSizingBarBeveled default True;
+    property SizingBarHeight: Integer read FSizingBarHeight write SetSizingBarHeight default 8;
+    property VertSizing: Boolean read FVertSizing write SetVertSizing default False;
+  published
+    property Left stored False;
+    property Top stored False;
+    property Width stored False;
+    property Height stored False;
+  end;
+
+  TGridRowPanelTabNavigationTypeEh = (rpntUpToDownPriorityEh, rpntLeftToRightPriorityEh);
+  TGridRowPanelNavKeysNavigationTypeEh = (rpntRowToRowEh, rpntCellToCellEh);
+
+{ TGridRowPanelEh }
+
+  TGridRowPanelEh = class(TPersistent)
+  private
+    FActive: Boolean;
+    FGrid: TCustomDBGridEh;
+    FNavKeysNavigationType: TGridRowPanelNavKeysNavigationTypeEh;
+    FTabNavigationType: TGridRowPanelTabNavigationTypeEh;
+    procedure SetActive(const Value: Boolean);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    procedure Assign(Source: TPersistent); override;
+  published
+    property Active: Boolean read FActive write SetActive default False;
+    property NavKeysNavigationType: TGridRowPanelNavKeysNavigationTypeEh read FNavKeysNavigationType write FNavKeysNavigationType default rpntRowToRowEh;
+    property TabNavigationType: TGridRowPanelTabNavigationTypeEh read FTabNavigationType write FTabNavigationType default rpntUpToDownPriorityEh;
+  end;
+
+{ TGroupRowParamsEh }
+
+  TGroupRowParamsEh = class(TObject)
+  private
+    FColor: TColor;
+    FFont: TFont;
+    FGroupRowText: String;
+    FImageIndex: Integer;
+    FImageList: TCustomImageList;
+    FState: TGridDrawState;
+    FHighlight: Boolean;
+  public
+    property Color: TColor read FColor write FColor;
+    property Font: TFont read FFont;
+    property GroupRowText: String read FGroupRowText write FGroupRowText;
+    property ImageIndex: Integer read FImageIndex write FImageIndex;
+    property Images: TCustomImageList read FImageList write FImageList;
+    property State: TGridDrawState read FState;
+    property Highlight: Boolean read FHighlight;
+  end;
+
+  TDBGridEhDataGroupGetGroupRowParamsEvent = procedure(Sender: TCustomDBGridEh;
+    GroupDataTreeNode: TGroupDataTreeNodeEh; Params: TGroupRowParamsEh) of object;
+
+{ TGroupFooterParamsEh }
+
+  TGroupFooterParamsEh = class(TObject)
+  private
+    FColor: TColor;
+    FFont: TFont;
+    FState: TGridDrawState;
+    FText: String;
+    FValue: Variant;
+  public
+    property Color: TColor read FColor write FColor;
+    property Font: TFont read FFont;
+    property Value: Variant read FValue;
+    property Text: String read FText write FText;
+    property State: TGridDrawState read FState;
+  end;
+
+  TDBGridEhDataGroupGetGroupFooterParamsEvent = procedure(Sender: TCustomDBGridEh;
+    GroupDataTreeNode: TGroupDataTreeNodeEh;
+    FooterColumnItem: TGridDataGroupFooterColumnItemEh;
+    Params: TGroupFooterParamsEh) of object;
+
+{ TDBGridEhDataGroupLevelEh }
+
+  TDBGridEhDataGroupGetKeyValueEvent = procedure(Sender: TCustomDBGridEh;
+    GroupLevel: TDBGridEhDataGroupLevelEh; var KeyValue: Variant) of object;
+
+  TDBGridEhDataGroupGetGroupRowTextEvent = procedure(Sender: TCustomDBGridEh;
+    GroupDataTreeNode: TGroupDataTreeNodeEh; var GroupRowText: String) of object;
+
+  TDBGridEhDataGroupLevelEh = class(TGridDataGroupLevelEh)
+  private
+    FLoadingColumnName: String;
+    FOnGetKeyValue: TDBGridEhDataGroupGetKeyValueEvent;
+    FOnGetGroupRowText: TDBGridEhDataGroupGetGroupRowTextEvent;
+    FOnGetKeyValueAsText: TDBGridEhDataGroupGetKeyValueAsTextEvent;
+    function GetColumn: TColumnEh;
+    function GetColumnName: String;
+    procedure SetColumn(const Value: TColumnEh);
+    procedure SetColumnName(const Value: String);
+  protected
+    procedure DrawFormatChanged; override;
+  public
+    function GetKeyValue: Variant; override;
+    function GetKeyValueAsText(GroupDataTreeNode: TGroupDataTreeNodeEh): String; override;
+    function GetGroupRowText(GroupDataTreeNode: TGroupDataTreeNodeEh): String; override;
+    procedure Assign(Source: TPersistent); override;
+    property Column: TColumnEh read GetColumn write SetColumn;
+  published
+    property Color;
+    property ColumnName: String read GetColumnName write SetColumnName;
+    property Font;
+    property ParentColor;
+    property ParentFont;
+    property RowHeight;
+    property RowHeightStored;
+    property RowLines;
+    property RowLinesStored;
+    property SortOrder;
+
+    property OnGetKeyValue: TDBGridEhDataGroupGetKeyValueEvent read FOnGetKeyValue write FOnGetKeyValue;
+    property OnGetKeyValueAsText: TDBGridEhDataGroupGetKeyValueAsTextEvent read FOnGetKeyValueAsText write FOnGetKeyValueAsText;
+    property OnGetGroupRowText: TDBGridEhDataGroupGetGroupRowTextEvent read FOnGetGroupRowText write FOnGetGroupRowText;
+  end;
+
+{ TDBGridEhGroupingPanelEh }
+
+  TDBGridEhGroupingPanelEh = class(TPersistent)
+  private
+    FDataGroups: TDBGridEhDataGroupsEh;
+    FColor: TColor;
+    procedure SetColor(const Value: TColor);
+  public
+    constructor Create(ADataGroups: TDBGridEhDataGroupsEh);
+    function GetColor: TColor; virtual;
+    property DataGroups: TDBGridEhDataGroupsEh read FDataGroups;
+  published
+    property Color: TColor read FColor write SetColor default clDefault;
+  end;
+
+{ TDBGridEhDataGroupsEh }
+
+  TDBGridEhDataGroupsEh = class(TGridDataGroupsEh)
+  private
+    FGroupPanel: TDBGridEhGroupingPanelEh;
+    FTop: Integer;
+
+    function GetCurDataNode: TGroupDataTreeNodeEh;
+    function GetGrid: TCustomDBGridEh;
+    procedure SetGroupPanel(const Value: TDBGridEhGroupingPanelEh);
+  protected
+    FHotTrackGroupLevelIdx: Integer;
+    function CreateGroupLevels: TGridDataGroupLevelsEh; override;
+    function DefaultFooterColor: TColor; override;
+    function DefaultFooterFont: TFont; override;
+
+    procedure ActiveChanged; override;
+    procedure ActiveGroupingStructChanged; override;
+    procedure ColumnDeleting(Item: TColumnEh); virtual;
+    procedure DrawFormatChanged; override;
+    procedure RebuildActiveGroupLevels; override;
+    procedure ResetGroupLevelNames;
+    procedure ResortActiveLevel(LevelIndex: Integer; SortOrder: TSortOrderEh); override;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function IsGroupingWorks: Boolean; override;
+    function IsGroupingWorksWithLevel: Boolean;
+
+    property Grid: TCustomDBGridEh read GetGrid;
+    property Top: Integer read FTop;
+    property CurDataNode: TGroupDataTreeNodeEh read GetCurDataNode;
+  published
+    property GroupPanel: TDBGridEhGroupingPanelEh read FGroupPanel write SetGroupPanel;
+  end;
+
+  TDBGridHorzEmptySpaceStyleEh = (deshNonEh, deshExtendTitleWideSpaceEh, deshExtendGridWideSpaceEh);
+
+{ TDBGridLineParamsEh }
+
+  TDBGridLineParamsEh = class(TDBAxisGridLineParamsEh)
+  private
+    FHorzEmptySpaceStyle: TDBGridHorzEmptySpaceStyleEh;
+    function GetGrid: TCustomDBGridEh;
+    procedure SetHorzEmptySpaceStyle(const Value: TDBGridHorzEmptySpaceStyleEh);
+
+  protected
+    function DefaultDataHorzLines: Boolean; override;
+    function DefaultDataVertLines: Boolean; override;
+
+    procedure SetVertEmptySpaceStyle(const Value: TDrawEmptySpaceStyle); override;
+    procedure SetGridBoundaries(const Value: Boolean); override;
+    property Grid: TCustomDBGridEh read GetGrid;
+
+  public
+    constructor Create(AGrid: TCustomGridEh);
+
+    function GetVertAreaContraVertColor: TColor; override;
+    function GetActualColorScheme: TDBGridLinesColorSchemeEh; override;
+
+  published
+    property BrightColor;
+    property ColorScheme;
+    property DarkColor;
+    property DataBoundaryColor;
+    property DataHorzColor;
+    property DataHorzLines;
+    property DataHorzLinesStored;
+    property DataVertColor;
+    property DataVertLines;
+    property DataVertLinesStored;
+    property GridBoundaries;
+    property VertEmptySpaceStyle;
+    property HorzEmptySpaceStyle: TDBGridHorzEmptySpaceStyleEh read FHorzEmptySpaceStyle write SetHorzEmptySpaceStyle default deshNonEh;
+  end;
+
+{ TGridHighlightTextParamsEh }
+
+  TGridHighlightTextParamsEh = class(TPersistent)
+  private
+    FCaseInsensitivity: Boolean;
+    FText: String;
+    FColor: TColor;
+    FColumnsList: TColumnsEhList;
+    procedure SetColumnsList(const Value: TColumnsEhList);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Text: String read FText write FText;
+    property CaseInsensitivity: Boolean read FCaseInsensitivity write FCaseInsensitivity;
+    property ColumnsList: TColumnsEhList read FColumnsList write SetColumnsList; 
+    property Color: TColor read FColor write FColor;
+  end;
+
+  TDBGridEhRowIndicatorTypeEh =
+   (giNormalArrowEh, giSelectedArrowEh, giEditEh, giInsertEh, giInplaceSearch);
+
+  THorzCellAreaTypeEh = (hctIndicatorEh, hctDataEh);
+  TVertCellAreaTypeEh = (vctTitleEh, vctSubTitleEh, vctDataEh, vctAboveFooterEh, vctFooterEh);
+
+  TCellAreaTypeEh = record
+    HorzType: THorzCellAreaTypeEh;
+    VertType: TVertCellAreaTypeEh;
+  end;
+
+  TDBGridDrawFixedStateEh = record
+    ClipRect: TRect;
+    DrawByThemesOverLines: Boolean;
+    EndGradientColor: TColor;
+    FillColor: TColor;
+    FillStyle: TGridCellFillStyleEh;
+    FontColor: TColor;
+    HorzBorderInFillStyle: Boolean;
+    HorzLineColor: TColor;
+    HotTrack: Boolean;
+    Pressed: Boolean;
+    Selected: Boolean;
+    StartGradientColor: TColor;
+    The3DRect: Boolean;
+    VertBorderInFillStyle: Boolean;
+    VertLineColor: TColor;
+  end;
+
+  { TDBGridDrawTitleCellParamsEh }
+
+  TDBGridDrawTitleCellParamsEh = class(TPersistent)
+  protected
+    FFont: TFont;
+    FMultiTitleNode: TDBGridMultiTitleNodeEh;
+    FColumn: TColumnEh;
+    FAlignment: TAlignment;
+    FColor: TColor;
+    FSecondColor: TColor;
+    FText: String;
+    FCellMultiSelected: Boolean;
+    FDown: Boolean;
+    FDrawByThemes: Boolean;
+    FDrawByThemesOverLines: Boolean;
+    FDrawFilterButton: Boolean;
+    FDrawSortIndex: Boolean;
+    FHighlight: Boolean;
+    FHorzBorderInFillStyle: Boolean;
+    FLayout: TTextLayout;
+    FMultiTitle: Boolean;
+    FOrientation: TTextOrientationEh;
+    FSortMarker: TSortMarkerEh;
+    FDraw3DBorder: Boolean;
+    FVertBorderInFillStyle: Boolean;
+    FWordWrap: Boolean;
+    FCellState: TGridDrawState;
+    FForeInsideRect: TRect;
+    FForeXDataOffset: Integer;
+    FForeYDataOffset: Integer;
+    FEndEllipsis: Boolean;
+  public
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure InitParams(AColumn: TColumnEh; AMultiTitleNode: TDBGridMultiTitleNodeEh);
+
+    property MultiTitleNode: TDBGridMultiTitleNodeEh read FMultiTitleNode;
+    property Column: TColumnEh read FColumn;
+
+    property Alignment: TAlignment read FAlignment write FAlignment;
+    property Font: TFont read FFont;
+    property Color: TColor read FColor write FColor;
+    property SecondColor: TColor read FSecondColor write FSecondColor;
+    property Text: String read FText write FText;
+    property CellMultiSelected: Boolean read FCellMultiSelected write FCellMultiSelected;
+    property Down: Boolean read FDown;
+    property DrawByThemes: Boolean read FDrawByThemes write FDrawByThemes;
+    property DrawByThemesOverLines: Boolean read FDrawByThemesOverLines write FDrawByThemesOverLines;
+    property DrawFilterButton: Boolean read FDrawFilterButton write FDrawFilterButton;
+    property DrawSortIndex: Boolean read FDrawSortIndex write FDrawSortIndex;
+    property Highlight: Boolean read FHighlight;
+    property HorzBorderInFillStyle: Boolean read FHorzBorderInFillStyle write FHorzBorderInFillStyle;
+    property Layout: TTextLayout read FLayout write FLayout;
+    property MultiTitle: Boolean read FMultiTitle;
+    property Orientation: TTextOrientationEh read FOrientation write FOrientation;
+    property SortMarker: TSortMarkerEh read FSortMarker write FSortMarker;
+    property Draw3DBorder: Boolean read FDraw3DBorder write FDraw3DBorder;
+    property VertBorderInFillStyle: Boolean read FVertBorderInFillStyle write FVertBorderInFillStyle;
+    property WordWrap: Boolean read FWordWrap write FWordWrap;
+    property CellState: TGridDrawState read FCellState write FCellState;
+    property ForeInsideRect: TRect read FForeInsideRect write FForeInsideRect;
+    property ForeXDataOffset: Integer read FForeXDataOffset write FForeXDataOffset;
+    property ForeYDataOffset: Integer read FForeYDataOffset write FForeYDataOffset;
+    property EndEllipsis: Boolean read FEndEllipsis;
+  end;
+
+  TDBGridGetDrawTitleParamsEventEh = procedure(Grid: TCustomDBGridEh;
+    Params: TDBGridDrawTitleCellParamsEh) of object;
+
+  TDBGridDrawTitleEventEh = procedure(Grid: TCustomDBGridEh; ACanvas: TCanvas;
+    const ARect: TRect; Params: TDBGridDrawTitleCellParamsEh;
+    var Processed: Boolean) of object;
+
+  TDBGridEhOption = (dghFixed3D, dghFrozen3D, dghFooter3D, dghData3D,
+    dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection,
+    dghFitRowHeightToText, dghAutoSortMarking, dghMultiSortMarking,
+    dghEnterAsTab, dghTraceColSizing, dghIncSearch, dghPreferIncSearch,
+    dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghRecordMoving,
+    dghShowRecNo, dghColumnResize, dghColumnMove, dghAutoFitRowHeight,
+    dghHotTrack, dghExtendVertLines);
+  TDBGridEhOptions = set of TDBGridEhOption;
+
+  TDBGridEhIndicatorOption = (gioShowRowIndicatorEh,
+    gioShowRecNoEh, gioShowRowselCheckboxesEh);
+  TDBGridEhIndicatorOptions = set of TDBGridEhIndicatorOption;
+
+  TDBGridEhState = (dgsNormal, dgsRowSelecting, dgsColSelecting, dgsRectSelecting,
+    dgsPosTracing, dgsTitleDown, dgsColSizing, dgsRowMoving,
+    dgsTitleFilterButtonDown, dgsGroupPanelTitleMoving, dgsGroupPanelTitleDown);
+
+  TEditButtonsShowOptionEh = (sebShowOnlyForCurCellEh,
+    sebShowOnlyForCurRowEh, sebShowOnlyWhenGridActiveEh, sebShowOnlyWhenDataEditingEh);
+  TEditButtonsShowOptionsEh = set of TEditButtonsShowOptionEh;
+
+  TDBGridEhClickEvent = procedure(Column: TColumnEh) of object;
+  TDrawFooterCellEvent = procedure(Sender: TObject; DataCol, Row: Longint;
+    Column: TColumnEh; Rect: TRect; State: TGridDrawState) of object;
+  TGetFooterParamsEvent = procedure(Sender: TObject; DataCol, Row: Longint;
+    Column: TColumnEh; AFont: TFont; var Background: TColor;
+    var Alignment: TAlignment; State: TGridDrawState; var Text: String) of object;
+
+  TGetBtnEhParamsEvent = procedure(Sender: TObject; Column: TColumnEh;
+    AFont: TFont; var Background: TColor; var SortMarker: TSortMarkerEh;
+    IsDown: Boolean) of object;
+
+  TGetDBGridEhRowHeightEvent = procedure(Sender: TObject;
+    var RowHeight: Integer) of object;
+
+  TDBGridEhRowDetailPanelHideEvent = procedure(Sender: TCustomDBGridEh; var CanHide: Boolean) of object;
+  TDBGridEhRowDetailPanelShowEvent = procedure(Sender: TCustomDBGridEh; var CanShow: Boolean) of object;
+  TDBGridEhCheckRowHaveDetailPanelEvent = procedure(Sender: TCustomDBGridEh; var RowHaveDetailPanel: Boolean) of object;
+  TDBGridEhNotifyEvent = procedure(Sender: TCustomDBGridEh) of object;
+
+{ TDBGridFooterParamsEh }
+
+  TDBGridFooterParamsEh = class(TPersistent)
+  private
+    FColor: TColor;
+    FFillStyle: TGridCellFillStyleEh;
+    FFont: TFont;
+    FGrid: TCustomDBGridEh;
+    FHorzLineColor: TColor;
+    FHorzLines: Boolean;
+    FHorzLinesStored: Boolean;
+    FParentFont: Boolean;
+    FRowHeight: Integer;
+    FRowLines: Integer;
+    FVertLineColor: TColor;
+    FVertLines: Boolean;
+    FVertLinesStored: Boolean;
+
+    function DefaultFont: TFont;
+    function DefaultHorzLines: Boolean;
+    function DefaultVertLines: Boolean;
+    function GetHorzLines: Boolean;
+    function GetVertLines: Boolean;
+    function IsFontStored: Boolean;
+    function IsHorzLinesStored: Boolean;
+    function IsVertLinesStored: Boolean;
+
+    procedure FontChanged(Sender: TObject);
+    procedure RefreshDefaultFont;
+    procedure SetColor(const Value: TColor);
+    procedure SetFillStyle(const Value: TGridCellFillStyleEh);
+    procedure SetFont(const Value: TFont);
+    procedure SetHorzLineColor(const Value: TColor);
+    procedure SetHorzLines(const Value: Boolean);
+    procedure SetHorzLinesStored(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetVertLineColor(const Value: TColor);
+    procedure SetVertLines(const Value: Boolean);
+    procedure SetVertLinesStored(const Value: Boolean);
+  protected
+    FCalculatedRowHeights: array of Integer;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function DefaultHorzLineColor: TColor; virtual;
+    function DefaultVertLineColor: TColor; virtual;
+    function GetActualFillStyle: TGridCellFillStyleEh; virtual;
+    function GetColor: TColor; virtual;
+    function GetHorzLineColor: TColor; virtual;
+    function GetVertLineColor: TColor; virtual;
+
+    property Grid: TCustomDBGridEh read FGrid;
+  published
+    property Color: TColor read FColor write SetColor default clDefault;
+    property FillStyle: TGridCellFillStyleEh read FFillStyle write SetFillStyle default cfstDefaultEh;
+    property Font: TFont read FFont write SetFont stored IsFontStored;
+    property HorzLineColor: TColor read FHorzLineColor write SetHorzLineColor default clDefault;
+    property HorzLines: Boolean read GetHorzLines write SetHorzLines stored IsHorzLinesStored;
+    property HorzLinesStored: Boolean read IsHorzLinesStored write SetHorzLinesStored stored False;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property RowHeight: Integer read FRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read FRowLines write SetRowLines default 0;
+    property VertLineColor: TColor read FVertLineColor write SetVertLineColor default clDefault;
+    property VertLines: Boolean read GetVertLines write SetVertLines stored IsVertLinesStored;
+    property VertLinesStored: Boolean read IsVertLinesStored write SetVertLinesStored stored False;
+  end;
+
+{ TDBGridIndicatorParamsEh }
+
+  TDBGridIndicatorParamsEh = class(TPersistent)
+  private
+    FColor: TColor;
+    FColorStored: Boolean;
+    FFillStyle: TGridCellFillStyleEh;
+    FGrid: TCustomDBGridEh;
+    FHorzLineColor: TColor;
+    FHorzLines: Boolean;
+    FHorzLinesStored: Boolean;
+    FRecNoShowStep: Integer;
+    FVertLineColor: TColor;
+    FVertLines: Boolean;
+    FVertLinesStored: Boolean;
+
+    function DefaultColor: TColor;
+    function DefaultHorzLines: Boolean;
+    function DefaultVertLines: Boolean;
+    function GetColor: TColor;
+    function GetHorzLines: Boolean;
+    function GetVertLines: Boolean;
+    function IsColorStored: Boolean;
+    function IsHorzLinesStored: Boolean;
+    function IsVertLinesStored: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetColorStored(const Value: Boolean);
+    procedure SetFillStyle(const Value: TGridCellFillStyleEh);
+    procedure SetHorzLineColor(const Value: TColor);
+    procedure SetHorzLines(const Value: Boolean);
+    procedure SetHorzLinesStored(const Value: Boolean);
+    procedure SetRecNoShowStep(const Value: Integer);
+    procedure SetVertLineColor(const Value: TColor);
+    procedure SetVertLines(const Value: Boolean);
+    procedure SetVertLinesStored(const Value: Boolean);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function GetVertLineColor: TColor; virtual;
+    function GetHorzLineColor: TColor; virtual;
+    function DefaultHorzLineColor: TColor; virtual;
+    function DefaultVertLineColor: TColor; virtual;
+    function GetActualFillStyle: TGridCellFillStyleEh; virtual;
+
+    property Grid: TCustomDBGridEh read FGrid;
+  published
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property ColorStored: Boolean read IsColorStored write SetColorStored stored False;
+    property FillStyle: TGridCellFillStyleEh read FFillStyle write SetFillStyle default cfstDefaultEh;
+    property HorzLineColor: TColor read FHorzLineColor write SetHorzLineColor default clDefault;
+    property HorzLines: Boolean read GetHorzLines write SetHorzLines stored IsHorzLinesStored;
+    property HorzLinesStored: Boolean read IsHorzLinesStored write SetHorzLinesStored stored False;
+    property RecNoShowStep: Integer read FRecNoShowStep write SetRecNoShowStep default 1;
+    property VertLineColor: TColor read FVertLineColor write SetVertLineColor default clDefault;
+    property VertLines: Boolean read GetVertLines write SetVertLines stored IsVertLinesStored;
+    property VertLinesStored: Boolean read IsVertLinesStored write SetVertLinesStored stored False;
+  end;
+
+{ TDBGridTitleParamsEh }
+
+  TDBGridTitleParamsEh = class(TPersistent)
+  private
+    FBorderInFillStyle: Boolean;
+    FColor: TColor;
+    FColorStored: Boolean;
+    FFillStyle: TGridCellFillStyleEh;
+    FFont: TFont;
+    FGrid: TCustomDBGridEh;
+    FHorzLineColor: TColor;
+    FHorzLines: Boolean;
+    FHorzLinesStored: Boolean;
+    FImages: TCustomImageList;
+    FMultiTitle: Boolean;
+    FParentFont: Boolean;
+    FPopupMenu: TPopupMenu;
+    FRowHeight: Integer;
+    FRowLines: Integer;
+    FSecondColor: TColor;
+    FSecondColorStored: Boolean;
+    FSortMarkerStyle: TSortMarkerStyleEh;
+    FSortMarkerStyleStored: Boolean;
+    FVertLineColor: TColor;
+    FVertLines: Boolean;
+    FVertLinesStored: Boolean;
+    FVTitleMargin: Integer;
+
+    function DefaultColor: TColor;
+    function DefaultSortMarkerStyle: TSortMarkerStyleEh;
+    function GetColor: TColor;
+    function GetSortMarkerStyle: TSortMarkerStyleEh;
+    function IsColorStored: Boolean;
+    function IsSortMarkerStyleStored: Boolean;
+    function DefaultHorzLines: Boolean;
+    function DefaultVertLines: Boolean;
+    function GetHorzLines: Boolean;
+    function GetSecondColor: TColor;
+    function GetVertLines: Boolean;
+    function IsFontStored: Boolean;
+    function IsHorzLinesStored: Boolean;
+    function IsSecondColorStored: Boolean;
+    function IsVertLinesStored: Boolean;
+
+    procedure FontChanged(Sender: TObject);
+    procedure SetBorderInFillStyle(const Value: Boolean);
+    procedure SetColor(const Value: TColor);
+    procedure SetColorStored(const Value: Boolean);
+    procedure SetFillStyle(const Value: TGridCellFillStyleEh);
+    procedure SetFont(const Value: TFont);
+    procedure SetHorzLineColor(const Value: TColor);
+    procedure SetHorzLines(const Value: Boolean);
+    procedure SetHorzLinesStored(const Value: Boolean);
+    procedure SetImages(const Value: TCustomImageList);
+    procedure SetMultiTitle(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetPopupMenu(Value: TPopupMenu);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetSecondColor(const Value: TColor);
+    procedure SetSecondColorStored(const Value: Boolean);
+    procedure SetSortMarkerStyle(const Value: TSortMarkerStyleEh);
+    procedure SetSortMarkerStyleStored(const Value: Boolean);
+    procedure SetVertLineColor(const Value: TColor);
+    procedure SetVertLines(const Value: Boolean);
+    procedure SetVertLinesStored(const Value: Boolean);
+    procedure SetVTitleMargin(const Value: Integer);
+  protected
+    procedure RefreshDefaultFont;
+    function DefaultFont: TFont;
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function GetVertLineColor: TColor; virtual;
+    function GetHorzLineColor: TColor; virtual;
+    function DefaultHorzLineColor: TColor; virtual;
+    function DefaultVertLineColor: TColor; virtual;
+    function GetActualFillStyle: TGridCellFillStyleEh; virtual;
+    function DefaultSecondColor: TColor; virtual;
+    property Grid: TCustomDBGridEh read FGrid;
+
+  published
+    property BorderInFillStyle: Boolean read FBorderInFillStyle write SetBorderInFillStyle default False;
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property ColorStored: Boolean read IsColorStored write SetColorStored stored False;
+    property FillStyle: TGridCellFillStyleEh read FFillStyle write SetFillStyle default cfstDefaultEh;
+    property Font: TFont read FFont write SetFont stored IsFontStored;
+    property HorzLineColor: TColor read FHorzLineColor write SetHorzLineColor default clDefault;
+    property HorzLines: Boolean read GetHorzLines write SetHorzLines stored IsHorzLinesStored;
+    property HorzLinesStored: Boolean read IsHorzLinesStored write SetHorzLinesStored stored False;
+    property Images: TCustomImageList read FImages write SetImages;
+    property MultiTitle: Boolean read FMultiTitle write SetMultiTitle default False;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property PopupMenu: TPopupMenu read FPopupMenu write SetPopupMenu;
+    property RowHeight: Integer read FRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read FRowLines write SetRowLines default 0;
+    property SecondColor: TColor read GetSecondColor write SetSecondColor stored IsSecondColorStored;
+    property SecondColorStored: Boolean read IsSecondColorStored write SetSecondColorStored stored False;
+    property SortMarkerStyle: TSortMarkerStyleEh read GetSortMarkerStyle write SetSortMarkerStyle stored IsSortMarkerStyleStored;
+    property SortMarkerStyleStored: Boolean read IsSortMarkerStyleStored write SetSortMarkerStyleStored stored False;
+    property VertLineColor: TColor read FVertLineColor write SetVertLineColor default clDefault;
+    property VertLines: Boolean read GetVertLines write SetVertLines stored IsVertLinesStored;
+    property VertLinesStored: Boolean read IsVertLinesStored write SetVertLinesStored stored False;
+    property VTitleMargin: Integer read FVTitleMargin write SetVTitleMargin default 10;
+  end;
+
+{ TGridTreeViewParamsEh }
+
+  TGridTreeViewParamsEh = class(TPersistent)
+  private
+    FGrid: TCustomDBGridEh;
+    FGlyphStyle: TTreeViewGlyphStyleEh;
+    FShowTreeLines: Boolean;
+    procedure SetGlyphStyle(const Value: TTreeViewGlyphStyleEh);
+    procedure SetShowTreeLines(const Value: Boolean);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+    function GetActualGlyphStyle: TTreeViewGlyphStyleEh;
+    property Grid: TCustomDBGridEh read FGrid;
+  published
+    property GlyphStyle: TTreeViewGlyphStyleEh read FGlyphStyle write SetGlyphStyle default tvgsDefaultEh;
+    property ShowTreeLines: Boolean read FShowTreeLines write SetShowTreeLines default True;
+  end;
+
+{ TGridEmptyDataInfoEh }
+
+  TGridEmptyDataInfoEh = class(TPersistent)
+  private
+    FActive: Boolean;
+    FFont: TFont;
+    FGrid: TCustomDBGridEh;
+    FParentFont: Boolean;
+    FText: String;
+
+    function DefaultFont: TFont;
+    function GetText: String;
+    function IsFontStored: Boolean;
+
+    procedure FontChanged(Sender: TObject);
+    procedure SetActive(const Value: Boolean);
+    procedure SetFont(const Value: TFont);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetText(const Value: String);
+  public
+    constructor Create(AGrid: TCustomDBGridEh);
+    destructor Destroy; override;
+
+    function Showing: Boolean;
+    procedure GetDrawRect(var ADrawRect: TRect); virtual;
+    procedure PaintEmptyDataInfo;
+    procedure RefreshDefaultFont;
+  published
+    property Active: Boolean read FActive write SetActive default False;
+    property Font: TFont read FFont write SetFont stored IsFontStored;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property Text: String read FText write SetText;
+  end;
+
+{ TDBGridBackgroundDataEh }
+
+  TDBGridBackgroundDataEh = class(TGridBackgroundDataEh)
+  private
+    FExcludeIndicator: Boolean;
+    FExcludeTitle: Boolean;
+    FExcludeFooter: Boolean;
+
+    procedure SetExcludeFooter(const Value: Boolean);
+    procedure SetExcludeIndicator(const Value: Boolean);
+    procedure SetExcludeTitle(const Value: Boolean);
+  public
+    function BoundRect: TRect; override;
+    function Grid: TCustomDBGridEh;
+
+  published
+    property ExcludeTitle: Boolean read FExcludeTitle write SetExcludeTitle default False;
+    property ExcludeIndicator: Boolean read FExcludeIndicator write SetExcludeIndicator default False;
+    property ExcludeFooter: Boolean read FExcludeFooter write SetExcludeFooter default False;
+  end;
+
+{ TDBGridSearchPanelEh }
+
+  TDBGridSearchPanelOptionMenuItemEh = (gsmuSearchScopesEh, gsmuCaseSensitiveEh, gsmuWholeWordsEh, gsmuBeginsWithEh);
+  TDBGridSearchPanelOptionsMenuItemsEh = set of TDBGridSearchPanelOptionMenuItemEh;
+
+  TDBGridSearchPanelScopeEh = (gssCurrentColumnEh, gssEntireGridEh);
+
+  TDBGridSearchPanelEh = class(TComponent)
+  private
+    FActive: Boolean;
+    FCaseSensitive: Boolean;
+    FCellBeginsWithMode: Boolean;
+    FEnabled: Boolean;
+    FFilterEnabled: Boolean;
+    FFilterOnTyping: Boolean;
+    FFoundColumnIndex: Integer;
+    FGrid: TCustomDBGridEh;
+    FLocation: TSearchPanelLocationEh;
+    FOptionsPopupMenuItems: TDBGridSearchPanelOptionsMenuItemsEh;
+    FPersistentShowing: Boolean;
+    FPreferSearchToEdit: Boolean;
+    FSearchingColumnIndex: Integer;
+    FSearchingText: String;
+    FSearchScope: TDBGridSearchPanelScopeEh;
+    FShortCut: TShortCut;
+    FVisible: Boolean;
+    FWholeWords: Boolean;
+
+    FOnCheckCellHitSearch: TGridSearchPanelCheckColumnValueAcceptEventEh;
+    FOnGetHighlightStrings: TDBGridGetHighlightStringsEventEh;
+    FOnSearchEditChange: TGridSearchEditChangeEventEh;
+    FOnSearchEditKeyDown: TGridSearchEditKeyEventEh;
+    FOnSearchEditKeyPress: TGridSearchEditKeyPressEventEh;
+    FOnSearchEditKeyUp: TGridSearchEditKeyEventEh;
+
+    function GetActive: Boolean;
+
+    procedure SetCaseSensitive(const Value: Boolean);
+    procedure SetEnabled(const Value: Boolean);
+    procedure SetFilterEnabled(const Value: Boolean);
+    procedure SetFoundColumnIndex(const Value: Integer);
+    procedure SetLocation(const Value: TSearchPanelLocationEh);
+    procedure SetPersistentShowing(const Value: Boolean);
+    procedure SetSearchingText(const Value: String);
+    procedure SetSearchScope(const Value: TDBGridSearchPanelScopeEh);
+    procedure SetCellBeginsWithMode(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+    procedure SetWholeWords(const Value: Boolean);
+    function GetSearchingColumnIndex: Integer;
+    function GetMRUList: TMRUListEh;
+    procedure SetMRUList(const Value: TMRUListEh);
+
+  protected
+    function InternalGetActive: Boolean;
+    function NormalHighlightBackColor: TColor; virtual;
+    function CurrentFoundItemBackColor: TColor; virtual;
+
+    procedure SetActive(const Value: Boolean);
+    procedure InternalSetActive(const Value: Boolean);
+    procedure InterSetSearchingText(const Value: String);
+    procedure SetOptionsPopupMenuItems(const Value: TDBGridSearchPanelOptionsMenuItemsEh);
+  public
+    constructor Create(AGrid: TCustomDBGridEh); reintroduce;
+    destructor Destroy; override;
+
+    function InGridVertCaptureSize: Integer;
+    function IsShortCutStored: Boolean; virtual;
+    function TryFindText(Text: String): Boolean; virtual;
+
+    procedure FindNext;
+    procedure FindPrev;
+    procedure RestartFind(TimeOut: LongWord = 0);
+    procedure ApplySearchFilter;
+    procedure CancelSearchFilter;
+    procedure CancelSearchPanelMode;
+
+    property Active: Boolean read GetActive write SetActive default False;
+    property Visible: Boolean read FVisible write SetVisible default False;
+    property SearchingText: String read FSearchingText write SetSearchingText;
+    property FoundColumnIndex: Integer read FFoundColumnIndex write SetFoundColumnIndex;
+    property Grid: TCustomDBGridEh read FGrid;
+    property SearchingColumnIndex: Integer read GetSearchingColumnIndex;
+
+  published
+    property Enabled: Boolean read FEnabled write SetEnabled default False;
+    property CaseSensitive: Boolean read FCaseSensitive write SetCaseSensitive default False;
+    property FilterEnabled: Boolean read FFilterEnabled write SetFilterEnabled default True;
+    property FilterOnTyping: Boolean read FFilterOnTyping write FFilterOnTyping default False;
+    property Location: TSearchPanelLocationEh read FLocation write SetLocation default splGridTopEh;
+    property OptionsPopupMenuItems: TDBGridSearchPanelOptionsMenuItemsEh read FOptionsPopupMenuItems write SetOptionsPopupMenuItems default [gsmuSearchScopesEh, gsmuCaseSensitiveEh, gsmuWholeWordsEh, gsmuBeginsWithEh];
+    property PersistentShowing: Boolean read FPersistentShowing write SetPersistentShowing default True;
+    property PreferSearchToEdit: Boolean read FPreferSearchToEdit write FPreferSearchToEdit default False;
+    property SearchScope: TDBGridSearchPanelScopeEh read FSearchScope write SetSearchScope default gssEntireGridEh;
+    
+    property ShortCut: TShortCut read FShortCut write FShortCut stored IsShortCutStored;
+    property CellBeginsWithMode: Boolean read FCellBeginsWithMode write SetCellBeginsWithMode default False;
+    property WholeWords: Boolean read FWholeWords write SetWholeWords default False;
+    property MRUList: TMRUListEh read GetMRUList write SetMRUList;
+
+    property OnCheckCellHitSearch: TGridSearchPanelCheckColumnValueAcceptEventEh read FOnCheckCellHitSearch write FOnCheckCellHitSearch;
+    property OnGetHighlightStrings: TDBGridGetHighlightStringsEventEh read FOnGetHighlightStrings write FOnGetHighlightStrings;
+    property OnSearchEditChange: TGridSearchEditChangeEventEh read FOnSearchEditChange write FOnSearchEditChange;
+    property OnSearchEditKeyDown: TGridSearchEditKeyEventEh read FOnSearchEditKeyDown write FOnSearchEditKeyDown;
+    property OnSearchEditKeyPress: TGridSearchEditKeyPressEventEh read FOnSearchEditKeyPress write FOnSearchEditKeyPress;
+    property OnSearchEditKeyUp: TGridSearchEditKeyEventEh read FOnSearchEditKeyUp write FOnSearchEditKeyUp;
+  end;
+
+{ TCustomDBGridEh }
+
+  TCustomDBGridEh = class(TCustomDBAxisGridEh, IMTEventReceiverEh)
+  private
+    FAllowedSelections: TDBGridEhAllowedSelections;
+    FAutoDrag, FSelectedCellPressed: Boolean;
+    FBookmarks: TBookmarkListEh;
+    FCenter: TDBGridEhCenter;
+    FCompleteKeyPress: String;
+    FContraColCount: Integer;
+    FCurGroupDataListBof: Boolean;
+    FCurGroupDataListEof: Boolean;
+    FCurGroupDataNode: TGroupDataTreeNodeEh;
+    FDataGrouping: TDBGridEhDataGroupsEh;
+    FDrawnGroupList: TObjectListEh;
+    FDSMouseCapture: Boolean;
+    FEditActions: TGridEditActionsEh;
+    FEditButtonsShowOptions: TEditButtonsShowOptionsEh;
+    FEmptyDataInfo: TGridEmptyDataInfoEh;
+    FEvenRowColor: TColor;
+    FEvenRowColorStored: Boolean;
+    FFetchingRecords: Boolean;
+    FFilterCol: Integer;
+    FFilterEdit: TCustomDBEditEh;
+    FFilterEditMode: Boolean;
+    FFooterParams: TDBGridFooterParamsEh;
+    FGridRowPanel: TGridRowPanelEh;
+    FHighlightTextParamsList: TObjectListEh;
+    FInColExit: Boolean;
+    FIndicatorOffset: Byte;
+    FIndicatorOptions: TDBGridEhIndicatorOptions;
+    FIndicatorParams: TDBGridIndicatorParamsEh;
+    FIndicatorTitle: TDBGridEhIndicatorTitle;
+    FInRowPanelCol: Integer;
+    FInstantReadDataNodes: TObjectListEh;
+    FLoadingModeBitmap: TBitmap;
+    FLoadingModeCallCount: Integer;
+    FLoadingModeText: String;
+    FLoadingShowText: Boolean;
+    FLockAutoShowCurCell: Boolean;
+    FOddRowColor: TColor;
+    FOddRowColorStored: Boolean;
+    FOldActiveRecord: Integer;
+    FOptions: TDBGridOptions;
+    FOptionsEh: TDBGridEhOptions;
+    FPopupMenuParams: TDBGridEhPopupMenuParams;
+    FRecNoTextWidth: Integer;
+    FRowDetailPanel: TRowDetailPanelEh;
+    FSelecting: Boolean;
+    FSelection: TDBGridEhSelection;
+    FSelectionAnchor: TUniBookmarkEh;
+    FSelfChangingFooterFont: Boolean;
+    FSelfChangingTitleFont: Boolean;
+    FSelRow: Integer;
+    FShowingLoadingMode: Boolean;
+    FSizeChanged: Boolean;
+    FSortLocal: Boolean;
+    FSortMarkerFont: TFont;
+    FSortMarking: Boolean;
+    FSTFilter: TSTDBGridEhFilter;
+    FStyle: TDBGridEhStyle;
+    FSumListRecalcing: Boolean;
+    FTimerActive: Boolean;
+    FTitleImageChangeLink: TChangeLink;
+    FTitleOffset: Byte;
+    FTitleParams: TDBGridTitleParamsEh;
+    FTopLeftVisible: Boolean;
+    FTreeViewParams: TGridTreeViewParamsEh;
+    FTryUseMemTableInt: Boolean;
+
+    FOnActiveGroupingStructChanged: TDBGridEhNotifyEvent;
+    FOnAdvDrawDataCell: TDBGridEhAdvDrawColumnDataEvent;
+    FOnApplyFilter: TNotifyEvent;
+    FOnBuildIndicatorTitleMenu: TDBGridEhBuildIndicatorTitleMenu;
+    FOnCellClick: TDBGridEhClickEvent;
+    FOnCheckRowHaveDetailPanel: TDBGridEhCheckRowHaveDetailPanelEvent;
+    FOnColEnter: TNotifyEvent;
+    FOnColExit: TNotifyEvent;
+    FOnColumnMoved: TMovedEvent;
+    FOnColWidthsChanged: TNotifyEvent;
+    FOnDataGroupFooterAggregateValue: TGridDataGroupFooterItemAggregateValueEvent;
+    FOnDataGroupFooterFinalizeValue: TGridDataGroupFooterItemFinalizeValueEvent;
+    FOnDataGroupFooterToDisplayText: TGridDataGroupFooterItemToDisplayTextEvent;
+    FOnDataGroupGetFooterParams: TDBGridEhDataGroupGetGroupFooterParamsEvent;
+    FOnDataGroupGetRowParams: TDBGridEhDataGroupGetGroupRowParamsEvent;
+    FOnDataGroupGetRowText: TDBGridEhDataGroupGetGroupRowTextEvent;
+    FOnDataHintShow: TDBGridEhDataHintShowEvent;
+    FOnDrawColumnCell: TDrawColumnEhCellEvent;
+    FOnDrawDataCell: TDrawDataCellEvent;
+    FOnDrawTitle: TDBGridDrawTitleEventEh;
+    FOnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent;
+    FOnGetCellParams: TGetCellEhParamsEvent;
+    FOnGetFooterParams: TGetFooterParamsEvent;
+    FOnGetRowHeight: TGetDBGridEhRowHeightEvent;
+    FOnGetTitleParams: TDBGridGetDrawTitleParamsEventEh;
+    FOnHintShowPause: TDBGridEhHintShowPauseEvent;
+    FOnIndicatorTitleMouseDown: TGridEhCellMouseEvent;
+    FOnNavigatorPanelButtonClick: TDBGridNavigatorPanelButtonClickEventEh;
+    FOnRowDetailPanelHide: TDBGridEhRowDetailPanelHideEvent;
+    FOnRowDetailPanelShow: TDBGridEhRowDetailPanelShowEvent;
+    FOnSelectedRowsItemChanged: TDBGridSelectedRowsItemChangedEh;
+    FOnSelectionChanged: TNotifyEvent;
+    FOnSortMarkingChanged: TNotifyEvent;
+    FOnSumListAfterRecalcAll: TNotifyEvent;
+    FOnSumListRecalcAll: TNotifyEvent;
+    FOnTitleClick: TDBGridEhClickEvent;
+    FOnTopLeftChanged: TNotifyEvent;
+    FWheelEventChildWheelControl: Boolean;
+
+    function GetCellColWidths(Index: Integer): Integer;
+    function GetCellRowHeights(Index: Integer): Integer;
+    function GetColumns: TDBGridColumnsEh;
+    function GetContraColCount: Longint;
+    function GetDefaultRowHeight: Integer;
+    function GetEvenRowColor: TColor;
+    function GetFieldColumns(const FieldName: String): TColumnEh;
+    function GetFooterColor: TColor;
+    function GetFooterFont: TFont;
+    function GetGridLineParams: TDBGridLineParamsEh;
+    function GetHorzScrollBar: THorzDBGridEhScrollBar;
+    function GetHorzScrollBarPanelControl: TDBGridEhScrollBarPanelControl;
+    function GetOddRowColor: TColor;
+    function GetOriginCol(): Integer;
+    function GetSearchPanelInplaceMode: Boolean;
+    function GetTitleImages: TCustomImageList;
+    function GetTopDataOffset: Byte;
+    function GetUseMultiTitle: Boolean;
+    function GetVertScrollBar: TVertDBGridEhScrollBar;
+    function GetVertScrollBarPanelControl: TDBGridEhScrollBarPanelControl;
+    function GetVisibleColumns: TColumnsEhList;
+    function GetVTitleMargin: Integer;
+    function IsCurrentRow(DataRowNum: Integer): Boolean;
+    function IsEvenRowColorStored: Boolean;
+    function IsOddRowColorStored: Boolean;
+
+    procedure ChangeGridOrientation(RightToLeftOrientation: Boolean);
+    procedure CheckClearSelection;
+    procedure CheckIMemTable;
+    procedure ClearSelection;
+    procedure DoSelection(Select: Boolean; Direction: Integer; MaxDirection, RowOnly: Boolean);
+    procedure FetchRecordsInView;
+    procedure MoveCol(DataCol, Direction: Integer; Select: Boolean);
+    procedure MTScroll(Distance: Integer);
+    procedure MTUpdateRowCount;
+    procedure PaintLoadingMode(RenderDuration: Integer);
+    procedure ResetOptions(Value: TDBGridOptions);
+    procedure ResetTabIndexedColumns;
+    procedure SetAllowedSelections(const Value: TDBGridEhAllowedSelections);
+    procedure SetCellColWidths(Index: Integer; const Value: Integer);
+    procedure SetCellRowHeights(Index: Integer; const Value: Integer);
+    procedure SetCenter(const Value: TDBGridEhCenter);
+    procedure SetColumnDefValues(const Value: TColumnDefValuesEh);
+    procedure SetColumns(const Value: TDBGridColumnsEh);
+    procedure SetContraColCount(const Value: Longint);
+    procedure SetDataGrouping(Value: TDBGridEhDataGroupsEh);
+    procedure SetDefaultRowHeight(const Value: Integer);
+    procedure SetEditButtonsShowOptions(Value: TEditButtonsShowOptionsEh);
+    procedure SetEmptyDataInfo(const Value: TGridEmptyDataInfoEh);
+    procedure SetEvenRowColor(const Value: TColor);
+    procedure SetFilterEditMode(const Value: Boolean);
+    procedure SetFooterColor(Value: TColor);
+    procedure SetFooterFont(Value: TFont);
+    procedure SetFooterParams(const Value: TDBGridFooterParamsEh);
+    procedure SetGridLineParams(const Value: TDBGridLineParamsEh);
+    procedure SetHorzScrollBar(const Value: THorzDBGridEhScrollBar);
+    procedure SetIndicatorOptions(const Value: TDBGridEhIndicatorOptions);
+    procedure SetIndicatorParams(const Value: TDBGridIndicatorParamsEh);
+    procedure SetOddRowColor(const Value: TColor);
+    procedure SetOptions(Value: TDBGridOptions);
+    procedure SetOptionsEh(const Value: TDBGridEhOptions);
+    procedure SetOriginCol(const Value: Integer);
+    procedure SetRowDetailPanel(const Value: TRowDetailPanelEh);
+    procedure SetRowPanel(const Value: TGridRowPanelEh);
+    procedure SetSTFilter(const Value: TSTDBGridEhFilter);
+    procedure SetStyle(const Value: TDBGridEhStyle);
+    procedure SetSumList(const Value: TDBGridEhSumList);
+    procedure SetTitleImages(const Value: TCustomImageList);
+    procedure SetTitleParams(const Value: TDBGridTitleParamsEh);
+    procedure SetTreeViewParams(const Value: TGridTreeViewParamsEh);
+    procedure SetVertScrollBar(const Value: TVertDBGridEhScrollBar);
+    procedure TitleImageListChange(Sender: TObject);
+    procedure UnpaintLoadingMode(RenderDuration: Integer);
+    procedure UpdateColumnResizeOptions(NewOptions: TDBGridOptions; NewOptionsEh: TDBGridEhOptions);
+
+    {$IFDEF FPC}
+    procedure CNChar(var Message: TLMChar); message CN_CHAR;
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CancelMode;
+    procedure CMChanged(var Msg: TCMChanged); message CM_CHANGED;
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    {$ENDIF}
+
+    procedure CMDeferLayout(var Message: TMessage); message cm_DeferLayout;
+    procedure CMDesignHitTest(var Msg: TCMDesignHitTest); message CM_DESIGNHITTEST;
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+    procedure CMHintsShowPause(var Message: TCMHintShowPause); message CM_HINTSHOWPAUSE;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMMouseWheel(var Message: TCMMouseWheel); message CM_MOUSEWHEEL;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMRButtonDown(var Message: TWMRButtonDown); message WM_RBUTTONDOWN;
+    procedure WMCommand(var Message: TWMCommand); message WM_COMMAND;
+    procedure WMGetDlgCode(var Msg: TWMGetDlgCode); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KillFocus;
+
+    
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SetFOCUS;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
+
+  protected
+    { IInplaceEditHolderEh }
+    function InplaceEditCanModify(Control: TWinControl): Boolean; override;
+    procedure GetMouseDownInfo(var Pos: TPoint; var Time: LongInt); override;
+    procedure InplaceEditKeyDown(Control: TWinControl; var Key: Word; Shift: TShiftState); override;
+    procedure InplaceEditKeyPress(Control: TWinControl; var Key: Char); override;
+    procedure InplaceEditKeyUp(Control: TWinControl; var Key: Word; Shift: TShiftState); override;
+    procedure InplaceEditWndProc(Control: TWinControl; var Message: TMessage); override;
+
+  protected
+    { IMTEventReceiverEh }
+    procedure MTViewDataEvent(RowNum: Integer; Event: TMTViewEventTypeEh; OldRowNum: Integer);
+
+  protected
+    FAntiSelection: Boolean;
+    FAutoFitColWidths: Boolean;
+    FCellTreeElementMouseDown: Boolean;
+    FColWidthsChanged: Boolean;
+    FDataAdding: Boolean;
+    FDataRowMoveLeftBoundary: Integer;
+    FDataRowMoveRightBoundary: Integer;
+    FDataRowMoveVisible: Boolean;
+    FDataTracking: Boolean;
+    FDBGridEhState: TDBGridEhState;
+    FDefaultRowChanged: Boolean;
+    FDragCellRect: TRect;
+    FExtraFirstColumnWidth: Integer;
+    FFilterObj: TObject;
+    FFooterRowCount: Integer;
+    FFrozenCols: Integer;
+    FGridMasterCellHeight: Integer;
+    FGridMasterCellWidth: Integer;
+    FGroupDataMovingIndex: Integer;
+    FGroupFooterParams: TGroupFooterParamsEh;
+    FGroupFooterPopupMenu: TPopupMenu;
+    FGroupRowParams: TGroupRowParamsEh;
+    FHeadTree: TDBGridMultiTitleTreeListEh;
+    FHotTrackEditButton: Integer;
+    FHotTrackMultiTitleOver: Boolean;
+    FHTitleMargin: Integer;
+    FIndicatorPressed: Boolean;
+    FInplaceColInRowPanel, FInplaceRow: Longint;
+    FInplaceSearching: Boolean;
+    FInplaceSearchingInProcess: Boolean;
+    FInplaceSearchText: String;
+    FInplaceSearchTimeOut: Integer;
+    FInplaceSearchTimer: TTimer;
+    FInplaceSearchTimerActive: Boolean;
+    FInternalUpdatingDatasetPos: Boolean;
+    FInTitleFilterListboxColumn: TColumnEh;
+    FInTitleFilterListboxGroupLevel: TGridDataGroupLevelEh;
+    FInTitleFilterListboxVisible: Boolean;
+    FLastDataSet: TDataSet;
+    FLastFilterPanelEvent: TFilterRecordEvent;
+    FLastVisibleCol: Integer;
+    FLeafFieldArr: PTLeafCol;
+    FLockedBookmark: TUniBookmarkEh;
+    FLockRowPosFromDatasetPos: Integer;
+    FLookedKeyValue: Variant;
+    FLookedOffset: Integer;
+    FLookedTopPos: Integer;
+    FMinAutoFitWidth: Integer;
+    FMouseInTrackRowRect: Boolean;
+    FMouseShift: TShiftState;
+    FMoveBookmarkSour: TUniBookmarkEh;
+    FMoveRowDest: Integer;
+    FMoveRowDestLevel: Integer;
+    FMoveRowLeftBounds: Integer;
+    FMoveRowSour: Integer;
+    FMoveRowSourLevel: Integer;
+    FNewRowHeight: Integer;
+    FOldTopLeft: TGridCoord;
+    FOnCheckButton: TCheckTitleEhBtnEvent;
+    FOnDrawFooterCell: TDrawFooterCellEvent;
+    FOnGetBtnParams: TGetBtnEhParamsEvent;
+    FOnMoveRecords: TGridMoveRecordsEventEh;
+    FOnTitleBtnClick: TTitleEhClickEvent;
+    FPressed: Boolean;
+    FPressedCol: Longint;
+    FPressedDataCol: Longint;
+    FPressedDataGroupLevelIdx: Integer;
+    FRowDetailControl: TRowDetailPanelControlEh;
+    FRowLines: Integer;
+    FRowselCheckboxesWidth: Integer;
+    FRowSizingAllowed: Boolean;
+    FScrollBarMessage: Boolean;
+    FSearchPanelMode: Boolean;
+    FSearchFilter: String;
+    FSearchFilterSelection: TDBGridEhSelection;
+    FSearchFilteringInProgress: Boolean;
+    FSearchFilteringStartTime: Longword;
+    FSearchFilteringWaitStarted: Boolean;
+    FSearchPanel: TDBGridSearchPanelEh;
+    FSearchPanelControl: TDBGridSearchPanelControlEh;
+    FSelectionAnchorSelected: Boolean;
+    FSortMarkedColumns: TColumnsEhList;
+    FStartShiftState: TShiftState;
+    FStdDefaultRowHeight: Integer;
+    FStdDefaultTextHeight: Integer;
+    FSumList: TDBGridEhSumList;
+    FSuppressDataSetChanged: Boolean;
+    FTitleCellDrawState: TDBGridDrawTitleCellParamsEh;
+    FTitleHeightFull: Integer;
+    FTitleRowHeight: Integer;
+    FToMoveColumnIndex: Integer;
+    FToMoveInRowLinePos: Integer;
+    FTopLeftCellOffset: TPoint;
+    FTracking: Boolean;
+    FTrackingStateRect: TRect;
+    FUpdateFields: Boolean;
+    FVertScrollBarVisibleMode: TScrollBarVisibleModeEh;
+    FWholeGridChanged: Boolean;
+    FUpdatingDataRowHeightsNeeded: Boolean;
+
+    function AcquireFocus: Boolean; override;
+    function AllowedOperationUpdate: Boolean; override;
+    function AxisColumnsStorePropertyName: String; override;
+    function CanCharShowEditor(Ch: Char): Boolean; override;
+    function CanEditModify: Boolean; override;
+    function CanEditModifyColumn(Index: Integer): Boolean; override;
+    function CanEditModifyText: Boolean; override;
+    function CanEditorMode: Boolean; override;
+    function CanEditShow: Boolean; override;
+    function CanHotTackCell(X, Y: Integer): Boolean; override;
+    function CellAxisBarRect(ACol, ARow: Integer; AxisBar: TAxisBarEh): TRect; override;
+    function CellEditRect(ACol, ARow: Longint): TRect; override;
+    function CellHave3DRect(ACol, ARow: Longint; AState: TGridDrawState): Boolean; override;
+    function CheckBeginColumnDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; override;
+    function CheckCellCanSendDoubleClicks(CellHit: TGridCoord; Button: TMouseButton; ShiftState: TShiftState; MousePos, InCellMousePos: TPoint): Boolean; override;
+    function CheckPersistentContraLine(LineType: TGridCellBorderTypeEh): Boolean; override;
+    function CreateAxisBarDefValues: TAxisBarDefValuesEh; override;
+    function CreateAxisBars: TGridAxisBarsEh; override;
+    function CreateBackgroundData: TGridBackgroundDataEh; override;
+    function CreateColCellParamsEh: TAxisColCellParamsEh; override;
+    function CreateDataLink: TAxisGridDataLinkEh; override;
+    function CreateEditor: TInplaceEdit; override;
+    function CreateGridLineColors: TGridLineColorsEh; override;
+    function CreateHorzScrollBarPanelControl: TGridScrollBarPanelControlEh; override;
+    function CreateScrollBar(AKind: TScrollBarKind): TGridScrollBarEh; override;
+    function CreateSizeGripPanel: TSizeGripPanelEh; override;
+    function CreateVertScrollBarPanelControl: TGridScrollBarPanelControlEh; override;
+    function DefaultDrawFocusFrame: Boolean; override;
+    function DefaultTitleAlignment: TAlignment; override;
+    function DefaultTitleColor: TColor; override;
+    function DesignHitTestObject(XPos, YPos: Integer): TPersistent; override;
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function EndColumnDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; override;
+    function FullRedrawOnScroll: Boolean; override;
+    function GetCursorAtPos(Pos: TPoint): TCursor; override;
+    function GetDataEditButtonTransparency(ACol, ARow: Longint; AxisBar: TAxisBarEh; Params: TAxisColCellParamsEh; EditButton: TEditButtonEh): Integer; override;
+    function GetDefaultFixedCellFillStyle: TGridCellFillStyleEh; override;
+    function GetEditMask(ACol, ARow: Longint): string; override;
+    function GetEditText(ACol, ARow: Longint): string; override;
+    function GetInCellPlaceBoxAt(ACol, ARow: Longint; AxisBar: TAxisBarEh; InCellX, InCellY: Integer): TInCellPlaceBoxEh; override;
+    function GetRestoreStateControl: TObject; override;
+    function GetSelectedIndex: Integer; override;
+    function GetSortMarkerStyle: TSortMarkerStyleEh; override;
+    function GetTabStops(Index: Longint): Boolean; override;
+    function GetTitleFont: TFont; override;
+    function HorzLineWidth: Integer; override;
+    function IsFixed3D: Boolean; override;
+    function IsSmoothHorzScroll: Boolean; override;
+    function IsSmoothVertScroll: Boolean; override;
+    function SelectCell(ACol, ARow: Longint): Boolean; override;
+    function Sizing(X, Y: Integer): Boolean; override;
+    function ViewScroll: Boolean; override;
+    function VertLineWidth: Integer; override;
+
+    {$IFDEF FPC}
+    function  DoUTF8KeyPress(var UTF8Key: TUTF8Char): boolean; override;
+    {$ELSE}
+    {$ENDIF}
+
+    function AddHighlightSubstrParams(const Text: String; CaseInsensitivity: Boolean; Column: TColumnEh; Color: TColor): TGridHighlightTextParamsEh;
+    function BeginDataRowDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function CalcHeightForGroupNode(ADrawGroupDataNode: TGroupDataTreeNodeEh): Integer;
+    function CalcHeightForTextLines(Font: TFont; RowLines, RowHeight: Integer): Integer;
+    function CalcLeftMoveLine(ARow: Integer; const MousePt: TPoint; var TreeLevel: Integer): Integer; virtual;
+    function CalcRectForGroupCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint): TRect;
+    function CalcRowDataRowHeight(DataRowNum: Integer): Integer; virtual;
+    function CalcRowForCurRecordHeight: Integer; virtual;
+    function CalcStdDefaultRowHeight: Integer;
+    function CanDrawFocusRowRect: Boolean; virtual;
+    function CanFilterCol(DCol: Longint): Boolean;
+    function CanFilterEditShow: Boolean; virtual;
+    function CanMouseTrackMode: Boolean;
+    function CanSelectType(const Value: TDBGridEhSelectionType): Boolean;
+    function CellIsMultiSelected(ACol, ARow: Integer; DataCol: Integer; DataRowBkmrk: TUniBookmarkEh): Boolean; virtual;
+    function CellTreeElementMouseDown(MouseX, MouseY: Integer; CheckInOnly: Boolean): Boolean; virtual;
+    function CheckBeginRowMoving(MouseX, MouseY: Integer; CheckInOnly: Boolean): Boolean; virtual;
+    function CheckCellFilter(ACol, ARow: Integer; P: TPoint): Boolean;
+    function CheckDataCellMouseDownInRowDetailSign(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Cell: TGridCoord; Column: TColumnEh; ACellRect: TRect; InCellX, InCellY: Integer): Boolean; virtual;
+    function CheckForDesigntTimeColMoving(X, Y: Integer): Boolean;
+    function CheckMouseDownInRowDetailSign(Button: TMouseButton; Shift: TShiftState; MouseX, MouseY: Integer): Boolean; virtual;
+    function CheckTitleCellFilterButtonPos(MousePos: TPoint; CellRect: TRect; Column: TColumnEh; var StateRect: TRect): Boolean;
+    function ColumnWidthToCellColWidth(Column: TColumnEh; AWidth: Integer): Integer;
+    function ColWidthToCellWidth(Column: TColumnEh; AWidth: Integer): Integer;
+    function CreateFilterEditor: TCustomDBEditEh; virtual;
+    function CreateSearchPanel: TDBGridSearchPanelEh; virtual;
+    function DataCellSelected(DataCol: Longint; DataRow: TUniBookmarkEh): Boolean;
+    function DataGroupsMoveBy(Distance: Integer; NewOnEof: Boolean): Integer;
+    function DataToRawColumn(ADataCol: Integer): Integer;
+    function DeletePrompt: Boolean; virtual;
+    function DrawDetailPanelSign(DataCol, DataRow: Integer; AState: TGridDrawState; ARect: TRect; Draw3DRect: Boolean): Integer; virtual;
+    function DrawTitleByThemes: Boolean;
+    function EffectiveGridOptions: TGridOptionsEh;
+    function EmptyColWidth: Integer;
+    function EmptyRowHeight: Integer;
+    function ExtendedScrolling: Boolean; virtual;
+    function FrozenSizing(X, Y: Integer): Boolean;
+    function GetAutoTitleHeight: Integer;
+    function GetBackgroundData: TDBGridBackgroundDataEh;
+    function GetCellTextForSearchPanel(Column: TColumnEh): String; virtual;
+    function GetColCellParamsEh: TColCellParamsEh; reintroduce; virtual;
+    function GetColField(DataCol: Integer): TField;
+    function GetColumnDefValues: TColumnDefValuesEh;
+    function GetColWidths(Index: Longint): Integer;
+    function GetDataLink: TGridDataLinkEh;
+    function GetDefaultActualColumnColor(Column: TColumnEh): TColor; virtual;
+    function GetDefaultActualColumnFontColor(Column: TColumnEh; AState: TGridDrawState): TColor; virtual;
+    function GetEditButtonIndexAt(ACol, ARow: Longint; Column: TColumnEh; InCellX, InCellY: Integer): Integer; virtual;
+    function GetFieldValue(ACol: Integer): string;
+    function GetFilterValue(DCol: Longint): String;
+    function GetFooterRowCount: Integer;
+    function GetFullFooterRowCount: Integer; virtual;
+    function GetMouseHitCellState(Cell: TGridCoord; MousePos: TPoint; CellRect: TRect; Column: TColumnEh; var StateRect: TRect): TDBGridEhState;
+    function GetRowHeight: Integer;
+    function GetRowLines: Integer;
+    function GetSelectionThemedElement(ASelStyle: TGridSelectionDrawStyleEh; State: TGridDrawState): TThemedElementDetails; virtual;
+    function GetSubTitleRowHeights(ASubTitleRow: Integer): Integer;
+    function GetSubTitleRows: Integer; virtual;
+    function GetTitleHeight: Integer;
+    function GetTitleLines: Integer;
+    function GetTitleRows: Integer; virtual;
+    function HaveHideDuplicates: Boolean;
+    function HighlightNoDataCellColor(ACol, ARow: Integer; DataCol, DataRow: Integer; CellType: TCellAreaTypeEh; AState: TGridDrawState; InMultiSelect: Boolean; var AColor: TColor; AFont: TFont): Boolean; virtual;
+    function HorzScotllingLockCount: Integer;
+    function IndicatorColVisible: Boolean; virtual;
+    function IsAutoFitColWidthsActiveMode: Boolean; virtual;
+    function IsDrawCellByThemes(ACol, ARow: Longint; AreaCol, AreaRow: Longint; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh; Cell3D: Boolean): Boolean; virtual;
+    function IsDrawCellSelectionThemed(ACol, ARow, DataCol, DataRow: Integer; State: TGridDrawState): Boolean;  reintroduce; virtual;
+    function MoveDataRows(BookmarkList: TBMListEh; ToIndex: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean; virtual;
+    function MoveSelectedDataRows(ToIndex: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean; virtual;
+    function RawToDataColumn(ACol: Integer): Integer;
+    function SetChildTreeHeight(ANode: TDBGridMultiTitleNodeEh): Integer;
+    function UpdateOutBoundaryIndents: Boolean; virtual;
+    function VisibleDataRowCount: Integer;
+
+    procedure CalcSizingState(X, Y: Integer; var State: TGridStateEh; var Index: Longint; var SizingPos, SizingOfs: Integer); override;
+    procedure CellCountChanged; override;
+    procedure CelLenChanged(Axis: TGridAxisDataEh; Index, OldLen: Integer); override;
+    procedure ChangeScale(M, D: Integer {$IFDEF EH_LIB_24}; isDpiChange: Boolean {$ENDIF}); override;
+    procedure CheckDrawCellBorder(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var IsDraw: Boolean; var BorderColor: TColor; var IsExtent: Boolean); override;
+    procedure ColumnDeleting(Item: TAxisBarEh); override;
+    procedure ColumnMoved(FromIndex, ToIndex: Longint); override;
+    procedure ColWidthsChanged; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DataChanged; override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DoContextPopup(MousePos: TPoint; var Handled: Boolean); override;
+    procedure DoEnter; override;
+    procedure DoExit; override;
+    procedure DrawBorder; override;
+    procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
+    procedure DrawEmptyAreaCell(ACol, ARow: Integer; ARect: TRect); override;
+    procedure DrawSizingLines; override;
+    procedure DrawTopOutBoundaryData(ARect: TRect); override;
+    procedure DrawMove; override;
+    procedure EditingChanged; override;
+    procedure FillBlankDataCellRect(ARect: TRect; IsSelected: Boolean; Cell3D: Boolean; Params: TAxisColCellParamsEh); override;
+    procedure FlatChanged; override;
+    procedure FocusCell(ACol, ARow: Longint; MoveAnchor: Boolean); override;
+    procedure GetCellParams(Column: TAxisBarEh; AFont: TFont; var Background: TColor; State: TGridDrawState); override;
+    procedure GetColRowForAxisCol(Column: TAxisBarEh; var ACol, ARow: Integer); override;
+    procedure GetDataForHorzScrollBar(var APosition, AMin, AMax, APageSize: Integer); override;
+    procedure GetDataForVertScrollBar(var APosition, AMin, AMax, APageSize: Integer); override;
+    procedure GetDrawSizingLineBound(var StartPos, FinishPos: Integer); override;
+    procedure GetThemeTitleFillRect(var AFillRect: TRect; IncVerBoundary, IncHorzBoundary: Boolean); override;
+    procedure GetTitleDragWinBounds(out ABounds: TRect; out AMovePos, ALineSize: Integer; out ASourceBounds: TRect);
+    procedure GridTimerEvent(Sender: TObject); override;
+    procedure HideEditor; override;
+    procedure HideMove; override;
+    procedure InitSizingLines; override;
+    procedure InternalLayout; override;
+    procedure InteractiveSetColWidth(ColIndex: Integer; Value: Integer); override;
+    procedure InvalidateEditor; override;
+    procedure InvalidateSpot(HTSpot: TGridHotTrackSpotEh); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure LayoutChanged; override;
+    procedure LinkActive(Value: Boolean); override;
+    procedure Loaded; override;
+    procedure LookupStateChanged(AxisBar: TAxisBarEh); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure OutBoundaryDataChanged; override;
+    procedure Paint; override;
+    procedure ReadState(Reader: TReader); override;
+    procedure RecordChanged(Field: TField); override;
+    procedure RolPosChanged(OldRowPosX, OldRowPosY: Integer); override;
+    procedure RowHeightsChanged; override;
+    procedure Scroll(Distance: Integer); override;
+    procedure ScrollBarShowingChanged; override;
+    procedure SelectionActiveChanged; override;
+    procedure SetColumnAttributes; override;
+    procedure SetDataSource(Value: TDataSource); override;
+    procedure SetSelectedIndex(Value: Integer); override;
+    procedure SetTitleFont(Value: TFont); override;
+    procedure ShowEditor; override;
+    procedure StyleEhChanged; override;
+    procedure TimedScroll(Direction: TGridScrollDirections); override;
+    procedure UpdateActive; override;
+    procedure UpdateCellTextBoundsAtPos(ACol, ARow: Integer); override;
+    procedure UpdateDataCellTextBoundsAtPos(ACol, ARow: Integer; AxisBar: TAxisBarEh); override;
+    procedure UpdateEdit; override;
+    procedure UpdateHotTrackInfo(X, Y: Integer); override;
+    procedure UpdatePlaceBoxListForCell(ACol, ARow: Integer; PlaceBox: TInCellPlaceBoxEh); override;
+    procedure UpdateScrollBarPanels; override;
+    procedure UpdateScrollBars; override;
+    procedure UpdateText(EditorChanged: Boolean); override;
+    procedure VertScrollBarMessage(ScrollCode, Pos: Integer); override;
+    procedure WndProc(var Message: TMessage); override;
+
+    procedure AddHighlightSubstr(Params: TGridHighlightTextParamsEh);
+    procedure AncestorNotFound(Reader: TReader; const ComponentName: string; ComponentClass: TPersistentClass; var Component: TComponent);
+    procedure BuildIndicatorTitleMenu(var PopupMenu: TPopupMenu);
+    procedure CalcFrozenSizingState(X, Y: Integer; var State: TDBGridEhState; var Index: Longint; var SizingPos, SizingOfs: Integer);
+    procedure CalcSizingStateForRowPanel(X, Y: Integer; var State: TGridStateEh; var Index: Longint; var SizingPos, SizingOfs: Integer);
+    procedure CellClick(Column: TColumnEh); virtual;
+    procedure CheckCellHitSearchPanelData(Column: TColumnEh; var Accept: Boolean; SearchText: String); virtual;
+    procedure CheckReturnSearchPanelFilter;
+    procedure CheckSetCurGroupDataNode(ACurGroupDataNode: TGroupDataTreeNodeEh; ShowInView: Boolean);
+    procedure CheckTitleButton(ACol: Longint; var Enabled: Boolean); virtual;
+    procedure ClampInViewRowPanelCell(DataCol: Integer);
+    procedure ClearPainted(Node: TDBGridMultiTitleNodeEh);
+    procedure ClearSearchFilter; virtual;
+    procedure ColEnter; virtual;
+    procedure ColExit; virtual;
+    procedure CreateComponent(Reader: TReader; ComponentClass: TComponentClass; var Component: TComponent);
+    procedure DataGroupsGotoRecordViewNo(RecViewNo: Integer; IsExpandToView: Boolean);
+    procedure DataGroupsVisibleChanged; virtual;
+    procedure DoAfterSizeChanged; virtual;
+    procedure DoDataGroupFooterItemAggregateValue(Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh; FooterColumnItem: TGridDataGroupFooterColumnItemEh; var AValue: Variant; Node: TGroupDataTreeNodeEh; var Processed: Boolean);
+    procedure DoDataGroupFooterItemFinalizeValue(Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh; FooterColumnItem: TGridDataGroupFooterColumnItemEh; var AValue: Variant; var Processed: Boolean);
+    procedure DoDataGroupFooterItemToDisplayText(Column: TColumnEh; GroupFooter: TGridDataGroupFooterEh; FooterColumnItem: TGridDataGroupFooterColumnItemEh; var AValue: Variant; var DisplayValue: String; var Processed: Boolean);
+    procedure DoSortMarkingChanged; virtual;
+    procedure DoTitleClick(ACol: Longint; AColumn: TColumnEh); virtual;
+    procedure DragGroupPanelTitleMovingMode(Shift: TShiftState; X, Y: Integer);
+    procedure DrawCellDataBackground(ACol, ARow, DataCol, DataRow: Integer; Column: TColumnEh; AreaRect: TRect; State: TGridDrawState; IsRowSelect: Boolean); reintroduce; virtual;
+    procedure DrawCellTreeArea(DataCol, DataRow: Integer; AState: TGridDrawState; ARect: TRect; Draw3DRect: Boolean); virtual;
+    procedure DrawColumnCell(const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState); virtual;
+    procedure DrawColumnTitleCellForeground(ACanvas: TCanvas; Column: TColumnEh; ARect: TRect; ATitleState: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure DrawDataAsRowPanel(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawDataCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawDataRowMove(LeftBoundary, RightBoundary: Integer);
+    procedure DrawFilterSign(ARect: TRect; Selected: Boolean); virtual;
+    procedure DrawFocusRect(Canvas: TCanvas; const ARect: TRect; ClipRect: PRect = nil); virtual;
+    procedure DrawFooterAsRowPanel(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawFooterCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawGridTreeElement(Canvas: TCanvas; ARect: TRect; TreeElement: TTreeElementEh; BackDot: Boolean; ScaleX, ScaleY: Double; RightToLeft: Boolean; Coloured: Boolean; GlyphStyle: TTreeViewGlyphStyleEh);
+    procedure DrawGroupDataArea(ACol, ARow: Longint; DataCol, DataRow: Integer; NodeLevel: Integer; AState: TGridDrawState; var ARect: TRect; Draw3DRect: Boolean; CompleteBottomLines: Boolean); virtual;
+    procedure DrawGroupDataCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawGroupFooterArea(DataCol, DataRow: Integer; NodeLevel: Integer; AState: TGridDrawState; ARect: TRect; Draw3DRect: Boolean); virtual;
+    procedure DrawGroupFooterCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawHighlightSubstrs(ACanvas: TCanvas; Column: TColumnEh; ARect: TRect; DX, DY: Integer; const MasterText: String; Alignment: TAlignment; Layout: TTextLayout; MultyL: Boolean; EndEllipsis: Boolean; LeftMarg, RightMarg: Integer; ARightToLeftReading: Boolean; HighlightColor: TColor);
+    procedure DrawIndicatorCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawIndicatorDropDownSign(ACol, ARow: Longint; ARect: TRect; Selected: Boolean); virtual;
+    procedure DrawMoveLineOrTitleCell(IsDrawLine: Boolean);
+    procedure DrawOutOfViewHighlightedSubText(Text: String; const ARect: TRect; AFont: Tfont; FontSize: Integer; BackColor: TColor); virtual;
+    procedure DrawRowIndicator(ACol, ARow: Longint; ARect: TRect; XOffset, YOffset: Integer; IndicatorType: TDBGridEhRowIndicatorTypeEh); virtual;
+    procedure DrawSizingLineEx(HorzGridBoundary, VertGridBoundary: Integer);
+    procedure DrawSubTitleCell(ACol, ARow: Longint; DataCol, DataRow: Integer; CellType: TCellAreaTypeEh; ARect: TRect; AState: TGridDrawState; var Highlighted: Boolean); virtual;
+    procedure DrawTitleAsRowPanel(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawTitleCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh); virtual;
+    procedure DrawTopOutBoundaryGroupCaption(ARect: TRect; GroupLevel: TGridDataGroupLevelEh); virtual;
+    procedure DrawTreeArea(Canvas: TCanvas; ARect: TRect; IsDrawEdge: Boolean; IsSubTreeArea: Boolean);
+    procedure EndRowMoving(MouseX, MouseY: Integer; Accept: Boolean); virtual;
+    procedure ExecuteFindDialog(const Text, FieldName: String; Modal: Boolean);
+    procedure ExpandCellWidthForEmptySpace(ColumnIndex: Integer);
+    procedure FillDataGroupRowParams(AGroupNode: TGroupDataTreeNodeEh; AState: TGridDrawState; AreaCol, AreaRow: Integer; AGroupRowParams: TGroupRowParamsEh); virtual;
+    procedure FillDataGroupFooterCellParams(AGroupNode: TGroupDataTreeNodeEh; AColumn: TColumnEh; AFooterColumnItem: TGridDataGroupFooterColumnItemEh; AState: TGridDrawState; AreaCol, AreaRow: Integer; AGroupFooterParams: TGroupFooterParamsEh); virtual;
+    procedure FillSTFilterListValues(ASTFilter: TSTColumnFilterEh; Items: TStrings); virtual;
+    procedure FillSuperTitleCellDrawParams(ARect: TRect; AMultiTitleNode: TDBGridMultiTitleNodeEh; ATitleState: TDBGridDrawTitleCellParamsEh; FullFill: Boolean); virtual;
+    procedure FillTitleCellDrawParams(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState; CellAreaType: TCellAreaTypeEh; ATitleState: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure FilterButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure FilterExit(Sender: TObject);
+    procedure FixupCustomStyleActiveBug;
+    procedure FullKeyPress(var Key: String); virtual;
+    procedure GetFooterParams(DataCol, Row: Longint; Column: TColumnEh; AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String); virtual;
+    procedure GetGroupMoveLineInfo(X, Y: Integer; var GroupMoveLinePos: TPoint; var GroupMoveLineSize: Integer; var InDataGroupIndex: Integer);
+    procedure GetTitleStateParams(ATitleCellDrawParams: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure GoRowPanelTitleCellDrag(Shift: TShiftState; X, Y: Integer); virtual;
+    procedure GroupFooterPopupMenuClick(Sender: TObject); virtual;
+    procedure GroupHeaderIndicatorCellMouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; CellCoord: TGridCoord; GroupDataNode: TGroupDataTreeNodeEh); virtual;
+    procedure GroupPanelTitleUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure GroupPanelVisibleChanged;
+    procedure HideDataRowMove;
+    procedure HideFilterEdit;
+    procedure IndicatorTitleMouseDown(Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure InplaceSearchTimerEvent(Sender: TObject); virtual;
+    procedure InstantReadRecordEnter(DataRowNum: Integer);
+    procedure InstantReadRecordLeave;
+    procedure InTitleFilterDropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+    procedure InTitleFilterDropDownFormForRect(Column: TColumnEh; ForRect: TRect);
+    procedure InTitleFilterListboxCloseUp(Accept: Boolean);
+    procedure InTitleFilterListboxDropDown(Column: TColumnEh);
+    procedure InTitleFilterListKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure KeyDownInGroupDataNode(var Key: Word; Shift: TShiftState);
+    procedure KeyDownInGroupFooterNode(var Key: Word; Shift: TShiftState);
+    procedure LoadDropDownFormFilterValues(ASTFilter: TSTColumnFilterEh; Items: TStrings);
+    procedure LoadPopupListboxFilterValues(ASTFilter: TSTColumnFilterEh; Items: TStrings; PopupListbox: TComboBoxPopupListboxEh; var NewWidth: Integer);
+    procedure LockGridHorzScotlling;
+    procedure MouseDownInDataCell(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Cell: TGridCoord; Column: TColumnEh; ACellRect: TRect; InCellX, InCellY: Integer);
+    procedure MouseDownInDataRowPanel(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MouseDownInGroupDataCell(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; ADrawGroupDataNode: TGroupDataTreeNodeEh); virtual;
+    procedure MouseDownInOutBoundary(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure MouseDownInTitleCell(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Cell: TGridCoord; Column: TColumnEh; ACellRect: TRect; InCellX, InCellY: Integer);
+    procedure MouseDownInTitleRowPanel(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MouseUpInDataCell(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Cell: TGridCoord; Column: TColumnEh; ACellRect: TRect; InCellX, InCellY: Integer);
+    procedure MouseUpInDataRowPanel(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MouseUpInTitleCell(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Cell: TGridCoord; Column: TColumnEh; ACellRect: TRect; InCellX, InCellY: Integer);
+    procedure MouseUpInTitleRowPanel(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MoveDataRowAndScroll(Mouse, CellHit: Integer; Axis: TGridAxisDataEh; ScrollBar: Integer; const MousePt: TPoint); virtual;
+    procedure NavigatorPanelButtonClick(AButton: TNavigateBtnEh; var Processed: Boolean); virtual;
+    procedure OldDrawDataCell(const Rect: TRect; Field: TField; State: TGridDrawState); virtual; { obsolete }
+    procedure OnFilterChange(Sender: TObject);
+    procedure OnFilterCloseUp(Sender: TObject; Accept: Boolean);
+    procedure OnFilterClosingUp(Sender: TObject; var Accept: Boolean);
+    procedure OnFilterEditButtonClick(Sender: TObject; var Handled: Boolean);
+    procedure OnFilterGetItemsList(Sender: TObject);
+    procedure OnFilterKeyPress(Sender: TObject; var Key: Char);
+    procedure OptimizeSelectedColsWidth(WithColumn: TColumnEh; MaxWaitingTime: Integer);
+    procedure OptionsChanged(OldOptions: TDBGridOptions); virtual;
+    procedure OverlaySelectionByTheme(Cell, AreaCell: TGridCoord; Column: TColumnEh; AreaRect: TRect; var Params: TColCellParamsEh);
+    procedure ReadFooterColor(Reader: TReader);
+    procedure ReadTitleHeight(Reader: TReader);
+    procedure ReadTitleLines(Reader: TReader);
+    procedure ReadUseMultiTitle(Reader: TReader);
+    procedure ReadVTitleMargin(Reader: TReader);
+    procedure RecreateGroupFooterPopupMenu(ADataGroupFooterItem: TGridDataGroupFooterColumnItemEh; var APopupMenu: TPopupMenu); virtual;
+    procedure RegetDefaultStyle;
+    procedure RemoveHighlightSubstr(Params: TGridHighlightTextParamsEh);
+    procedure ResetGroupPanel;
+    procedure RestoreColumnsLayoutProducer(ARegIni: TObject; const Section: String; RestoreParams: TColumnEhRestoreParams);
+    procedure RestoreGridLayoutProducer(ARegIni: TObject; const Section: String; RestoreParams: TDBGridEhRestoreParams);
+    procedure ReturnSearchPanelFilter;
+    procedure SafeSmoothScrollData(DX, DY: Integer);
+    procedure SaveColumnsLayoutProducer(ARegIni: TObject; const Section: String; DeleteSection: Boolean);
+    procedure SaveGridLayoutProducer(ARegIni: TObject; const Section: String; DeleteSection: Boolean);
+    procedure SearchFilterEvent(DataSet: TDataSet; var Accept: Boolean);
+    procedure SelectedRowsItemChanged(Item: TUniBookmarkEh; Action: TListNotification);
+    procedure SelectionChanged; reintroduce; virtual;
+    procedure SetBackgroundData(Value: TDBGridBackgroundDataEh);
+    procedure SetColInRowPanel(DataCol: Integer);
+    procedure SetColWidths(Index: Longint; Value: Integer);
+    procedure SetCurGroupDataNode(ACurGroupDataNode: TGroupDataTreeNodeEh; ShowInView: Boolean);
+    procedure SetDataFilter;
+    procedure SetExtraFirstColumnWidth;
+    procedure SetFilterValue(DCol: Longint); virtual;
+    procedure SetFooterRowCount(Value: Integer);
+    procedure SetFrozenCols(Value: Integer);
+    procedure SetGridScrollBarInfo(BarFlag: Integer; SetProps: TScrollBarPropsEh; Min, Max, PageSize, Pos: Integer);
+    procedure SetMaxSizeForCheckbox(var ARect: TRect);
+    procedure SetRowCount(NewRowCount: Longint);
+    procedure SetRowHeight(Value: Integer);
+    procedure SetRowLines(Value: Integer);
+    procedure SetRowSizingAllowed(Value: Boolean);
+    procedure SetSearchPanelMode(Value: Boolean);
+    procedure SetSearchFilter(const FilterStr: String); virtual;
+    procedure SetSearchPanel(Value: TDBGridSearchPanelEh);
+    procedure ShowFilterEditorChar(Ch: Char);
+    procedure StartEditFilter(DCol: Longint);
+    procedure StartGroupPanelTitleMovingMode(Shift: TShiftState; X, Y: Integer); virtual;
+    procedure StartInplaceSearchTimer;
+    procedure StartRowPanelTitleCellDrag(Shift: TShiftState; X, Y, ColumnIndex: Integer); virtual;
+    procedure StartRowPanelTitleCellDragBox(Shift: TShiftState; X, Y, ColumnIndex: Integer; TitleRect: TRect); virtual;
+    procedure StopEditFilter;
+    procedure StopGroupPanelTitleMovingMode(Shift: TShiftState; X, Y: Integer; IsAccept: Boolean);
+    procedure StopInplaceSearchTimer;
+    procedure StopRowPanelTitleCellDrag(Shift: TShiftState; X, Y: Integer; IsAccept: Boolean); virtual;
+    procedure StopTracking;
+    procedure SumListAfterRecalcAll(Sender: TObject);
+    procedure SumListChanged(Sender: TObject);
+    procedure SumListRecalcAll(Sender: TObject);
+    procedure TimerScroll; virtual;
+    procedure TitleClick(Column: TColumnEh); virtual;
+    procedure TrackButton(X, Y: Integer);
+    procedure UnlockGridHorzScotlling;
+    procedure UpdateDataRowHeight(DataRowNum: Integer); virtual;
+    procedure UpdateDatasetPosFromGroupNode(GroupNode: TGroupDataTreeNodeEh);
+    procedure UpdateDatasetPosFromRowPos;
+    procedure UpdateEditorMode;
+    procedure UpdateFilterEdit(UpdateData: Boolean);
+    procedure UpdateFilterEditProps(DataCol: Longint); virtual;
+    procedure UpdateLanguageVars; virtual;
+    procedure UpdateRowCount; virtual;
+    procedure UpdateRowDetailPanel;
+    procedure UpdateRowPosFromDatasetPos; virtual;
+    procedure UpdateSearchPanel;
+    procedure WriteAutoFitColWidths(Value: Boolean);
+    procedure WriteHighlightedSubCellTextEh(Column: TColumnEh; C: TCanvas; AR: TRect; X, Y: Integer; const T: string; A: TAlignment; La:TTextLayout; ML:Boolean; EE: Boolean; L, R: Integer;rlr: Boolean;S: String; CI: Boolean; WW: Boolean; SOS: Boolean; HC: TColor; Pos: Integer; PosC: TColor);
+    procedure WriteHTitleMargin(Value: Integer);
+    procedure WriteMinAutoFitWidth(Value: Integer);
+    procedure WriteTitleHeight(Value: Integer);
+    procedure WriteTitleLines(Value: Integer);
+    procedure WriteUseMultiTitle(Value: Boolean);
+    procedure WriteVTitleMargin(Value: Integer);
+    procedure UpdateMouseCellTextBounds; virtual;
+
+    property CellColWidths[Index: Longint]: Integer read GetCellColWidths write SetCellColWidths;
+    property CellRowHeights[Index: Longint]: Integer read GetCellRowHeights write SetCellRowHeights;
+    property ColCellParamsEh: TColCellParamsEh read GetColCellParamsEh;
+    property FilterEdit: TCustomDBEditEh read FFilterEdit;
+    property FilterEditMode: Boolean read FFilterEditMode write SetFilterEditMode;
+    property FooterColor: TColor read GetFooterColor write SetFooterColor;
+    property FooterFont: TFont read GetFooterFont write SetFooterFont stored False;
+    property HorzScrollBarPanelControl: TDBGridEhScrollBarPanelControl read GetHorzScrollBarPanelControl;
+    property VertScrollBarPanelControl: TDBGridEhScrollBarPanelControl read GetVertScrollBarPanelControl;
+
+    property OnApplyFilter: TNotifyEvent read FOnApplyFilter write FOnApplyFilter;
+    property OnCellClick: TDBGridEhClickEvent read FOnCellClick write FOnCellClick;
+    property OnColEnter: TNotifyEvent read FOnColEnter write FOnColEnter;
+    property OnColExit: TNotifyEvent read FOnColExit write FOnColExit;
+    property OnColumnMoved: TMovedEvent read FOnColumnMoved write FOnColumnMoved;
+    property OnDrawColumnCell: TDrawColumnEhCellEvent read FOnDrawColumnCell write FOnDrawColumnCell;
+    property OnDrawDataCell: TDrawDataCellEvent read FOnDrawDataCell write FOnDrawDataCell; { obsolete }
+    property OnTitleClick: TDBGridEhClickEvent read FOnTitleClick write FOnTitleClick;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    constructor CreateNew(AOwner: TComponent; Dummy: Integer = 0); virtual;
+    destructor Destroy; override;
+
+    procedure StartLoadingStatus(const LoadingCaption : String = ''; RenderDuration: Integer = -1; ShowCaption: boolean = True);
+    procedure FinishLoadingStatus(RenderDuration: Integer = -1);
+
+    function BookmarkInVisibleView({$IFDEF CIL}const{$ENDIF} Bookmark: TUniBookmarkEh): Boolean;
+    function CalcIndicatorColWidth: Integer;
+    function CheckColumnDuplicateValues(Column: TColumnEh; DataRow: Integer; var s: String; CheckPrevRow: Boolean; out NextTreeNodeLevel: Integer): Boolean;
+    function CheckCopyAction: Boolean;
+    function CheckCutAction: Boolean;
+    function CheckDeleteAction: Boolean;
+    function CheckFillDataCell(Cell, AreaCell: TGridCoord; AxisBar: TAxisBarEh; AreaRect: TRect; Params: TAxisColCellParamsEh): Boolean; override;
+    function CheckIndicatorColWidthChanged: Boolean;
+    function CheckPasteAction: Boolean;
+    function CheckSelectAllAction: Boolean;
+    function DataBox: TGridRect;
+    function DataRect: TRect;
+    function DataRowCount: Integer;
+    function DataRowToRecNo(DataRow: Integer): Integer;
+    function DefaultCalcIndicatorRowNumAreaWidth: Integer; virtual;
+    function DefaultMoveDataRows(BookmarkList: TBMListEh; ToRecNo: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean; virtual;
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    function FindFieldColumn(const FieldName: String): TColumnEh;
+    function GetBof: Boolean;
+    function GetCellAreaType(ACol, ARow: Integer; var AreaCol, AreaRow: Integer): TCellAreaTypeEh;
+    function GetCellPopupMenu(const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh): TPopupMenu; virtual;
+    function GetCellRectInRowPanelAtPos(InCellPos: TPoint; var ACellRect: TRect; IncludeLines: Boolean): TColumnEh;
+    function GetCellTreeElmentsAreaWidth: Integer; override;
+    function GetColumnInRowPanelAtPos(InCellPos: TPoint; IsTitleTypeCell: Boolean): TColumnEh;
+    function GetCompleteKeyPress: String;
+    function GetEof: Boolean;
+    function GetFooterValue(Row: Integer; Column: TColumnEh): String; virtual;
+    function GetSearchingText: String;
+    function HighlightDataCellColor(DataCol, DataRow: Integer; const Value: string; AState: TGridDrawState; var AColor: TColor; AFont: TFont): Boolean; override;
+    function HighlightGroupDataCellColor(DataCol, DataRow: Integer; const Value: string; AState: TGridDrawState; var AColor: TColor; AFont: TFont): Boolean; virtual;
+    function InRowPanelLineHeight: Integer; virtual;
+    function InstantReadCurDataNode: TGroupDataTreeNodeEh;
+    function InstantReadRecordCount: Integer;
+    function InternalGetCellPopupMenu(const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh): TPopupMenu; virtual;
+    function IsDrawEditButton(AColumn: TColumnEh; ARow: Integer): Boolean; virtual;
+    function IsFindDialogShowAsModal: Boolean; virtual;
+    function IsSearchingState: Boolean; virtual;
+    function IsUseMultiTitle: Boolean; virtual;
+    function LocateText(AGrid: TCustomDBGridEh; const FieldName: string; const Text: String; Options: TLocateTextOptionsEh; Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh; TreeFindRange: TLocateTextTreeFindRangeEh; TimeOut: LongWord = 0; CheckValueEvent: TCheckColumnValueAcceptEventEh = nil): Boolean; virtual;
+    function MoveBy(Distance: Integer): Integer;
+    function RequireExternalSorting: Boolean;
+    function ScrollBarPanel: Boolean; virtual;
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+
+    procedure ApplyFilter;
+    procedure BuildCellPopupMenu(PopupMenu: TPopupMenu; const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh); virtual;
+    procedure CancelEditing; override;
+    procedure CancelMode; override;
+    procedure CenterCurRowInView; virtual;
+    procedure CheckCellHitSearchPanelText(Text: String; var Accept: Boolean; SearchText: String); virtual;
+    procedure ClearFilter;
+    procedure ClearSortMarkers; virtual;
+    procedure DataAppend;
+    procedure DataInsert;
+    procedure DataFirst;
+    procedure DataLast;
+    procedure DefaultApplyFilter; virtual;
+    procedure DefaultApplySorting; virtual;
+    procedure DefaultBuildIndicatorTitleMenu(var PopupMenu: TPopupMenu); virtual;
+    procedure DefaultCellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure DefaultCheckCellHitSearchPanelData(Column: TColumnEh; var Accept: Boolean; SearchText: String); virtual;
+    procedure DefaultDrawColumnCell(const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DefaultDrawColumnDataCell(Cell, AreaCell: TGridCoord; Column: TColumnEh; AreaRect: TRect; var Params: TColCellParamsEh); virtual;
+    procedure DefaultDrawDataCell(const Rect: TRect; Field: TField; State: TGridDrawState); { obsolete } reintroduce;
+    procedure DefaultDrawFooterCell(const Rect: TRect; DataCol, Row: Integer; Column: TColumnEh; State: TGridDrawState); virtual;
+    procedure DefaultDrawTitleCell(ACanvas: TCanvas; const ARect: TRect; ATitleState: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure DefaultFillSTFilterListCommandValues(Column: TColumnEh; Items: TStrings); virtual;
+    procedure DefaultFillSTFilterListDataValues(Column: TColumnEh; Items: TStrings); virtual;
+    procedure DefaultFillSTFilterListValues(Column: TColumnEh; Items: TStrings); virtual;
+    procedure DefaultHandler(var Message); override;
+    procedure DefaultIndicatorTitleMouseDown(Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure DrawColumnDataCellBackground(Cell, AreaCell: TGridCoord; Column: TColumnEh; AreaRect: TRect; var Params: TColCellParamsEh); virtual;
+    procedure DrawColumnDataCellMainContent(Cell, AreaCell: TGridCoord; Column: TColumnEh; AreaRect: TRect; var Params: TColCellParamsEh; const ContentRect: TRect); virtual;
+    procedure DrawTitleCellBackground(ACanvas: TCanvas; const ARect: TRect; ATitleState: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure DrawTitleCellForeground(ACanvas: TCanvas; const ARect: TRect; ATitleState: TDBGridDrawTitleCellParamsEh); virtual;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+    procedure GetSortValue(var VarValue: Variant; Index: Integer);
+    procedure InternalBuildCellPopupMenu(PopupMenu: TPopupMenu; const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh); virtual;
+    procedure InvalidateFooter;
+    procedure InvalidateTitle;
+    procedure OptimizeAllColsWidth(const CheckRowCount : Integer = -1; const MaxWaitingTime: Integer = 0);
+    procedure OptimizeColsWidth(ColumnsList: TColumnsEhList; const CheckRowCount : Integer = -1; const MaxWaitingTime: Integer = 0);
+    procedure RestoreBookmark;
+    procedure RestoreColumnsLayout(ACustIni: TCustomIniFile; const Section: String; RestoreParams: TColumnEhRestoreParams); overload;
+
+{$IFDEF MSWINDOWS}
+    procedure RestoreColumnsLayout(ARegIni: TRegIniFile; RestoreParams: TColumnEhRestoreParams); overload;
+    procedure RestoreGridLayout(ARegIni: TRegIniFile; RestoreParams: TDBGridEhRestoreParams); overload;
+    procedure SaveColumnsLayout(ARegIni: TRegIniFile); overload;
+    procedure SaveGridLayout(ARegIni: TRegIniFile); overload;
+{$ELSE}
+{$ENDIF}
+
+{$IFDEF EH_LIB_20} 
+    procedure ReadSettings(Keeper: TSettingsKeeperEh); overload; virtual;
+    procedure ReadSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions); overload; virtual;
+    procedure ReadGridSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions); virtual;
+    procedure ReadSearchPanelSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions); virtual;
+    procedure ReadColumnsSettings(Keeper: TSettingsKeeperEh; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions); virtual;
+    procedure ReadColumnSettings(Keeper: TSettingsKeeperEh; Column: TColumnEh; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions); virtual;
+
+    function WriteSettings(Keeper: TSettingsKeeperEh): TSettingsKeeperEh; overload; virtual;
+    function WriteSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions): TSettingsKeeperEh; overload; virtual;
+    function WriteGridSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions): TSettingsKeeperEh; virtual;
+    function WriteSearchPanelSettings(Keeper: TSettingsKeeperEh; GridSettingsKeeperOptions: TDBGridEhSettingsKeeperOptions): TSettingsKeeperEh; virtual;
+    function WriteColumnsSettings(Keeper: TSettingsKeeperEh; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions): TSettingsKeeperEh; virtual;
+    function WriteColumnSettings(Keeper: TSettingsKeeperEh; Column: TColumnEh; ColumnSettingsKeeperOptions: TColumnEhSettingsKeeperOptions): TSettingsKeeperEh; virtual;
+{$ENDIF}
+
+    procedure RestoreColumnsLayoutIni(const IniFileName: String; const Section: String; RestoreParams: TColumnEhRestoreParams);
+    procedure RestoreGridLayout(ARegIni: TCustomIniFile; const Section: String; RestoreParams: TDBGridEhRestoreParams); overload;
+    procedure RestoreGridLayoutIni(const IniFileName: String; const Section: String; RestoreParams: TDBGridEhRestoreParams);
+    procedure RestoreVertPos(const KeyFieldNames: String); virtual;
+    procedure SaveBookmark;
+    procedure SaveColumnsLayout(ACustIni: TCustomIniFile; const Section: String); overload;
+    procedure SaveColumnsLayoutIni(const IniFileName: String; const Section: String; DeleteSection: Boolean);
+    procedure SaveGridLayout(ACustIni: TCustomIniFile; const Section: String); overload;
+    procedure SaveGridLayoutIni(const IniFileName: String; const Section: String; DeleteSection: Boolean);
+    procedure SaveVertPos(const KeyFieldNames: String); virtual;
+    procedure SetFocus; override;
+    procedure SetSortMarkedColumns;
+    procedure SetValueFromPrevRecord;
+    procedure StartInplaceSearch(const ss: String; TimeOut: Integer; InpsDirection: TLocateTextDirectionEh);
+    procedure StopInplaceSearch;
+    procedure UpdateAllDataRowHeights; virtual;
+    procedure UpdateAllGridDataRowHeights(); virtual;
+    procedure UpdateData; override;
+    procedure UpdateFooterRowHeights; virtual;
+    procedure UpdateGroupFooterRowHeights; virtual;
+
+    property AllowedOperations;
+    property AllowedSelections: TDBGridEhAllowedSelections read FAllowedSelections write SetAllowedSelections default [gstRecordBookmarks..gstAll];
+    property AutoFitColWidths: Boolean read FAutoFitColWidths write WriteAutoFitColWidths default False;
+    property BackgroundData: TDBGridBackgroundDataEh read GetBackgroundData write SetBackgroundData;
+    property Bof: Boolean read GetBof;
+    property Center: TDBGridEhCenter read FCenter write SetCenter;
+    property ColumnDefValues: TColumnDefValuesEh read GetColumnDefValues write SetColumnDefValues;
+    property Columns: TDBGridColumnsEh read GetColumns write SetColumns;
+    property ContraColCount: Longint read GetContraColCount write SetContraColCount default 0;
+    property DataGrouping: TDBGridEhDataGroupsEh read FDataGrouping write SetDataGrouping;
+    property DataLink: TGridDataLinkEh read GetDataLink;
+    property DefaultRowHeight: Integer read GetDefaultRowHeight write SetDefaultRowHeight default 24;
+    property EditActions: TGridEditActionsEh read FEditActions write FEditActions default [];
+    property EditButtonsShowOptions: TEditButtonsShowOptionsEh read FEditButtonsShowOptions write SetEditButtonsShowOptions default [];
+    property EmptyDataInfo: TGridEmptyDataInfoEh read FEmptyDataInfo write SetEmptyDataInfo;
+    property Eof: Boolean read GetEof;
+    property EvenRowColor: TColor read GetEvenRowColor write SetEvenRowColor stored IsEvenRowColorStored;
+    property FieldColumns[const FieldName: String]: TColumnEh read GetFieldColumns; default;
+    property FooterParams: TDBGridFooterParamsEh read FFooterParams write SetFooterParams;
+    property FooterRowCount: Integer read GetFooterRowCount write SetFooterRowCount default 0;
+    property FrozenCols: Integer read FFrozenCols write SetFrozenCols default 0;
+    property FullFooterRowCount: Integer read GetFullFooterRowCount;
+    property GridLineParams: TDBGridLineParamsEh read GetGridLineParams write SetGridLineParams;
+    property HeadTree: TDBGridMultiTitleTreeListEh read FHeadTree;
+    property HorzScrollBar: THorzDBGridEhScrollBar read GetHorzScrollBar write SetHorzScrollBar;
+    property IndicatorOffset: Byte read FIndicatorOffset;
+    property IndicatorOptions: TDBGridEhIndicatorOptions read FIndicatorOptions write SetIndicatorOptions default [gioShowRowIndicatorEh];
+    property IndicatorParams: TDBGridIndicatorParamsEh read FIndicatorParams write SetIndicatorParams;
+    property IndicatorTitle: TDBGridEhIndicatorTitle read FIndicatorTitle write FIndicatorTitle;
+    property InplaceSearching: Boolean read FInplaceSearching;
+    property LeafFieldArr: PTLeafCol read FLeafFieldArr;
+    property MinAutoFitWidth: Integer read FMinAutoFitWidth write WriteMinAutoFitWidth default 0;
+    property OddRowColor: TColor read GetOddRowColor write SetOddRowColor stored IsOddRowColorStored;
+    property Options: TDBGridOptions read FOptions write SetOptions default [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit];
+    property OptionsEh: TDBGridEhOptions read FOptionsEh write SetOptionsEh default [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnResize, dghColumnMove, dghExtendVertLines];
+    property OriginCol: Integer read GetOriginCol write SetOriginCol;
+    property PopupMenuParams: TDBGridEhPopupMenuParams read FPopupMenuParams write FPopupMenuParams;
+    property RowDetailPanel: TRowDetailPanelEh read FRowDetailPanel write SetRowDetailPanel;
+    property RowDetailPanelControl: TRowDetailPanelControlEh read FRowDetailControl;
+    property RowHeight: Integer read GetRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read GetRowLines write SetRowLines default 0;
+    property RowPanel: TGridRowPanelEh read FGridRowPanel write SetRowPanel;
+    property RowSizingAllowed: Boolean read FRowSizingAllowed write SetRowSizingAllowed default False;
+    property SearchPanelMode: Boolean read FSearchPanelMode write SetSearchPanelMode;
+    property SearchPanelInplaceMode: Boolean read GetSearchPanelInplaceMode;
+    property SearchPanel: TDBGridSearchPanelEh read FSearchPanel write SetSearchPanel;
+    property SelectedRows: TBookmarkListEh read FBookmarks;
+    property Selection: TDBGridEhSelection read FSelection;
+    property SortLocal: Boolean read FSortLocal write FSortLocal default False;
+    property SortMarkedColumns: TColumnsEhList read FSortMarkedColumns write FSortMarkedColumns;
+    property SortMarkerFont: TFont read FSortMarkerFont;
+    property STFilter: TSTDBGridEhFilter read FSTFilter write SetSTFilter;
+    property Style: TDBGridEhStyle read FStyle write SetStyle;
+    property SumList: TDBGridEhSumList read FSumList write SetSumList;
+    property TimerActive: Boolean read FTimerActive;
+    property TitleFont;
+    property TitleHeight: Integer read GetTitleHeight write WriteTitleHeight default 0;
+    property TitleImages: TCustomImageList read GetTitleImages write SetTitleImages stored False;
+    property TitleLines: Integer read GetTitleLines write WriteTitleLines default 0;
+    property TitleOffset: Byte read FTitleOffset;
+    property TitleParams: TDBGridTitleParamsEh read FTitleParams write SetTitleParams;
+    property TopDataOffset: Byte read GetTopDataOffset;
+    property TreeViewParams: TGridTreeViewParamsEh read FTreeViewParams write SetTreeViewParams;
+    property TryUseMemTableInt: Boolean read FTryUseMemTableInt write FTryUseMemTableInt;
+    property UseMultiTitle: Boolean read GetUseMultiTitle write WriteUseMultiTitle default False;
+    property VertScrollBar: TVertDBGridEhScrollBar read GetVertScrollBar write SetVertScrollBar;
+    property VisibleColumns: TColumnsEhList read GetVisibleColumns;
+    property VTitleMargin: Integer read GetVTitleMargin write WriteVTitleMargin default 10;
+
+    property OnActiveGroupingStructChanged: TDBGridEhNotifyEvent read FOnActiveGroupingStructChanged write FOnActiveGroupingStructChanged;
+    property OnAdvDrawDataCell: TDBGridEhAdvDrawColumnDataEvent read FOnAdvDrawDataCell write FOnAdvDrawDataCell;
+    property OnBuildIndicatorTitleMenu: TDBGridEhBuildIndicatorTitleMenu read FOnBuildIndicatorTitleMenu write FOnBuildIndicatorTitleMenu;
+    property OnCheckButton: TCheckTitleEhBtnEvent read FOnCheckButton write FOnCheckButton;
+    property OnCheckRowHaveDetailPanel: TDBGridEhCheckRowHaveDetailPanelEvent read FOnCheckRowHaveDetailPanel write FOnCheckRowHaveDetailPanel;
+    property OnColWidthsChanged: TNotifyEvent read FOnColWidthsChanged write FOnColWidthsChanged;
+    property OnDataGroupFooterAggregateValue: TGridDataGroupFooterItemAggregateValueEvent read FOnDataGroupFooterAggregateValue write FOnDataGroupFooterAggregateValue;
+    property OnDataGroupFooterFinalizeValue: TGridDataGroupFooterItemFinalizeValueEvent read FOnDataGroupFooterFinalizeValue write FOnDataGroupFooterFinalizeValue;
+    property OnDataGroupFooterToDisplayText: TGridDataGroupFooterItemToDisplayTextEvent read FOnDataGroupFooterToDisplayText write FOnDataGroupFooterToDisplayText;
+    property OnDataGroupGetFooterParams: TDBGridEhDataGroupGetGroupFooterParamsEvent read FOnDataGroupGetFooterParams write FOnDataGroupGetFooterParams;
+    property OnDataGroupGetRowParams: TDBGridEhDataGroupGetGroupRowParamsEvent read FOnDataGroupGetRowParams write FOnDataGroupGetRowParams;
+    property OnDataGroupGetRowText: TDBGridEhDataGroupGetGroupRowTextEvent read FOnDataGroupGetRowText write FOnDataGroupGetRowText;
+    property OnDataHintShow: TDBGridEhDataHintShowEvent read FOnDataHintShow write FOnDataHintShow;
+    property OnDrawFooterCell: TDrawFooterCellEvent read FOnDrawFooterCell write FOnDrawFooterCell;
+    property OnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent read FOnFillSTFilterListValues write FOnFillSTFilterListValues;
+    property OnGetBtnParams: TGetBtnEhParamsEvent read FOnGetBtnParams write FOnGetBtnParams;
+    property OnGetCellParams: TGetCellEhParamsEvent read FOnGetCellParams write FOnGetCellParams;
+    property OnGetFooterParams: TGetFooterParamsEvent read FOnGetFooterParams write FOnGetFooterParams;
+    property OnGetRowHeight: TGetDBGridEhRowHeightEvent read FOnGetRowHeight write FOnGetRowHeight;
+    property OnHintShowPause: TDBGridEhHintShowPauseEvent read FOnHintShowPause write FOnHintShowPause;
+    property OnIndicatorTitleMouseDown: TGridEhCellMouseEvent read FOnIndicatorTitleMouseDown write FOnIndicatorTitleMouseDown;
+    property OnMoveRecords: TGridMoveRecordsEventEh read FOnMoveRecords write FOnMoveRecords;
+    property OnNavigatorPanelButtonClick: TDBGridNavigatorPanelButtonClickEventEh read FOnNavigatorPanelButtonClick write FOnNavigatorPanelButtonClick;
+    property OnRowDetailPanelHide: TDBGridEhRowDetailPanelHideEvent read FOnRowDetailPanelHide write FOnRowDetailPanelHide;
+    property OnRowDetailPanelShow: TDBGridEhRowDetailPanelShowEvent read FOnRowDetailPanelShow write FOnRowDetailPanelShow;
+    property OnSelectionChanged: TNotifyEvent read FOnSelectionChanged write FOnSelectionChanged;
+    property OnSortMarkingChanged: TNotifyEvent read FOnSortMarkingChanged write FOnSortMarkingChanged;
+    property OnSumListAfterRecalcAll: TNotifyEvent read FOnSumListAfterRecalcAll write FOnSumListAfterRecalcAll;
+    property OnSumListRecalcAll: TNotifyEvent read FOnSumListRecalcAll write FOnSumListRecalcAll;
+    property OnTitleBtnClick: TTitleEhClickEvent read FOnTitleBtnClick write FOnTitleBtnClick;
+    property OnTopLeftChanged: TNotifyEvent read FOnTopLeftChanged write FOnTopLeftChanged;
+    property OnSelectedRowsItemChanged: TDBGridSelectedRowsItemChangedEh read FOnSelectedRowsItemChanged write FOnSelectedRowsItemChanged;
+    property OnGetTitleParams: TDBGridGetDrawTitleParamsEventEh read FOnGetTitleParams write FOnGetTitleParams;
+    property OnDrawTitleCell: TDBGridDrawTitleEventEh read FOnDrawTitle write FOnDrawTitle;
+  end;
+
+{ TDBGridEh }
+
+  TDBGridEh = class(TCustomDBGridEh)
+  public
+    property Col;
+    property Row;
+    property Canvas;
+    property RowCount;
+    property SelectedRows;
+    property FooterColor;
+  published
+    property PopupMenuParams;
+
+    property Align;
+    property AllowedOperations;
+    property AllowedSelections;
+    property Anchors;
+    property AutoFitColWidths;
+    property Border;
+    property BiDiMode;
+    property BorderStyle;
+    property IncludeImageModules;
+    property Color;
+    property ColumnDefValues;
+    property Columns stored False; 
+    property Constraints;
+    property ContraColCount;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataGrouping;
+    property DataSource;
+    property DefaultDrawing;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DrawGraphicData;
+    property DrawMemoText;
+    property DynProps;
+    property EditActions;
+    property Enabled;
+    property EvenRowColor;
+    property FixedColor;
+    property Flat;
+    property Font;
+    property FooterFont;
+    property FooterRowCount;
+    property FooterParams;
+    property FrozenCols;
+    property GridLineParams;
+    property HorzScrollBar;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property IndicatorOptions;
+    property IndicatorParams;
+    property IndicatorTitle;
+    property MinAutoFitWidth;
+    property EmptyDataInfo;
+    property BackgroundData;
+    property OddRowColor;
+    property Options;
+    property OptionsEh;
+    property ParentBiDiMode;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property RowDetailPanel;
+    property RowHeight;
+    property RowLines;
+    property RowSizingAllowed;
+    property RowPanel;
+    property SearchPanel;
+    property SelectionDrawParams;
+    property ShowHint;
+    property EditButtonsShowOptions;
+    property SortLocal;
+    property STFilter;
+    property SumList;
+    property TabOrder;
+    property TabStop;
+    property TitleFont;
+    property TitleImages;
+    property TitleParams;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property TreeViewParams;
+    property VertScrollBar;
+    property Visible;
+    property OnActiveGroupingStructChanged;
+    property OnAdvDrawDataCell;
+    property OnApplyFilter;
+    property OnBuildIndicatorTitleMenu;
+    property OnCellClick;
+    property OnCellMouseClick;
+    property OnCheckButton;
+    property OnCheckRowHaveDetailPanel;
+    property OnColEnter;
+    property OnColExit;
+    property OnColumnMoved;
+    property OnColWidthsChanged;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDataGroupFooterAggregateValue;
+    property OnDataGroupFooterFinalizeValue;
+    property OnDataGroupFooterToDisplayText;
+    property OnDataGroupGetRowText;
+    property OnDataGroupGetRowParams;
+    property OnDataGroupGetFooterParams;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnDrawColumnCell;
+    property OnDrawDataCell; { obsolete }
+    property OnDrawFooterCell;
+    property OnDataHintShow;
+    property OnDrawTitleCell;
+    property OnEditButtonClick;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnFillSTFilterListValues;
+    property OnGetBtnParams;
+    property OnGetCellParams;
+    property OnGetFooterParams;
+    property OnGetRowHeight;
+    property OnGetTitleParams;
+    property OnIndicatorTitleMouseDown;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnMoveRecords;
+    property OnNavigatorPanelButtonClick;
+    property OnSelectionChanged;
+    property OnHintShowPause;
+    property OnRowDetailPanelHide;
+    property OnRowDetailPanelShow;
+    property OnSortMarkingChanged;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnSumListAfterRecalcAll;
+    property OnSumListRecalcAll;
+    property OnTitleBtnClick;
+    property OnTitleClick;
+    property OnSelectedRowsItemChanged;
+  end;
+
+  TDBGridEhStyleIndicatorTitleMenuEh = (itmVisibleColumnsEh, itmCut, itmCopy, itmPaste, itmDelete, itmSelectAll{, itmPreview});
+  TDBGridEhStyleIndicatorTitleMenusEh = set of TDBGridEhStyleIndicatorTitleMenuEh;
+
+  TColumnEhMenuItem = class(TMenuItemEh)
+  public
+    ColumnEh: TColumnEh;
+  end;
+
+  TDBGridEhMenuItem = class(TMenuItemEh)
+  public
+    Grid: TCustomDBGridEh;
+    TagObject: TObject;
+  end;
+
+  TDBGridEhIndicatorTitleMenuItemEh = class(TDBGridEhMenuItem)
+  public
+    TitleMenu: TDBGridEhStyleIndicatorTitleMenuEh;
+  end;
+
+  TGridThemeTitleFillElementEh = (gtfeHeaderItemEh, gtfeSplitButtonEh);
+
+{ TDBGridEhStyle }
+
+  TDBGridEhStyle = class(TComponent)
+  private
+    FDataCellHorzOffset: Integer;
+    FDefaultSortMarkerStyle: TSortMarkerStyleEh;
+    FFinishLoadingStatusRenderDuration: Integer;
+    FGradientEnabledInClassicTheme: Boolean;
+    FGrids: TObjectListEh;
+    FInTitleFilterButtonStyle: TEditButtonStyleEh;
+    FIsDrawFocusRect: Boolean;
+    FIsDrawFocusRectStored: Boolean;
+    FLuminateSelection: Boolean;
+    FOnGetSubtitleRowColor: TDBGridEhGetColorEvent;
+    FSelectionColor: TColor;
+    FSelectionFontColor: TColor;
+    FSelectionInactiveColor: TColor;
+    FSortMarkerStyle: TSortMarkerStyleEh;
+    FStartLoadingStatusRenderDuration: Integer;
+    FThemeTitleFillElement: TGridThemeTitleFillElementEh;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    FWindowHandle: HWND;
+    {$ENDIF}
+    FTitleFinishColumnMovingAnimationTime: Longword;
+    FTitleStartColumnMovingAnimationTime: Longword;
+
+    function GetIsDrawFocusRect: Boolean;
+
+    procedure SetDefaultSortMarkerStyle(const Value: TSortMarkerStyleEh);
+    procedure SetGradientEnabledInClassicTheme(const Value: Boolean);
+    procedure SetIsDrawFocusRect(const Value: Boolean);
+    procedure SetLuminateSelection(const Value: Boolean);
+    procedure SetSelectionColor(const Value: TColor);
+    procedure SetSelectionFontColor(const Value: TColor);
+    procedure SetSelectionInactiveColor(const Value: TColor);
+    procedure SetSortMarkerStyle(const Value: TSortMarkerStyleEh);
+  protected
+    function DefaultIsDrawFocusRect: Boolean; virtual;
+    function HighlightDataCellColor(AGrid: TCustomDBGridEh; ACol, ARow: Integer; DataCol, DataRow: Integer; const Value: string; AState: TGridDrawState; InMultiSelect: Boolean; var AColor: TColor; AFont: TFont): Boolean; virtual;
+    function HighlightNoDataCellColor(AGrid: TCustomDBGridEh; ACol, ARow: Integer; DataCol, DataRow: Integer; CellType: TCellAreaTypeEh; AState: TGridDrawState; InMultiSelect: Boolean; var AColor: TColor; AFont: TFont): Boolean; virtual;
+
+    procedure RemoveAllChangeNotification;
+    procedure StyleWndProc(var Msg: TMessage); virtual;
+    procedure SysColorChanged; virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function GridInChangeNotification(Grid: TCustomDBGridEh): Boolean;
+    function LightenColor(AColor: TColor; GlassColor: TColor; Ungray: Boolean): TColor; virtual;
+    function GetColumnFontColor(Column: TColumnEh; AState: TGridDrawState): TColor; virtual;
+    function GetColumnColor(Column: TColumnEh): TColor; virtual;
+    function GetSubtitleRowColor(Grid: TCustomDBGridEh): TColor; virtual;
+    function DefaultGetSubtitleRowColor(Grid: TCustomDBGridEh): TColor; virtual;
+    function GetGroupPanelColor(Grid: TCustomDBGridEh): TColor; virtual;
+    function GetSelectionColor: TColor; virtual;
+    function GetSelectionFontColor: TColor; virtual;
+    function GetSelectionInactiveColor: TColor; virtual;
+    function GetSortMarkerSize(Canvas: TCanvas; SMStyle: TSortMarkerStyleEh): TSize; virtual;
+    function GetDataCellHorzOffset(Grid: TCustomDBGridEh; Column: TColumnEh): Integer; virtual;
+    function IsCustomStyleActive: Boolean;
+    function GetActualTreeGlyphStyle: TTreeViewGlyphStyleEh; virtual;
+    function GetThemeTitleFillElement(AIsDown, AIsSelected: Boolean): TThemedElementDetails;
+
+    procedure GetThemeTitleFillRect(var AFillRect: TRect; IncVerBoundary, IncHorzBoundary: Boolean);
+    procedure AddChangeNotification(Grid: TCustomDBGridEh);
+    procedure DrawCustomStyleCellBackground(Grid: TCustomDBGridEh; Canvas: TCanvas; const ARect: TRect; FillStyle: TGridCellFillStyleEh; AColor: TColor; AState: TGridDrawState; ACol, ARow: Integer; CellPressed: Boolean; ClipRect: TRect); virtual;
+    procedure DrawTitleCellBackground(Grid: TCustomDBGridEh; Column: TColumnEh; Canvas: TCanvas; const ARect: TRect;  FillInside: Boolean; out InsideRect: TRect; AState: TGridDrawState; ATitleState: TDBGridDrawTitleCellParamsEh; ClipRect: TRect); virtual;
+    procedure DrawFixedCellBackground(Grid: TCustomDBGridEh; Canvas: TCanvas; const ARect: TRect;  FillInside: Boolean; var InsideRect: TRect; AState: TGridDrawState; var AFixedState: TDBGridDrawFixedStateEh); virtual;
+
+    procedure GetSortMarkerColors(SMStyle: TSortMarkerStyleEh; Column: TColumnEh; Direction: TSortMarkerEh; Selected: Boolean; var FrameBrightColor, FrameDarkColor, FillColor: TColor); virtual;
+    procedure DrawSortMarker(Canvas: TCanvas; SMStyle: TSortMarkerStyleEh; Column: TColumnEh; Direction: TSortMarkerEh; Selected: Boolean; ARect: TRect);
+    procedure DrawSortMarkerNew(Canvas: TCanvas; SMStyle: TSortMarkerStyleEh; Direction: TSortMarkerEh; Selected: Boolean; ARect: TRect; FrameBrightColor, FrameDarkColor, FillColor: TColor); virtual;
+    procedure Changed;
+    procedure RemoveChangeNotification(Grid: TCustomDBGridEh);
+    procedure GetDefaultFixedGradientColor(var AStartColor, AEndColor: TColor; IsTrack, IsPressed: Boolean); virtual;
+    procedure GetCustomStyleFixedColors(var AFillColor, ATextColor, AStartColor, AEndColor: TColor; FillStyle: TGridCellFillStyleEh; IsTrack, IsPressed: Boolean); virtual;
+
+  published
+    property DataCellHorzOffset: Integer read FDataCellHorzOffset write FDataCellHorzOffset default -1;
+    property DefaultSortMarkerStyle: TSortMarkerStyleEh read FDefaultSortMarkerStyle write SetDefaultSortMarkerStyle default smstFrameEh;
+    property FinishLoadingStatusRenderDuration: Integer read FFinishLoadingStatusRenderDuration write FFinishLoadingStatusRenderDuration;
+    property GradientEnabledInClassicTheme: Boolean read FGradientEnabledInClassicTheme write SetGradientEnabledInClassicTheme default False;
+    property InTitleFilterButtonStyle: TEditButtonStyleEh read FInTitleFilterButtonStyle write FInTitleFilterButtonStyle;
+    property IsDrawFocusRect: Boolean read GetIsDrawFocusRect write SetIsDrawFocusRect default True;
+    property LuminateSelection: Boolean read FLuminateSelection write SetLuminateSelection default True;
+    property SelectionColor: TColor read FSelectionColor write SetSelectionColor default clDefault;
+    property SelectionFontColor: TColor read FSelectionFontColor write SetSelectionFontColor default clDefault;
+    property SelectionInactiveColor: TColor read FSelectionInactiveColor write SetSelectionInactiveColor default clDefault;
+    property SortMarkerStyle: TSortMarkerStyleEh read FSortMarkerStyle write SetSortMarkerStyle;
+    property StartLoadingStatusRenderDuration: Integer read FStartLoadingStatusRenderDuration write FStartLoadingStatusRenderDuration;
+    property ThemeTitleFillElement: TGridThemeTitleFillElementEh read FThemeTitleFillElement write FThemeTitleFillElement;
+    property TitleStartColumnMovingAnimationTime: Longword read FTitleStartColumnMovingAnimationTime write FTitleStartColumnMovingAnimationTime;
+    property TitleFinishColumnMovingAnimationTime: Longword read FTitleFinishColumnMovingAnimationTime write FTitleFinishColumnMovingAnimationTime;
+
+    property OnGetSubtitleRowColor: TDBGridEhGetColorEvent read FOnGetSubtitleRowColor write FOnGetSubtitleRowColor;
+  end;
+
+{ TDBGridEhCenter }
+
+  TDBGridEhCenter = class(TPersistent)
+  private
+    FColWidthsOptimizationMaxWaitingTime: Integer;
+    FFilterEditCloseUpApplyFilter: Boolean;
+    FGrids: TObjectListEh;
+    FIndicatorTitleMenus: TDBGridEhStyleIndicatorTitleMenusEh;
+    FOnApplyFilter: TNotifyEvent;
+    FOnApplySorting: TNotifyEvent;
+    FOnBuildIndicatorTitleMenu: TDBGridEhBuildIndicatorTitleMenu;
+    FOnCellMouseClick: TGridEhCellMouseEvent;
+    FOnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent;
+    FOnIndicatorTitleMouseDown: TGridEhCellMouseEvent;
+    FOnLocateText: TLocateTextEventEh;
+    FPreferEditFormatForNumberFields: Boolean;
+    FSTFilterDefaultBooleanOperator: TSTFilterDefaultOperatorEh;
+    FSTFilterDefaultDateTimeOperator: TSTFilterDefaultOperatorEh;
+    FSTFilterDefaultNumberOperator: TSTFilterDefaultOperatorEh;
+    FSTFilterDefaultStringOperator: TSTFilterDefaultOperatorEh;
+    FUseExtendedScrollingForMemTable: Boolean;
+    FTryUseViewScroll: Boolean;
+
+  protected
+    function DefaultLocateText(AGrid: TCustomDBGridEh; const FieldName: string; const Text: String; Options: TLocateTextOptionsEh; Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh; TreeFindRange: TLocateTextTreeFindRangeEh; TimeOut: LongWord = 0; CheckValueEvent: TCheckColumnValueAcceptEventEh = nil): Boolean; virtual;
+    function DefaultMoveRecords(AGrid: TCustomDBGridEh; BookmarkList: TBMListEh; ToRecNo: Longint; CheckOnly: Boolean): Boolean; virtual;
+    function GetColumnTextForGroupingBar(AGrid: TCustomDBGridEh; AColumn: TColumnEh): String; virtual;
+    function LocateText(AGrid: TCustomDBGridEh; const FieldName: string; const Text: String; Options: TLocateTextOptionsEh; Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh; TreeFindRange: TLocateTextTreeFindRangeEh; TimeOut: LongWord = 0; CheckValueEvent: TCheckColumnValueAcceptEventEh = nil): Boolean; virtual;
+    function MoveRecords(AGrid: TCustomDBGridEh; BookmarkList: TBMListEh; ToRecNo: Longint; CheckOnly: Boolean): Boolean; virtual;
+
+    procedure ApplyFilter(AGrid: TCustomDBGridEh); virtual;
+    procedure ApplySimpleTextFilter(AGrid: TCustomDBGridEh; const FieldNames: String; Operation: TLSAutoFilterTypeEh; const FilterText: String); virtual;
+    procedure ApplySorting(AGrid: TCustomDBGridEh); virtual;
+    procedure ExecuteFindDialog(AGrid: TCustomDBGridEh; const Text, FieldName: String; Modal: Boolean); virtual;
+    procedure MenuEditClick(Sender: TObject);
+
+    procedure RemoveAllChangeNotification;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function CalcIndicatorRowNumAreaWidth(Grid: TCustomDBGridEh): Integer; virtual;
+    function CanColumnValueReadAsText(Grid: TCustomDBGridEh; Column: TColumnEh): Boolean; virtual;
+    function ColumnValueTypeIsComparable(Grid: TCustomDBGridEh; Column: TColumnEh): Boolean; virtual;
+    function GetCellPopupMenu(Grid: TCustomDBGridEh; const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh): TPopupMenu; virtual;
+    function GetColumnSettingsKeeperOptions(Grid: TCustomDBGridEh): TColumnEhSettingsKeeperOptions; virtual;
+    function GetFirstSortMarkerState(Grid: TCustomDBGridEh; Column: TColumnEh): TSortMarkerEh; virtual;
+    function GetGridSettingsKeeperOptions(Grid: TCustomDBGridEh): TDBGridEhSettingsKeeperOptions; virtual;
+    function GetGroupFooterFunctionNames(AFooterValueType: TGroupFooterValueTypeEh): String; virtual;
+    function GetSortOrderForSortMarker(Grid: TCustomDBGridEh; Column: TColumnEh; SortMarker: TSortMarkerEh): TSortOrderEh; virtual;
+    function GetSTFilterDefaultOperator(Grid: TCustomDBGridEh; Column: TColumnEh; var FExpression: TSTFilterExpressionEh): TSTFilterDefaultOperatorEh; virtual;
+    function GridInChangeNotification(Grid: TCustomDBGridEh): Boolean;
+
+    procedure AddChangeNotification(Grid: TCustomDBGridEh);
+    procedure BuildCellPopupMenu(Grid: TCustomDBGridEh; PopupMenu: TPopupMenu; const MousePos: TPoint; const Cell: TGridCoord; const InCellMousePos: TPoint; const CellAreaType: TCellAreaTypeEh; InAreaCell: TGridCoord; const InplaceEditorVisible: Boolean; const AColumn: TColumnEh; const AGroupDataNode: TGroupDataTreeNodeEh); virtual;
+    procedure BuildIndicatorTitleMenu(Grid: TCustomDBGridEh; var PopupMenu: TPopupMenu); virtual;
+    procedure BuildSearchPanelOptionsPopupMenu(Grid: TCustomDBGridEh; var PopupMenu: TPopupMenu); virtual;
+    procedure CellMouseClick(Grid: TCustomDBGridEh; Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure Changed;
+    procedure DefaultApplyFilter(AGrid: TCustomDBGridEh); virtual;
+    procedure DefaultApplySorting(AGrid: TCustomDBGridEh); virtual;
+    procedure DefaultBuildIndicatorTitleMenu(Grid: TCustomDBGridEh; var PopupMenu: TPopupMenu); virtual;
+    procedure DefaultCellMouseClick(Grid: TCustomDBGridEh; Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure DefaultFillSTFilterListCommandValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings); virtual;
+    procedure DefaultFillSTFilterListDataValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings); virtual;
+    procedure DefaultFillSTFilterListValues(Grid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings);
+    procedure DefaultIndicatorTitleMouseDown(Grid: TCustomDBGridEh; Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure GetColCellParams(Grid: TCustomDBGridEh; Column: TColumnEh; EditMode: Boolean; Params: TColCellParamsEh); virtual;
+    procedure GetTitleParams(Grid: TCustomDBGridEh; Column: TColumnEh; AFont: TFont; var Background: TColor; var SortMarker: TSortMarkerEh; IsDown: Boolean); virtual;
+    procedure IndicatorTitleMouseDown(Grid: TCustomDBGridEh; Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure MenuVisibleColumnClick(Sender: TObject); virtual;
+    procedure MenuSearchPanelOptionsClick(Sender: TObject); virtual;
+    procedure RemoveChangeNotification(Grid: TCustomDBGridEh);
+    procedure RowDetailPanelHide(Sender: TCustomDBGridEh; var CanHide: Boolean); virtual;
+    procedure RowDetailPanelShow(Sender: TCustomDBGridEh; var CanShow: Boolean); virtual;
+    procedure StandardFillSTFilterListDataValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings); virtual;
+    procedure StandardFillSTFilterListCommandValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings; AddEmpties, AddNotEmpties: Boolean); virtual;
+
+    property FilterEditCloseUpApplyFilter: Boolean read FFilterEditCloseUpApplyFilter write FFilterEditCloseUpApplyFilter default False;
+    property IndicatorTitleMenus: TDBGridEhStyleIndicatorTitleMenusEh read FIndicatorTitleMenus write FIndicatorTitleMenus;
+    property PreferEditFormatForNumberFields: Boolean read FPreferEditFormatForNumberFields write FPreferEditFormatForNumberFields default False;
+    property STFilterDefaultBooleanOperator: TSTFilterDefaultOperatorEh read FSTFilterDefaultBooleanOperator write FSTFilterDefaultBooleanOperator;
+    property STFilterDefaultDateTimeOperator: TSTFilterDefaultOperatorEh read FSTFilterDefaultDateTimeOperator write FSTFilterDefaultDateTimeOperator;
+    property STFilterDefaultNumberOperator: TSTFilterDefaultOperatorEh read FSTFilterDefaultNumberOperator write FSTFilterDefaultNumberOperator;
+    property STFilterDefaultStringOperator: TSTFilterDefaultOperatorEh read FSTFilterDefaultStringOperator write FSTFilterDefaultStringOperator;
+    property UseExtendedScrollingForMemTable: Boolean read FUseExtendedScrollingForMemTable write FUseExtendedScrollingForMemTable default True;
+    property TryUseViewScroll: Boolean read FTryUseViewScroll write FTryUseViewScroll;
+
+    property ColWidthsOptimizationMaxWaitingTime: Integer read FColWidthsOptimizationMaxWaitingTime write FColWidthsOptimizationMaxWaitingTime;
+    property OnApplyFilter: TNotifyEvent read FOnApplyFilter write FOnApplyFilter;
+    property OnApplySorting: TNotifyEvent read FOnApplySorting write FOnApplySorting;
+    property OnBuildIndicatorTitleMenu: TDBGridEhBuildIndicatorTitleMenu read FOnBuildIndicatorTitleMenu write FOnBuildIndicatorTitleMenu;
+    property OnCellMouseClick: TGridEhCellMouseEvent read FOnCellMouseClick write FOnCellMouseClick;
+    property OnFillSTFilterListValues: TDBGridEhFillSTFilterListValuesEvent read FOnFillSTFilterListValues write FOnFillSTFilterListValues;
+    property OnIndicatorTitleMouseDown: TGridEhCellMouseEvent read FOnIndicatorTitleMouseDown write FOnIndicatorTitleMouseDown;
+    property OnLocateText: TLocateTextEventEh read FOnLocateText write FOnLocateText;
+  end;
+
+function SetDBGridEhDefaultStyle(NewGridDefaultStyle: TDBGridEhStyle): TDBGridEhStyle;
+function DBGridEhDefaultStyle: TDBGridEhStyle;
+
+function SetDBGridEhCenter(NewGridCenter: TDBGridEhCenter): TDBGridEhCenter;
+function DBGridEhCenter: TDBGridEhCenter;
+
+{ TDBGridFilterPopupListboxItemEh }
+
+type
+  TDBGridFilterPopupListboxItemEh = class(TPopupListboxItemEh)
+  protected
+    function GetColumn(Listbox: TCustomListboxEh): TColumnEh; virtual;
+    function GetGroupLevel(Listbox: TCustomListboxEh): TGridDataGroupLevelEh; virtual;
+  end;
+
+{ TPopupListboxItemEhSort }
+
+  TPopupListboxItemEhSort = class(TDBGridFilterPopupListboxItemEh)
+  protected
+    FSortState: TSortMarkerEh;
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+  public
+    constructor Create(ASortState: TSortMarkerEh);
+    function IsDataItem: Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+{ TPopupListboxItemEhLine }
+
+  TPopupListboxItemEhLine = class(TDBGridFilterPopupListboxItemEh)
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+  public
+    function IsDataItem: Boolean; override;
+    function CloseOnExecute(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+  end;
+
+{ TPopupListboxItemEhSpec }
+
+  TPopupListboxItemEhSpecType = (ptFilterSpecItemClearFilter, ptFilterSpecItemAll,
+    ptFilterSpecItemEmpties, ptFilterSpecItemNotEmties, ptFilterSpecItemDialog,
+    ptFilterApply);
+
+  TPopupListboxItemEhSpec = class(TDBGridFilterPopupListboxItemEh)
+  protected
+    FType: TPopupListboxItemEhSpecType;
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+  public
+    constructor Create(AType: TPopupListboxItemEhSpecType);
+    function IsDataItem: Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+{ TPopupListboxItemEhData }
+
+  TPopupListboxItemEhData = class(TDBGridFilterPopupListboxItemEh)
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    function GetDisplayText(Sender: TCustomListboxEh; ItemIndex: Integer): String; override;
+
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure MouseMove(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+    procedure KeyPress(Sender: TCustomListboxEh; ItemIndex: Integer; var Key: Char; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+  public
+    function CloseOnExecute(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+const
+  IndicatorWidth = 11;
+
+var
+  DBGridEhIndicators: TImageList;
+  DBGridEhSortMarkerImages: TImageList;
+
+  DBGridEhInplaceSearchKey: TShortCut;
+  DBGridEhInplaceSearchNextKey: TShortCut;
+  DBGridEhInplaceSearchPriorKey: TShortCut;
+  DBGridEhInplaceSearchTimeOut: Integer; 
+  DBGridEhInplaceSearchColor: TColor;
+  DBGridEhInplaceSearchTextColor: TColor;
+  DBGridEhSetValueFromPrevRecordKey: TShortCut;
+  DBGridEhFindDialogKey: TShortCut;
+  DBGridEhShowInTitleFilterBox: TShortCut;
+  DBGridEhSearchPanelInitFindTimeOut: Integer; 
+
+  DBGridEhIndicatorTitlePopupMenu: TPopupMenu;
+  DBGridEhVisibleColumnsIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+  DBGridEhCutIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+  DBGridEhCopyIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+  DBGridEhPasteIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+  DBGridEhDeleteIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+  DBGridEhSelectAllIndicatorMenuItem: TDBGridEhIndicatorTitleMenuItemEh;
+
+  DBGridEhSearchPanelOptionsScopeMenuItem: TDBGridEhMenuItem;
+  DBGridEhSearchPanelScopeCurrentColumnMenuItem: TDBGridEhMenuItem;
+  DBGridEhSearchPanelScopeAllTheGridMenuItem: TDBGridEhMenuItem;
+  DBGridEhSearchPanelCaseSensitiveMenuItem: TDBGridEhMenuItem;
+  DBGridEhSearchPanelWholeWordsMenuItem: TDBGridEhMenuItem;
+  DBGridEhSearchPanelBeginsWithMenuItem: TDBGridEhMenuItem;
+  DBGridEhCloseMenuItem: TDBGridEhMenuItem;
+
+  FScreenNumColors: Integer;
+
+  PopupListboxItemEhSortAsc: TPopupListboxItemEhSort;
+  PopupListboxItemEhSortDes: TPopupListboxItemEhSort;
+  PopupListboxItemEhLine: TPopupListboxItemEhLine;
+
+  PopupListboxItemEhClearFilter: TPopupListboxItemEhSpec;
+  PopupListboxItemEhAll: TPopupListboxItemEhSpec;
+  PopupListboxItemEhEmpties: TPopupListboxItemEhSpec;
+  PopupListboxItemEhNotEmties: TPopupListboxItemEhSpec;
+  PopupListboxItemEhDialog: TPopupListboxItemEhSpec;
+  PopupListboxItemEhApplyFilter: TPopupListboxItemEhSpec;
+
+  PopupListboxItemEhData: TPopupListboxItemEhData;
+
+  DBGridEhEmptyDataInfoText: String = ''; 
+
+const
+  ColSelectionAreaHeight: Integer = 7;
+
+function GetColumnDisplayFormat(Column: TColumnEh): String;
+
+implementation

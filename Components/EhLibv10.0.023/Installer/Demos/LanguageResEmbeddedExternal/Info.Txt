@@ -1,0 +1,32 @@
+This Demo shows how to use embedded and external language resources.
+
+You can comment or uncomment defs in Unit1.pas to change type of language resources.
+There are three options:
+
+1.
+{$DEFINE EMBEDDED_LANGUAGE_RESOURCES} 
+{$DEFINE EMBEDDED_LANGUAGE_RESOURCES_ALL}
+
+All resources are linked to the exe file on compilation time. 
+See list of resources in EhLibEmbeddedLangConsts.pas file.
+
+2.
+{$DEFINE EMBEDDED_LANGUAGE_RESOURCES}
+//{$DEFINE EMBEDDED_LANGUAGE_RESOURCES_ALL}
+
+Only selected resources are linked to the exe file on compilation time. 
+See list of resources in Unit1.pas file.
+Find lines begins with  "{$R Res\....".
+
+...
+    {$R Res\EhLibLangConsts.ENU.dfm}
+    {$R Res\EhLibLangConsts.RUS.dfm}
+    {$R Res\EhLibLangConsts.UKR.dfm}
+...
+
+3. 
+//{$DEFINE EMBEDDED_LANGUAGE_RESOURCES} 
+//{$DEFINE EMBEDDED_LANGUAGE_RESOURCES_ALL}
+
+Resources download from files at run-time. 
+See list of resources in the folder ".\Res".

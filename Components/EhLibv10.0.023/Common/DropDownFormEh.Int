@@ -1,0 +1,176 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                   DropingDown Forms                   }
+{                                                       }
+{   Copyright (c) 2013-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit DropDownFormEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  Messages,
+  {$IFDEF FPC}
+    EhLibLCL, LCLType, LCLIntf, LMessages,
+   {$IFDEF FPC_CROSSP}
+   {$ELSE}
+   Windows, UxTheme, MultiMon,
+   {$ENDIF}
+  {$ELSE}
+    EhLibVCL, Windows, UxTheme, MultiMon,
+  {$ENDIF}
+  Types, Themes,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ToolCtrlsEh, DynVarsEh, DBCtrls, Buttons, ExtCtrls;
+
+type
+  TCustomDropDownFormEh = class;
+  TDDFCloseButtonEh = class;
+  TDDFSizingBarEh = class;
+
+  TDropLayoutEh = (dlAboveControlEh, dlUnderControlEh);
+  TDropDownFormElementEh = (ddfeLeftGripEh, ddfeRightGripEh, ddfeCloseButtonEh, ddfeSizingBarEh);
+  TDropDownFormElementsEh = set of TDropDownFormElementEh;
+
+  TInitDropDownFormEventEh = procedure(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh) of object;
+  TPutBackFormParamsEventEh = procedure(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh) of object;
+
+
+
+  { TCustomDropDownFormEh }
+
+  TCustomDropDownFormEh = class(TForm, IDropDownFormEh, IDynParamsInteractableEh)
+  private
+    FBorderWidth: Integer;
+    FCallbackProc: TDropDownFormCallbackProcEh;
+    FDropDownMode: Boolean;
+    FFormElements: TDropDownFormElementsEh;
+    FKeepFormVisible: Boolean;
+    FOnInitForm: TInitDropDownFormEventEh;
+    FOnReturnParams: TPutBackFormParamsEventEh;
+    FReadOnly: Boolean;
+    FSizeGrip: TSizeGripEh;
+    FSizeGrip2: TSizeGripEh;
+
+    function GetBorderStyle: TFormBorderStyle;
+    function GetControlClientRect: TRect;
+    function GetReadOnly: Boolean;
+    procedure SetDropDownMode(const Value: Boolean);
+    procedure SetReadOnly(const Value: Boolean);
+
+    procedure WMActivate(var msg: TWMActivate); message WM_ACTIVATE;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
+    procedure SetKeepFormVisible(const Value: Boolean);
+
+  protected
+    FActivateClosing: Boolean;
+    FActivateShowing: Boolean;
+    FCloseButton: TDDFCloseButtonEh;
+    FDropLayout: TDropLayoutEh;
+    FDynParams: TDynVarsEh;
+    FMasterFocusControl: TWinControl;
+    FMasterForm: TCustomForm;
+    FModalMode: Boolean;
+    FSizingBar: TDDFSizingBarEh;
+    FSysParams: TDropDownFormSysParams;
+    FClosing: Boolean;
+
+    function DoHandleStyleMessage(var Message: TMessage): Boolean; {$IFDEF EH_LIB_16} override; {$ENDIF}
+
+{$IFDEF EH_LIB_14}
+    procedure GetBorderStyles(var Style, ExStyle, ClassStyle: Cardinal); override;
+{$ENDIF}
+    procedure AdjustClientRect(var aRect: TRect); override;
+    procedure CreateHandle; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DoClose(var Action: TCloseAction); override;
+    procedure DoHide; override;
+    procedure DrawBorder(BorderRect: TRect); virtual;
+    procedure GetOutDynParams(var DynParams: TDynVarsEh); virtual;
+    procedure InitializeNewForm; {$IFDEF EH_LIB_12} override; {$else} virtual; {$ENDIF}
+    procedure Loaded; override;
+    procedure Paint; override;
+    procedure SetInDynParams(DynParams: TDynVarsEh); virtual;
+  public
+    constructor Create(AOwner: TComponent); override;
+    constructor CreateNew(AOwner: TComponent; Dummy: Integer = 0); override;
+    destructor Destroy; override;
+
+    function Execute(RelativePosControl: TControl; DownStateControl: TControl; Align: TDropDownAlign; DynParams: TDynVarsEh): Boolean; virtual;
+    function ShowModal: Integer; override;
+
+    procedure ExecuteNomodal(RelativePosRect: TRect; DownStateControl: TControl; Align: TDropDownAlign; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams; CallbackProc: TDropDownFormCallbackProcEh);
+    procedure InitElements; virtual;
+    procedure InitForm(Host: TComponent; DynParams: TDynVarsEh); virtual;
+    procedure ReturnParams(Host: TComponent; DynParams: TDynVarsEh); virtual;
+    procedure Show;
+    procedure Close;
+    procedure UpdateSize; virtual;
+
+    class function GetGlobalRef: TCustomDropDownFormEh; virtual;
+
+    property BorderWidth: Integer read FBorderWidth write FBorderWidth;
+    property CallbackProc: TDropDownFormCallbackProcEh read FCallbackProc;
+    property KeepFormVisible: Boolean read FKeepFormVisible write SetKeepFormVisible;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly;
+    property ControlClientRect: TRect read GetControlClientRect;
+
+  published
+    property FormElements: TDropDownFormElementsEh read FFormElements write FFormElements default [ddfeLeftGripEh, ddfeRightGripEh, ddfeCloseButtonEh, ddfeSizingBarEh];
+
+    property BorderStyle: TFormBorderStyle read GetBorderStyle stored False;
+    property DropDownMode: Boolean read FDropDownMode write SetDropDownMode;
+
+    property OnInitForm: TInitDropDownFormEventEh read FOnInitForm write FOnInitForm;
+    property OnReturnParams: TPutBackFormParamsEventEh read FOnReturnParams write FOnReturnParams;
+  end;
+
+  TCustomDropDownFormClassEh = class of TCustomDropDownFormEh;
+
+{ TDDFCloseButtonEh }
+
+  TDDFCloseButtonEh = class(TWinControl)
+  private
+    FButtonControl: TSpeedButtonEh;
+    procedure PaintHandler(Sender: TObject);
+    procedure ClickHandler(Sender: TObject);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  end;
+
+{ TDDFSizingBarEh }
+
+  TDDFSizingBarEh = class(TCustomPanel)
+  private
+    FHostControl: TWinControl;
+    FMouseDownPos: TPoint;
+    FSizingArea: Integer;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMSetCursor(var Msg: TWMSetCursor); message WM_SETCURSOR;
+    {$ENDIF}
+
+  protected
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure Resize; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property HostControl: TWinControl read FHostControl write FHostControl;
+  end;
+
+var
+  OpenDropDownFormProc: procedure(DDFCallParam: TDropDownFormCallParamsEh) = nil;
+
+implementation

@@ -1,0 +1,46 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{         Design time TPivotGridPivotFieldsEditor       }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PivotGridPivotFieldsEditors;
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  {$IFDEF FPC}
+  {$ELSE}
+    Windows, ColnEdit, ActnPopup,
+  {$ENDIF}
+  Messages,
+  Menus, ComCtrls, StdCtrls, ExtCtrls, DB, ActnList, ImgList, ToolWin;
+
+{$IFDEF FPC}
+{$ELSE}
+type
+  TPivotGridPivotFieldsEditor = class(TCollectionEditor)
+    AddAllFields1: TMenuItem;
+    Restoredefaults1: TMenuItem;
+    AddAllFieldsCmd: TAction;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    N1: TMenuItem;
+    procedure AddAllFieldsClick(Sender: TObject);
+    procedure AddAllFieldsCmdUpdate(Sender: TObject);
+    procedure ListView1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+  protected
+    function CanAdd(Index: Integer): Boolean; override;
+  public
+    function CanAddAllFields: Boolean;
+  end;
+{$ENDIF}
+
+implementation

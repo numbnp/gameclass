@@ -1,0 +1,16 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{               Embedded Language Resources             }
+{                                                       }
+{     Copyright (c) 2017-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit EhLibEmbeddedLangConsts;
+
+{$I EhLib.Inc}
+
+interface
+
+implementation

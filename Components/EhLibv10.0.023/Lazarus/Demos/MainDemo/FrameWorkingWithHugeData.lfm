@@ -1,0 +1,333 @@
+object frWorkingWithHugeData: TfrWorkingWithHugeData
+  Left = 0
+  Height = 471
+  Top = 0
+  Width = 628
+  ClientHeight = 471
+  ClientWidth = 628
+  Color = clBtnFace
+  ParentColor = False
+  TabOrder = 0
+  DesignLeft = 793
+  DesignTop = 245
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 628
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 628
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 628
+      Align = alClient
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 22
+      Height = 15
+      Top = 4
+      Width = 132
+      Caption = 'Working With Huge Data'
+      ParentColor = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 49
+    Top = 33
+    Width = 628
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 49
+    ClientWidth = 628
+    TabOrder = 1
+    object Label10: TLabel
+      Left = 8
+      Height = 15
+      Top = 2
+      Width = 412
+      Caption = 'To make measuring actual, Run Application in "Run Without Debuging" mode'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 336
+      Height = 15
+      Top = 27
+      Width = 104
+      Caption = 'Action Time (msec)'
+      ParentColor = False
+    end
+    object btnSmallTable: TButton
+      Left = 8
+      Height = 25
+      Top = 20
+      Width = 98
+      Caption = 'Open Small Table'
+      OnClick = btnSmallTableClick
+      TabOrder = 0
+    end
+    object btnBigTable: TButton
+      Left = 112
+      Height = 25
+      Top = 20
+      Width = 97
+      Caption = 'Open Big Table'
+      OnClick = btnBigTableClick
+      TabOrder = 1
+    end
+    object DBEditEh1: TDBEditEh
+      Left = 432
+      Height = 23
+      Top = 24
+      Width = 121
+      CharCase = ecNormal
+      ControlLabel.ParentColor = False
+      DynProps = <>
+      EditButtons = <>
+      MaxLength = 0
+      TabOrder = 2
+      Visible = True
+    end
+    object btnSortBy: TButton
+      Left = 215
+      Height = 25
+      Top = 20
+      Width = 106
+      Caption = 'Sort by [asciiname]'
+      OnClick = btnSortByClick
+      TabOrder = 3
+    end
+    object ProgressBar1: TProgressBar
+      Left = 432
+      Height = 17
+      Top = 3
+      Width = 121
+      TabOrder = 4
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 389
+    Top = 82
+    Width = 628
+    Align = alClient
+    Border.EdgeBorders = [ebTop]
+    Border.ExtendedDraw = True
+    ColumnDefValues.Title.TitleButton = True
+    DataSource = DataSource1
+    DynProps = <>
+    Flat = True
+    GridLineParams.ColorScheme = glcsThemedEh
+    GridLineParams.VertEmptySpaceStyle = dessSolidEh
+    HorzScrollBar.ExtraPanel.Visible = True
+    HorzScrollBar.ExtraPanel.VisibleItems = [gsbiRecordsInfoEh, gsbiSelAggregationInfoEh]
+    IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+    IndicatorParams.RecNoShowStep = 10
+    OptionsEh = [dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghExtendVertLines]
+    ParentColor = True
+    SearchPanel.Enabled = True
+    SortLocal = True
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    TabOrder = 2
+    TitleParams.SortMarkerStyle = smstFrameEh
+    OnSortMarkingChanged = DBGridEh1SortMarkingChanged
+    Columns = <    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'geonameid'
+        Footers = <>
+        Width = 59
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'asciiname'
+        Footers = <>
+        Width = 113
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'population'
+        Footers = <>
+        Width = 68
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'timezone'
+        Footers = <>
+        Width = 79
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'latitude'
+        Footers = <>
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'gname'
+        Footers = <>
+        Width = 123
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'longitude'
+        Footers = <>
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'feature_class'
+        Footers = <>
+        Width = 75
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'feature_code'
+        Footers = <>
+        Width = 80
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'country_code'
+        Footers = <>
+        Width = 78
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'cc2'
+        Footers = <>
+        Width = 29
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin1_code'
+        Footers = <>
+        Width = 68
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin2_code'
+        Footers = <>
+        Width = 53
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin3_code'
+        Footers = <>
+        Width = 24
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'admin4_code'
+        Footers = <>
+        Width = 27
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'elevation'
+        Footers = <>
+        Width = 54
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'dem'
+        Footers = <>
+        Width = 52
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'modification_date'
+        Footers = <>
+        Width = 82
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'select'
+      '*'
+      'from'
+      '  %Table_name%'
+      'where'
+      ' 1=1 %Filter%'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.SpecMacrosUsages = [smuUseFilterMacroEh, smuFilterWithANDPrecedingEh, smuSortOrderAsOrderByClauseEh]
+    MacroVars.Macros = <    
+      item
+        Name = '%Table_name%'
+        Value = 'Cities1000Small'
+      end>
+    SpecParams.Strings = (
+      'table=table_Cities1000Small'
+    )
+    left = 216
+    top = 248
+  end
+  object DataSetDriverEh1: TDataSetDriverEh
+    left = 296
+    top = 336
+  end
+  object MemTableEh1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 312
+    top = 280
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 408
+    top = 280
+  end
+end

@@ -1,0 +1,445 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                DataSetImpExpEh components             }
+{                                                       }
+{    Copyright (c) 2015-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DataSetImpExpEh;
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs,
+  {$IFDEF CIL}
+    EhLibVCLNET,
+    System.Text,
+    System.Runtime.InteropServices,
+  {$ELSE}
+    {$IFDEF FPC}
+    EhLibLCL,
+    {$ELSE}
+    EhLibVCL, Windows,
+    {$ENDIF}
+  {$ENDIF}
+  Variants, ToolCtrlsEh, Db;
+
+type
+
+  TFieldsMapItemEh = class;
+  TExportFieldsMapItemEh = class;
+  TImportFieldsMapItemEh = class;
+  TFieldsMapCollectionEh = class;
+  TDataSetTextExporterEh = class;
+  TDataSetTextImporterEh = class;
+
+{ TFieldsMapItemEh }
+
+  TFieldsMapItemEh = class(TCollectionItem)
+  private
+    FDataSetFieldName: String;
+    FFileFieldName: String;
+    FFileFieldPos: Integer;
+    FFileFieldLen: Integer;
+    FField: TField;
+    FFieldSize: Integer;
+    function GetCollection: TFieldsMapCollectionEh;
+
+  protected
+    function GetDisplayName: string; override;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    procedure Assign(Source: TPersistent); override;
+
+    property Field: TField read FField write FField;
+    property FieldSize: Integer read FFieldSize;
+    property Collection: TFieldsMapCollectionEh read GetCollection;
+  published
+    property DataSetFieldName: String read FDataSetFieldName write FDataSetFieldName;
+    property FileFieldName: String read FFileFieldName write FFileFieldName;
+    property FileFieldPos: Integer read FFileFieldPos write FFileFieldPos default -1;
+    property FileFieldLen: Integer read FFileFieldLen write FFileFieldLen default 0;
+  end;
+
+{ TExportFieldsMapItemEh }
+
+  TFormatExportTextEventEh = procedure(Sender: TDataSetTextExporterEh;
+                                       FieldsMapItem: TExportFieldsMapItemEh;
+                                       var Value: String;
+                                       var Processed: Boolean) of object;
+
+  TExportFieldsMapItemEh = class(TFieldsMapItemEh)
+  private
+    FOnFormatExportValue: TFormatExportTextEventEh;
+  published
+    property OnFormatExportValue: TFormatExportTextEventEh read FOnFormatExportValue write FOnFormatExportValue;
+  end;
+
+{ TImportFieldsMapItemEh }
+
+  TParseImportValueEventEh = procedure(Sender: TDataSetTextImporterEh;
+                                       FieldsMapItem: TImportFieldsMapItemEh;
+                                       const SourceValue: String;
+                                       var TargetValue: Variant;
+                                       var Processed: Boolean) of object;
+  TWriteFieldValueEventEh = procedure(Sender: TDataSetTextImporterEh;
+                                       FieldsMapItem: TImportFieldsMapItemEh;
+                                       Value: Variant;
+                                       var Processed: Boolean) of object;
+
+  TImportFieldsMapItemEh = class(TFieldsMapItemEh)
+  private
+    FSourceValue: String;
+    FTargetValue: Variant;
+
+    FOnParseImportValue: TParseImportValueEventEh;
+    FOnWriteFieldValue: TWriteFieldValueEventEh;
+
+    procedure SetOnParseImportValue(const Value: TParseImportValueEventEh);
+    procedure SetOnWriteFieldValue(const Value: TWriteFieldValueEventEh);
+  public
+    constructor Create(Collection: TCollection); override;
+    procedure Assign(Source: TPersistent); override;
+
+    property SourceValue: String read FSourceValue write FSourceValue;
+    property TargetValue: Variant read FTargetValue write FTargetValue;
+  published
+
+    property OnParseImportValue: TParseImportValueEventEh read FOnParseImportValue write SetOnParseImportValue;
+    property OnWriteFieldValue: TWriteFieldValueEventEh read FOnWriteFieldValue write SetOnWriteFieldValue;
+  end;
+
+{ TFieldsMapCollectionEh }
+
+  TFieldsMapCollectionEh = class(TCollection, IDefaultItemsCollectionEh)
+  private
+    function GetItem(Index: Integer): TFieldsMapItemEh;
+    procedure SetItem(Index: Integer; Value: TFieldsMapItemEh);
+
+  protected
+    {IInterface}
+  {$IFDEF FPC}
+    function QueryInterface(constref IID: TGUID; out Obj): HResult; virtual; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+    function _AddRef: Integer; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+    function _Release: Integer; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+  {$ELSE}
+    function QueryInterface(const IID: TGUID; out Obj): HResult; virtual; stdcall;
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
+  {$ENDIF}
+
+    {IDefaultItemsCollectionEh}
+    function CanAddDefaultItems: Boolean;
+    procedure AddAllItems(DeleteExisting: Boolean);
+
+  protected
+    FOwner: TPersistent;
+    function GetOwner: TPersistent; override;
+    function GetDataSetFields: TFields;
+
+  public
+    constructor Create(AOwner: TPersistent; ItemClass: TCollectionItemClass);
+    destructor Destroy; override;
+    function Add: TFieldsMapItemEh;
+    function ItemByDataSetFieldName(const DataSetFieldName: String): TFieldsMapItemEh;
+    function ItemByFileFieldName(const FileFieldName: String): TFieldsMapItemEh;
+
+    property Item[Index: Integer]: TFieldsMapItemEh read GetItem write SetItem; default;
+  end;
+
+{ TExportFieldsMapCollectionEh }
+
+  TExportFieldsMapCollectionEh = class (TFieldsMapCollectionEh)
+  private
+    function GetItem(Index: Integer): TExportFieldsMapItemEh;
+    procedure SetItem(Index: Integer; Value: TExportFieldsMapItemEh);
+
+  public
+    function Add: TExportFieldsMapItemEh;
+
+    property Item[Index: Integer]: TExportFieldsMapItemEh read GetItem write SetItem; default;
+  end;
+
+{ TDataSetTextExporterEh }
+
+{$IFDEF EH_LIB_12}
+  {$IFDEF EH_LIB_16}
+  TExportImportEncodingEh = (eieAutoEh, eieUTF7Eh, eieUTF8Eh, eieUnicodeEh,
+    eieBigEndianUnicodeEh, eieANSIEh, eieASCIIEh);
+  {$ELSE}
+  TExportImportEncodingEh = (eieAutoEh, eieUTF7Eh, eieUTF8Eh, eieUnicodeEh);
+  {$ENDIF}
+{$ELSE}
+  TExportImportEncodingEh = (eieAutoEh, eieANSIEh);
+{$ENDIF}
+
+  TValueSeparationStyleEh = (vssFixedPositionAndSizeEh, vssDelimiterSeparatedEh);
+  TValueExceedsSizeLimitActionEh = (vesTruncEh, vesRaiseExceptionEh);
+
+  TTruncateTitleFieldEventEh = procedure(Exporter: TDataSetTextExporterEh; var StrValue: String; FieldSize: Integer) of object;
+  TTruncateDataFieldEventEh = procedure(Exporter: TDataSetTextExporterEh; Field: TField; var StrValue: String; FieldSize: Integer) of object;
+  TDataSetTextExporterExportLineEventEh = procedure(Exporter: TDataSetTextExporterEh; StreamWriter: TStreamWriter) of object;
+  TGetFieldSizeEventEh = procedure(Sender: TComponent; Field: TField; var FieldSize: Integer) of object;
+
+  TImportFormatsEh = class(TPersistent)
+  private
+    FDecimalSeparator: Char;
+    FDateFormat: String;
+    FDateSeparator: Char;
+    FTimeFormat: String;
+    FTimeSeparator: Char;
+  protected
+    function IsDateFormatStored: Boolean; virtual;
+    function IsTimeFormatStored: Boolean; virtual;
+    function DefaultDateFormat: String; virtual;
+    function DefaultTimeFormat: String; virtual;
+  public
+    constructor Create; virtual;
+    procedure Assign(Source: TPersistent); override;
+  published
+    property DecimalSeparator: Char read FDecimalSeparator write FDecimalSeparator default '.';
+    property DateSeparator: Char read FDateSeparator write FDateSeparator default '/';
+    property DateFormat: String read FDateFormat write FDateFormat stored IsDateFormatStored; 
+    property TimeSeparator: Char read FTimeSeparator write FTimeSeparator default ':';
+    property TimeFormat: String read FTimeFormat write FTimeFormat stored IsTimeFormatStored; 
+  end;
+
+  TExportFormatsEh = class(TImportFormatsEh)
+  private
+    FDateTimeFormat: String;
+  protected
+    function IsDateTimeFormatStored: Boolean; virtual;
+    function DefaultDateTimeFormat: String; virtual;
+  public
+    constructor Create; override;
+    procedure Assign(Source: TPersistent); override;
+  published
+    property DateTimeFormat: String read FDateTimeFormat write FDateTimeFormat stored IsTimeFormatStored; 
+  end;
+
+  TDataSetTextExporterEh = class(TComponent)
+  private
+    FDataSet: TDataSet;
+    FEncoding: TExportImportEncodingEh;
+    FStreamWriter: TStreamWriter;
+    FValueDelimiter: Char;
+    FLineBreak: String;
+    FQuoteChar: Char;
+    FIsExportFieldNames: Boolean;
+    FExportValueAsDisplayText: Boolean;
+    FExportFormats: TExportFormatsEh;
+    FValueSeparationStyle: TValueSeparationStyleEh;
+    FFieldsMap: TExportFieldsMapCollectionEh;
+    FInternalFieldsMap: TExportFieldsMapCollectionEh;
+    FIgnoreErrors: Boolean;
+    FPosInLine: Integer;
+    FExportRecordsCount: Integer;
+    FValueExceedsSizeLimitAction: TValueExceedsSizeLimitActionEh;
+
+    FOnStartExport: TNotifyEvent;
+    FOnFinishExport: TNotifyEvent;
+    FOnExportTitle: TDataSetTextExporterExportLineEventEh;
+    FOnExportRecord: TDataSetTextExporterExportLineEventEh;
+    FOnTruncateTitleField: TTruncateTitleFieldEventEh;
+    FOnTruncateDataField: TTruncateDataFieldEventEh;
+    FOnGetFieldSize: TGetFieldSizeEventEh;
+    FOnFormatExportValue: TFormatExportTextEventEh;
+
+    function TruncateAndAlignCell(Item: TExportFieldsMapItemEh; const CellValue: String; IsCaption: Boolean): String;
+    function GetActiveFieldsMap: TExportFieldsMapCollectionEh;
+
+    procedure SetFieldsMap(Value: TExportFieldsMapCollectionEh);
+    procedure SetExportFormats(Value: TExportFormatsEh);
+  protected
+
+    procedure StartExport; virtual;
+    procedure FinishExport; virtual;
+    procedure ExportTitle; virtual;
+    procedure ExportRecord; virtual;
+    procedure CalculateFieldSize(FieldsMapItem: TExportFieldsMapItemEh); virtual;
+    procedure SeparateValue(IsLastInRecord: Boolean); virtual;
+    function QuoteValue(const Value: String): String; virtual;
+  public
+
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure ExportToFile(const AFileName: String; AppendToFile: Boolean = False);
+    procedure ExportToStream(AStream: TStream);
+
+    function DefaultFormatExportValue(FieldsMapItem: TExportFieldsMapItemEh): String;
+    function ActualLineBreak: String; virtual;
+
+    procedure DefaultExportTitle(StreamWriter: TStreamWriter);
+    procedure DefaultExportRecord(StreamWriter: TStreamWriter);
+    procedure WriteEndOfLine(StreamWriter: TStreamWriter);
+    procedure WriteValueSeparator(StreamWriter: TStreamWriter);
+    procedure ExportTitleCell(StreamWriter: TStreamWriter; Item: TExportFieldsMapItemEh);
+    procedure ExportRecordCell(StreamWriter: TStreamWriter; Item: TExportFieldsMapItemEh);
+
+    property ActiveFieldsMap: TExportFieldsMapCollectionEh read GetActiveFieldsMap;
+    property LineBreak: String read FLineBreak write FLineBreak; 
+  published
+
+    property DataSet: TDataSet read FDataSet write FDataSet;
+    property Encoding: TExportImportEncodingEh read FEncoding write FEncoding default eieAutoEh;
+    property ValueDelimiter: Char read FValueDelimiter write FValueDelimiter default ';';
+    property QuoteChar: Char read FQuoteChar write FQuoteChar default '"';
+    property ValueSeparationStyle: TValueSeparationStyleEh read FValueSeparationStyle write FValueSeparationStyle default vssDelimiterSeparatedEh;
+    property FieldsMap: TExportFieldsMapCollectionEh read FFieldsMap write SetFieldsMap;
+    property IsExportFieldNames: Boolean read FIsExportFieldNames write FIsExportFieldNames default True;
+    property ExportValueAsDisplayText: Boolean read FExportValueAsDisplayText write FExportValueAsDisplayText default False;
+    property ExportFormats: TExportFormatsEh read FExportFormats write SetExportFormats;
+    property ValueExceedsSizeLimitAction: TValueExceedsSizeLimitActionEh read FValueExceedsSizeLimitAction write FValueExceedsSizeLimitAction default vesTruncEh;
+    property ExportRecordsCount: Integer read FExportRecordsCount write FExportRecordsCount default -1;
+
+    property OnStartExport: TNotifyEvent read FOnStartExport write FOnStartExport;
+    property OnFinishExport: TNotifyEvent read FOnFinishExport write FOnFinishExport;
+    property OnExportTitle: TDataSetTextExporterExportLineEventEh read FOnExportTitle write FOnExportTitle;
+    property OnExportRecord: TDataSetTextExporterExportLineEventEh read FOnExportRecord write FOnExportRecord;
+    property OnTruncateTitleField: TTruncateTitleFieldEventEh read FOnTruncateTitleField write FOnTruncateTitleField;
+    property OnTruncateDataField: TTruncateDataFieldEventEh read FOnTruncateDataField write FOnTruncateDataField;
+    property OnGetFieldSize: TGetFieldSizeEventEh read FOnGetFieldSize write FOnGetFieldSize;
+    property OnFormatExportValue: TFormatExportTextEventEh read FOnFormatExportValue write FOnFormatExportValue;
+  end;
+
+{ TImportFieldsMapCollectionEh }
+
+  TImportFieldsMapCollectionEh = class (TFieldsMapCollectionEh)
+  private
+    function GetItem(Index: Integer): TImportFieldsMapItemEh;
+    procedure SetItem(Index: Integer; Value: TImportFieldsMapItemEh);
+
+  public
+    function Add: TImportFieldsMapItemEh;
+    function ItemByDataSetFieldName(const DataSetFieldName: String): TImportFieldsMapItemEh;
+    function ItemByFileFieldName(const FileFieldName: String): TImportFieldsMapItemEh;
+
+    property Item[Index: Integer]: TImportFieldsMapItemEh read GetItem write SetItem; default;
+  end;
+
+{ TDataSetTextImporterEh }
+
+  TUnknownFieldEventEh = procedure(Importer: TDataSetTextImporterEh; FieldName: String; var SkipField: Boolean) of object;
+  TDataSetTextImporterImportLineEventEh = procedure(Importer: TDataSetTextImporterEh; StreamReader: TStreamReader) of object;
+  TParseLineImportEventEh = procedure(Importer: TDataSetTextImporterEh; var LineStr: String; ParsedValues: TStringList) of object;
+  TParseImportValueErrorEventEh = procedure(Importer: TDataSetTextImporterEh; ErrorMessage: String; FieldDataType: TFieldType; var Value: String; var TryParse: Boolean) of object;
+  TDataSetTextImporterEventEh = procedure(Importer: TDataSetTextImporterEh) of object;
+
+  TDataSetTextImporterEh = class(TComponent)
+  private
+    FDataSet: TDataSet;
+    FEncoding: TExportImportEncodingEh;
+    FFieldsMap: TImportFieldsMapCollectionEh;
+    FFieldsMapToImportFields: Array of Integer;
+    FImportFormats: TImportFormatsEh;
+    FImportRecordsCount: Integer;
+    FInternalFieldsMap: TImportFieldsMapCollectionEh;
+    FIsFirstLineFieldNames: Boolean;
+    FLineBreak: String;
+    FLineBreakAutoDetect: Boolean;
+    FProcessLine: String;
+    FProcessLineIndex: Integer;
+    FQuoteChar: Char;
+    FStreamReader: TStreamReader;
+    FValueDelimiter: Char;
+    FValueSeparationStyle: TValueSeparationStyleEh;
+
+    FOnFinishImport: TNotifyEvent;
+    FOnGetFieldSize: TGetFieldSizeEventEh;
+    FOnImportTitle: TDataSetTextImporterImportLineEventEh;
+    FOnMakeRecordReady: TDataSetTextImporterEventEh;
+    FOnParseImportValue: TParseImportValueEventEh;
+    FOnParseImportValueError: TParseImportValueErrorEventEh;
+    FOnParseLine: TParseLineImportEventEh;
+    FOnParseValues: TDataSetTextImporterEventEh;
+    FOnStartImport: TNotifyEvent;
+    FOnUnknownFieldName: TUnknownFieldEventEh;
+    FOnWriteFieldValue: TWriteFieldValueEventEh;
+    FOnWriteRecord: TDataSetTextImporterEventEh;
+
+    function GetActiveFieldsMap: TImportFieldsMapCollectionEh;
+
+    procedure SetFieldsMap(Value: TImportFieldsMapCollectionEh);
+    procedure SetImportFormats(Value: TImportFormatsEh);
+
+  protected
+    function ReadLine: String; virtual;
+
+    procedure StartImport; virtual;
+    procedure FinishImport; virtual;
+    procedure ImportTitle; virtual;
+    procedure CalculateFieldSize(FieldsMapItem: TImportFieldsMapItemEh); virtual;
+    procedure ProcessLineStr(const LineStr: String); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ActualLineBreak: String; virtual;
+
+    procedure DefaultImportTitle;
+    procedure DefaultMakeRecordReady;
+    procedure DefaultParseImportValue(Item: TImportFieldsMapItemEh);
+    procedure DefaultParseLine(const Line: String; Values: TStringList); virtual;
+    procedure DefaultParseValues;
+    procedure DefaultProcessLine(const LineStr: String);
+    procedure DefaultWriteRecordValues;
+    procedure DefaultWriteRecord;
+    procedure ImportFromFile(const AFileName: String);
+    procedure ImportFromStream(AStream: TStream);
+    procedure ImportRecordCell(Item: TImportFieldsMapItemEh); virtual;
+    procedure MakeRecordReady;
+    procedure MapValues(ParsedValues: TStringList);
+    procedure ParseLine(const Line: String; Values: TStringList);
+    procedure ParseValues;
+    procedure PostRecord;
+    procedure WriteRecordValues;
+    procedure WriteRecord; virtual;
+
+    property ActiveFieldsMap: TImportFieldsMapCollectionEh read GetActiveFieldsMap;
+    property ProcessLineIndex: Integer read FProcessLineIndex;
+    property ProcessLine: String read FProcessLine;
+    property LineBreak: String read FLineBreak write FLineBreak; 
+
+  published
+    property DataSet: TDataSet read FDataSet write FDataSet;
+    property Encoding: TExportImportEncodingEh read FEncoding write FEncoding default eieAutoEh;
+    property LineBreakAutoDetect: Boolean read FLineBreakAutoDetect write FLineBreakAutoDetect default False;
+    property ValueDelimiter: Char read FValueDelimiter write FValueDelimiter default ';';
+    property QuoteChar: Char read FQuoteChar write FQuoteChar default '"';
+    property ValueSeparationStyle: TValueSeparationStyleEh read FValueSeparationStyle write FValueSeparationStyle default vssDelimiterSeparatedEh;
+    property FieldsMap: TImportFieldsMapCollectionEh read FFieldsMap write SetFieldsMap;
+    property IsFirstLineFieldNames: Boolean read FIsFirstLineFieldNames write FIsFirstLineFieldNames default True;
+    property ImportFormats: TImportFormatsEh read FImportFormats write SetImportFormats;
+    property ImportRecordsCount: Integer read FImportRecordsCount write FImportRecordsCount default -1;
+
+    property OnStartImport: TNotifyEvent read FOnStartImport write FOnStartImport;
+    property OnFinishImport: TNotifyEvent read FOnFinishImport write FOnFinishImport;
+    property OnParseLine: TParseLineImportEventEh read FOnParseLine write FOnParseLine;
+    property OnImportTitle: TDataSetTextImporterImportLineEventEh read FOnImportTitle write FOnImportTitle;
+    property OnUnknownFieldName: TUnknownFieldEventEh read FOnUnknownFieldName write FOnUnknownFieldName;
+    property OnGetFieldSize: TGetFieldSizeEventEh read FOnGetFieldSize write FOnGetFieldSize;
+    property OnParseImportValue: TParseImportValueEventEh read FOnParseImportValue write FOnParseImportValue;
+    property OnParseImportValueError: TParseImportValueErrorEventEh read FOnParseImportValueError write FOnParseImportValueError;
+    property OnWriteFieldValue: TWriteFieldValueEventEh read FOnWriteFieldValue write FOnWriteFieldValue;
+    property OnMakeRecordReady: TDataSetTextImporterEventEh read FOnMakeRecordReady write FOnMakeRecordReady;
+    property OnWriteRecord: TDataSetTextImporterEventEh read FOnWriteRecord write FOnWriteRecord;
+    property OnParseValues: TDataSetTextImporterEventEh read FOnParseValues write FOnParseValues;
+  end;
+
+var
+{$IFDEF EH_LIB_12}
+  DefaultExportEncoding: TExportImportEncodingEh = eieUTF8Eh;
+{$ELSE}
+  DefaultExportEncoding: TExportImportEncodingEh = eieANSIEh;
+{$ENDIF}
+  DefaultImportExportLineBreak: String = sLineBreak;
+
+implementation

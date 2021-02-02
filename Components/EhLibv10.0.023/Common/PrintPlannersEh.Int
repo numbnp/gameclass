@@ -1,0 +1,102 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{              TPrintPlannerControlEh component         }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit PrintPlannersEh;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  Windows, Messages, SysUtils, Classes, Graphics, Controls,
+  EhLibVCL, Types,
+{$IFDEF EH_LIB_17} System.Contnrs, {$ENDIF}
+  StdCtrls, ImgList, Forms, DB, Variants,
+  PlannersEh, PlannerDataEh, PlannerToolCtrlsEh,
+  PrintUtilsEh, PrntsEh, SpreadGridsEh, PrViewEh, GridsEh,  ToolCtrlsEh;
+
+type
+
+  TPlannerControlPrintServiceEh = class(TCustomPlannerControlPrintServiceEh)
+  private
+
+    function GetPlannerView: TCustomPlannerViewEh;
+    procedure PrintMasterCell(ACol, ARow: Integer; ARect: TRect; ACell: TSpreadGridCellEh);
+    procedure PrintMasterForMergedCell(ACol, ARow: Integer; ARect: TRect; ACell: TSpreadGridCellEh);
+    procedure PrintCellArea(ACol, ARow: Integer; ARect: TRect; ACell: TSpreadGridCellEh);
+    procedure PrintTopLeftCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintDataCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintAlldayDataCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintDateBar(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintDateCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintDayNamesCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintInterResourceCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintResourceCaptionCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintTimeCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+    procedure PrintWeekNoCell(ACol, ARow: Integer; ARect: TRect; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh);
+
+  protected
+    FDrawSpanItemArgs: TDrawSpanItemArgsEh;
+    ColStartPoses, RowStartPoses: TIntegerDynArray;
+
+    function CheckDrawLine(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var Color: TColor; var Width: Integer): Boolean; override;
+    function GetControlCanvas: TCanvas; override;
+
+    procedure PrintCell(ACol, ARow: Integer; ARect: TRect); override;
+    procedure PrintCellData(ACol, ARow: Integer; ARect: TRect); override;
+    procedure SetColRowSize; override;
+    procedure PrintPageCells(FromCol, ToCol, FromRow, ToRow: Integer; const CellsRect: TRect); override;
+    procedure PrintSpanItems(HorzOffset, VertOffset: Integer; const CellsRect: TRect); virtual;
+
+    procedure PrintSpanItem(SpanItem: TTimeSpanDisplayItemEh; DrawRect: TRect); virtual;
+    procedure DefaultPrintSpanItem(SpanItem: TTimeSpanDisplayItemEh; const ARect: TRect; DrawArgs: TDrawSpanItemArgsEh); virtual;
+    procedure PrintSpanItemBackgroud(SpanItem: TTimeSpanDisplayItemEh; const ARect: TRect; DrawArgs: TDrawSpanItemArgsEh); virtual;
+    procedure PrintSpanItemContent(SpanItem: TTimeSpanDisplayItemEh; const ARect: TRect; DrawArgs: TDrawSpanItemArgsEh); virtual;
+    procedure PrintSpanItemSurround(SpanItem: TTimeSpanDisplayItemEh; var ARect: TRect; DrawArgs: TDrawSpanItemArgsEh); virtual;
+    procedure FrameRect(const Rect: TRect; PenW: Integer); virtual;
+
+    property PlannerView: TCustomPlannerViewEh read GetPlannerView;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure PrintTo(VPrinter: TVirtualPrinter); override;
+
+  published
+
+    property Scale;
+    property FitToPagesWide;
+    property FitToPagesTall;
+    property ScalingMode;
+    property Orientation;
+    property ColorSchema;
+    property PageFooter;
+    property PageHeader;
+    property PageMargins;
+    property TextBeforeContent;
+    property TextAfterContent;
+
+    property OnBeforePrint;
+    property OnBeforePrintPage;
+    property OnBeforePrintPageContent;
+    property OnPrintDataBeforeGrid;
+    property OnCalcLayoutDataBeforeGrid;
+
+    property OnAfterPrint;
+    property OnAfterPrintPage;
+    property OnAfterPrintPageContent;
+    property OnPrintDataAfterGrid;
+    property OnCalcLayoutDataAfterGrid;
+
+    property OnPrinterSetupDialog;
+  end;
+
+implementation

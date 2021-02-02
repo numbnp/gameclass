@@ -1,0 +1,95 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                    Registration unit                  }
+{                                                       }
+{   Copyright (c) 1998-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit EhLibReg;
+
+interface
+
+uses
+{$IFDEF CIL} Borland.Vcl.Design.DesignIntf,
+             Borland.Vcl.Design.DesignEditors,
+             Borland.Vcl.Design.ColnEdit,
+             Borland.Vcl.Design.VCLEditors, Variants,
+             EhLibVCLNET,
+{$ELSE}
+  {$IFDEF FPC}
+  DBGridsEh, DBVertGridsEh, PrnDbgeh,
+  EhLibLCL, LCLType,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  DBGridEh, DBVertGridsEh, PrnDbgeh, PrViewEh,
+  EhLibVCL, ColnEdit,
+  DesignIntf, DesignEditors, VCLEditors, Variants, ToolsAPI,
+  StorablePropsDesignIntfEh,
+  LookupLinkDesignEh,
+  EhLibSelectFromListDesignEh, DBLookupUtilsEh,
+  {$ENDIF}
+{$ENDIF}
+   PropStorageEditEh, Contnrs, DB, Classes;
+
+{$IFDEF CIL}
+
+{$R DBCtrlsEh.TDBCheckBoxEh.bmp}
+{$R DBCtrlsEh.TDBComboBoxEh.bmp}
+{$R DBCtrlsEh.TDBDateTimeEditEh.bmp}
+{$R DBCtrlsEh.TDBEditEh.bmp}
+{$R DBCtrlsEh.TDBNumberEditEh.bmp}
+{$R DBGridEh.TDBGridEh.bmp}
+{$R DBLookupEh.TDBLookupComboboxEh.bmp}
+{$R DBSumLst.TDBSumList.bmp}
+{$R PrnDbgeh.TPrintDBGridEh.bmp}
+{$R PrViewEh.TPreviewBox.bmp}
+{$R PropStorageEh.TIniPropStorageManEh.bmp}
+{$R PropStorageEh.TPropStorageEh.bmp}
+{$R PropStorageEh.TRegPropStorageManEh.bmp}
+
+{$R DataDriverEh.TDataSetDriverEh.bmp}
+{$R DataDriverEh.TSQLDataDriverEh.bmp}
+{$R MemTableEh.TMemTableEh.bmp}
+
+{$ENDIF}
+
+
+type
+
+{ TListFieldProperty }
+
+  TListFieldProperty = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+    function GetDataSourcePropName: string; virtual;
+    function GetDataSet: TDataSet; virtual;
+  end;
+
+{ TBasePrintControlComponentPropertyEh }
+
+  TBasePrintControlComponentPropertyEh = class(TComponentProperty)
+    function GetAttributes: TPropertyAttributes; override;
+    procedure Edit; override;
+  end;
+
+var
+  NiClasses: TClassList;
+
+procedure Register;
+
+{$IFDEF FPC}
+{$ELSE}
+procedure GetComponentNamesEh(lst: TStrings; TargetClass:
+  TClass; DividePackages: Boolean; TargetComponet: TComponent = nil;
+  TargetPropName: String = '');
+
+
+{$ENDIF}
+
+implementation

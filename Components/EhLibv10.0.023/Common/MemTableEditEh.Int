@@ -1,0 +1,50 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{             TMemTableDataForm component               }
+{                                                       }
+{      Copyright (c) 2003-2020 by EhLib Team and        }
+{                Dmitry V. Bolshakov                    }
+{                                                       }
+{*******************************************************}
+
+unit MemTableEditEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Windows, Messages, Classes, Graphics, Controls,
+{$IFDEF CIL}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DsnDBCst,
+{$ELSE}
+  DsnDBCst,
+  DesignIntf,
+{$ENDIF}
+  Forms, Dialogs, StdCtrls, Buttons, DB, MemTableEh;
+
+type
+
+  TMemTableDataForm = class(TForm)
+    GroupBox1: TGroupBox;
+    DataSetList: TListBox;
+    OkBtn: TButton;
+    CancelBtn: TButton;
+    HelpBtn: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure OkBtnClick(Sender: TObject);
+    procedure HelpBtnClick(Sender: TObject);
+    procedure DataSetListDblClick(Sender: TObject);
+    procedure DataSetListKeyPress(Sender: TObject; var Key: Char);
+  private
+    FDataSet: TCustomMemTableEh;
+    FDesigner: IDesigner;
+    procedure CheckComponent(const Value: string);
+    function Edit: Boolean;
+  end;
+
+function EditMemTable(ADataSet: TCustomMemTableEh; ADesigner: IDesigner): Boolean;
+
+implementation

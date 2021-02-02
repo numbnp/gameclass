@@ -1,0 +1,1680 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                TCustomGridEh component                }
+{                                                       }
+{     Copyright (c) 2013-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit GridsEh;
+
+interface
+
+uses SysUtils, Classes,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    Windows, UxTheme, Win32Extra,
+    {$ENDIF}
+    EhLibLCL, LMessages, LCLType, Maskedit, LCLIntf, LCLProc,
+  {$ELSE}
+    EhLibVCL, Mask, Windows, UxTheme,
+  {$ENDIF}
+  Messages, Graphics, Menus, Controls, Forms, StdCtrls, Imglist,
+  Types, Themes, GridToolCtrlsEh, ToolCtrlsEh,
+  Dialogs, ExtCtrls, Contnrs;
+
+type
+  EInvalidGridOperationEh = class(Exception);
+
+  TCustomGridEh = class;
+  TGridDrawStyleEh = class;
+  TInplaceEdit = class;
+
+  TScrollBarPropEh = (sbpRangeEh, sbpPageEh, sbpPosEh);
+  TScrollBarPropsEh = set of TScrollBarPropEh;
+
+  TScrollStepTypeEh = (sstByPixelEh, sstByCellEh);
+
+  TGridCoord = record
+    X: Integer;
+    Y: Integer;
+  end;
+
+  TGridRect = record
+    case Integer of
+      0: (Left, Top, Right, Bottom: Integer);
+      1: (TopLeft, BottomRight: TGridCoord);
+  end;
+
+{ TInplaceEditCoreControl }
+
+  TInplaceEditCoreControl = class(TCustomMaskEdit)
+  private
+    FParentEdit: TInplaceEdit;
+    function GetGrid: TCustomGridEh;
+
+    procedure WMGetDlgCode(var Message: TWMNoParams); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+    procedure WMCut(var Message: TMessage); message WM_CUT;
+    procedure WMClear(var Message: TMessage); message WM_CLEAR;
+
+  protected
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+    function EditCanModify: Boolean; override;
+
+    procedure Change; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure DblClick; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure UpdateContents; virtual;
+    procedure WndProc(var Message: TMessage); override;
+
+    {$IFDEF FPC}
+    function ChildClassAllowed(ChildClass: TClass): boolean; override;
+    {$ENDIF}
+
+  public
+    constructor Create(AOwner: TInplaceEdit); reintroduce;
+
+    procedure DefaultHandler(var Message); override;
+
+    property ParentEdit: TInplaceEdit read FParentEdit;
+    property  Grid: TCustomGridEh read GetGrid;
+
+    procedure Deselect;
+
+    property MaxLength;
+  end;
+
+{ TInplaceEdit }
+
+  TInplaceEdit = class(TCustomControl)
+  private
+    FGrid: TCustomGridEh;
+    FClickTime: Longint;
+    FEditCoreControl: TInplaceEditCoreControl;
+    FInternalTextSetting: Boolean;
+    function GetAutoSelect: Boolean;
+    function GetEditMask: string;
+    function GetEditText: string;
+    function GetIsMasked: Boolean;
+    function GetMaxLength: Integer;
+    function GetModified: Boolean;
+    function GetReadOnly: Boolean;
+    function GetSelLength: integer;
+    function GetSelStart: integer;
+    function GetSelText: String;
+    function GetText: String;
+    procedure InternalMove(const Loc: TRect; Redraw: Boolean);
+    procedure SetAutoSelect(AValue: Boolean);
+    procedure SetEditMask(AValue: string);
+    procedure SetEditText(AValue: string);
+    procedure SetGrid(Value: TCustomGridEh);
+    procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
+    procedure SetMaxLength(AValue: Integer);
+    procedure SetModified(AValue: Boolean);
+    procedure SetReadOnly(AValue: Boolean);
+    procedure SetSelLength(AValue: integer);
+    procedure SetSelStart(AValue: integer);
+    procedure SetSelText(AValue: String);
+    procedure SetText(AValue: String);
+
+    procedure WMGetDlgCode(var Message: TWMNoParams); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+  protected
+    function  EditCanModify: Boolean; virtual;
+    function GetEditCoreBounds: TRect; virtual;
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+    function DoCut(var Message: TMessage): Boolean; virtual;
+    function DoPaste(var Message: TMessage): Boolean; virtual;
+    function DoClear(var Message: TMessage): Boolean; virtual;
+    function CreateInplaceEditCoreControl: TInplaceEditCoreControl; virtual;
+
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure DblClick; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure Paint(); override;
+  {$IFDEF FPC}
+    procedure BoundsChanged; virtual; reintroduce;
+  {$ELSE}
+    procedure BoundsChanged; virtual;
+  {$ENDIF}
+
+    procedure WndProc(var Message: TMessage); override;
+
+    {$IFDEF FPC}
+    function ChildClassAllowed(ChildClass: TClass): boolean; override;
+    {$ENDIF}
+
+    procedure Change; virtual;
+    procedure LoseFocus(NewFocusWnd: HWND); virtual;
+    procedure ProcessKeyEvent(var Message: TMessage); virtual;
+    procedure UpdateContents; virtual;
+
+    property Grid: TCustomGridEh read FGrid;
+    property InternalTextSetting: Boolean read FInternalTextSetting;
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    function GetTextLen: Integer; reintroduce;
+    function Visible: Boolean;
+    function Focused: Boolean; override;
+
+    procedure Deselect;
+    procedure Hide; virtual;
+    procedure Invalidate; override;
+    procedure Move(const Loc: TRect);
+    procedure SetFocus; reintroduce;
+    procedure SetBounds(aLeft, aTop, aWidth, aHeight: integer); override;
+    procedure UpdateLoc(const Loc: TRect);
+    procedure Reset;
+    procedure SetSel(AStartPos, ALength: Integer);
+
+    procedure SelectAll;
+
+    property EditCoreControl: TInplaceEditCoreControl read FEditCoreControl;
+    property EditText: string read GetEditText write SetEditText;
+    property MaxLength: Integer read GetMaxLength write SetMaxLength;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly;
+    property SelText: String read GetSelText write SetSelText;
+    property SelLength: integer read GetSelLength write SetSelLength;
+    property SelStart: integer read GetSelStart write SetSelStart;
+    property Text: String read GetText write SetText;
+    property EditMask: string read GetEditMask write SetEditMask;
+    property IsMasked: Boolean read GetIsMasked;
+    property Modified: Boolean read GetModified write SetModified;
+    property AutoSelect: Boolean read GetAutoSelect write SetAutoSelect;
+  end;
+
+  { TGridLineColorsEh }
+
+  TGridLineColorsEh = class(TPersistent)
+  private
+    FBrightColor: TColor;
+    FDarkColor: TColor;
+    FDataHorzColor: TColor;
+    FDataVertColor: TColor;
+    FFixedHorzColor: TColor;
+    FFixedVertColor: TColor;
+    FGrid: TCustomGridEh;
+    FHorzAreaContraBorderColor: TColor;
+    FHorzAreaContraHorzColor: TColor;
+    FHorzAreaContraVertColor: TColor;
+    FHorzAreaFrozenBorderColor: TColor;
+    FHorzAreaFrozenHorzColor: TColor;
+    FHorzAreaFrozenVertColor: TColor;
+    FVertAreaContraBorderColor: TColor;
+    FVertAreaContraHorzColor: TColor;
+    FVertAreaContraVertColor: TColor;
+    FVertAreaFrozenBorderColor: TColor;
+    FVertAreaFrozenHorzColor: TColor;
+    FVertAreaFrozenVertColor: TColor;
+
+    procedure SetBrightColor(const Value: TColor);
+    procedure SetDarkColor(const Value: TColor);
+    procedure SetDataHorzColor(const Value: TColor);
+    procedure SetDataVertColor(const Value: TColor);
+  protected
+    property Grid: TCustomGridEh read FGrid;
+
+    function GetCellColor(ACol, ARow: Longint): TColor; virtual;
+    function GetDataHorzColor: TColor; virtual;
+    function GetDataVertColor: TColor; virtual;
+    function GetDownBorderCellColor(ACol, ARow: Longint): TColor; virtual;
+    function GetHorzAreaFrozenBorderColor: TColor; virtual;
+    function GetHorzAreaFrozenHorzColor: TColor; virtual;
+    function GetHorzAreaFrozenVertColor: TColor; virtual;
+    function GetLeftBorderCellColor(ACol, ARow: Longint): TColor; virtual;
+    function GetRightBorderCellColor(ACol, ARow: Longint): TColor; virtual;
+    function GetTopBorderCellColor(ACol, ARow: Longint): TColor; virtual;
+    function GetVertAreaFrozenBorderColor: TColor; virtual;
+    function GetVertAreaFrozenHorzColor: TColor; virtual;
+    function GetVertAreaFrozenVertColor: TColor; virtual;
+
+    property FixedVertColor: TColor read FFixedVertColor write FFixedVertColor default clDefault;
+    property FixedHorzColor: TColor read FFixedHorzColor write FFixedHorzColor default clDefault;
+    property VertAreaFrozenVertColor: TColor read FVertAreaFrozenVertColor write FVertAreaFrozenVertColor default clDefault;
+    property VertAreaFrozenHorzColor: TColor read FVertAreaFrozenHorzColor write FVertAreaFrozenHorzColor default clDefault;
+    property HorzAreaFrozenVertColor: TColor read FHorzAreaFrozenVertColor write FHorzAreaFrozenVertColor default clDefault;
+    property HorzAreaFrozenHorzColor: TColor read FHorzAreaFrozenHorzColor write FHorzAreaFrozenHorzColor default clDefault;
+    property VertAreaFrozenBorderColor: TColor read FVertAreaFrozenBorderColor write FVertAreaFrozenBorderColor default clDefault;
+    property HorzAreaFrozenBorderColor: TColor read FHorzAreaFrozenBorderColor write FHorzAreaFrozenBorderColor default clDefault;
+    property DataVertColor: TColor read FDataVertColor write SetDataVertColor default clDefault;
+    property DataHorzColor: TColor read FDataHorzColor write SetDataHorzColor default clDefault;
+    property VertAreaContraVertColor: TColor read FVertAreaContraVertColor write FVertAreaContraVertColor default clDefault;
+    property VertAreaContraHorzColor: TColor read FVertAreaContraHorzColor write FVertAreaContraHorzColor default clDefault;
+    property HorzAreaContraVertColor: TColor read FHorzAreaContraVertColor write FHorzAreaContraVertColor default clDefault;
+    property HorzAreaContraHorzColor: TColor read FHorzAreaContraHorzColor write FHorzAreaContraHorzColor default clDefault;
+    property VertAreaContraBorderColor: TColor read FVertAreaContraBorderColor write FVertAreaContraBorderColor default clDefault;
+    property HorzAreaContraBorderColor: TColor read FHorzAreaContraBorderColor write FHorzAreaContraBorderColor default clDefault;
+  public
+    constructor Create(AGrid: TCustomGridEh);
+
+    function GetDarkColor: TColor; virtual;
+    function GetBrightColor: TColor; virtual;
+
+    function GetFixedVertColor: TColor; virtual;
+    function GetFixedHorzColor: TColor; virtual;
+    function GetVertAreaContraVertColor: TColor; virtual;
+    function GetVertAreaContraHorzColor: TColor; virtual;
+    function GetHorzAreaContraVertColor: TColor; virtual;
+    function GetHorzAreaContraHorzColor: TColor; virtual;
+    function GetVertAreaContraBorderColor: TColor; virtual;
+    function GetHorzAreaContraBorderColor: TColor; virtual;
+
+    property DarkColor: TColor read FDarkColor write SetDarkColor default clDefault;
+    property BrightColor: TColor read FBrightColor write SetBrightColor default clDefault;
+  end;
+
+  {TDBGridEhScrollBar}
+
+  TScrollBarVisibleModeEh = (sbAlwaysShowEh, sbNeverShowEh, sbAutoShowEh);
+
+  TGridScrollBarEh = class(TPersistent)
+  private
+    FGrid: TCustomGridEh;
+    FKind: TScrollBarKind;
+    FSize: Integer;
+    FSmoothStep: Boolean;
+    FTracking: Boolean;
+    FVisibleMode: TScrollBarVisibleModeEh;
+
+    function GetSize: Integer;
+    function GetSmoothStep: Boolean;
+    function GetVisible: Boolean;
+
+    procedure SetSize(const Value: Integer);
+    procedure SetSmoothStep(Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+    procedure SetVisibleMode(const Value: TScrollBarVisibleModeEh);
+  protected
+    function CheckScrollBarMustBeShown: Boolean;  virtual;
+
+    procedure ScrollBarPanelChanged; virtual;
+    procedure SetParams(APosition, AMin, AMax, APageSize: Integer);
+    procedure SmoothStepChanged; virtual;
+  public
+    constructor Create(AGrid: TCustomGridEh; AKind: TScrollBarKind);
+    destructor Destroy; override;
+
+    function ActualScrollBarBoxSize: Integer; virtual;
+    function ActualSize: Integer; virtual;
+    function CheckHideScrollBar: Boolean;
+    function Grid: TCustomGridEh;
+    function IsKeepMaxSizeInDefault: Boolean; virtual;
+    function IsScrollBarShowing: Boolean; virtual;
+    function ScrollBarPanel: Boolean; virtual;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure GetScrollBarParams(var APosition, AMin, AMax, APageSize: Integer);
+
+    property Kind: TScrollBarKind read FKind;
+    property Size: Integer read GetSize write SetSize default 0;
+    property SmoothStep: Boolean read GetSmoothStep write SetSmoothStep default False;
+    property VisibleMode: TScrollBarVisibleModeEh read FVisibleMode write SetVisibleMode default sbAutoShowEh;
+
+  published
+    property Tracking: Boolean read FTracking write FTracking default True;
+    property Visible: Boolean read GetVisible write SetVisible default True;
+  end;
+
+{ TGridOutBoundaryDataEh }
+
+  TGridCellBorderTypeEh = (cbtTopEh, cbtLeftEh, cbtBottomEh, cbtRightEh);
+  TGridCellBorderTypesEh = set of TGridCellBorderTypeEh;
+
+  TCornerDrawPriorityEh = (crpHorizontalDataPriorityEh, crpVerticalDataPriorityEh);
+
+  TGridOutBoundaryDataEh = class(TPersistent)
+  private
+    FBottomIndent: Integer;
+    FGrid: TCustomGridEh;
+    FLeftBottomDrawPriority: TCornerDrawPriorityEh;
+    FLeftIndent: Integer;
+    FLeftTopDrawPriority: TCornerDrawPriorityEh;
+    FRightBottomDrawPriority: TCornerDrawPriorityEh;
+    FRightIndent: Integer;
+    FRightTopDrawPriority: TCornerDrawPriorityEh;
+    FTopIndent: Integer;
+
+    procedure SetBottomIndent(const Value: Integer);
+    procedure SetLeftBottomDrawPriority(const Value: TCornerDrawPriorityEh);
+    procedure SetLeftIndent(const Value: Integer);
+    procedure SetLeftTopDrawPriority(const Value: TCornerDrawPriorityEh);
+    procedure SetRightBottomDrawPriority(const Value: TCornerDrawPriorityEh);
+    procedure SetRightIndent(const Value: Integer);
+    procedure SetRightTopDrawPriority(const Value: TCornerDrawPriorityEh);
+    procedure SetTopIndent(const Value: Integer);
+  protected
+    property Grid: TCustomGridEh read FGrid;
+  public
+    constructor Create(AGrid: TCustomGridEh);
+
+    function GetOutBoundaryRect(var ARect: TRect; OutBoundaryType: TGridCellBorderTypeEh): Boolean;
+    procedure InvalidateOutBoundary(OutBoundaryType: TGridCellBorderTypeEh);
+
+    property BottomIndent: Integer read FBottomIndent write SetBottomIndent;
+    property LeftBottomDrawPriority: TCornerDrawPriorityEh read FLeftBottomDrawPriority write SetLeftBottomDrawPriority;
+    property LeftIndent: Integer read FLeftIndent write SetLeftIndent;
+    property LeftTopDrawPriority: TCornerDrawPriorityEh read FLeftTopDrawPriority write SetLeftTopDrawPriority;
+    property RightBottomDrawPriority: TCornerDrawPriorityEh read FRightBottomDrawPriority write SetRightBottomDrawPriority;
+    property RightIndent: Integer read FRightIndent write SetRightIndent;
+    property RightTopDrawPriority: TCornerDrawPriorityEh read FRightTopDrawPriority write SetRightTopDrawPriority;
+    property TopIndent: Integer read FTopIndent write SetTopIndent;
+  end;
+
+{ TGridHotTrackSpotEh }
+
+  TGridHotTrackSpotEh = class(TPersistent)
+  private
+    FCol: Integer;
+    FInCellX: Integer;
+    FInCellY: Integer;
+    FRow: Integer;
+  public
+    constructor Create;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property Col: Integer read FCol write FCol;
+    property InCellX: Integer read FInCellX write FInCellX;
+    property InCellY: Integer read FInCellY write FInCellY;
+    property Row: Integer read FRow write FRow;
+  end;
+
+{ TGridAxisDataEh }
+
+  TGridAxisDataEh = class(TPersistent)
+  private
+    FContraCelCount: Integer;
+    FContraCelLens: TIntegerDynArray;
+    FContraLen: Integer;
+    FContraStart: Integer;
+    FDefaultCelLen: Integer;
+    FFixedBoundary: Integer;
+    FFixedCelCount: Integer;
+    FFixedCelLens: TIntegerDynArray;
+    FFrozenCelCount: Integer;
+    FFrozenLen: Integer;
+    FGrid: TCustomGridEh;
+    FGridClientStart: Integer;
+    FGridClientStop: Integer;
+    FRolCelCount: Integer;
+    FRolCelLens: TIntegerDynArray;
+    FRolLastFullVisCel: Integer;
+    FRolLastVisCel: Integer;
+    FRolLocCelPosArr: TInt64DynArray;
+    FRolLocCelPosArrObsolete: Boolean;
+    FRolStartVisCel: Integer;
+    FRolStartVisCelOfst: Integer;
+    FRolStartVisPos: Int64;
+    FWinClientBoundSta: Integer;
+    FWinClientBoundSto: Integer;
+
+    function GetCelCount: Integer;
+    function GetCelLens(Index: Integer): Integer;
+    function GetContraCelLens(Index: Integer): Integer;
+    function GetFixedCelLens(Index: Integer): Integer;
+    function GetFullCelCount: Integer;
+    function GetGridClientLen: Integer;
+    function GetGridClientStart: Integer;
+    function GetGridClientStop: Integer;
+    function GetRolCelLens(Index: Integer): Integer;
+    function GetRolClientLen: Integer;
+    function GetRolInClientBoundary: Integer;
+    function GetRolLastFullVisCel: Integer;
+    function GetRolLastVisCel: Integer;
+    function GetRolLen: Int64;
+    function GetRolLocCelPosArr(Index: Integer): Int64;
+    function GetRolStopVisPos: Int64;
+    function GetStartVisCel: Integer;
+
+    procedure SetCelLens(Index: Integer; const Value: Integer);
+    procedure SetContraCelCount(const Value: Integer);
+    procedure SetContraCelLens(Index: Integer; const Value: Integer);
+    procedure SetDefaultCelLen(const Value: Integer);
+    procedure SetFixedCelLens(Index: Integer; const Value: Integer);
+    procedure SetFrozenCelCount(const Value: Integer);
+    procedure SetRolCelCount(const Value: Integer);
+    procedure SetRolCelLens(Index: Integer; const Value: Integer);
+    procedure SetRolLocCelPosArr(Index: Integer; const Value: Int64);
+    procedure SetRolStartVisPos(const Value: Int64);
+    procedure SetFixedCelCount(const Value: Integer);
+    function GetInEndOfRol: Boolean;
+
+  protected
+    procedure GetLastVisibleCell(var LastVisCell, LastFullVisCell: Integer);
+    procedure UpdateRolCelPosArr;
+    procedure InsertRolCels(const Pos, Count: Integer);
+    procedure DeleteRolCels(const Pos, Count: Integer);
+
+  public
+    constructor Create(AGrid: TCustomGridEh);
+    destructor Destroy; override;
+
+    function CheckRolStartVisPos(const ARolStartVisPos: Int64): Int64;
+    function GetScrollStep: Integer;
+    function SafeSetRolStartVisCel(NewStartCell: Integer; ScrollStepType: TScrollStepTypeEh = sstByPixelEh): Integer;
+    function CalcMaxStartCellFor(RolFinishCell: Integer): Integer;
+    function GetFixedCelPos(Index: Integer): Integer;
+
+    procedure RolCellAtPos(Pos: Int64; var ACel, ACelOffset: Integer);
+    procedure CheckUpdateRolCelPosArr;
+    procedure CheckUpdateAxises;
+    procedure MoveCel(FromIndex, ToIndex: Integer);
+    procedure SwapRightToLeftPoses(var Pos1, Pos2: Integer);
+    function RightToLeftReflect(const APos: Integer): Integer;
+    procedure UpdateVisCells;
+
+    property Grid: TCustomGridEh read FGrid;
+
+    property FixedCelCount: Integer read FFixedCelCount write SetFixedCelCount;
+    property FrozenCelCount: Integer read FFrozenCelCount write SetFrozenCelCount;
+    property RolCelCount: Integer read FRolCelCount write SetRolCelCount;
+    property ContraCelCount: Integer read FContraCelCount write SetContraCelCount;
+
+    property CelCount: Integer read GetCelCount;
+    property FullCelCount: Integer read GetFullCelCount;
+
+    property WinClientBoundSta: Integer read FWinClientBoundSta;
+    property WinClientBoundSto: Integer read FWinClientBoundSto;
+    property GridClientStart: Integer read GetGridClientStart;
+    property GridClientStop: Integer read GetGridClientStop;
+    property GridClientLen: Integer read GetGridClientLen;
+
+    property FixedBoundary: Integer read FFixedBoundary;
+    property RolClientLen: Integer read GetRolClientLen;
+
+    property ContraStart: Integer read FContraStart;
+    property ContraLen: Integer read FContraLen;
+
+    property FrozenLen: Integer read FFrozenLen;
+
+    property RolStartVisPos: Int64 read FRolStartVisPos write SetRolStartVisPos;
+    property RolStopVisPos: Int64 read GetRolStopVisPos;
+
+    property RolLen: Int64 read GetRolLen;
+    property RolInClientBoundary: Integer read GetRolInClientBoundary;
+    property InEndOfRol: Boolean read GetInEndOfRol;
+
+    property RolStartVisCel: Integer read FRolStartVisCel;
+    property RolStartVisCelOfst: Integer read  FRolStartVisCelOfst;
+    property RolLastVisCel: Integer read GetRolLastVisCel;
+    property RolLastFullVisCel: Integer read GetRolLastFullVisCel;
+
+    property StartVisCel: Integer read GetStartVisCel;
+
+    property FixedCelLens[Index: Longint]: Integer read GetFixedCelLens write SetFixedCelLens;
+    property RolCelLens[Index: Longint]: Integer read GetRolCelLens write SetRolCelLens;
+    property ContraCelLens[Index: Longint]: Integer read GetContraCelLens write SetContraCelLens;
+
+    property CelLens[Index: Longint]: Integer read GetCelLens write SetCelLens;
+    property DefaultCelLen: Integer read FDefaultCelLen write SetDefaultCelLen;
+    property RolLocCelPosArr[Index: Longint]: Int64 read GetRolLocCelPosArr write SetRolLocCelPosArr;
+
+  end;
+
+{ TGridBackgroundDataEh }
+
+  TGridBackgroundDataEh = class(TPersistent)
+  private
+    FGrid: TCustomGridEh;
+    FImageHorzMargin: Integer;
+    FImagePlacement: TImagePlacementEh;
+    FImageVertMargin: Integer;
+    FPicture: TPicture;
+    FVisible: Boolean;
+
+    procedure SetPicture(Value: TPicture);
+    procedure SetImagePlacement(Value: TImagePlacementEh);
+    procedure SetImageHorzMargin(const Value: Integer);
+    procedure SetImageVertMargin(const Value: Integer);
+    procedure SetVisible(const Value: Boolean);
+
+  protected
+    function DestRect: TRect;
+    procedure PictureChanged(Sender: TObject);
+  public
+    constructor Create(AGrid: TCustomGridEh);
+    destructor Destroy; override;
+
+    function Showing: Boolean; virtual;
+    function BoundRect: TRect; virtual;
+
+    procedure PaintBackgroundData; virtual;
+    property Grid: TCustomGridEh read FGrid;
+  published
+    property HorzMargin: Integer read FImageHorzMargin write SetImageHorzMargin default 0;
+    property Picture: TPicture read FPicture write SetPicture;
+    property Placement: TImagePlacementEh read FImagePlacement write SetImagePlacement default ipCenterCenterEh;
+    property VertMargin: Integer read FImageVertMargin write SetImageVertMargin default 0;
+    property Visible: Boolean read FVisible write SetVisible default False;
+  end;
+
+{ TGridSelectionParamsEh }
+
+  TGridSelectionDrawStyleEh = (gsdsDefaultEh, gsdsClassicEh, gsdsGridThemedEh,
+    gsdsListViewThemedEh);
+
+  TGridSelectionDrawParamsEh = class(TPersistent)
+  private
+    FDrawFocusFrame: Boolean;
+    FDrawFocusFrameStored: Boolean;
+    FGrid: TCustomGridEh;
+    FSelectionStyle: TGridSelectionDrawStyleEh;
+    function GetDrawFocusFrame: Boolean;
+    procedure SetDrawFocusFrame(const Value: Boolean);
+    procedure SetSelectionStyle(const Value: TGridSelectionDrawStyleEh);
+    function IsDrawFocusFrameStored: Boolean;
+    procedure SetDrawFocusFrameStored(const Value: Boolean);
+  public
+    constructor Create(AGrid: TCustomGridEh);
+    destructor Destroy; override;
+    function GetActualSelectionStyle: TGridSelectionDrawStyleEh;
+    function DefaultDrawFocusFrame: Boolean; virtual;
+    property Grid: TCustomGridEh read FGrid;
+  published
+    property SelectionStyle: TGridSelectionDrawStyleEh read FSelectionStyle write SetSelectionStyle default gsdsDefaultEh;
+    property DrawFocusFrame: Boolean read GetDrawFocusFrame write SetDrawFocusFrame stored IsDrawFocusFrameStored;
+    property DrawFocusFrameStored: Boolean read IsDrawFocusFrameStored write SetDrawFocusFrameStored default False;
+  end;
+
+{ TCustomGridEh }
+
+  TGridDrawState = set of (gdSelected, gdFocused, gdCurrent, gdFixed, gdRowSelected, gdHotTrack, gdPressed);
+
+  TGridStateEh = (gsNormalEh, gsSelectingEh, gsRowSizingEh, gsColSizingEh,
+    gsRowMovingEh, gsColMovingEh);
+
+  TGridOptionEh = (
+    goFixedVertLineEh, goFixedHorzLineEh, goVertLineEh, goHorzLineEh,
+    goDrawFocusSelectedEh, goRowSizingEh, goColSizingEh, goRowMovingEh,
+    goColMovingEh, goEditingEh, goTabsEh, goRowSelectEh,
+    goAlwaysShowEditorEh, goThumbTrackingEh, goExtendVertLinesEh,
+    goContraVertBoundaryLineEh, goContraHorzBoundaryLineEh, goRangeSelectEh);
+  TGridOptionsEh = set of TGridOptionEh;
+  TGridScrollDirection = (sdLeft, sdRight, sdUp, sdDown);
+  TGridScrollDirections = set of TGridScrollDirection;
+
+  TEditStyle =  (esSimple, esEllipsis, esPickList);
+
+  TSelectCellEvent = procedure (Sender: TObject; ACol, ARow: Longint;
+    var CanSelect: Boolean) of object;
+  TDrawCellEvent = procedure (Sender: TObject; ACol, ARow: Longint;
+    Rect: TRect; State: TGridDrawState) of object;
+  TGridEhCellMouseEvent = procedure (Grid: TCustomGridEh; Cell: TGridCoord;
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer; var Processed: Boolean) of object;
+
+  TCustomGridEh = class(TCustomControlEh)
+  private
+    FBackgroundData: TGridBackgroundDataEh;
+    FBorderStyle: TBorderStyle;
+    FBufferedPaint: Boolean;
+    FCanEditModify: Boolean;
+    FCanvasRightToLeftReflected: Boolean;
+    FCornerScrollBarPanelControl: TSizeGripPanelEh;
+    FCurCell: TGridCoord;
+    FDrawStyle: TGridDrawStyleEh;
+    FEditorMode: Boolean;
+    FExtraSizeGripControl: TSizeGripPanelEh;
+    FFixedColor: TColor;
+    FFlat: Boolean;
+    FGridLineColors: TGridLineColorsEh;
+    FGridLineWidth: Integer;
+    FHitTest: TPoint;
+    FHorzAxis: TGridAxisDataEh;
+    FHorzScotllingLockCount: Integer;
+    FHorzScrollBar: TGridScrollBarEh;
+    FHorzScrollBarIsShowing: Boolean;
+    FHorzScrollBarPanelControl: TGridScrollBarPanelControlEh;
+    FInplaceCol, FInplaceRow: Longint;
+    FInplaceEdit: TInplaceEdit;
+    FOptions: TGridOptionsEh;
+    FScrollBarSize: Integer;
+    FSelectionDrawParams: TGridSelectionDrawParamsEh;
+    FSizeGripAlwaysShow: Boolean;
+    FSizeGripPostion: TSizeGripPosition;
+    FVertAxis: TGridAxisDataEh;
+    FVertScrollBar: TGridScrollBarEh;
+    FVertScrollBarIsShowing: Boolean;
+    FVertScrollBarPanelControl: TGridScrollBarPanelControlEh;
+    FWinClientBoundary: TRect;
+{$IFDEF EH_LIB_13}
+    FPanPoint: TPoint;
+{$ENDIF}
+
+    FOnCellMouseClick: TGridEhCellMouseEvent;
+    FOnCellMouseDown: TGridEhCellMouseEvent;
+    FOutBoundaryData: TGridOutBoundaryDataEh;
+    FFocused: Boolean;
+
+    function GetColCount: Integer;
+    function GetColWidths(Index: Integer): Integer;
+    function GetContraColCount: Integer;
+    function GetContraRowCount: Integer;
+    function GetDefaultColWidth: Integer;
+    function GetDefaultRowHeight: Integer;
+    function GetFixedColCount: Integer;
+    function GetFixedRowCount: Integer;
+    function GetFrozenColCount: Longint;
+    function GetFrozenRowCount: Longint;
+    function GetFullColCount: Integer;
+    function GetFullRowCount: Integer;
+    function GetGridClientHeight: Integer;
+    function GetGridClientWidth: Integer;
+    function GetLastFullVisibleCol: Integer;
+    function GetLastFullVisibleRow: Integer;
+    function GetLastVisibleCol: Integer;
+    function GetLastVisibleRow: Integer;
+    function GetLeftCol: Longint;
+    function GetLeftColOffset: Longint;
+    function GetRolColCount: Integer;
+    function GetRolRowCount: Integer;
+    function GetRolStartVisPosX: Int64;
+    function GetRolStartVisPosY: Int64;
+    function GetRowCount: Integer;
+    function GetRowHeights(Index: Integer): Integer;
+    function GetSelection: TGridRect;
+    function GetTopRow: Longint;
+    function GetTopRowOffset: Longint;
+    function GetVisibleColCount: Integer;
+    function GetVisibleRowCount: Integer;
+    function GetWinClientBoundary: TRect;
+
+    procedure GridRectToScreenRect(GridRect: TGridRect; var ScreenRect: TRect; CutOutbounds: Boolean = True; UseRTL: Boolean = True);
+    procedure GridRectToScreenRectAbs(GridRect: TGridRect; var ScreenRect: TRect; IncludeLine: Boolean);
+    procedure Initialize;
+    procedure MoveCurrent(ACol, ARow: Longint; ShowX, ShowY: Boolean);
+    procedure MoveAndScroll(Mouse, CellHit: Integer; Axis: TGridAxisDataEh; Scrollbar: Integer; const MousePt: TPoint);
+    procedure ReadColWidths(Reader: TReader);
+    procedure ReadRowHeights(Reader: TReader);
+  {$IFDEF FPC}
+    procedure SetBorderStyle(const Value: TBorderStyle); reintroduce;
+    function GetBorderStyle: TBorderStyle; reintroduce;
+  {$ELSE}
+    procedure SetBorderStyle(const Value: TBorderStyle);
+    function GetBorderStyle: TBorderStyle;
+  {$ENDIF}
+    procedure SetCol(const Value: Longint);
+    procedure SetColCount(const Value: Integer);
+    procedure SetColWidths(Index: Integer; const Value: Integer);
+    procedure SetContraColCount(const Value: Integer);
+    procedure SetContraRowCount(const Value: Integer);
+    procedure SetDefaultColWidth(const Value: Integer);
+    procedure SetDefaultRowHeight(const Value: Integer);
+    procedure SetDrawStyle(const Value: TGridDrawStyleEh);
+    procedure SetEditorMode(Value: Boolean);
+    procedure SetFixedColCount(const Value: Integer);
+    procedure SetFixedColor(Value: TColor);
+    procedure SetFixedRowCount(const Value: Integer);
+    procedure SetFlat(const Value: Boolean);
+    procedure SetFrozenColCount(const Value: Longint);
+    procedure SetFrozenRowCount(const Value: Longint);
+    procedure SetGridLineColors(const Value: TGridLineColorsEh);
+    procedure SetGridLineWidth(Value: Integer);
+    procedure SetHorzScrollBar(const Value: TGridScrollBarEh);
+    procedure SetLeftCol(Value: Longint);
+    procedure SetOptions(Value: TGridOptionsEh);
+    procedure SetRolColCount(const Value: Integer);
+    procedure SetRolRowCount(const Value: Integer);
+    procedure SetRolStartVisPosX(const Value: Int64);
+    procedure SetRolStartVisPosY(const Value: Int64);
+    procedure SetRow(const Value: Longint);
+    procedure SetRowCount(const Value: Integer);
+    procedure SetRowHeights(Index: Integer; const Value: Integer);
+    procedure SetScrollBarSize(const Value: Integer);
+    procedure SetSelection(const Value: TGridRect);
+    procedure SetSelectionDrawParams(const Value: TGridSelectionDrawParamsEh);
+    procedure SetSizeGripAlwaysShow(const Value: Boolean);
+    procedure SetSizeGripPostion(const Value: TSizeGripPosition);
+    procedure SetTopRow(Value: Longint);
+    procedure SetVertScrollBar(const Value: TGridScrollBarEh);
+    procedure WriteColWidths(Writer: TWriter);
+    procedure WriteRowHeights(Writer: TWriter);
+
+{$IFNDEF FPC}
+    procedure CMCancelMode(var Msg: TCMCancelMode); message CM_CANCELMODE;
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+{$ENDIF}
+    procedure CMDesignHitTest(var Msg: TCMDesignHitTest); message CM_DESIGNHITTEST;
+
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
+
+    procedure CMWantSpecialKey(var Msg: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+{$IFDEF EH_LIB_16}
+    procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
+{$ENDIF}
+
+    procedure WMCancelMode(var Msg: TMessage); message WM_CANCELMODE;
+    procedure WMChar(var Msg: TWMChar); message WM_CHAR;
+    procedure WMCommand(var Message: TWMCommand); message WM_COMMAND;
+    procedure WMGetDlgCode(var Msg: TWMNoParams); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+
+    procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
+    procedure WMRButtonDblClk(var Message: TWMRButtonDblClk); message WM_RBUTTONDBLCLK;
+    procedure WMMButtonDblClk(var Message: TWMMButtonDblClk); message WM_MBUTTONDBLCLK;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMRButtonDown(var Message: TWMRButtonDown); message WM_RBUTTONDOWN;
+    procedure WMMButtonDown(var Message: TWMMButtonDown); message WM_MBUTTONDOWN;
+    procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
+    procedure WMRButtonUp(var Message: TWMRButtonUp); message WM_RBUTTONUP;
+    procedure WMMButtonUp(var Message: TWMMButtonUp); message WM_MBUTTONUP;
+
+    procedure WMSetCursor(var Msg: TWMSetCursor); message WM_SETCURSOR;
+
+    procedure WMNCHitTest(var Msg: TWMNCHitTest); message WM_NCHITTEST;
+    procedure WMNCMouseMove(var Message: TWMMouseMove); message WM_NCMOUSEMOVE;
+
+{$IFDEF FPC}
+{$ELSE}
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+{$ENDIF}
+
+    procedure WMEraseBkgnd(var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
+    procedure WMSetFocus(var Msg: TWMSetFocus); message WM_SETFOCUS;
+    procedure WMSize(var Msg: TWMSize); message WM_SIZE;
+
+  protected
+    FAnchorCell: TGridCoord;
+    FBoundariesUpdateCount: Integer;
+    FDesignOptionsBoost: TGridOptionsEh;
+    FDrawenSizingPos1: Integer;
+    FDrawenSizingPos2: Integer;
+    FFixedLineColor: TColor;
+    FGridState: TGridStateEh;
+    FGridTimer: TTimer;
+    FHotTrackCell: TGridCoord;
+    FHotTrackInCellPos: TPoint;
+    FInternalColor: TColor;
+    FInternalFixedColor: TColor;
+    FInternalFixedFontColor: TColor;
+    FInternalFontColor: TColor;
+    FLockPaint: Integer;
+    FMouseDownCell: TGridCoord;
+    FMouseInControl: Boolean;
+    FMoveFromIndex, FMoveToIndex, FMoveFromCellOriginDistance: Longint;
+    FMouseMovePos: TPoint;
+    FMovePosRightSite: Boolean;
+    FNewHotTrackSpot: TGridHotTrackSpotEh;
+    FOldHotTrackSpot: TGridHotTrackSpotEh;
+    FSaveCellExtents: Boolean;
+    FSizingIndex: Integer;
+    FSizingPos, FSizingOfs: Integer;
+    FInternalFocusResetting: Boolean; 
+
+{$IFDEF EH_LIB_13}
+    function IsTouchPropertyStored(AProperty: TTouchProperty): Boolean; override;
+{$ENDIF}
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+
+    function BoundariesUpdating: Boolean;
+    function BoxRect(ALeft, ATop, ARight, ABottom: Longint; IncludeLine: Boolean = False; UseRTL: Boolean = True): TRect;
+    function BoxRectAbs(ALeft, ATop, ARight, ABottom: Longint; IncludeLine: Boolean = False): TRect;
+    function CalcColRangeWidth(FromCol, RangeColCount: Integer): Int64;
+    function CalcCoordFromPoint(X, Y: Integer): TGridCoord;
+    function CalcRowRangeHeight(FromRow, RangeRowCount: Integer): Int64;
+    function CanEditAcceptKey(Key: Char): Boolean; virtual;
+    function CanEditModify: Boolean; virtual;
+    function CanEditShow: Boolean; virtual;
+    function CanCharShowEditor(Ch: Char): Boolean; virtual;
+    function CanFillSelectionByTheme: Boolean;
+    function CanGridAcceptKey(Key: Word; Shift: TShiftState): Boolean; virtual;
+    function CanHotTackCell(X, Y: Integer): Boolean; virtual;
+    function CellEditRect(ACol, ARow: Longint): TRect; virtual;
+    function CellRect(ACol, ARow: Longint; IncludeLine: Boolean = False; UseRTL: Boolean = True): TRect;
+    function CellRectAbs(ACol, ARow: Longint; IncludeLine: Boolean = False): TRect;
+    function CheckBeginColumnDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function CheckBeginRowDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function CheckCellCanSendDoubleClicks(CellHit: TGridCoord; Button: TMouseButton; ShiftState: TShiftState; MousePos, InCellMousePos: TPoint): Boolean; virtual;
+    function CheckCellLine(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh): Boolean;
+    function CheckCellMouseClick(var Message: TWMLButtonUp): Boolean; virtual;
+    function CheckColumnDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function CheckPersistentContraLine(LineType: TGridCellBorderTypeEh): Boolean; virtual;
+    function CheckRowDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function CheckSizingState(X, Y: Integer): TGridStateEh; virtual;
+    function CheckStartTmpCancelCanvasRTLReflecting(var ADrawRect: TRect): Boolean;
+    function ChildControlCanMouseDown(AControl: TControl): Boolean; virtual;
+    function CreateBackgroundData: TGridBackgroundDataEh; virtual;
+    function CreateEditor: TInplaceEdit; virtual;
+    function CreateGridLineColors: TGridLineColorsEh; virtual;
+    function CreateHorzScrollBarPanelControl: TGridScrollBarPanelControlEh; virtual;
+    function CreateHotTrackSpot: TGridHotTrackSpotEh; virtual;
+    function CreateScrollBar(AKind: TScrollBarKind): TGridScrollBarEh; virtual;
+    function CreateSizeGripPanel: TSizeGripPanelEh; virtual;
+    function CreateVertScrollBarPanelControl: TGridScrollBarPanelControlEh; virtual;
+    function DefaultDrawFocusFrame: Boolean; virtual;
+    function DoMouseWheelDownEvent(Shift: TShiftState; MousePos: TPoint): Boolean;
+    function DoMouseWheelUpEvent(Shift: TShiftState; MousePos: TPoint): Boolean;
+    function EmptyColWidth: Integer;
+    function EmptyRowHeight: Integer;
+    function EndColumnDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function EndRowDrag(var Origin, Destination: Integer; const MousePt: TPoint): Boolean; virtual;
+    function EnsureInplaceEditCreated: Boolean;
+    function FixedColsSizingAllowed: Boolean; virtual;
+    function FixedRowsSizingAllowed: Boolean; virtual;
+    function FullRedrawOnScroll: Boolean; virtual;
+    function GetCursorAtPos(Pos: TPoint): TCursor; virtual;
+    function GetDefaultSelectionStyle: TGridSelectionDrawStyleEh; virtual;
+    function GetEditLimit: Integer; virtual;
+    function GetEditMask(ACol, ARow: Longint): string; virtual;
+    function GetEditStyle(ACol, ARow: Longint): TEditStyle; virtual;
+    function GetEditText(ACol, ARow: Longint): string; virtual;
+    function GetHorzScrollStep: Integer; virtual;
+    function GetTabStops(Index: Longint): Boolean; virtual;
+    function GetVertScrollStep: Integer; virtual;
+    function GridBackgroundFilled: Boolean; virtual;
+    function HasFocus: Boolean; virtual;
+    function HorzLineWidth: Integer; virtual;
+    function HorzScotllingLockCount: Integer;
+    function HotTrackSpotsEqual(OldHTSpot, NewHTSpot: TGridHotTrackSpotEh): Boolean; virtual;
+    function IsActiveControl: Boolean;
+    function IsDrawCellSelectionThemed(ACol, ARow: Integer; State: TGridDrawState): Boolean; virtual;
+    function IsMultiSelected: Boolean; virtual;
+    function IsSmoothHorzScroll: Boolean; virtual;
+    function IsSmoothVertScroll: Boolean; virtual;
+    function NeedBufferedPaint: Boolean; virtual;
+    function PaintLocked: Boolean;
+    function ResizeLine(Axis: TGridAxisDataEh): Integer;
+    function RolSizeValid: Boolean;
+    function SelectCell(ACol, ARow: Longint): Boolean; virtual;
+    function Sizing(X, Y: Integer): Boolean; virtual;
+    function VertLineWidth: Integer; virtual;
+    function WantInplaceEditorKey(Key: Word; Shift: TShiftState): Boolean; virtual;
+    function WMCheckCanSendDoubleClicks(var MouseEvent: TWMMouse): Boolean; virtual;
+    function NextSelectableCellFor(ACol, ARow, ANextCol, ANextRow: Integer): TGridCoord; virtual;
+
+    {$IFDEF FPC}
+    procedure BoundsChanged; override;
+    {$ELSE}
+    {$ENDIF}
+    {$IFDEF EH_LIB_13}
+    procedure DoGesture(const EventInfo: TGestureEventInfo; var Handled: Boolean); override;
+    {$ENDIF}
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DoExit; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure Loaded; override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Paint; override;
+    procedure Resize; override;
+    procedure WndProc(var Message: TMessage); override;
+
+    procedure AdjustMaxTopLeft(AdjustLeft, AdjustTop, LeftBindToCell, TopBindToCell: Boolean); virtual;
+    procedure AxisMoved(Axis: TGridAxisDataEh; FromIndex, ToIndex: Integer); virtual;
+    procedure BeginUpdateBoundaries;
+    procedure CalcMaxRolTopLeft(var AMaxLeftPos, AMaxTopPos: Integer; LeftBindToCell, TopBindToCell: Boolean); virtual;
+    procedure CalcSizingState(X, Y: Integer; var State: TGridStateEh; var Index: Longint; var SizingPos, SizingOfs: Integer); virtual;
+    procedure CancelMode; virtual;
+    procedure CellCountChanged; virtual;
+    procedure CelLenChanged(Axis: TGridAxisDataEh; Index, OldLen: Integer); virtual;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); virtual;
+    procedure CellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); virtual;
+    procedure ChangeGridOrientation(ACanvas: TCanvas; RightToLeftOrientation: Boolean; AClientWidth: Integer; AClientHeight: Integer); overload;
+    procedure ChangeGridOrientation(ACanvas: TCanvas; RightToLeftOrientation: Boolean); overload;
+    procedure CheckDrawCellBorder(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var IsDraw: Boolean; var BorderColor: TColor; var IsExtent: Boolean); virtual;
+    procedure CheckUpdateAxises; virtual;
+    procedure ClampInView(const Coord: TGridCoord; CheckX, CheckY: Boolean); virtual;
+    procedure ColumnMoved(FromIndex, ToIndex: Longint); virtual;
+    procedure ColWidthsChanged; virtual;
+    procedure CurrentCellMoved(OldCurrent: TGridCoord); virtual;
+    procedure DeleteColumn(ACol: Longint); virtual;
+    procedure DeleteRow(ARow: Longint); virtual;
+    procedure DrawBordersForCellArea(ACol, ARow: Integer; var ARect: TRect; State: TGridDrawState; CellBorderTypes: TGridCellBorderTypesEh = [cbtBottomEh, cbtRightEh]); virtual;
+    procedure DrawBottomOutBoundaryData(ARect: TRect); virtual;
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure DrawCellArea(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure DrawCellDataBackground(ACol, ARow: Integer; AreaRect: TRect; State: TGridDrawState); virtual;
+    procedure DrawEdgeEh(ACanvas: TCanvas; qrc: TRect; IsDown, IsSelected, NeedLeft, NeedRight: Boolean);
+    procedure DrawEmptyAreaCell(ACol, ARow: Integer; ARect: TRect); virtual;
+    procedure DrawLeftOutBoundaryData(ARect: TRect); virtual;
+    procedure DrawMove; virtual;
+    procedure DrawOutBoundaryData; virtual;
+    procedure DrawPolyline(Canvas: TCanvas; Points: array of TPoint);
+    procedure DrawPolyPolyline(PointsList: TPointArrayEh; StrokeList: TDWORDArrayEh; VCount: Integer);
+    procedure DrawRightOutBoundaryData(ARect: TRect); virtual;
+    procedure DrawSizingLine; virtual;
+    procedure DrawSizingLines; virtual;
+    procedure UpdateSizingLines; virtual;
+    procedure InitSizingLines; virtual;
+    procedure InternalSetFocusedControl(Control: TWinControl);
+    procedure DrawText(ACanvas: TCanvas; ARect: TRect; FillRect: Boolean; DX, DY: Integer; const Text: string; Alignment: TAlignment; Layout: TTextLayout; MultyL: Boolean; EndEllipsis: Boolean; LeftMarg, RightMarg: Integer; ForceSingleLine: Boolean; UseRightToLeftAlignment: Boolean);
+    procedure DrawTopOutBoundaryData(ARect: TRect); virtual;
+    procedure DrawWideLine(X1, Y1, X2, Y2, Width: Integer);
+    procedure EndUpdateBoundaries;
+    procedure FastInvalidate;
+    procedure FillGradient(Canvas: TCanvas; ARect: TRect; FromColor, ToColor: TColor);
+    procedure FixCoordToBound(var X, Y: Integer); virtual;
+    procedure FlatChanged; virtual;
+    procedure FocusCell(ACol, ARow: Longint; MoveAnchor: Boolean); virtual;
+    procedure GetDataForHorzScrollBar(var APosition, AMin, AMax, APageSize: Integer); virtual;
+    procedure GetDataForVertScrollBar(var APosition, AMin, AMax, APageSize: Integer); virtual;
+    procedure GetDrawSizingLineBound(var StartPos, FinishPos: Integer); virtual;
+    procedure HideEdit;
+    procedure HideMove; virtual;
+    procedure HideEditor; virtual;
+    procedure HorzScrollBarMessage(ScrollCode, Pos: Integer); virtual;
+    procedure InteractiveSetColWidth(ColIndex: Integer; Value: Integer); virtual;
+    procedure InteractiveSetRowHeight(RowIndex: Integer; Value: Integer); virtual;
+    procedure InvalidateCell(ACol, ARow: Longint);
+    procedure InvalidateCol(ACol: Longint);
+    procedure InvalidateEditor; virtual;
+    procedure InvalidateGrid;
+    procedure InvalidateRect(const ARect: TGridRect); virtual;
+    procedure InvalidateRow(ARow: Longint);
+    procedure InvalidateSpot(HTSpot: TGridHotTrackSpotEh); virtual;
+    procedure LockGridHorzScotlling;
+    procedure LockPaint;
+    procedure MoveAnchorCell(ACol, ARow: Integer; Show: Boolean); virtual;
+    procedure MoveColRow(ACol, ARow: Longint; ShowX, ShowY: Boolean); virtual;
+    procedure MoveColumn(FromIndex, ToIndex: Longint);
+    procedure MoveRow(FromIndex, ToIndex: Longint);
+    procedure OutBoundaryDataChanged; virtual;
+    procedure RegetDefaultStyle;
+    procedure RolPosAxisChanged(Axis: TGridAxisDataEh; OldRowPos: Integer);
+    procedure RolPosChanged(OldRowPosX, OldRowPosY: Integer); virtual;
+    procedure RolSizeUpdated; virtual;
+    procedure RowHeightsChanged; virtual;
+    procedure RowMoved(FromIndex, ToIndex: Longint); virtual;
+    procedure SafeScrollData(DX, DY: Integer);
+    procedure SafeScrollDataTo(XRolPos, YRolPos: Integer);
+    procedure SafeSetTopRow(ANewTopRow: Integer);
+    procedure ScrollBarMessage(ScrollBar, ScrollCode, Pos: Integer; UseRightToLeft: Boolean); virtual;
+    procedure ScrollBarShowingChanged; virtual;
+    procedure ScrollBarSizeChanged(ScrollBar: TGridScrollBarEh); virtual;
+    procedure SelectionChanged(const OldSel: TGridRect); virtual;
+    procedure SetEditText(ACol, ARow: Longint; const Value: string); virtual;
+    procedure SetHotTrackSpotInfo(HTSpot: TGridHotTrackSpotEh; X, Y: Integer); virtual;
+    procedure SetPaintColors; virtual;
+    procedure ShowEditor; virtual;
+    procedure ShowEditorChar(Ch: Char);
+    procedure StartColMoving(ColIndex: Integer; X, Y: Integer); virtual;
+    procedure StartRowDrag(StartRow: Integer; const MousePt: TPoint); virtual;
+    procedure StrictEvaluateCoord(var Coord: TGridCoord); virtual;
+    procedure StopTmpCancelCanvasRTLReflecting;
+    procedure StyleEhChanged; virtual;
+    procedure TimedScroll(Direction: TGridScrollDirections); virtual;
+    procedure TopLeftChanged; virtual;
+    procedure UnlockGridHorzScotlling;
+    procedure UnlockPaint;
+    procedure UpdateBoundaries; virtual;
+    procedure UpdateDesigner;
+    procedure UpdateEdit; virtual;
+    procedure UpdateFixedLineColor; virtual;
+    procedure UpdateHotTrackInfo(X, Y: Integer); virtual;
+    procedure UpdateScrollBarPanels; virtual;
+    procedure UpdateScrollBars; virtual;
+    procedure UpdateText(EditorChanged: Boolean); virtual;
+    procedure ValidateRolSize;
+    procedure VertScrollBarMessage(ScrollCode, Pos: Integer); virtual;
+    procedure WriteCellText(ACanvas: TCanvas; ARect: TRect; FillRect: Boolean; DX, DY: Integer; const Text: string; Alignment: TAlignment; Layout: TTextLayout; MultyL, EndEllipsis: Boolean; LeftMarg, RightMarg: Integer; ForceSingleLine: Boolean);
+    procedure GridTimerEvent(Sender: TObject); virtual;
+    procedure SetGridTimer(Enabled: Boolean; Interval: Cardinal); virtual;
+
+    property BackgroundData: TGridBackgroundDataEh read FBackgroundData write FBackgroundData;
+    property BorderStyle: TBorderStyle read GetBorderStyle write SetBorderStyle default bsSingle;
+    property Col: Longint read FCurCell.X write SetCol;
+    property ColCount: Integer read GetColCount write SetColCount;
+    property Color default clWindow;
+    property ColWidths[Index: Longint]: Integer read GetColWidths write SetColWidths;
+    property ContraColCount: Integer read GetContraColCount write SetContraColCount;
+    property ContraRowCount: Integer read GetContraRowCount write SetContraRowCount;
+    property CornerScrollBarPanelControl: TSizeGripPanelEh read FCornerScrollBarPanelControl;
+    property DefaultColWidth: Integer read GetDefaultColWidth write SetDefaultColWidth;
+    property DefaultRowHeight: Integer read GetDefaultRowHeight write SetDefaultRowHeight;
+    property DrawStyle: TGridDrawStyleEh read FDrawStyle write SetDrawStyle;
+    property EditorMode: Boolean read FEditorMode write SetEditorMode;
+    property FixedColCount: Integer read GetFixedColCount write SetFixedColCount;
+    property FixedColor: TColor read FFixedColor write SetFixedColor default clBtnFace;
+    property FixedRowCount: Integer read GetFixedRowCount write SetFixedRowCount;
+    property FrozenColCount: Longint read GetFrozenColCount write SetFrozenColCount;
+    property FrozenRowCount: Longint read GetFrozenRowCount write SetFrozenRowCount;
+    property FullColCount: Integer read GetFullColCount;
+    property FullRowCount: Integer read GetFullRowCount;
+    property GridLineColors: TGridLineColorsEh read FGridLineColors write SetGridLineColors;
+    property GridLineWidth: Integer read FGridLineWidth write SetGridLineWidth default 1;
+    property HitTest: TPoint read FHitTest;
+    property HorzAxis: TGridAxisDataEh read FHorzAxis;
+    property HorzScrollBar: TGridScrollBarEh read FHorzScrollBar write SetHorzScrollBar;
+    property HorzScrollBarPanelControl: TGridScrollBarPanelControlEh read FHorzScrollBarPanelControl;
+    property InplaceEditor: TInplaceEdit read FInplaceEdit;
+    property LastFullVisibleCol: Integer read GetLastFullVisibleCol;
+    property LastFullVisibleRow: Integer read GetLastFullVisibleRow;
+    property LastVisibleCol: Integer read GetLastVisibleCol;
+    property LastVisibleRow: Integer read GetLastVisibleRow;
+    property LeftCol: Longint read GetLeftCol write SetLeftCol;
+    property LeftColOffset: Longint read GetLeftColOffset;
+    property Options: TGridOptionsEh read FOptions write SetOptions default [];
+    property OutBoundaryData: TGridOutBoundaryDataEh read FOutBoundaryData;
+    property RolColCount: Integer read GetRolColCount write SetRolColCount;
+    property RolRowCount: Integer read GetRolRowCount write SetRolRowCount;
+    property RolStartVisPosX: Int64 read GetRolStartVisPosX write SetRolStartVisPosX;
+    property RolStartVisPosY: Int64 read GetRolStartVisPosY write SetRolStartVisPosY;
+    property Row: Longint read FCurCell.Y write SetRow;
+    property RowCount: Integer read GetRowCount write SetRowCount;
+    property RowHeights[Index: Longint]: Integer read GetRowHeights write SetRowHeights;
+    property ScrollBarSize: Integer read FScrollBarSize write SetScrollBarSize;
+    property Selection: TGridRect read GetSelection write SetSelection;
+    property SelectionDrawParams: TGridSelectionDrawParamsEh read FSelectionDrawParams write SetSelectionDrawParams;
+    property SizeGripAlwaysShow: Boolean read FSizeGripAlwaysShow write SetSizeGripAlwaysShow;
+    property SizeGripPostion: TSizeGripPosition read FSizeGripPostion write SetSizeGripPostion default sgpBottomRight;
+    property TabStops[Index: Longint]: Boolean read GetTabStops;
+    property TopRow: Longint read GetTopRow write SetTopRow;
+    property TopRowOffset: Longint read GetTopRowOffset;
+    property VertAxis: TGridAxisDataEh read FVertAxis;
+    property VertScrollBar: TGridScrollBarEh read FVertScrollBar write SetVertScrollBar;
+    property VertScrollBarPanelControl: TGridScrollBarPanelControlEh read FVertScrollBarPanelControl;
+    property VisibleColCount: Integer read GetVisibleColCount;
+    property VisibleRowCount: Integer read GetVisibleRowCount;
+    property WinClientBoundary: TRect read GetWinClientBoundary;
+
+    property OnCellMouseClick: TGridEhCellMouseEvent read FOnCellMouseClick write FOnCellMouseClick;
+    property OnCellMouseDown: TGridEhCellMouseEvent read FOnCellMouseDown write FOnCellMouseDown;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function CanFocus: Boolean; override;
+    function Focused: Boolean; override;
+    function MouseCoord(X, Y: Integer): TGridCoord; virtual;
+    {$IFDEF FPC}
+    function Ctl3D: Boolean;
+    {$ENDIF}
+
+    procedure DefaultCellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); virtual;
+    procedure DefaultCellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); virtual;
+    procedure SetLeftPos(ALeftPos: Integer);
+    procedure SetTopPos(ATopPos: Integer);
+
+    property BufferedPaint: Boolean read FBufferedPaint write FBufferedPaint;
+    property CanvasRightToLeftReflected: Boolean read FCanvasRightToLeftReflected;
+    property Flat: Boolean read FFlat write SetFlat default False;
+    property GridClientHeight: Integer read GetGridClientHeight; 
+    property GridClientWidth: Integer read GetGridClientWidth; 
+
+  published
+    property TabStop default True;
+  end;
+
+{ TDrawGridScrollBar }
+
+  TDrawGridScrollBarEh = class(TGridScrollBarEh)
+  published
+    property SmoothStep;
+    property Visible stored False;
+    property VisibleMode;
+  end;
+
+{ TDrawGridScrollBar }
+
+  TDrawGridHorzScrollBarEh = class(TGridScrollBarEh)
+  public
+    constructor Create(AGrid: TCustomGridEh; AKind: TScrollBarKind);
+  published
+    property SmoothStep default True;
+    property Visible stored False;
+    property VisibleMode;
+  end;
+
+  { TCustomDrawGridEh }
+
+  TGetEditEvent = procedure (Sender: TObject; ACol, ARow: Longint; var Value: string) of object;
+  TSetEditEvent = procedure (Sender: TObject; ACol, ARow: Longint; const Value: string) of object;
+  TMovedEvent = procedure (Sender: TObject; FromIndex, ToIndex: Longint) of object;
+
+  TCustomDrawGridEh = class(TCustomGridEh)
+  private
+    FOnColumnMoved: TMovedEvent;
+    FOnDrawCell: TDrawCellEvent;
+    FOnGetEditMask: TGetEditEvent;
+    FOnGetEditText: TGetEditEvent;
+    FOnRowMoved: TMovedEvent;
+    FOnSelectCell: TSelectCellEvent;
+    FOnSetEditText: TSetEditEvent;
+    FOnTopLeftChanged: TNotifyEvent;
+
+  protected
+    function CreateScrollBar(AKind: TScrollBarKind): TGridScrollBarEh; override;
+    function GetEditMask(ACol, ARow: Longint): string; override;
+    function GetEditText(ACol, ARow: Longint): string; override;
+    function SelectCell(ACol, ARow: Longint): Boolean; override;
+
+    procedure ColumnMoved(FromIndex, ToIndex: Longint); override;
+    procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
+    procedure RowMoved(FromIndex, ToIndex: Longint); override;
+    procedure SetEditText(ACol, ARow: Longint; const Value: string); override;
+    procedure TopLeftChanged; override;
+
+    property OnColumnMoved: TMovedEvent read FOnColumnMoved write FOnColumnMoved;
+    property OnDrawCell: TDrawCellEvent read FOnDrawCell write FOnDrawCell;
+    property OnGetEditMask: TGetEditEvent read FOnGetEditMask write FOnGetEditMask;
+    property OnGetEditText: TGetEditEvent read FOnGetEditText write FOnGetEditText;
+    property OnRowMoved: TMovedEvent read FOnRowMoved write FOnRowMoved;
+    property OnSelectCell: TSelectCellEvent read FOnSelectCell write FOnSelectCell;
+    property OnSetEditText: TSetEditEvent read FOnSetEditText write FOnSetEditText;
+    property OnTopLeftChanged: TNotifyEvent read FOnTopLeftChanged write FOnTopLeftChanged;
+  public
+    function CellRect(ACol, ARow: Longint): TRect;
+
+    procedure MouseToCell(X, Y: Integer; var ACol, ARow: Longint);
+
+    property Canvas;
+    property Col;
+    property ColCount;
+    property ColWidths;
+    property ContraColCount;
+    property ContraRowCount;
+    property EditorMode;
+    property Flat;
+    property FrozenColCount;
+    property FrozenRowCount;
+    property FullColCount;
+    property FullRowCount;
+    property LeftCol;
+    property OutBoundaryData;
+    property Row;
+    property RowCount;
+    property RowHeights;
+    property SizeGripAlwaysShow;
+    property TopRow;
+  end;
+
+{ TDrawGridEh }
+
+  TDrawGridEh = class(TCustomDrawGridEh)
+  published
+    property Align;
+    property Anchors;
+    property BiDiMode;
+    property BorderStyle;
+    property Col;
+    property ColCount;
+    property Color;
+    property ContraColCount;
+    property ContraRowCount;
+    property FixedColCount;
+    property FixedRowCount;
+    property FrozenColCount;
+    property FrozenRowCount;
+    property GridLineWidth;
+    property HorzAxis;
+    property HorzScrollBar;
+    property Options;
+    property RolColCount;
+    property RolRowCount;
+    property Row;
+    property RowCount;
+    property VertAxis;
+    property VertScrollBar;
+  end;
+
+{ TCustomListboxEh }
+
+  TCustomListboxEh = class(TCustomGridEh)
+  private
+    FItems: TStrings;
+    {$IFDEF FPC}
+    {$ELSE}
+    FOnData: TLBGetDataEvent;
+    FOnDataObject: TLBGetDataObjectEvent;
+    {$ENDIF}
+    FImageList: TCustomImageList;
+    FItemAlignment: TAlignment;
+    FItemHeight: Integer;
+    FOnGetImageIndex: TListGetImageIndexEventEh;
+    FRowSeleced: Boolean;
+    FSorted: Boolean;
+    FUseItemObjects: Boolean;
+    FVirtualItems: Boolean;
+    FVirtualRowCount: Integer;
+    FVisibleIterms: TStrings;
+    FFilterStr: String;
+    FFilterType: TLSAutoFilterTypeEh;
+    FFilterCaseInsensitive: Boolean;
+
+    function GetCount: Integer;
+    function GetItemHeight: Integer;
+    function GetItemIndex: Integer;
+    function GetItemVisibleIndex: Integer;
+    function GetTopIndex: Integer;
+    function GetTopVisibleIndex: Integer;
+    function GetVisibleIterms: TStrings;
+
+    procedure SetCount(const Value: Integer);
+    procedure SetImageList(const Value: TCustomImageList);
+    procedure SetItemHeight(const Value: Integer);
+    procedure SetItemIndex(const Value: Integer);
+    procedure SetItemVisibleIndex(const Value: Integer);
+    procedure SetSorted(const Value: Boolean);
+    procedure SetTopIndex(const Value: Integer);
+    procedure SetVirtualItems(const Value: Boolean);
+  protected
+    function VisibleItemRect(VisibleIndex: Integer): TRect;
+    function GetItems: TStrings; virtual;
+    function GetDisplayText(VisibleIndex: Integer): String; virtual;
+
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure DrawItem(Index: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure FocusCell(ACol, ARow: Longint; MoveAnchor: Boolean); override;
+    procedure GetData(Index: Integer; var Data: string); virtual;
+    procedure ItemsChanged(Sender: TObject);
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Resize; override;
+    procedure SetItems(const Value: TStrings); virtual;
+    procedure UpdateRowCount;
+
+    property Sorted: Boolean read FSorted write SetSorted default False;
+    property TopIndex: Integer read GetTopIndex write SetTopIndex;
+    property TopVisibleIndex: Integer read GetTopVisibleIndex write SetTopIndex;
+    property VisibleItems: TStrings read GetVisibleIterms;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    property OnData: TLBGetDataEvent read FOnData write FOnData;
+    property OnDataObject: TLBGetDataObjectEvent read FOnDataObject write FOnDataObject;
+    {$ENDIF}
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure ApplyFilter(AFilterStr: String; AFilterType: TLSAutoFilterTypeEh; ACaseInsensitive: Boolean);
+    procedure ClearFilter();
+    procedure DefaultDrawItem(VisibleIndex: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure InvalidateIndex(AItemIndex: Integer);
+    procedure ResetVisibleIterms;
+
+    function DataIndexToVisibleIndex(DataIndex: Integer): Integer;
+    function ItemAtPos(Pos: TPoint; Existing: Boolean): Integer;
+    function GetTextHeight: Integer; virtual;
+    function StrictIndexToClient(X, Y: Integer): Integer;
+    function StrictVisibleIndexToClient(X, Y: Integer): Integer;
+    function ValueIsHitFilter(Value: String): Boolean;
+    function VisibleIndexToDataIndex(VisibleIndex: Integer): Integer;
+    function VisibleItemAtPos(Pos: TPoint; Existing: Boolean): Integer;
+
+    property Canvas;
+    property Color;
+    property Count: Integer read GetCount write SetCount;
+    property ImageList: TCustomImageList read FImageList write SetImageList;
+    property ItemHeight: Integer read GetItemHeight write SetItemHeight default 16;
+    property ItemIndex: Integer read GetItemIndex write SetItemIndex;
+    property ItemVisibleIndex: Integer read GetItemVisibleIndex write SetItemVisibleIndex;
+    property Items: TStrings read GetItems write SetItems;
+    property SizeGripAlwaysShow;
+    property UseItemObjects: Boolean read FUseItemObjects write FUseItemObjects;
+    property VirtualItems: Boolean read FVirtualItems write SetVirtualItems;
+    property ItemAlignment: TAlignment read FItemAlignment write FItemAlignment;
+
+    property OnGetImageIndex: TListGetImageIndexEventEh read FOnGetImageIndex write FOnGetImageIndex;
+  end;
+
+{ TCustomListboxItemEh }
+
+  TCustomListboxItemEh = class(TObject)
+  private
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; virtual;
+    function GetDisplayText(Sender: TCustomListboxEh; ItemIndex: Integer): String; virtual;
+
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); virtual;
+    procedure MouseMove(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); virtual;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); virtual;
+    procedure KeyPress(Sender: TCustomListboxEh; ItemIndex: Integer; var Key: Char; Shift: TShiftState; var IsCloseListbox: Boolean); virtual;
+  public
+    function IsDataItem: Boolean; virtual;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); virtual;
+  end;
+
+{ TPopupListboxEh }
+
+  TPopupListboxEh = class(TCustomListboxEh)
+  private
+    FBorderWidth: Integer;
+    FExtItems: TStrings;
+    FMouseIndex: Integer;
+    FMousePos: TPoint;
+    FRowCount: Integer;
+    FSizeGripResized: Boolean;
+    FResizedRowCount: Integer;
+    FResizedWidth: Integer;
+    FInternalResizing: Boolean;
+
+    function GetExtItems: TStrings;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    {$ENDIF}
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+
+    procedure CMSetSizeGripChangePosition(var Message: TMessage); message cm_SetSizeGripChangePosition;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+
+    procedure SetExtItems(Value: TStrings);
+    procedure SetRowCount(Value: Integer);
+
+    procedure WMNCCalcSize(var Message: TWMNCCalcSize); message WM_NCCALCSIZE;
+    procedure WMNCPaint(var Message: TMessage); message WM_NCPAINT;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+
+  protected
+    FIsMouseUpCloseListbox: Boolean;
+
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function GetItems: TStrings; override;
+
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DrawBorder; virtual;
+    procedure GetData(Index: Integer; var Data: string); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure SelfOnGetDataObject(Control: TWinControl; Index: Integer; var DataObject: TObject); virtual;
+    procedure SetItems(const Value: TStrings); override;
+    procedure UpdateBorderWidth;
+  public
+    constructor Create(Owner: TComponent); override;
+
+    function CanFocus: Boolean; override;
+    function GetBorderSize: Integer;
+    function Focused: Boolean; override;
+
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+    procedure Show;
+    procedure Hide;
+
+    property BorderWidth: Integer read FBorderWidth;
+    property Color;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    property ParentCtl3D;
+    {$ENDIF}
+    property Font;
+    property ItemHeight;
+    property IsMouseUpCloseListbox: Boolean read FIsMouseUpCloseListbox;
+    property RowCount: Integer read FRowCount write SetRowCount;
+    property ExtItems: TStrings read GetExtItems write SetExtItems;
+    property ResizedRowCount: Integer read FResizedRowCount;
+    property ResizedWidth: Integer read FResizedWidth;
+    property SizeGripAlwaysShow;
+    property SizeGripResized: Boolean read FSizeGripResized write FSizeGripResized;
+    property InternalResizing: Boolean read FInternalResizing write FInternalResizing;
+    property SelectionDrawParams;
+
+    property OnMouseDown;
+    property OnMouseUp;
+    property OnKeyDown;
+    property OnKeyUp;
+    property OnKeyPress;
+  end;
+
+{ TPopupListboxItemEh }
+
+  TPopupListboxItemEh = class(TCustomListboxItemEh)
+  private
+  protected
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState; var IsCloseListbox: Boolean); reintroduce; virtual;
+  public
+    function CloseOnExecute(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; virtual;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+{ TPopupListboxGridEh }
+
+  TPopupListboxGridEh = class(TCustomListboxEh)
+  private
+    FBorderWidth: Integer;
+    FExtItems: TStrings;
+    FMouseVisibleIndex: Integer;
+    FMousePos: TPoint;
+    FRowCount: Integer;
+    FSizeGripResized: Boolean;
+    FResizedRowCount: Integer;
+    FResizedWidth: Integer;
+    FInternalResizing: Boolean;
+
+    function GetExtItems: TStrings;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    {$ENDIF}
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+    procedure CMSetSizeGripChangePosition(var Message: TMessage); message cm_SetSizeGripChangePosition;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure SetExtItems(Value: TStrings);
+    procedure SetRowCount(Value: Integer);
+
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+
+  protected
+    FIsMouseUpCloseListbox: Boolean;
+
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function GetItems: TStrings; override;
+
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure GetData(Index: Integer; var Data: string); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure SelfOnGetDataObject(Control: TWinControl; Index: Integer; var DataObject: TObject); virtual;
+    procedure SetItems(const Value: TStrings); override;
+    procedure UpdateBorderWidth;
+
+  public
+    constructor Create(Owner: TComponent); override;
+
+    function CanFocus: Boolean; override;
+    function GetBorderSize: Integer;
+    function Focused: Boolean; override;
+
+    property BorderWidth: Integer read FBorderWidth;
+    property Color;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    property ParentCtl3D;
+    {$ENDIF}
+    property Font;
+    property ItemHeight;
+    property IsMouseUpCloseListbox: Boolean read FIsMouseUpCloseListbox;
+    property RowCount: Integer read FRowCount write SetRowCount;
+    property ExtItems: TStrings read GetExtItems write SetExtItems;
+    property ResizedRowCount: Integer read FResizedRowCount;
+    property ResizedWidth: Integer read FResizedWidth;
+    property SizeGripAlwaysShow;
+    property SizeGripResized: Boolean read FSizeGripResized write FSizeGripResized;
+    property InternalResizing: Boolean read FInternalResizing write FInternalResizing;
+    property SelectionDrawParams;
+
+    property OnMouseDown;
+    property OnMouseUp;
+    property OnKeyDown;
+    property OnKeyUp;
+    property OnKeyPress;
+  end;
+
+{ TPopupListboxFormEh }
+
+  TPopupListboxFormEh = class(TPopupInactiveFormEh)
+  private
+    FInternalResizing: Boolean;
+    FListGrid: TPopupListboxGridEh;
+    FResizedRowCount: Integer;
+    FResizedWidth: Integer;
+    FRowCount: Integer;
+
+    function GetCount: Integer;
+    function GetExtItems: TStrings;
+    function GetImageList: TCustomImageList;
+    function GetIsMouseUpCloseListbox: Boolean;
+    function GetItemHeight: Integer;
+    function GetItemIndex: Integer;
+    function GetItems: TStrings;
+    function GetOnGetImageIndex: TListGetImageIndexEventEh;
+    function GetSelectionDrawParams: TGridSelectionDrawParamsEh;
+    function GetSizeGripAlwaysShow: Boolean;
+    function GetSizeGripResized: Boolean;
+    function GetSorted: Boolean;
+    function GetUseItemObjects: Boolean;
+
+    procedure SetCount(AValue: Integer);
+    procedure SetExtItems(const Value: TStrings);
+    procedure SetImageList(AValue: TCustomImageList);
+    procedure SetItemHeight(AValue: Integer);
+    procedure SetItemIndex(AValue: Integer);
+    procedure SetItems(const Value: TStrings);
+    procedure SetOnGetImageIndex(AValue: TListGetImageIndexEventEh);
+    procedure SetRowCount(Value: Integer);
+    procedure SetSelectionDrawParams(const Value: TGridSelectionDrawParamsEh);
+    procedure SetSizeGripAlwaysShow(const Value: Boolean);
+    procedure SetSizeGripResized(const Value: Boolean);
+    procedure SetSorted(AValue: Boolean);
+    procedure SetUseItemObjects(const Value: Boolean);
+
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+  protected
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+
+    procedure ListMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+
+  public
+    constructor Create(Owner: TComponent); override;
+
+    function GetTextHeight: Integer; virtual;
+    function GetBorderSize: Integer; virtual;
+
+    procedure ApplyFilter(AFilterStr: String; AFilterType: TLSAutoFilterTypeEh; ACaseInsensitive: Boolean);
+    procedure ClearFilter();
+    procedure HandleNeeded; reintroduce;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+
+    property ListGrid: TPopupListboxGridEh read FListGrid;
+
+    property Color;
+    property Count: Integer read GetCount write SetCount;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    property ParentCtl3D;
+    {$ENDIF}
+    property Font;
+    property Items: TStrings read GetItems write SetItems;
+    property ItemHeight: Integer read GetItemHeight write SetItemHeight default 16;
+    property ImageList: TCustomImageList read GetImageList write SetImageList;
+    property ItemIndex: Integer read GetItemIndex write SetItemIndex;
+
+    property IsMouseUpCloseListbox: Boolean read GetIsMouseUpCloseListbox;
+    property RowCount: Integer read FRowCount write SetRowCount;
+    property ExtItems: TStrings read GetExtItems write SetExtItems;
+    property ResizedRowCount: Integer read FResizedRowCount;
+    property ResizedWidth: Integer read FResizedWidth;
+    property SizeGripAlwaysShow: Boolean read GetSizeGripAlwaysShow write SetSizeGripAlwaysShow;
+    property SizeGripResized: Boolean read GetSizeGripResized write SetSizeGripResized;
+    property InternalResizing: Boolean read FInternalResizing write FInternalResizing;
+    property SelectionDrawParams: TGridSelectionDrawParamsEh read GetSelectionDrawParams write SetSelectionDrawParams;
+    property Sorted: Boolean read GetSorted write SetSorted;
+    property UseItemObjects: Boolean read GetUseItemObjects write SetUseItemObjects;
+
+    property OnGetImageIndex: TListGetImageIndexEventEh read GetOnGetImageIndex write SetOnGetImageIndex;
+  end;
+
+{ TMRUListboxEh }
+
+  TMRUListboxEh = class(TPopupListboxFormEh)
+  private
+  protected
+  public
+    constructor Create(Owner: TComponent); override;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property Sorted;
+    property OnMouseUp;
+  end;
+
+{ TGridDrawStyleEh }
+
+  TGridDrawStyleEh = class(TComponent)
+  private
+    FDrawFocusFrame: Boolean;
+    FDrawFocusFrameStored: Boolean;
+    FGrids: TObjectListEh;
+    FSelectionStyle: TGridSelectionDrawStyleEh;
+
+    function GetDrawFocusFrame: Boolean;
+    function IsDrawFocusFrameStored: Boolean;
+    procedure SetDrawFocusFrame(const Value: Boolean);
+    procedure SetDrawFocusFrameStored(const Value: Boolean);
+    procedure SetSelectionStyle(const Value: TGridSelectionDrawStyleEh);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DefaultDrawFocusFrame: Boolean; virtual;
+    function GetActualSelectionStyle: TGridSelectionDrawStyleEh;
+    function GetDefaultActualSelectionStyle: TGridSelectionDrawStyleEh; virtual;
+    function GridInChangeNotification(Grid: TCustomGridEh): Boolean;
+    function IsCustomStyleActive: Boolean;
+
+    procedure AddChangeNotification(Grid: TCustomGridEh);
+    procedure Changed;
+    procedure RemoveChangeNotification(Grid: TCustomGridEh);
+  published
+
+    property DrawFocusFrame: Boolean read GetDrawFocusFrame write SetDrawFocusFrame;
+    property DrawFocusFrameStored: Boolean read IsDrawFocusFrameStored write SetDrawFocusFrameStored default False;
+    property SelectionStyle: TGridSelectionDrawStyleEh read FSelectionStyle write SetSelectionStyle default gsdsDefaultEh;
+  end;
+
+  TComboBoxPopupListboxEh = TPopupListboxFormEh;
+
+function GridCoord(X, Y: Longint): TGridCoord;
+function GridRect(Coord1, Coord2: TGridCoord): TGridRect;
+function GridDefaultDrawStyleEh: TGridDrawStyleEh;
+function SetGridDefaultDrawStyleEh(NewGridDefaultDrawStyle: TGridDrawStyleEh): TGridDrawStyleEh;
+function PointInGridRect(Col, Row: Longint; const Rect: TGridRect): Boolean;
+function EqualGridRect(const R1, R2: TGridRect): Boolean;
+
+procedure BinarySearch(Poses: TInt64DynArray; TargetPos: Int64; var ACol, AColOffset: Integer);
+procedure FillArray(Arr: TIntegerDynArray; const Pos, Count, Value: Integer);
+
+var
+  GridEhDebugDraw: Boolean;
+  DummyPopupListboxItemEh: TPopupListboxItemEh;
+
+implementation

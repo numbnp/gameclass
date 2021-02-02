@@ -1,0 +1,49 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{              TPrintDBVertGridEh component             }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit PrintDBVertGridsEh;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls,
+  EhLibVCL, Types,
+{$IFDEF EH_LIB_17} System.Contnrs, System.UITypes, {$ENDIF}
+  StdCtrls, ImgList, Forms, DB,
+  DBVertGridsEh, PrintUtilsEh, PrntsEh, PrViewEh, GridsEh,
+  ToolCtrlsEh, DBAxisGridsEh;
+
+type
+
+{ TDBVertGridPrintServiceEh }
+
+  TDBVertGridPrintServiceEh = class(TCustomDBVertGridPrintServiceEh)
+  private
+  protected
+    FDrawParams: TAxisColCellParamsEh;
+
+    function CheckDrawLine(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var Color: TColor; var Width: Integer): Boolean; override;
+    function GetControlCanvas: TCanvas; override;
+
+    procedure PrintCellData(ACol, ARow: Integer; ARect: TRect); override;
+    procedure SetColRowSize; override;
+
+    procedure DrawDataCell(ACol, ARow, AreaCol, AreaRow: Integer; ARect: TRect; FieldRow: TFieldRowEh); virtual;
+    procedure DrawLabelCell(ACol, ARow, AreaCol, AreaRow: Integer; ARect: TRect; FieldRow: TFieldRowEh); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure PrintTo(VPrinter: TVirtualPrinter); override;
+  end;
+
+implementation

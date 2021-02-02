@@ -1,0 +1,359 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                 Utils to print Data                   }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit PrintUtilsEh;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls,
+  EhLibVCL, Types,
+{$IFDEF EH_LIB_17} System.UITypes, System.Contnrs, {$ENDIF}
+{$IFDEF FPC}
+{$ELSE}
+  PrViewEh,
+{$ENDIF}
+  RichEdit, DynVarsEh, ComCtrls,
+  StdCtrls, ImgList, Forms, DB,
+  Printers,
+  DBCtrlsEh,PrntsEh, GridsEh, ToolCtrlsEh;
+
+type
+  TBaseGridPrintServiceEh = class;
+
+  TPageColontitleLineTypeEh = (pcltNonEh, pcltSingleLineEh, pcltDoubleLineEh);
+  TMeasurementSystemEh = (msMetricEh, msUnitedStatesEh);
+  TPrintColotSchemaEh = (pcsFullColorEh, pcsAdaptedColorEh, pcsBlackAndWhiteEh);
+
+  TPageColontitleEh = class(TPersistent)
+  private
+    FCenterText: TRichStringEh;
+    FLeftText: TRichStringEh;
+    FLineType: TPageColontitleLineTypeEh;
+    FRightText: TRichStringEh;
+
+    procedure SetCenterText(const Value: TRichStringEh);
+    procedure SetLeftText(const Value: TRichStringEh);
+    procedure SetLineType(const Value: TPageColontitleLineTypeEh);
+    procedure SetRightText(const Value: TRichStringEh);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property LineType: TPageColontitleLineTypeEh read FLineType write SetLineType default pcltNonEh;
+
+    property CenterText: TRichStringEh read FCenterText write SetCenterText;
+    property LeftText: TRichStringEh read FLeftText write SetLeftText;
+    property RightText: TRichStringEh read FRightText write SetRightText;
+  end;
+
+{ TPageMarginsEh }
+
+  TPageMarginsEh = class(TPersistent)
+  private
+    FBottom: Currency;
+    FFooter: Currency;
+    FHeader: Currency;
+    FLeft: Currency;
+    FRight: Currency;
+    FTop: Currency;
+
+    function IsBottomStored: Boolean;
+    function IsFooterStored: Boolean;
+    function IsHeaderStored: Boolean;
+    function IsLeftStored: Boolean;
+    function IsRightStored: Boolean;
+    function IsTopStored: Boolean;
+    function GetCurRegionalMetricBottom: Currency;
+    function GetCurRegionalMetricFooter: Currency;
+    function GetCurRegionalMetricHeader: Currency;
+    function GetCurRegionalMetricLeft: Currency;
+    function GetCurRegionalMetricRight: Currency;
+    function GetCurRegionalMetricTop: Currency;
+
+    procedure SetCurRegionalMetricBottom(const Value: Currency);
+    procedure SetCurRegionalMetricFooter(const Value: Currency);
+    procedure SetCurRegionalMetricHeader(const Value: Currency);
+    procedure SetCurRegionalMetricLeft(const Value: Currency);
+    procedure SetCurRegionalMetricRight(const Value: Currency);
+    procedure SetCurRegionalMetricTop(const Value: Currency);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property CurRegionalMetricLeft: Currency read GetCurRegionalMetricLeft write SetCurRegionalMetricLeft;
+    property CurRegionalMetricRight: Currency read GetCurRegionalMetricRight write SetCurRegionalMetricRight;
+    property CurRegionalMetricTop: Currency read GetCurRegionalMetricTop write SetCurRegionalMetricTop;
+    property CurRegionalMetricBottom: Currency read GetCurRegionalMetricBottom write SetCurRegionalMetricBottom;
+
+    property CurRegionalMetricHeader: Currency read GetCurRegionalMetricHeader write SetCurRegionalMetricHeader;
+    property CurRegionalMetricFooter: Currency read GetCurRegionalMetricFooter write SetCurRegionalMetricFooter;
+
+  published
+    property Bottom: Currency read FBottom write FBottom stored IsBottomStored;
+    property Left: Currency read FLeft write FLeft stored IsLeftStored;
+    property Right: Currency read FRight write FRight stored IsRightStored;
+    property Top: Currency read FTop write FTop stored IsTopStored;
+
+    property Header: Currency read FHeader write FHeader stored IsHeaderStored;
+    property Footer: Currency read FFooter write FFooter stored IsFooterStored;
+  end;
+
+  TScalingModeEh = (smAdjustToScaleEh, smFitToPagesEh);
+
+{ TBasePrintServiceComponentEh }
+
+  TBasePrintServiceComponentEh = class(TComponent)
+  private
+    FColorSchema: TPrintColotSchemaEh;
+    FFitToPagesTall: Integer;
+    FFitToPagesWide: Integer;
+    FLogDataPrintRec: TRect;
+    FLogPelsXOnControl: Integer;
+    FLogPelsXOnPrinter: Integer;
+    FLogPelsYOnControl: Integer;
+    FLogPelsYOnPrinter: Integer;
+    FOrientation: TPrinterOrientation;
+    FPageCount: Integer;
+    FPageFooter: TPageColontitleEh;
+    FPageHeader: TPageColontitleEh;
+    FPageMargins: TPageMarginsEh;
+    FPenW: Integer;
+    FPhysDataPrintRec: TRect;
+    FPrintDataScale: Integer;
+    FPrinter: TVirtualPrinter;
+    FPrnPhysOffSetX: Integer;
+    FPrnPhysOffSetY: Integer;
+    FScale: Integer;
+    FScaleX, FScaleY: Double;
+    FScalingMode: TScalingModeEh;
+    FSubstituteRichEdit: TDBRichEditEh;
+    FSubstitutionVars: TDynVarsEh;
+    FTextAfterContent: TRichStringEh;
+    FTextBeforeContent: TRichStringEh;
+
+    FOnAfterPrint: TNotifyEvent;
+    FOnAfterPrintPage: TNotifyEvent;
+    FOnBeforePrint: TNotifyEvent;
+    FOnBeforePrintPage: TNotifyEvent;
+    FOnPrinterSetupDialog: TNotifyEvent;
+    FOnAfterPrintPageContent: TNotifyEvent;
+    FOnBeforePrintPageContent: TNotifyEvent;
+
+    function GetCanvas: TCanvas;
+    function GetSubstituteRichEdit: TDBRichEditEh;
+    function GetPageHeight: Integer;
+    function GetPageWidth: Integer;
+
+    procedure SetPageFooter(const Value: TPageColontitleEh);
+    procedure SetPageHeader(const Value: TPageColontitleEh);
+    procedure SetPageMargins(const Value: TPageMarginsEh);
+    procedure SetTextAfterContent(const Value: TRichStringEh);
+    procedure SetTextBeforeContent(const Value: TRichStringEh);
+
+
+  protected
+    MacroValues: array[0..5] of String;
+
+    function GetControlCanvas: TCanvas; virtual;
+    function ExtractMacros(s: TRichStringEh): TRichStringEh;
+    function SubstituteRichTextVar(RichText: TRichStringEh; const SearchStr, ReplaceStr: String; StartPos, Length: Integer; Options: TSearchTypes; ReplaceAll: Boolean; var FoundPos: Integer): TRichStringEh;
+    function SubstituteVars(RichText: TRichStringEh): TRichStringEh;
+
+    procedure InitData; virtual;
+    procedure PrintData; virtual;
+    procedure PrintPageOutClientData; virtual;
+    procedure PreparePageInClientData; virtual;
+    procedure PrintPageInClientData; virtual;
+
+    procedure CalcDeviceCaps; virtual;
+    procedure SetPrinterSetupDialog; virtual;
+    procedure PrintPageHeader; virtual;
+    procedure PrintPageFooter; virtual;
+    procedure PrintColontitle(Colontitle: TPageColontitleEh; ARect: TRect; Layout: TTextLayout); virtual;
+    procedure PrintColontitleLine(Colontitle: TPageColontitleEh; var ARect: TRect; Layout: TTextLayout); virtual;
+    procedure InitMacroValues; virtual;
+    procedure StartPrint; virtual;
+    procedure EndPrint; virtual;
+    procedure NewPage; virtual;
+    procedure InitPageViewMode; virtual;
+    procedure ResetPageViewMode; virtual;
+
+    property ColorSchema: TPrintColotSchemaEh read FColorSchema write FColorSchema default pcsAdaptedColorEh;
+    property FitToPagesTall: Integer read FFitToPagesTall write FFitToPagesTall default 1;
+    property FitToPagesWide: Integer read FFitToPagesWide write FFitToPagesWide default 1;
+    property Orientation: TPrinterOrientation read FOrientation write FOrientation default poPortrait;
+    property PageFooter: TPageColontitleEh read FPageFooter write SetPageFooter;
+    property PageHeader: TPageColontitleEh read FPageHeader write SetPageHeader;
+    property PageMargins: TPageMarginsEh read FPageMargins write SetPageMargins;
+    property Scale: Integer read FScale write FScale default 100;
+    property ScalingMode: TScalingModeEh read FScalingMode write FScalingMode default smAdjustToScaleEh;
+    property TextAfterContent: TRichStringEh read FTextAfterContent write SetTextAfterContent;
+    property TextBeforeContent: TRichStringEh read FTextBeforeContent write SetTextBeforeContent;
+    property SubstituteRichEdit: TDBRichEditEh read GetSubstituteRichEdit;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure Preview; virtual;
+    {$ENDIF}
+    procedure Print; virtual;
+    procedure PrintTo(VPrinter: TVirtualPrinter); virtual;
+
+    property Canvas: TCanvas read GetCanvas;
+    property ControlCanvas: TCanvas read GetControlCanvas;
+    property SubstitutionVars: TDynVarsEh read FSubstitutionVars;
+
+    property LogDataPrintRec: TRect read FLogDataPrintRec write FLogDataPrintRec;
+    property PenW: Integer read FPenW write FPenW;
+    property PhysDataPrintRec: TRect read FPhysDataPrintRec write FPhysDataPrintRec;
+    property Printer: TVirtualPrinter read FPrinter;
+    property PrnPhysOffSetX: Integer read FPrnPhysOffSetX write FPrnPhysOffSetX;
+    property PrnPhysOffSetY: Integer read FPrnPhysOffSetY write FPrnPhysOffSetY;
+    property ScaleX: Double read FScaleX write FScaleX;
+    property ScaleY: Double read FScaleY write FScaleY;
+    property PrintDataScale: Integer read FPrintDataScale write FPrintDataScale;
+    property LogPelsXOnControl: Integer read FLogPelsXOnControl write FLogPelsXOnControl;
+    property LogPelsYOnControl: Integer read FLogPelsYOnControl write FLogPelsYOnControl;
+    property LogPelsXOnPrinter: Integer read FLogPelsXOnPrinter write FLogPelsXOnPrinter;
+    property LogPelsYOnPrinter: Integer read FLogPelsYOnPrinter write FLogPelsYOnPrinter;
+    property PageCount: Integer read FPageCount write FPageCount;
+    property PageHeight: Integer read GetPageHeight;
+    property PageWidth: Integer read GetPageWidth;
+
+    property OnAfterPrint: TNotifyEvent read FOnAfterPrint write FOnAfterPrint;
+    property OnAfterPrintPage: TNotifyEvent read FOnAfterPrintPage write FOnAfterPrintPage;
+    property OnAfterPrintPageContent: TNotifyEvent read FOnAfterPrintPageContent write FOnAfterPrintPageContent;
+
+    property OnBeforePrint: TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
+    property OnBeforePrintPage: TNotifyEvent read FOnBeforePrintPage write FOnBeforePrintPage;
+    property OnBeforePrintPageContent: TNotifyEvent read FOnBeforePrintPageContent write FOnBeforePrintPageContent;
+    property OnPrinterSetupDialog: TNotifyEvent read FOnPrinterSetupDialog write FOnPrinterSetupDialog;
+  end;
+
+  TPrintPageDataMode = (ppdmPrintDataEh, ppdmLayoutDataEh);
+
+  TPrintServicePrintDataBeforeGridEventEh = procedure(PrintService: TBaseGridPrintServiceEh;
+    var BeforeGridHeight, FullHeight: Integer; var Processed: Boolean) of object;
+  TPrintServiceCalcLayoutDataBeforeGridEventEh = procedure(PrintService: TBaseGridPrintServiceEh;
+    var BeforeGridHeight, FullHeight: Integer; var Processed: Boolean) of object;
+
+  TPrintServicePrintDataAfterGridEventEh = procedure(PrintService: TBaseGridPrintServiceEh;
+    var AfterGridHeight, FullHeight: Integer; var Processed: Boolean) of object;
+  TPrintServiceCalcLayoutDataAfterGridEventEh = procedure(PrintService: TBaseGridPrintServiceEh;
+    var AfterGridHeight, FullHeight: Integer; var Processed: Boolean) of object;
+
+  TBaseGridPrintServiceEh = class(TBasePrintServiceComponentEh)
+  private
+    FGridLogRect: TRect;
+
+    FOnPrintDataBeforeGrid: TPrintServicePrintDataBeforeGridEventEh;
+    FOnCalcLayoutDataBeforeGrid: TPrintServiceCalcLayoutDataBeforeGridEventEh;
+    FOnPrintDataAfterGrid: TPrintServicePrintDataAfterGridEventEh;
+    FOnCalcLayoutDataAfterGrid: TPrintServiceCalcLayoutDataAfterGridEventEh;
+
+    function GetBefortAfterRichText: TDBRichEditEh;
+
+  protected
+    ColWidths: TIntegerDynArray;
+    FAfterGridFullHeight: Integer;
+    FAfterGridOnPageHeight: Integer;
+    FBeforeGridFullHeight: Integer;
+    FBeforeGridOnPageHeight: Integer;
+    FBefortAfterRichText: TDBRichEditEh;
+    FColsPageCount, FRowsPageCount: Integer;
+    FExtraPageCount: Integer;
+    FPageDrawenCells: array of TGridCoord;
+    FPageFinishCol: Integer;
+    FPageFinishRow: Integer;
+    FPageStartCol: Integer;
+    FPageStartRow: Integer;
+    FPrintPageMode: TPrintPageDataMode;
+    PageStartCols: TIntegerDynArray;
+    PageStartRows: TIntegerDynArray;
+    RowHeights: TIntegerDynArray;
+
+    function CheckDrawLine(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var Color: TColor; var Width: Integer): Boolean; virtual;
+    function AdjustBackgroundColor(Color: TColor): TColor;
+    function AdjustForegroundColor(Color: TColor): TColor;
+
+    procedure DrawAxisLine(LineRect: TRect; BorderType: TGridCellBorderTypeEh; BorderColor: TColor; BorderWidth: Integer; FarFix: Integer); virtual;
+    procedure DrawLine(FromPoint, ToPoint: TPoint; BorderWidth: Integer); virtual;
+    procedure GetLinePos(LineRect: TRect; BorderType: TGridCellBorderTypeEh; BorderWidth: Integer; var FromPoint, ToPoint: TPoint); virtual;
+    procedure PrintBorders(ACol, ARow: Integer; var ARect: TRect; Borders: TGridCellBorderTypesEh); virtual;
+    procedure PrintCell(ACol, ARow: Integer; ARect: TRect); virtual;
+    procedure PrintCellData(ACol, ARow: Integer; ARect: TRect); virtual;
+    procedure PrintLeftTopBorders(ACol, ARow: Integer; ARect: TRect; Borders: TGridCellBorderTypesEh); virtual;
+    procedure ResetPrinterCanvas;
+    procedure InitPageViewMode; override;
+
+    procedure SetPrinterSetupDialog; override;
+    procedure PrinterSetupDialogPreview(Sender: TObject); virtual;
+    procedure InitData; override;
+    procedure PrintData; override;
+    procedure PrintPageOutClientData; override;
+    procedure PreparePageInClientData; override;
+    procedure PrintPageInClientData; override;
+    procedure RecalcBeforeAfterPageData; virtual;
+
+    procedure ScaleToPages(FitToPagesTall, FitToPagesWide: Integer); virtual;
+    procedure SetDataScale;
+
+    function LogRectToPhysRect(const ARect: TRect): TRect; virtual;
+    function CheckCellAreaDrawn(ACol, ARow: Integer): Boolean; virtual;
+
+    procedure SetColRowSize; virtual;
+    procedure PrintGrid; virtual;
+    procedure PrintPageCells(FromCol, ToCol, FromRow, ToRow: Integer; const CellsRect: TRect); virtual;
+    procedure CalcPageColsRows; virtual;
+    procedure PrintDataBeforeGrid; virtual;
+    procedure PrintDataAfterGrid; virtual;
+    procedure PrintDataRichOutContent(const RichText: TRichStringEh; var BeforeGridHeight, AfterGridHeight, FullHeight: Integer); virtual;
+
+    procedure SetCellDrawn(ACol, ARow: Integer); virtual;
+
+    property GridLogRect: TRect read FGridLogRect write FGridLogRect;
+    property BefortAfterRichText: TDBRichEditEh read GetBefortAfterRichText;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure DefaultPrintDataBeforeGrid(var BeforeGridHeight, FullHeight: Integer);
+    procedure DefaultCalcLayoutDataBeforeGrid(var BeforeGridHeight, FullHeight: Integer);
+    procedure DefaultPrintDataAfterGrid(var AfterGridHeight, FullHeight: Integer);
+    procedure DefaultCalcLayoutDataAfterGrid(var AfterGridHeight, FullHeight: Integer);
+
+    property OnPrintDataBeforeGrid: TPrintServicePrintDataBeforeGridEventEh read FOnPrintDataBeforeGrid write FOnPrintDataBeforeGrid;
+    property OnCalcLayoutDataBeforeGrid: TPrintServiceCalcLayoutDataBeforeGridEventEh read FOnCalcLayoutDataBeforeGrid write FOnCalcLayoutDataBeforeGrid;
+    property OnPrintDataAfterGrid: TPrintServicePrintDataAfterGridEventEh read FOnPrintDataAfterGrid write FOnPrintDataAfterGrid;
+    property OnCalcLayoutDataAfterGrid: TPrintServiceCalcLayoutDataAfterGridEventEh read FOnCalcLayoutDataAfterGrid write FOnCalcLayoutDataAfterGrid;
+  end;
+
+  function GetLocaleMeasurementSystem(Locale: Integer): TMeasurementSystemEh;
+  function LocaleMeasureValueToInches(Val: Currency): Currency;
+  function InchesValueToLocaleMeasure(Val: Currency): Currency;
+
+  procedure DrawRichTextEh(Canvas: TCanvas; const RichText: String; ARect: TRect);
+
+const
+  ColontileMacros: array[0..5] of String = (
+    '&[Page]', '&[ShortDate]', '&[Date]', '&[LongDate]', '&[Time]', '&[Pages]');
+
+implementation

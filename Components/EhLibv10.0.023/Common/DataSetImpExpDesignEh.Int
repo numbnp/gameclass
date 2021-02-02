@@ -1,0 +1,64 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{              Design window for TDBGridEh              }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit DataSetImpExpDesignEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Dialogs,
+{$IFDEF CIL}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DesignEditors,
+  Borland.Vcl.Design.ColnEdit,
+  Variants, Types,
+  EhLibVCLNET,
+{$ELSE}
+
+  {$IFDEF FPC}
+  EhLibLCL,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  Windows, Messages,
+  ColnEdit, DesignMenus,
+  Variants, DesignEditors, DesignIntf,
+  EhLibVCL, PSAPI, ToolsAPI,
+  ImgList, Menus, ActnList, ExtCtrls, ComCtrls,
+  ToolWin,
+  {$ENDIF}
+
+{$ENDIF}
+  Graphics, Controls, Forms, ToolCtrlsEh, Db,
+  Classes, TypInfo,
+  DefaultItemsCollectionEditorsEh, DataSetImpExpEh, EhLibReg, EhLibDesignAbout;
+
+type
+
+{ TDataSetTextImpExpEditorEh  }
+
+  TDataSetTextImpExpEditorEh = class(TComponentEditor)
+    function  GetVerbCount: Integer; override;
+    function  GetVerb(Index: Integer): string; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+
+type
+
+{ TDataSetTextImpExpListFieldProperty }
+
+  TDataSetTextImpExpListFieldProperty = class(TListFieldProperty)
+  public
+    function GetDataSet: TDataSet; override;
+  end;
+
+procedure Register;
+
+implementation

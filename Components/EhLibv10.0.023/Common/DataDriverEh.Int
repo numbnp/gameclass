@@ -1,0 +1,922 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{           TDataDriverEh, TSQLDataDriverEh             }
+{                                                       }
+{    Copyright (c) 2003-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit DataDriverEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Classes, Controls, DB, Forms, Contnrs,
+  Variants,
+{$IFDEF FPC}
+  EhLibLCL, LCLType,
+  {$IFDEF FPC_CROSSP}
+  {$ELSE}
+    Windows,
+  {$ENDIF}
+{$ELSE}
+  EhLibVCL, Messages, Windows,
+{$ENDIF}
+  ToolCtrlsEh, DynVarsEh, MemTableDataEh;
+
+type
+
+  TDataDriverEh = class;
+  TConnectionProviderEh = class;
+  TMacroVarsEh = class;
+  TCustomSQLDataDriverEh = class;
+  TCustomSQLCommandEh = class;
+
+  TUpdateErrorActionEh = (ueaBreakAbortEh, ueaBreakRaiseEh, ueaCountinueEh, ueaRetryEh, ueaCountinueSkip);
+
+  TFieldTypesEh = set of TFieldType;
+
+  TDataDriverProduceDataReaderEhEvent = procedure (DataDriver: TDataDriverEh; var DataReader: TDataSet; var FreeOnEof: Boolean) of object;
+  TDataDriverBuildDataStructEhEvent = procedure (DataDriver: TDataDriverEh; DataStruct: TMTDataStructEh) of object;
+  TDataDriverReadRecordEhEvent = procedure (DataDriver: TDataDriverEh; MemTableData: TMemTableDataEh;
+    MemRec: TMemoryRecordEh; var ProviderEOF: Boolean) of object;
+  TDataDriverUpdateErrorEhEvent = procedure (DataDriver: TDataDriverEh; MemTableData: TMemTableDataEh;
+    MemRec: TMemoryRecordEh; var Action: TUpdateErrorActionEh) of object;
+  TDataDriverRecordEhEvent = procedure (DataDriver: TDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh) of object;
+  TDataDriverAssignFieldValueEhEvent = procedure (DataDriver: TDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh;
+    DataFieldIndex: Integer; DataValueVersion: TDataValueVersionEh; ReaderDataSet: TDataSet) of object;
+
+  IDataDriverConsumerEh = interface
+    ['{E390BBF2-666F-43D7-8CC8-1FA2BA8263D1}']
+    procedure SetDataDriverConsumer(AObject: TObject);
+    function GetDataDriverConsumer: TObject;
+    property DataDriverConsumer: TObject read GetDataDriverConsumer write SetDataDriverConsumer;
+  end;
+
+{ IDatabaseSchemaInfoEh }
+
+  IDatabaseSchemaInfoEh = interface
+  ['{087069AE-610F-4ADF-B2DA-390B09BD1A1F}']
+    procedure GetFieldNames(const TableName: string; List: TStrings);
+  end;
+
+{ IConnectionProviderEh }
+
+  IConnectionProviderEh = interface
+  ['{C5744985-A67B-4786-9165-DB99A7CA4831}']
+    function ExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer;
+    procedure GetDataReaderForSQL(const SQLText: String; AParams: TParams; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean);
+    procedure FillMemTableForSQL(const SQLText: String; AParams: TParams; MemTableData: TMemTableDataEh; var Processed: Boolean);
+    function ExecuteSQL(const SQLText: String; AParams: TParams; var Processed: Boolean): Integer;
+    procedure UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean);
+    procedure GetBackUpdatedValues(SQLDataDriver: TCustomSQLDataDriverEh; MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet; var Processed: Boolean);
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet);
+    function ConnectionIsPostponed: Boolean;
+    function GetDesignDataBase: TComponent;
+    function GetDatabaseSchemaInfo: IDatabaseSchemaInfoEh;
+  end;
+
+{ TDataDriverEh }
+
+  TDataDriverEh = class(TComponent, ISideOwnedComponentEh, IDataDriverConsumerEh, IUnknown)
+  private
+    FDataDriverConsumer: TObject;
+    FKeyFields: String;
+    FProviderDataSet: TDataSet;
+    FProviderEOF: Boolean;
+    FReaderDataSet: TDataSet;
+    FReaderDataSetFreeOnEof: Boolean;
+    FResolveToDataSet: Boolean;
+    FSideParent: TComponent;
+    FSideParentName: String;
+
+    FOnAssignFieldValue: TDataDriverAssignFieldValueEhEvent;
+    FOnBuildDataStruct: TDataDriverBuildDataStructEhEvent;
+    FOnProduceDataReader: TDataDriverProduceDataReaderEhEvent;
+    FOnReadRecord: TDataDriverReadRecordEhEvent;
+    FOnRefreshRecord: TDataDriverRecordEhEvent;
+    FOnUpdateError: TDataDriverUpdateErrorEhEvent;
+    FOnUpdateRecord: TDataDriverRecordEhEvent;
+
+    function IsSideParentStored: Boolean;
+
+    procedure ReadSideParent(Reader: TReader);
+    procedure SetKeyFields(const Value: String);
+    procedure SetProviderDataSet(const Value: TDataSet);
+    procedure SetProviderEOF(const Value: Boolean);
+    procedure WriteSideParent(Writer: TWriter);
+
+  protected
+    FDataToRecFields: array of Integer;
+    FSideParentable: Boolean;
+
+    function GetDataDriverConsumer: TObject;
+    function IsSideParentedBy(AComponent: TComponent): Boolean; virtual;
+
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure ResetDataToRecFields(DataStruct: TMTDataStructEh; DataSet: TDataSet);
+    procedure SetAutoIncFields(Fields: TFields; DataStruct: TMTDataStructEh); virtual;
+    procedure SetDataDriverConsumer(ADataDriverConsumer: TObject);
+    procedure SetSideParent(AComponent: TComponent); virtual;
+
+    property KeyFields: String read FKeyFields write SetKeyFields;
+    property ProviderDataSet: TDataSet read FProviderDataSet write SetProviderDataSet;
+    property ReaderDataSet: TDataSet read FReaderDataSet;
+    property SideParent: TComponent read FSideParent stored False;
+
+  public
+    function ConnectionIsPostponed: Boolean; virtual;
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ApplyUpdates(MemTableData: TMemTableDataEh): Integer; virtual;
+    function DefaultUpdateRecord(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; virtual;
+    function GetDataReader: TDataSet; virtual;
+    function ReadData(MemTableData: TMemTableDataEh; Count: Integer): Integer; virtual;
+    function RefreshReaderParamsFromCursor(DataSet: TDataSet): Boolean; virtual;
+
+    procedure AssignFieldValue(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; DataFieldIndex: Integer; DataValueVersion: TDataValueVersionEh; ReaderDataSet: TDataSet); virtual;
+    procedure BuildDataStruct(DataStruct: TMTDataStructEh); virtual;
+    procedure ConsumerClosed(ConsumerDataSet: TDataSet); virtual;
+    procedure DefaultAssignFieldValue(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; DataFieldIndex: Integer; DataValueVersion: TDataValueVersionEh; ReaderDataSet: TDataSet); virtual;
+    procedure DefaultBuildDataStruct(DataStruct: TMTDataStructEh); virtual;
+    procedure DefaultProduceDataReader(var DataSet: TDataSet; var FreeOnEof: Boolean); virtual;
+    procedure DefaultReadRecord(MemTableData: TMemTableDataEh; Rec: TMemoryRecordEh; var ProviderEOF: Boolean); virtual;
+    procedure DefaultRefreshRecord(MemRecord: TMemoryRecordEh); virtual;
+    procedure DefaultUpdateError(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Action: TUpdateErrorActionEh); virtual;
+    procedure RefreshReader; virtual;
+    procedure RefreshRecord(MemRecord: TMemoryRecordEh); virtual;
+    procedure SetReaderParamsFromCursor(DataSet: TDataSet); virtual;
+    procedure UpdateRecord(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh); virtual;
+
+    property ProviderEOF: Boolean read FProviderEOF write SetProviderEOF;
+    property ResolveToDataSet: Boolean read FResolveToDataSet write FResolveToDataSet default True;
+    property OnBuildDataStruct: TDataDriverBuildDataStructEhEvent read FOnBuildDataStruct write FOnBuildDataStruct;
+    property OnProduceDataReader: TDataDriverProduceDataReaderEhEvent read FOnProduceDataReader write FOnProduceDataReader;
+    property OnAssignFieldValue: TDataDriverAssignFieldValueEhEvent read FOnAssignFieldValue write FOnAssignFieldValue;
+    property OnReadRecord: TDataDriverReadRecordEhEvent read FOnReadRecord write FOnReadRecord;
+    property OnRefreshRecord: TDataDriverRecordEhEvent read  FOnRefreshRecord write FOnRefreshRecord;
+    property OnUpdateRecord: TDataDriverRecordEhEvent read  FOnUpdateRecord write FOnUpdateRecord;
+    property OnUpdateError: TDataDriverUpdateErrorEhEvent read  FOnUpdateError write FOnUpdateError;
+  end;
+
+  TDataSetDriverEh = class(TDataDriverEh)
+  published
+    property KeyFields;
+    property ProviderDataSet;
+    property OnBuildDataStruct;
+    property OnProduceDataReader;
+    property OnAssignFieldValue;
+    property OnReadRecord;
+    property OnRefreshRecord;
+    property OnUpdateRecord;
+    property OnUpdateError;
+    property ResolveToDataSet;
+  end;
+
+  TServerSpecOperationsEh = class;
+
+{ TDynaSQLParamsEh }
+
+  TDynaSQLOptionEh = ( dsoDynamicSQLInsertEh, dsoDynamicSQLUpdateEh, dsoDynamicSQLDeleteEh);
+  TDynaSQLOptionsEh = set of TDynaSQLOptionEh;
+
+  TTableFieldListSourceEh = (tflsListPropertyEh, tflsDataBaseSchemaEh);
+
+  TDynaSQLParamsEh = class(TPersistent)
+  private
+    FDataDriver: TCustomSQLDataDriverEh;
+    FUpdateTable: String;
+    FUpdateFields: String;
+    FKeyFields: String;
+    FSkipUnchangedFields: Boolean;
+    FOptions: TDynaSQLOptionsEh;
+    FUpdateFieldListSource: TTableFieldListSourceEh;
+
+    procedure SetKeyFields(const Value: String);
+    procedure SetUpdateFields(const Value: String);
+    procedure SetUpdateTable(const Value: String);
+
+  public
+    constructor Create(ADataDriver: TCustomSQLDataDriverEh);
+    destructor Destroy; override;
+
+    procedure GetUpdateFields(List: TStrings; MemRec: TMemoryRecordEh);
+    procedure Assign(Source: TPersistent); override;
+
+    property DataDriver: TCustomSQLDataDriverEh read FDataDriver;
+    property UpdateFieldListSource: TTableFieldListSourceEh read FUpdateFieldListSource write FUpdateFieldListSource default tflsListPropertyEh;
+
+  published
+    property KeyFields: String read FKeyFields write SetKeyFields;
+    property UpdateFields: String read FUpdateFields write SetUpdateFields;
+    property UpdateTable: String read FUpdateTable write SetUpdateTable;
+    property SkipUnchangedFields: Boolean read FSkipUnchangedFields write FSkipUnchangedFields default False;
+    property Options: TDynaSQLOptionsEh read FOptions write FOptions;
+  end;
+
+{ TSpecMacrosEh }
+
+  TSpecMacrosEh = class(TPersistent)
+  private
+    FFilterMacroName: String;
+    FSortOrderMacroName: String;
+    FSortOrderMacroValue: String;
+    FFilterMacroValue: String;
+    FMacroVars: TMacroVarsEh;
+
+    function IsFilterMacroNameStored: Boolean;
+    function IsSortOrderMacroNameStored: Boolean;
+
+    procedure SetFilterMacroValue(const Value: String);
+    procedure SetSortOrderMacroValue(const Value: String);
+
+  public
+    constructor Create(AMacroVars: TMacroVarsEh);
+    procedure Assign(Source: TPersistent); override;
+
+	  property FilterMacroValue: String read FFilterMacroValue write SetFilterMacroValue;
+	  property SortOrderMacroValue: String read FSortOrderMacroValue write SetSortOrderMacroValue;
+
+  published
+	  property FilterMacroName: String read FFilterMacroName write FFilterMacroName stored IsFilterMacroNameStored;
+	  property SortOrderMacroName: String read FSortOrderMacroName write FSortOrderMacroName stored IsSortOrderMacroNameStored;
+  end;
+
+{ TMacroVarsEh }
+  TSpecMacrosUsageEh = (smuUseFilterMacroEh, smuFilterAsWhereClauseEh, smuFilterWithANDPrecedingEh,
+    smuUseSortOrderMacroEh, smuSortOrderAsOrderByClauseEh, smuSortOrderWithCommaPrecedingEh);
+  TSpecMacrosUsagesEh = set of TSpecMacrosUsageEh;
+
+  TMacroVarsEh = class(TPersistent)
+  private
+    FDataDriver: TCustomSQLDataDriverEh;
+    FMacros: TStringVarsEh;
+    FSpecMacrosUsages: TSpecMacrosUsagesEh;
+    FSpecMacros: TSpecMacrosEh;
+
+    procedure SetMacros(const Value: TStringVarsEh);
+    procedure SetSpecMacrosUsages(const Value: TSpecMacrosUsagesEh);
+    procedure SetSpecMacros(const Value: TSpecMacrosEh);
+
+  protected
+    procedure MacrosChanged(Sender: TObject); virtual;
+
+  public
+    constructor Create(ADataDriver: TCustomSQLDataDriverEh);
+    destructor Destroy; override;
+
+    function SubstituteMacro(const Text, MacroName, MacroValue: String): String;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure ScanStrForMacros(const SrcStr: String; var sl: TStringList);
+    procedure ScanAllForMacros(var sl: TStringList);
+    property DataDriver: TCustomSQLDataDriverEh read FDataDriver;
+
+  published
+    property SpecMacros: TSpecMacrosEh read FSpecMacros write SetSpecMacros;
+    property SpecMacrosUsages: TSpecMacrosUsagesEh read FSpecMacrosUsages write SetSpecMacrosUsages default [smuFilterAsWhereClauseEh, smuSortOrderAsOrderByClauseEh];
+    property Macros: TStringVarsEh read FMacros write SetMacros;
+  end;
+
+{ TCustomSQLCommandEh }
+
+  TSQLCommandTypeEh = (cthSelectQuery, cthUpdateQuery, cthTable, cthStoredProc);
+  TSQLExecuteEhEvent = function (var Cursor: TDataSet; var FreeOnEof: Boolean) : Integer of object;
+  TAssignParamEhEvent = procedure (Command: TCustomSQLCommandEh;
+    MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Param: TParam) of object;
+
+  TCustomSQLCommandEh = class(TPersistent)
+  private
+    FCommandText: TStrings;
+    FCommandType: TSQLCommandTypeEh;
+    FDataDriver: TCustomSQLDataDriverEh;
+    FFinalCommandText: TStrings;
+
+    function IsCommandTypeStored: Boolean;
+    function GetFinalCommandText: TStrings;
+
+  protected
+    FFinalCommandTextObsolete: Boolean;
+
+    function DefaultCommandType: TSQLCommandTypeEh; virtual;
+    function GetCommandText: TStrings; virtual;
+    function GetCommandType: TSQLCommandTypeEh; virtual;
+    function GetOwner: TPersistent; override;
+
+    procedure CommandTextChanged(Sender: TObject); virtual;
+    procedure CommandTypeChanged; virtual;
+    procedure SetCommandText(const Value: TStrings); virtual;
+    procedure SetCommandType(const Value: TSQLCommandTypeEh); virtual;
+
+  public
+    constructor Create(ADataDriver: TCustomSQLDataDriverEh);
+    destructor Destroy; override;
+
+    function Execute(var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; virtual;
+    function GetNamePath: String; override;
+    function GetParams: TParams; virtual;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure FinalCommandTextObsolete;
+    procedure FormFinalCommandText; virtual;
+    procedure RebuildParams; virtual;
+    procedure RefreshParams(MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh); virtual;
+    procedure SetParams(AParams: TParams); virtual;
+
+    property CommandText: TStrings read GetCommandText write SetCommandText;
+    property CommandType: TSQLCommandTypeEh read GetCommandType write SetCommandType stored IsCommandTypeStored;
+    property DataDriver: TCustomSQLDataDriverEh read FDataDriver;
+    property FinalCommandText: TStrings read GetFinalCommandText;
+  end;
+
+{ TCustomSQLDataDriverEh }
+
+  TDataDriverExecuteCommandEhEvent = function (DataDriver: TCustomSQLDataDriverEh;
+    Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer of object;
+  TDataDriverGetBackUpdatedValuesEhEvent = procedure (DataDriver: TCustomSQLDataDriverEh;
+    MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet) of object;
+
+  TCustomSQLDataDriverEh = class(TDataDriverEh)
+  private
+    FDeleteCommand: TCustomSQLCommandEh;
+    FDesignDataBase: TComponent;
+    FDynaSQLParams: TDynaSQLParamsEh;
+    FGetrecCommand: TCustomSQLCommandEh;
+    FInsertCommand: TCustomSQLCommandEh;
+    FMacroVars: TMacroVarsEh;
+    FOnExecuteCommand: TDataDriverExecuteCommandEhEvent;
+    FOnGetBackUpdatedValues: TDataDriverGetBackUpdatedValuesEhEvent;
+    FSelectCommand: TCustomSQLCommandEh;
+    FServerSpecOperations: TServerSpecOperationsEh;
+    FServiceCommand: TCustomSQLCommandEh;
+    FSpecParams: TStrings;
+    FUpdateCommand: TCustomSQLCommandEh;
+
+    function GetDeleteSQL: TStrings;
+    function GetFinalDeleteSQL: TStrings;
+    function GetFinalGetrecSQL: TStrings;
+    function GetFinalInsertSQL: TStrings;
+    function GetFinalSelectSQL: TStrings;
+    function GetFinalUpdateSQL: TStrings;
+    function GetGetrecSQL: TStrings;
+    function GetInsertSQL: TStrings;
+    function GetSelectSQL: TStrings;
+    function GetUpdateSQL: TStrings;
+
+    procedure SetDeleteCommand(const Value: TCustomSQLCommandEh);
+    procedure SetDeleteSQL(const Value: TStrings);
+    procedure SetDynaSQLParams(const Value: TDynaSQLParamsEh);
+    procedure SetGetrecCommand(const Value: TCustomSQLCommandEh);
+    procedure SetGetrecSQL(const Value: TStrings);
+    procedure SetInsertCommand(const Value: TCustomSQLCommandEh);
+    procedure SetInsertSQL(const Value: TStrings);
+    procedure SetMacroVars(const Value: TMacroVarsEh);
+    procedure SetSelectCommand(const Value: TCustomSQLCommandEh);
+    procedure SetSelectSQL(const Value: TStrings);
+    procedure SetServerSpecOperations(const Value: TServerSpecOperationsEh);
+    procedure SetServiceCommand(const Value: TCustomSQLCommandEh);
+    procedure SetSpecParams(const Value: TStrings);
+    procedure SetUpdateCommand(const Value: TCustomSQLCommandEh);
+    procedure SetUpdateSQL(const Value: TStrings);
+
+  protected
+    procedure Loaded; override;
+    procedure MacrosChanged; virtual;
+    procedure SetAutoIncFields(Fields: TFields; DataStruct: TMTDataStructEh); override;
+    procedure SetDesignDataBase(const Value: TComponent); virtual;
+
+  public
+    {DesignTime stuff}
+    function CreateDesignCopy: TCustomSQLDataDriverEh; virtual;
+    function CreateDesignDataBase: TComponent; virtual;
+    function ForceGetNewDesignDataBase: TComponent; virtual;
+    function GetDesignDataBase: TComponent; virtual;
+
+    procedure AssignFromDesignDriver(DesignDataDriver: TCustomSQLDataDriverEh); virtual;
+    property DesignDataBase: TComponent read GetDesignDataBase write SetDesignDataBase;
+
+  protected
+    function CheckAddFieldInDynaSQL(UpdateStatus: TUpdateStatus; const FieldName: String): Boolean; virtual;
+    function CreateCommand: TCustomSQLCommandEh; virtual;
+    function CreateDeleteCommand: TCustomSQLCommandEh; virtual;
+    function CreateGetrecCommand: TCustomSQLCommandEh; virtual;
+    function CreateInsertCommand: TCustomSQLCommandEh; virtual;
+    function CreateSelectCommand: TCustomSQLCommandEh; virtual;
+    function CreateUpdateCommand: TCustomSQLCommandEh; virtual;
+    function GetDefaultCommandTypeFor(Command: TCustomSQLCommandEh): TSQLCommandTypeEh; virtual;
+
+    procedure CommandTextChanged(Sender: TCustomSQLCommandEh); virtual;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure UpdateServerService; virtual;
+
+    property ServiceCommand: TCustomSQLCommandEh read FServiceCommand write SetServiceCommand;
+  public
+    function InternalGetServerSpecOperations: TServerSpecOperationsEh; virtual;
+    function ConnectionIsPostponed: Boolean; override;
+
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet); override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DefaultExecuteCommand(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; virtual;
+    function DefaultUpdateRecord(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; override;
+    function DoUpdateRecord(MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; virtual;
+    function ExecuteCommand(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; virtual;
+    function FilterTextSupported: Boolean; virtual;
+    function GetConnectionProvider: IConnectionProviderEh; virtual;
+    function HaveDataConnection(): Boolean; virtual;
+    function OrderByTextSupported: Boolean; virtual;
+    function RefreshReaderParamsFromCursor(DataSet: TDataSet): Boolean; override;
+
+    procedure ApplyFilterText(const FilterText: String); virtual;
+    procedure ApplyOrderByText(const OrderByText: String); virtual;
+    procedure DefaultBuildDataStruct(DataStruct: TMTDataStructEh); override;
+    procedure DefaultGetUpdatedServerValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); virtual;
+    procedure DefaultProduceDataReader(var DataSet: TDataSet; var FreeOnEof: Boolean); override;
+    procedure DefaultRefreshRecord(MemRecord: TMemoryRecordEh); override;
+    procedure GenerateDynamicSQLCommand(MemRecord: TMemoryRecordEh; Command: TCustomSQLCommandEh); virtual;
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); virtual;
+    procedure SetReaderParamsFromCursor(DataSet: TDataSet); override;
+
+    property DynaSQLParams: TDynaSQLParamsEh read FDynaSQLParams write SetDynaSQLParams;
+    property MacroVars: TMacroVarsEh read FMacroVars write SetMacroVars;
+    property ResolveToDataSet default False;
+
+    property DeleteCommand: TCustomSQLCommandEh read FDeleteCommand write SetDeleteCommand;
+    property DeleteSQL: TStrings read GetDeleteSQL write SetDeleteSQL stored False;
+    property FinalDeleteSQL: TStrings read GetFinalDeleteSQL stored False;
+
+    property GetrecCommand: TCustomSQLCommandEh read FGetrecCommand write SetGetrecCommand;
+    property GetrecSQL: TStrings read GetGetrecSQL write SetGetrecSQL stored False;
+    property FinalGetrecSQL: TStrings read GetFinalGetrecSQL stored False;
+
+    property InsertCommand: TCustomSQLCommandEh read FInsertCommand write SetInsertCommand;
+    property InsertSQL: TStrings read GetInsertSQL write SetInsertSQL stored False;
+    property FinalInsertSQL: TStrings read GetFinalInsertSQL stored False;
+
+    property SelectCommand: TCustomSQLCommandEh read FSelectCommand write SetSelectCommand;
+    property SelectSQL: TStrings read GetSelectSQL write SetSelectSQL stored False;
+    property FinalSelectSQL: TStrings read GetFinalSelectSQL stored False;
+
+    property ServerSpecOperations: TServerSpecOperationsEh read FServerSpecOperations write SetServerSpecOperations;
+    property SpecParams: TStrings read FSpecParams write SetSpecParams;
+
+    property UpdateCommand: TCustomSQLCommandEh read FUpdateCommand write SetUpdateCommand;
+    property UpdateSQL: TStrings read GetUpdateSQL write SetUpdateSQL stored False;
+    property FinalUpdateSQL: TStrings read GetFinalUpdateSQL stored False;
+
+    property OnExecuteCommand: TDataDriverExecuteCommandEhEvent read FOnExecuteCommand write FOnExecuteCommand;
+    property OnGetBackUpdatedValues: TDataDriverGetBackUpdatedValuesEhEvent read FOnGetBackUpdatedValues write FOnGetBackUpdatedValues;
+  end;
+
+{ TServerSpecOperationsEh }
+
+  TServerSpecOperationsEh = class(TObject)
+  private
+  protected
+    procedure GenWhereClause(const KeyFields: String; SQL: TStrings); virtual;
+    procedure BuildChangedFieldList(MemRec: TMemoryRecordEh; UpdateFieldList, ChangedFieldList: TStringList); virtual;
+
+  public
+    constructor Create; virtual;
+
+    class function GetServerTypeName: String; virtual;
+    function UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; virtual;
+
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); virtual;
+    procedure GenerateDynaSQLCommand(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh); virtual;
+    procedure GenerateDeleteCommand(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh); virtual;
+    procedure GenerateUpdateCommand(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh); virtual;
+    procedure GenerateInsertCommand(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh); virtual;
+  end;
+
+  TServerSpecOperationsEhClass = class of TServerSpecOperationsEh;
+
+{ TSQLDataDriverResolver }
+
+  TResolverExecuteCommandEhEvent = function (SQLDataDriver: TCustomSQLDataDriverEh;
+    Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean;
+    var Processed: Boolean): Integer of object;
+
+  TResolverGetBackUpdatedValuesEhEvent = procedure (SQLDataDriver: TCustomSQLDataDriverEh;
+   MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet;
+   var Processed: Boolean) of object;
+  TResolverGetServerSpecOperationsEh = procedure (var Processed: Boolean;
+    var ServerSpecOperations: TServerSpecOperationsEh) of object;
+  TResolverUpdateRecordEhEvent = procedure (SQLDataDriver: TCustomSQLDataDriverEh;
+      MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean) of object;
+
+  TSQLDataDriverResolver = class(TPersistent)
+  private
+    FServerSpecOperations: TServerSpecOperationsEh;
+    FOnExecuteCommand: TResolverExecuteCommandEhEvent;
+    FOnGetBackUpdatedValues: TResolverGetBackUpdatedValuesEhEvent;
+    FOnGetServerSpecOperations: TResolverGetServerSpecOperationsEh;
+    FOnUpdateRecord: TResolverUpdateRecordEhEvent;
+  public
+    function ExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; virtual;
+    function GetServerSpecOperations(var Processed: Boolean): TServerSpecOperationsEh; virtual;
+
+    procedure DefaultGetUpdatedServerValues(SQLDataDriver: TCustomSQLDataDriverEh; MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet; var Processed: Boolean); virtual;
+    procedure DefaultUpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean); virtual;
+    procedure GetBackUpdatedValues(SQLDataDriver: TCustomSQLDataDriverEh; MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet; var Processed: Boolean); virtual;
+    procedure UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean); virtual;
+
+    property ServerSpecOperations: TServerSpecOperationsEh read FServerSpecOperations write FServerSpecOperations;
+    property OnExecuteCommand: TResolverExecuteCommandEhEvent read FOnExecuteCommand write FOnExecuteCommand;
+    property OnGetBackUpdatedValues: TResolverGetBackUpdatedValuesEhEvent read FOnGetBackUpdatedValues write FOnGetBackUpdatedValues;
+    property OnGetServerSpecOperations: TResolverGetServerSpecOperationsEh read FOnGetServerSpecOperations write FOnGetServerSpecOperations;
+    property OnUpdateRecord: TResolverUpdateRecordEhEvent read FOnUpdateRecord write FOnUpdateRecord;
+  end;
+
+  TBaseSQLCommandEh = class;
+  TBaseSQLDataDriverEh = class;
+
+  TSQLDataDriverExecuteCommandEhEvent = function (DataDriver: TBaseSQLDataDriverEh;
+    Command: TBaseSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer of object;
+  TSQLDataDriverAssignParamEhEvent = procedure (DataDriver: TBaseSQLDataDriverEh;
+    Command: TBaseSQLCommandEh; MemRecord: TMemoryRecordEh;
+    DataValueVersion: TDataValueVersionEh; Param: TParam) of object;
+  TSQLDataDriverGetBackUpdatedValuesEhEvent = procedure (DataDriver: TBaseSQLDataDriverEh;
+    MemRec: TMemoryRecordEh; Command: TBaseSQLCommandEh; ResDataSet: TDataSet) of object;
+
+{ TBaseSQLDataDriverEh }
+
+  TBaseSQLDataDriverEh = class(TCustomSQLDataDriverEh)
+  private
+    FOnAssignCommandParam: TSQLDataDriverAssignParamEhEvent;
+    FOnGetBackUpdatedValues: TSQLDataDriverGetBackUpdatedValuesEhEvent;
+
+    function GetDeleteCommand: TBaseSQLCommandEh;
+    function GetGetrecCommand: TBaseSQLCommandEh;
+    function GetInsertCommand: TBaseSQLCommandEh;
+    function GetOnExecuteCommand: TSQLDataDriverExecuteCommandEhEvent;
+    function GetSelectCommand: TBaseSQLCommandEh;
+    function GetUpdateCommand: TBaseSQLCommandEh;
+
+    procedure SetDeleteCommand(const Value: TBaseSQLCommandEh);
+    procedure SetGetrecCommand(const Value: TBaseSQLCommandEh);
+    procedure SetInsertCommand(const Value: TBaseSQLCommandEh);
+    procedure SetOnExecuteCommand(const Value: TSQLDataDriverExecuteCommandEhEvent);
+    procedure SetSelectCommand(const Value: TBaseSQLCommandEh);
+    procedure SetUpdateCommand(const Value: TBaseSQLCommandEh);
+  protected
+    function CreateCommand: TCustomSQLCommandEh; override;
+    procedure AssignCommandParam(Command: TBaseSQLCommandEh; MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Param: TParam); virtual;
+
+  public
+    function CreateDesignCopy: TCustomSQLDataDriverEh; override;
+    function ExecuteCommand(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+
+    procedure DefaultGetUpdatedServerValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    procedure DefaultAssignCommandParam(Command: TBaseSQLCommandEh; MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Param: TParam); virtual;
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+
+    property DynaSQLParams;
+    property DeleteCommand: TBaseSQLCommandEh read GetDeleteCommand write SetDeleteCommand;
+    property GetrecCommand: TBaseSQLCommandEh read GetGetrecCommand write SetGetrecCommand;
+    property InsertCommand: TBaseSQLCommandEh read GetInsertCommand write SetInsertCommand;
+    property SelectCommand: TBaseSQLCommandEh read GetSelectCommand write SetSelectCommand;
+    property UpdateCommand: TBaseSQLCommandEh read GetUpdateCommand write SetUpdateCommand;
+    property SpecParams;
+    property OnAssignCommandParam: TSQLDataDriverAssignParamEhEvent read FOnAssignCommandParam write FOnAssignCommandParam;
+    property OnExecuteCommand: TSQLDataDriverExecuteCommandEhEvent read GetOnExecuteCommand write SetOnExecuteCommand;
+    property OnGetBackUpdatedValues: TSQLDataDriverGetBackUpdatedValuesEhEvent read FOnGetBackUpdatedValues write FOnGetBackUpdatedValues;
+  end;
+
+{ TBaseSQLCommandEh }
+
+  TBaseSQLCommandEh = class(TCustomSQLCommandEh)
+  private
+    FParamCheck: Boolean;
+    FParams: TParams;
+    FOnAssignParam: TAssignParamEhEvent;
+    function GetParamCheck: Boolean;
+    function GetDataDriver: TBaseSQLDataDriverEh;
+
+  protected
+    procedure CommandTextChanged(Sender: TObject); override;
+    procedure SetParamCheck(const Value: Boolean); virtual;
+
+  public
+    constructor Create(ADataDriver: TBaseSQLDataDriverEh);
+    destructor Destroy; override;
+
+    function GetParams: TParams; override;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure DefaultRefreshParam(MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Param: TParam); virtual;
+    procedure RebuildParams; override;
+    procedure RefreshParams(MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh); override;
+    procedure SetParams(AParams: TParams); override;
+
+    property DataDriver: TBaseSQLDataDriverEh read GetDataDriver;
+    property ParamCheck: Boolean read GetParamCheck write SetParamCheck default True;
+    property Params: TParams read GetParams write SetParams;
+
+    property OnAssignParam: TAssignParamEhEvent read FOnAssignParam write FOnAssignParam;
+  end;
+
+{ TSQLCommandEh }
+
+  TSQLCommandEh = class(TBaseSQLCommandEh)
+  published
+    property Params;
+    property ParamCheck;
+    property CommandText;
+    property CommandType;
+  end;
+
+{ TSQLDataDriverEh }
+
+  TSQLDataDriverEh = class(TBaseSQLDataDriverEh)
+  private
+    FConnectionProvider: TConnectionProviderEh;
+    function GetDeleteCommand: TSQLCommandEh;
+    function GetGetrecCommand: TSQLCommandEh;
+    function GetInsertCommand: TSQLCommandEh;
+    function GetSelectCommand: TSQLCommandEh;
+    function GetUpdateCommand: TSQLCommandEh;
+
+    procedure SetConnectionProvider(const Value: TConnectionProviderEh);
+    procedure SetDeleteCommand(AValue: TSQLCommandEh);
+    procedure SetGetrecCommand(AValue: TSQLCommandEh);
+    procedure SetInsertCommand(AValue: TSQLCommandEh);
+    procedure SetSelectCommand(AValue: TSQLCommandEh);
+    procedure SetUpdateCommand(AValue: TSQLCommandEh);
+
+  protected
+    function CreateSelectCommand: TCustomSQLCommandEh; override;
+    function CreateUpdateCommand: TCustomSQLCommandEh; override;
+    function CreateInsertCommand: TCustomSQLCommandEh; override;
+    function CreateDeleteCommand: TCustomSQLCommandEh; override;
+    function CreateGetrecCommand: TCustomSQLCommandEh; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+  public
+    function GetConnectionProvider: IConnectionProviderEh; override;
+
+  published
+    property DeleteCommand: TSQLCommandEh read GetDeleteCommand write SetDeleteCommand;
+    property DeleteSQL;
+    property DynaSQLParams;
+    property GetrecCommand: TSQLCommandEh read GetGetrecCommand write SetGetrecCommand;
+    property GetrecSQL;
+    property InsertCommand: TSQLCommandEh read GetInsertCommand write SetInsertCommand;
+    property InsertSQL;
+    property SelectCommand: TSQLCommandEh read GetSelectCommand write SetSelectCommand;
+    property SelectSQL;
+    property UpdateCommand: TSQLCommandEh read GetUpdateCommand write SetUpdateCommand;
+    property UpdateSQL;
+
+    property ConnectionProvider: TConnectionProviderEh read FConnectionProvider write SetConnectionProvider;
+    property KeyFields;
+    property MacroVars;
+    property ProviderDataSet;
+    property SpecParams;
+
+    property OnAssignCommandParam;
+    property OnAssignFieldValue;
+    property OnBuildDataStruct;
+    property OnExecuteCommand;
+    property OnGetBackUpdatedValues;
+    property OnProduceDataReader;
+    property OnReadRecord;
+    property OnRefreshRecord;
+    property OnUpdateError;
+    property OnUpdateRecord;
+  end;
+
+  TSQLDataDriverEhClass = class of TCustomSQLDataDriverEh;
+
+{ TCustomInlineConnectionEh }
+
+  TCustomInlineConnectionEh = class(TPersistent)
+  private
+    FUseAtDesignTime: Boolean;
+    {$IFDEF FPC}
+    {$ELSE}
+    FWinControl: TWinControl;
+    FWndMethod: TWndMethod;
+    FReadingTimeConnected: Boolean;
+    {$ENDIF}
+    FConnectionProvider: TConnectionProviderEh;
+    FConnectionFileName: String;
+    FKeepConnectionInfoInFile: Boolean;
+    procedure SetConnectionFileName(const Value: String);
+    procedure SetKeepConnectionInfoInFile(const Value: Boolean);
+
+  protected
+    function GetConnected: Boolean; virtual;
+    procedure SetConnected(const Value: Boolean); virtual;
+    procedure SetDesignConnected(const Value: Boolean); virtual;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure WinProg(var Message: TMessage);
+    {$ENDIF}
+    procedure Loaded; virtual;
+
+    property ConnectionFileName: String read FConnectionFileName write SetConnectionFileName;
+    property KeepConnectionInfoInFile: Boolean read FKeepConnectionInfoInFile write SetKeepConnectionInfoInFile;
+    property UseAtDesignTime: Boolean read FUseAtDesignTime write FUseAtDesignTime default False;
+
+  public
+    constructor Create(AConnectionProvider: TConnectionProviderEh);
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure Close;
+    procedure Open;
+
+    property ConnectionProvider: TConnectionProviderEh read FConnectionProvider;
+    property Connected: Boolean read GetConnected write SetConnected default False;
+  end;
+
+{ TConnectionProviderEh }
+
+  TConnectionProviderEh = class(TComponent, IConnectionProviderEh)
+  private
+    FOnExecuteCommand: TResolverExecuteCommandEhEvent;
+    FOnGetBackUpdatedValues: TResolverGetBackUpdatedValuesEhEvent;
+    FOnGetServerSpecOperations: TResolverGetServerSpecOperationsEh;
+    FOnUpdateRecord: TResolverUpdateRecordEhEvent;
+    FServerSpecOperations: TServerSpecOperationsEh;
+
+    function GetServerTypes(AIndex: Integer): String;
+    function GetServerTypesCount: Integer;
+  protected
+
+    function ConnectionIsPostponed: Boolean; virtual;
+    function GetDatabaseSchemaInfo: IDatabaseSchemaInfoEh; virtual;
+    function GetServerType: String; virtual;
+
+    procedure SetServerType(const Value: String); virtual;
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet); virtual;
+  public
+    {DesignTime stuff}
+    function GetDesignDataBase: TComponent; virtual;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DefaultExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; virtual;
+    function ExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; virtual;
+    function ExecuteSQL(const SQLText: String; AParams: TParams; var Processed: Boolean): Integer; virtual;
+    function GetServerSpecOperations: TServerSpecOperationsEh; virtual;
+
+    procedure DefaultGetUpdatedServerValues(SQLDataDriver: TCustomSQLDataDriverEh; MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet; var Processed: Boolean); virtual;
+    procedure DefaultUpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean); virtual;
+    procedure FillMemTableForSQL(const SQLText: String; AParams: TParams; MemTableData: TMemTableDataEh; var Processed: Boolean); virtual;
+    procedure GetBackUpdatedValues(SQLDataDriver: TCustomSQLDataDriverEh; MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet; var Processed: Boolean); virtual;
+    procedure GetDataReaderForSQL(const SQLText: String; AParams: TParams; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean); virtual;
+    procedure UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh; var Processed: Boolean); virtual;
+
+    property ServerSpecOperations: TServerSpecOperationsEh read FServerSpecOperations write FServerSpecOperations;
+    property ServerType: String read GetServerType write SetServerType;
+    property ServerTypes[AIndex: Integer]: String read GetServerTypes;
+    property ServerTypesCount: Integer read GetServerTypesCount;
+
+    property OnExecuteCommand: TResolverExecuteCommandEhEvent read FOnExecuteCommand write FOnExecuteCommand;
+    property OnGetBackUpdatedValues: TResolverGetBackUpdatedValuesEhEvent read FOnGetBackUpdatedValues write FOnGetBackUpdatedValues;
+    property OnGetServerSpecOperations: TResolverGetServerSpecOperationsEh read FOnGetServerSpecOperations write FOnGetServerSpecOperations;
+    property OnUpdateRecord: TResolverUpdateRecordEhEvent read FOnUpdateRecord write FOnUpdateRecord;
+
+  end;
+
+{ TSQLConnectionProviderEh }
+
+  TSQLConnectionProviderEh = class(TConnectionProviderEh)
+  published
+    property ServerType;
+    
+    property OnExecuteCommand;
+    property OnGetBackUpdatedValues;
+    property OnGetServerSpecOperations;
+    property OnUpdateRecord;
+  end;
+
+{ IConnectionProviderDesignSerivceEh }
+
+  IConnectionProviderDesignServiceEh = interface
+  ['{8524FC1E-990F-4665-99B0-7FA145B3A1A9}']
+    function EditDesignData(ConnectionProvider: TConnectionProviderEh): Boolean;
+    function ResetSysVariablesValues(sl: TStringList): Boolean;
+    function GetConnectionSettingsFilePath(ConnectionProvider: TComponent): String;
+    function CreateDesignDataBase(ConnectionProvider: TComponent): TComponent;
+  end;
+
+{ IDesignDataBaseEh }
+
+  IDesignDataBaseEh = interface
+  ['{01F477A4-8417-4DC9-B93A-1F95D2FF2EB8}']
+    function CreateDesignCopy(RTDataDriver: TCustomSQLDataDriverEh): TCustomSQLDataDriverEh;
+    function Execute(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer;
+    function BuildUpdates(DataDriver: TCustomSQLDataDriverEh): Boolean;
+    function BuildObjectTree(List: TObjectList): Boolean;
+    function GetFieldList(const TableName: string; DataSet: TDataSet): Boolean;
+    procedure EditDatabaseParams;
+    function GetConnected: Boolean;
+    procedure SetConnected(const Value: Boolean);
+    procedure SetServerTypeAsServerSpecOperationsClass(const Value: TServerSpecOperationsEhClass);
+  end;
+
+{ TOracleSpecOperationsEh }
+
+  TOracleSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    function UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; override;
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+  end;
+
+{ TMSSQLSpecOperationsEh }
+
+  TMSSQLSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    constructor Create; override;
+  end;
+
+{ TInterbaseSpecOperationsEh }
+
+  TInterbaseSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    function UpdateRecord(SQLDataDriver: TCustomSQLDataDriverEh; MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh): Integer; override;
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+  end;
+
+{ TInfromixSpecOperationsEh }
+
+  TInfromixSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    constructor Create; override;
+  end;
+
+{ TDB2SpecOperationsEh }
+
+  TDB2SpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+  end;
+
+{ TSybaseSpecOperationsEh }
+
+  TSybaseSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+  end;
+
+{ TMSAccessSpecOperationsEh }
+
+  TMSAccessSpecOperationsEh = class(TServerSpecOperationsEh)
+  public
+    class function GetServerTypeName: String; override;
+  public
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    constructor Create; override;
+  end;
+
+  TSetDesignDataBaseProcEh = procedure(DataDriver: TCustomSQLDataDriverEh);
+
+function DefaultSQLDataDriverResolver: TSQLDataDriverResolver;
+function RegisterDefaultSQLDataDriverResolver(ASQLDataDriverResolver: TSQLDataDriverResolver): TSQLDataDriverResolver;
+
+
+procedure RegisterDesignDataBuilderProcEh(DataDriverClass: TSQLDataDriverEhClass;
+  DesignDataBaseProc: TSetDesignDataBaseProcEh);
+procedure UnregisterDesignDataBuilderProcEh(DataDriverClass: TSQLDataDriverEhClass);
+function GetDesignDataBuilderProcEh(DataDriverClass: TSQLDataDriverEhClass):
+  TSetDesignDataBaseProcEh;
+
+procedure VarParamsToParams(VarParams: Variant; Params: TParams);
+
+procedure RegisterServerType(ServerTypeClass: TServerSpecOperationsEhClass);
+
+var
+  ServerTypeClasses: TStringList;
+  KeyAllowedFieldTypes: TFieldTypesEh;
+
+implementation

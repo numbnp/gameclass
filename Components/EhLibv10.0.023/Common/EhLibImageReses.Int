@@ -1,0 +1,92 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                  TEhLibImageResources                 }
+{                                                       }
+{   Copyright (c) 2020-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit EhLibImageReses;
+
+interface
+
+uses
+  Messages,
+  {$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, SqlTimSt, Windows, UxTheme,
+  {$ENDIF}
+  SysUtils, Classes, Controls, Forms, StdCtrls, Contnrs,
+  Graphics, Types;
+
+type
+
+{ TResourceImageItemEh }
+
+  TResourceImageItemEh = class(TPersistent)
+  private
+    FStdImages: TObjectList;
+    FDisableImages: TObjectList;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function GetGraphic(MaxSize: TSize; ScaleFactor: Double; IsDisabled: Boolean; IsDackTheme: Boolean): TGraphic; virtual;
+    function GetImageForScale(Images: TObjectList; MaxSize: TSize; ScaleFactor: Double): TGraphic; virtual;
+  end;
+
+
+{ TEhLibImageResources }
+
+  TEhLibImageResources = class(TPersistent)
+  private
+    FGridScrollBarNavCancelImageItem: TResourceImageItemEh;
+    FGridScrollBarNavDeleteImageItem: TResourceImageItemEh;
+    FGridScrollBarNavEditImageItem: TResourceImageItemEh;
+    FGridScrollBarNavFirstImageItem: TResourceImageItemEh;
+    FGridScrollBarNavInsertImageItem: TResourceImageItemEh;
+    FGridScrollBarNavLastImageItem: TResourceImageItemEh;
+    FGridScrollBarNavNextImageItem: TResourceImageItemEh;
+    FGridScrollBarNavPostImageItem: TResourceImageItemEh;
+    FGridScrollBarNavPriorImageItem: TResourceImageItemEh;
+    FGridScrollBarNavRefreshImageItem: TResourceImageItemEh;
+    FSearchPanelCancelSearchImageItem: TResourceImageItemEh;
+    FSearchPanelFilterImageItem: TResourceImageItemEh;
+    FSearchPanelFindNextImageItem: TResourceImageItemEh;
+    FSearchPanelFindPriorImageItem: TResourceImageItemEh;
+    FSearchPanelMenuImageItem: TResourceImageItemEh;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property GridScrollBarNavFirstImageItem: TResourceImageItemEh read FGridScrollBarNavFirstImageItem;
+    property GridScrollBarNavPriorImageItem: TResourceImageItemEh read FGridScrollBarNavPriorImageItem;
+    property GridScrollBarNavNextImageItem: TResourceImageItemEh read FGridScrollBarNavNextImageItem;
+    property GridScrollBarNavLastImageItem: TResourceImageItemEh read FGridScrollBarNavLastImageItem;
+    property GridScrollBarNavInsertImageItem: TResourceImageItemEh read FGridScrollBarNavInsertImageItem;
+    property GridScrollBarNavDeleteImageItem: TResourceImageItemEh read FGridScrollBarNavDeleteImageItem;
+    property GridScrollBarNavEditImageItem: TResourceImageItemEh read FGridScrollBarNavEditImageItem;
+    property GridScrollBarNavPostImageItem: TResourceImageItemEh read FGridScrollBarNavPostImageItem;
+    property GridScrollBarNavCancelImageItem: TResourceImageItemEh read FGridScrollBarNavCancelImageItem;
+    property GridScrollBarNavRefreshImageItem: TResourceImageItemEh read FGridScrollBarNavRefreshImageItem;
+
+    property SearchPanelCancelSearchImageItem: TResourceImageItemEh read FSearchPanelCancelSearchImageItem;
+    property SearchPanelFindNextImageItem: TResourceImageItemEh read FSearchPanelFindNextImageItem;
+    property SearchPanelFindPriorImageItem: TResourceImageItemEh read FSearchPanelFindPriorImageItem;
+    property SearchPanelMenuImageItem: TResourceImageItemEh read FSearchPanelMenuImageItem;
+    property SearchPanelFilterImageItem: TResourceImageItemEh read FSearchPanelFilterImageItem;
+  end;
+
+function EhLibImageResources: TEhLibImageResources;
+
+implementation

@@ -1,0 +1,395 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                Planner Source Component               }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PlannerDataEh;
+
+interface
+
+uses
+  Classes, Graphics, Dialogs, Contnrs,
+{$IFDEF EH_LIB_17} System.Generics.Collections, System.UITypes, {$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  WinUtils,
+{$ELSE}
+  {$IFDEF FPC}
+  EhLibLCL,
+  {$ELSE}
+  EhLibVCL, Windows,
+  {$ENDIF}
+{$ENDIF}
+  Messages, Types, ToolCtrlsEh, DateUtils, DB, ImgList, TypInfo,
+  SysUtils, Variants, GraphUtil;
+
+type
+  TPlannerDataSourceEh = class;
+  TPlannerDataItemEh = class;
+  TPlannerResourcesEh = class;
+  TPlannerItemSourceParamsEh = class;
+  TItemSourceFieldsMapEh = class;
+  TItemSourceFieldsMapItemEh = class;
+
+  TPlannerDataItemEhClass = class of TPlannerDataItemEh;
+
+  TApplyUpdateToDataStorageEhEvent = procedure (PlannerDataSource: TPlannerDataSourceEh; PlanItem: TPlannerDataItemEh; UpdateStatus: TUpdateStatus) of object;
+  TCheckLoadTimePlanRecordEhEvent = procedure (PlannerDataSource: TPlannerDataSourceEh; DataSet: TDataSet; var IsLoadRecord: Boolean) of object;
+
+  TPrepareItemsReaderEhEvent = procedure (PlannerDataSource: TPlannerDataSourceEh;
+    RequriedStartDate, RequriedFinishDate, LoadedBorderDate: TDateTime;
+    var PreparedReadyStartDate, PreparedFinishDate: TDateTime) of object;
+  TReadItemEhEvent = procedure (PlannerDataSource: TPlannerDataSourceEh; PlanItem: TPlannerDataItemEh; var Eof: Boolean) of object;
+
+  TPlannerLoadDataForPeriodEhEvent =  procedure (PlannerDataSource: TPlannerDataSourceEh;
+  StartDate, FinishDate, LoadedBorderDate: TDateTime; var LoadedStartDate, LoadedFinishDate: TDateTime) of object;
+
+  TEditingStatusEh = (esBrowseEh, esEditEh, esInsertEh);
+
+{ TPlannerResourceEh }
+
+  TPlannerResourceEh = class(TCollectionItem)
+  private
+    FName: string;
+    FImageIndex: TImageIndex;
+    FColor: TColor;
+    FResourceID: Variant;
+    FFaceColor: TColor;
+    FDarkLineColor: TColor;
+    FBrightLineColor: TColor;
+
+    procedure SetImageIndex(const Value: TImageIndex);
+    procedure SetName(const Value: string);
+    procedure SetColor(const Value: TColor);
+    function GetCollection: TPlannerResourcesEh;
+    procedure SetResourceID(const Value: Variant);
+    function GetFaceColor: TColor;
+    function GetDarkLineColor: TColor;
+    function GetBrightLineColor: TColor;
+
+  protected
+    function GetDisplayName: string; override;
+    procedure AssignTo(Dest: TPersistent); override;
+    procedure SetDisplayName(const Value: string); override;
+
+  public
+    constructor Create(ACollection: TCollection); override;
+
+    property FaceColor: TColor read GetFaceColor;
+    property DarkLineColor: TColor read GetDarkLineColor;
+    property BrightLineColor: TColor read GetBrightLineColor;
+
+    property Collection: TPlannerResourcesEh read GetCollection;
+  published
+    property Color: TColor read FColor write SetColor default clDefault;
+    property Name: string read FName write SetName;
+    property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
+    property ResourceID: Variant read FResourceID write SetResourceID;
+
+  end;
+
+{ TPlannerResourcesEh }
+
+  TPlannerResourcesEh = class(TCollection)
+  private
+    FPlannerSource: TPlannerDataSourceEh;
+    procedure SetItem(Index: Integer; Value: TPlannerResourceEh);
+    function GetItem(Index: Integer): TPlannerResourceEh;
+
+  protected
+    function GetOwner: TPersistent; override;
+    procedure Update(Item: TCollectionItem); override;
+
+  public
+    constructor Create(APlannerSource: TPlannerDataSourceEh);
+
+    function Add: TPlannerResourceEh;
+    function ResourceByResourceID(ResourceID: Variant): TPlannerResourceEh;
+
+    property Items[Index: Integer]: TPlannerResourceEh read GetItem write SetItem; default;
+  end;
+
+{ TPlannerDataItemEh }
+
+  TPlannerDataItemEh = class(TPersistent)
+  private
+    FTitle: string;
+    FEndTime: TDateTime;
+    FStartTime: TDateTime;
+    FSource: TPlannerDataSourceEh;
+    FAllDay: Boolean;
+    FResourceID: Variant;
+    FUpdateStatus: TUpdateStatus;
+    FItemID: Variant;
+    FResource: TPlannerResourceEh;
+    FFillColor: TColor;
+    FBody: String;
+    FFrameColor: TColor;
+    FChangesApplying: Boolean;
+    FEditingStatus: TEditingStatusEh;
+    FReadOnly: Boolean;
+
+    function GetDuration: TDateTime;
+    procedure SetEndTime(const Value: TDateTime);
+    procedure SetStartTime(const Value: TDateTime);
+    procedure SetTitle(const Value: string);
+    procedure SetAllDay(const Value: Boolean);
+    procedure SetResourceID(const Value: Variant);
+    procedure SetItemID(const Value: Variant);
+    procedure SetResource(const Value: TPlannerResourceEh);
+    procedure SetFillColor(const Value: TColor);
+    procedure SetBody(const Value: String);
+    procedure SetReadOnly(const Value: Boolean);
+
+  protected
+    FUpdateCount: Integer;
+    FDummy: Boolean;
+
+    procedure BeginInsert; virtual;
+    procedure Change; virtual;
+    procedure Delete;
+    procedure FinishApplyChanges; virtual;
+    procedure ResolvePlanItemUpdate; virtual;
+    procedure StartApplyChanges; virtual;
+    procedure UpdateRefResource; virtual;
+
+  public
+    constructor Create(ASource: TPlannerDataSourceEh); virtual;
+    destructor Destroy; override;
+
+    procedure BeginEdit; virtual;
+    procedure EndEdit(PostChanges: Boolean); virtual;
+
+    function GetFrameColor: TColor; virtual;
+
+    function InsideDay: Boolean; virtual;
+    function InsideDayRange: Boolean; virtual;
+    procedure Assign(Source: TPersistent); override;
+    procedure AssignProperties(Source: TPlannerDataItemEh); virtual;
+    procedure MergeUpdates;
+    procedure ApplyUpdates;
+
+    property IsDummy: Boolean read FDummy;
+    property Duration: TDateTime read GetDuration;
+    property Source: TPlannerDataSourceEh read FSource;
+    property Resource: TPlannerResourceEh read FResource write SetResource;
+
+    property UpdateCount: Integer read FUpdateCount;
+    property UpdateStatus: TUpdateStatus read FUpdateStatus;
+    property EditingStatus: TEditingStatusEh read FEditingStatus;
+
+  published
+    property Title: String read FTitle write SetTitle;
+    property Body: String read FBody write SetBody;
+    property StartTime: TDateTime read FStartTime write SetStartTime;
+    property EndTime: TDateTime read FEndTime write SetEndTime;
+    property AllDay: Boolean read FAllDay write SetAllDay;
+    property ResourceID: Variant read FResourceID write SetResourceID;
+    property ItemID: Variant read FItemID write SetItemID;
+    property FillColor: TColor read FFillColor write SetFillColor;
+    property ReadOnly: Boolean read FReadOnly write SetReadOnly;
+  end;
+
+  TItemSourceReadValueEventEh = procedure(DataSource: TPlannerDataSourceEh;
+    MapItem: TItemSourceFieldsMapItemEh; const DataItem: TPlannerDataItemEh;
+    var Processed: Boolean) of object;
+
+{ TItemSourceFieldsMapItemEh }
+
+  TItemSourceFieldsMapItemEh = class(TCollectionItem)
+  private
+    FPropertyName: String;
+    FField: TField;
+    FDataSetFieldName: String;
+    FPropInfo: PPropInfo;
+    FOnReadValue: TItemSourceReadValueEventEh;
+    function GetCollection: TItemSourceFieldsMapEh;
+
+  public
+    constructor Create(Collection: TCollection); override;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure DefaulReadValue(const DataItem: TPlannerDataItemEh); virtual;
+    procedure ReadValue(const DataItem: TPlannerDataItemEh); virtual;
+
+    property Field: TField read FField write FField;
+    property PropInfo: PPropInfo read FPropInfo write FPropInfo;
+    property Collection: TItemSourceFieldsMapEh read GetCollection;
+
+  published
+    property DataSetFieldName: String read FDataSetFieldName write FDataSetFieldName;
+    property PropertyName: String read FPropertyName write FPropertyName;
+
+    property OnReadValue: TItemSourceReadValueEventEh read FOnReadValue write FOnReadValue;
+  end;
+
+{ TItemSourceFieldsMapEh }
+
+  TItemSourceFieldsMapEh = class(TCollection, IDefaultItemsCollectionEh)
+  private
+    FItemSourceParamsEh: TPlannerItemSourceParamsEh;
+    function GetItem(Index: Integer): TItemSourceFieldsMapItemEh;
+    procedure SetItem(Index: Integer; const Value: TItemSourceFieldsMapItemEh);
+    function GetSourceParams: TPlannerItemSourceParamsEh;
+
+  protected
+    {IInterface}
+  {$IFDEF FPC}
+    function QueryInterface(constref IID: TGUID; out Obj): HResult; virtual; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+    function _AddRef: Integer; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+    function _Release: Integer; {$IFDEF MSWINDOWS}stdcall {$ELSE}CDECL{$ENDIF};
+  {$ELSE}
+    function QueryInterface(const IID: TGUID; out Obj): HResult; virtual; stdcall;
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
+  {$ENDIF}
+
+    {IDefaultItemsCollectionEh}
+    function CanAddDefaultItems: Boolean;
+    procedure AddAllItems(DeleteExisting: Boolean);
+
+  protected
+    function GetOwner: TPersistent; override;
+
+  public
+    constructor Create(AItemSourceParamsEh: TPlannerItemSourceParamsEh; ItemClass: TCollectionItemClass);
+    destructor Destroy; override;
+
+    function Add: TItemSourceFieldsMapItemEh;
+
+    procedure ReadDataRecordValues(DataItem: TPlannerDataItemEh);
+    procedure InitItems;
+
+    procedure BuildItems(const DataItemClass: TPlannerDataItemEhClass); virtual;
+    property Item[Index: Integer]: TItemSourceFieldsMapItemEh read GetItem write SetItem; default;
+    property SourceParams: TPlannerItemSourceParamsEh read GetSourceParams;
+  end;
+
+{ TPlannerItemSourceParamsEh }
+
+  TPlannerItemSourceParamsEh = class(TPersistent)
+  private
+    FDataSet: TDataSet;
+    FPlannerDataSource: TPlannerDataSourceEh;
+    FFieldsMap: TItemSourceFieldsMapEh;
+    procedure SetDataSet(const Value: TDataSet);
+    procedure SetFieldMap(const Value: TItemSourceFieldsMapEh);
+
+  protected
+    function GetOwner: TPersistent; override;
+
+  public
+    constructor Create(APlannerDataSource: TPlannerDataSourceEh);
+    destructor Destroy; override;
+
+    property PlannerDataSource: TPlannerDataSourceEh read FPlannerDataSource;
+  published
+    property DataSet: TDataSet read FDataSet write SetDataSet;
+    property FieldsMap: TItemSourceFieldsMapEh read FFieldsMap write SetFieldMap;
+  end;
+
+{ TPlannerDataSourceEh }
+
+  TPlannerDataSourceEh = class(TComponent)
+  private
+    FAllItemsLoaded: Boolean;
+    FChanged: Boolean;
+    FItems: TObjectListEh;
+    FItemSourceParams: TPlannerItemSourceParamsEh;
+    FLoadedFinishDate: TDateTime;
+    FLoadedStartDate: TDateTime;
+    FNotificationConsumers: TInterfaceList;
+    FResources: TPlannerResourcesEh;
+    FTimePlanItemClass: TPlannerDataItemEhClass;
+    FUpdateCount: Integer;
+
+    FOnApplyUpdateToDataStorage: TApplyUpdateToDataStorageEhEvent;
+    FOnCheckLoadTimePlanRecord: TCheckLoadTimePlanRecordEhEvent;
+    FOnLoadDataForPeriod: TPlannerLoadDataForPeriodEhEvent;
+    FOnPrepareItemsReader: TPrepareItemsReaderEhEvent;
+    FOnPrepareReadItem: TReadItemEhEvent;
+
+    function GetCount: Integer;
+    function GetItems(Index: Integer): TPlannerDataItemEh;
+    function GetResources: TPlannerResourcesEh;
+
+    procedure SetResources(const Value: TPlannerResourcesEh);
+    procedure SetItemSourceParams(const Value: TPlannerItemSourceParamsEh);
+    procedure SetAllItemsLoaded(const Value: Boolean);
+    procedure SetLoadedFinishDateC(const Value: TDateTime);
+    procedure SetLoadedStartDate(const Value: TDateTime);
+
+  protected
+
+    function IsLoadTimePlanRecord(ADataSet: TDataSet): Boolean; virtual;
+
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+    procedure FreeItem(Item: TPlannerDataItemEh);
+    procedure LoadDataForPeriod(StartDate, FinishDate, LoadedBorderDate: TDateTime; var LoadedStartDate, LoadedFinishDate: TDateTime); virtual;
+    procedure PlanChanged; virtual;
+    procedure PlanItemChanged(PlanItem: TPlannerDataItemEh); virtual;
+    procedure PrepareItemsReader(StartDate, FinishDate, LoadedBorderDate: TDateTime; var ALoadedStartDate, ALoadedFinishDate: TDateTime); virtual;
+    procedure ReadItem(PlanItem: TPlannerDataItemEh; var Eof: Boolean); virtual;
+    procedure ResolvePlanItemUpdate(PlanItem: TPlannerDataItemEh; UpdateStatus: TUpdateStatus); virtual;
+    procedure ResolvePlanItemUpdateToDataStorage(PlanItem: TPlannerDataItemEh; UpdateStatus: TUpdateStatus);
+    procedure ResourcesChanged; virtual;
+    procedure Sort;
+    procedure UpdateRecourdesByRecourdeID; virtual;
+
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure RegisterChanges(Value: ISimpleChangeNotificationEh);
+    procedure UnRegisterChanges(Value: ISimpleChangeNotificationEh);
+
+    function CreatePlannerItem: TPlannerDataItemEh; virtual;
+    function CreateTmpPlannerItem: TPlannerDataItemEh; virtual;
+    function NewItem(ATimePlanItemClass: TPlannerDataItemEhClass = nil; IsDummy: Boolean = False): TPlannerDataItemEh;
+    function IndexOf(Item: TPlannerDataItemEh): Integer;
+
+    procedure AddItem(Item: TPlannerDataItemEh);
+    procedure BeginUpdate;
+    procedure ClearItems;
+    procedure DefaultPrepareItemsReader(RequriedStartDate, RequriedFinishDate, LoadedBorderDate: TDateTime; var PreparedReadyStartDate, PreparedFinishDate: TDateTime); virtual;
+    procedure DefaultReadItem(PlanItem: TPlannerDataItemEh; var Eof: Boolean); virtual;
+    procedure DeleteItem(Item: TPlannerDataItemEh);
+    procedure DeleteItemAt(Index: Integer);
+    procedure DeleteItemNoApplyUpdates(Item: TPlannerDataItemEh);
+    procedure EndUpdate;
+    procedure EnsureDataForPeriod(AStartDate, AEndDate: TDateTime); virtual;
+    procedure FetchTimePlanItem(Item: TPlannerDataItemEh);
+    procedure LoadTimeItems; virtual;
+    procedure RequestItems(StartTime, EndTime: TDateTime);
+
+    procedure StopAutoLoad;
+    procedure ResetAutoLoadProcess;
+
+    property AllItemsLoaded: Boolean read FAllItemsLoaded write SetAllItemsLoaded;
+    property Count: Integer read GetCount;
+    property Items[Index: Integer]: TPlannerDataItemEh read GetItems; default;
+    property LoadedFinishDate: TDateTime read FLoadedFinishDate write SetLoadedFinishDateC;
+    property LoadedStartDate: TDateTime read FLoadedStartDate write SetLoadedStartDate;
+    property Resources: TPlannerResourcesEh read GetResources write SetResources;
+    property TimePlanItemClass: TPlannerDataItemEhClass read FTimePlanItemClass write FTimePlanItemClass;
+
+  published
+    property ItemSourceParams: TPlannerItemSourceParamsEh read FItemSourceParams write SetItemSourceParams;
+
+    property OnApplyUpdateToDataStorage: TApplyUpdateToDataStorageEhEvent read FOnApplyUpdateToDataStorage write FOnApplyUpdateToDataStorage;
+    property OnCheckLoadTimePlanRecord: TCheckLoadTimePlanRecordEhEvent read FOnCheckLoadTimePlanRecord write FOnCheckLoadTimePlanRecord;
+    property OnPrepareItemsReader: TPrepareItemsReaderEhEvent read FOnPrepareItemsReader write FOnPrepareItemsReader;
+    property OnLoadDataForPeriod: TPlannerLoadDataForPeriodEhEvent read FOnLoadDataForPeriod write FOnLoadDataForPeriod;
+    property OnReadItem: TReadItemEhEvent read FOnPrepareReadItem write FOnPrepareReadItem;
+  end;
+
+implementation

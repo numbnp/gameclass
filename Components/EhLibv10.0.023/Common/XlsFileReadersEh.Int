@@ -1,0 +1,709 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib v10.0                      }
+{                                                       }
+{           Classes to work with Xlsx Format            }
+{                                                       }
+{     Copyright (c) 2020-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit XlsFileReadersEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, GridsEh, Controls, Types,
+{$IFDEF EH_LIB_6} Variants, {$ENDIF}
+{$IFDEF EH_LIB_16} System.Zip, {$ENDIF}
+{$IFNDEF EH_LIB_17} GraphUtil, {$ENDIF}
+{$IFDEF FPC}
+  LCLIntf, XMLRead, DOM, EhLibXmlConsts,
+{$ELSE}
+  xmldom, XMLIntf, msxmldom, XMLDoc, EhLibXmlConsts,
+{$ENDIF}
+  Forms,
+{$IFDEF EH_LIB_17} System.UITypes, UIConsts, System.Contnrs, {$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Runtime.InteropServices, System.Reflection,
+{$ELSE}
+  {$IFDEF FPC}
+    EhLibLCL, LCLType,
+  {$ELSE}
+    EhLibVCL, Messages, SqlTimSt, Windows,
+  {$ENDIF}
+{$ENDIF}
+  Printers, ZipFileProviderEh, XlsMemFilesEh,
+  ComCtrls;
+
+type
+  TXlsReaderSheetsEh = class;
+  TXlsFileReaderEh = class;
+  TXlsReaderSheetDataEh = class;
+  TXlsReaderSheetEh = class;
+  TXlsReaderSheetRowEh = class;
+  TXlsReaderStyleSheetEh = class;
+  TXlsReaderStyleFont = class;
+  TXlsReaderShareStringEh = class;
+
+  TXlsReaderShareStringTypeEh = (shstSimpleStringEh, shstRichStringEh);
+
+{ TXlsReaderClrSchemeItemEh }
+
+  TXlsReaderClrSchemeItemEh = class(TCollectionItem)
+  private
+    FColor: TColor;
+    FItemName: String;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    property ItemName: String read FItemName;
+    property Color: TColor read FColor;
+
+  end;
+
+{ TXlsReaderClrSchemeEh }
+
+  TXlsReaderClrSchemeEh = class(TCollection)
+  private
+    FReader: TXlsFileReaderEh;
+
+    function GetItem(Index: Integer): TXlsReaderClrSchemeItemEh;
+
+  public
+    constructor Create(AReader: TXlsFileReaderEh);
+    function Add: TXlsReaderClrSchemeItemEh;
+
+    property Item[Index: Integer]: TXlsReaderClrSchemeItemEh read GetItem; default;
+  end;
+
+{ TXlsReaderRichStringItemEh }
+
+  TXlsReaderRichStringItemEh = class(TCollectionItem)
+  private
+    FFontStyle: TXlsReaderStyleFont;
+    FValue: String;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    property FontStyle: TXlsReaderStyleFont read FFontStyle;
+    property Value: String read FValue;
+
+  end;
+
+{ TXlsReaderRichStringEh }
+
+  TXlsReaderRichStringEh = class(TCollection)
+  private
+    FShareString: TXlsReaderShareStringEh;
+
+    function GetItem(Index: Integer): TXlsReaderRichStringItemEh;
+
+  public
+    constructor Create(AShareString: TXlsReaderShareStringEh);
+    function Add: TXlsReaderRichStringItemEh;
+    function GetTextValue: String;
+
+    property Item[Index: Integer]: TXlsReaderRichStringItemEh read GetItem; default;
+  end;
+
+{ TXlsReaderShareStringEh }
+
+  TXlsReaderShareStringEh = class(TCollectionItem)
+  private
+    FStringType: TXlsReaderShareStringTypeEh;
+    FSimpleValue: String;
+    FRichValue: TXlsReaderRichStringEh;
+
+  public
+    destructor Destroy; override;
+
+    property StringType: TXlsReaderShareStringTypeEh read FStringType;
+    property SimpleValue: String read FSimpleValue;
+    property RichValue: TXlsReaderRichStringEh read FRichValue;
+  end;
+
+{ TXlsReaderShareStringsEh }
+
+  TXlsReaderShareStringsEh = class(TCollection)
+  private
+    FReader: TXlsFileReaderEh;
+    function GetShString(Index: Integer): TXlsReaderShareStringEh;
+  public
+    constructor Create(AReader: TXlsFileReaderEh);
+    function Add: TXlsReaderShareStringEh;
+
+    property ShString[Index: Integer]: TXlsReaderShareStringEh read GetShString; default;
+  end;
+
+{ TXlsReaderMergeCellEh }
+
+  TXlsReaderMergeCellEh = class(TCollectionItem)
+  private
+    FMergeRect: TRect;
+  public
+    property MergeRect: TRect read FMergeRect;
+  end;
+
+{ TXlsReaderMergeCellsEh }
+
+  TXlsReaderMergeCellsEh = class(TCollection)
+  private
+    FSheet: TXlsReaderSheetEh;
+  private
+    function GetMergeCell(Index: Integer): TXlsReaderMergeCellEh;
+  public
+    constructor Create(ASheet: TXlsReaderSheetEh);
+    function Add: TXlsReaderMergeCellEh;
+
+    property MergeCell[Index: Integer]: TXlsReaderMergeCellEh read GetMergeCell; default;
+  end;
+
+{ TXlsReaderRelStructureItemEh }
+
+  TXlsReaderRelStructureItemEh = class(TCollectionItem)
+  private
+    FFullTypeName: String;
+    FId: String;
+    FFileTarget: String;
+    FTypeName: String;
+  public
+    property FileTarget: String read FFileTarget;
+    property FullTypeName: String read FFullTypeName;
+    property TypeName: String read FTypeName;
+    property Id: String read FId;
+  end;
+
+{ TXlsReaderRelStructureEh }
+
+  TXlsReaderRelStructureEh = class(TCollection)
+  private
+    FReader: TXlsFileReaderEh;
+    function GetItem(Index: Integer): TXlsReaderRelStructureItemEh;
+  public
+    constructor Create(AReader: TXlsFileReaderEh);
+
+    function Add: TXlsReaderRelStructureItemEh;
+    function GetItemById(ATypeName: String; Id: String): TXlsReaderRelStructureItemEh;
+
+    property Item[Index: Integer]: TXlsReaderRelStructureItemEh read GetItem; default;
+  end;
+
+{ TXlsReaderNumFormatEh }
+
+  TXlsReaderNumFormatEh = class(TCollectionItem)
+  private
+    FNumFormatStr: String;
+    FNumFormatId: String;
+    FVCLDisplayFormat: String;
+    FVarType: TVarType;
+    FIsStandardNumFormat: Boolean;
+  public
+    property NumFormatStr: String read FNumFormatStr;
+    property NumFormatId: String read FNumFormatId;
+    property VCLDisplayFormat: String read FVCLDisplayFormat;
+    property VarType: TVarType read FVarType;
+    property IsStandardNumFormat: Boolean read FIsStandardNumFormat;
+  end;
+
+{ TXlsReaderNumFormatsEh }
+
+  TXlsReaderNumFormatsEh = class(TCollection)
+  private
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    function GetFormat(Index: Integer): TXlsReaderNumFormatEh;
+  public
+    constructor Create(AStyleSheet: TXlsReaderStyleSheetEh);
+    function Add: TXlsReaderNumFormatEh;
+    function FormatById(AFormatId: String): TXlsReaderNumFormatEh;
+
+    property Format[Index: Integer]: TXlsReaderNumFormatEh read GetFormat; default;
+  end;
+
+{ TXlsReaderStyleBorderEh }
+
+  TXlsReaderStyleBorderEh = class(TCollectionItem)
+  private
+    FBottomBorderColor: TColor;
+    FBottomBorderStyle: TXlsFileCellLineStyleEh;
+    FBottomBorderStyleAssigned: Boolean;
+    FDiagonalDownBorderColor: TColor;
+    FDiagonalDownBorderStyle: TXlsFileCellLineStyleEh;
+    FDiagonalDownBorderStyleAssigned: Boolean;
+    FDiagonalUpBorderColor: TColor;
+    FDiagonalUpBorderStyle: TXlsFileCellLineStyleEh;
+    FDiagonalUpBorderStyleAssigned: Boolean;
+    FLeftBorderColor: TColor;
+    FLeftBorderStyle: TXlsFileCellLineStyleEh;
+    FLeftBorderStyleAssigned: Boolean;
+    FRightBorderColor: TColor;
+    FRightBorderStyle: TXlsFileCellLineStyleEh;
+    FRightBorderStyleAssigned: Boolean;
+    FTopBorderColor: TColor;
+    FTopBorderStyle: TXlsFileCellLineStyleEh;
+    FTopBorderStyleAssigned: Boolean;
+
+    procedure SetBottomBorderStyle(const Value: TXlsFileCellLineStyleEh);
+    procedure SetDiagonalDownBorderStyle(const Value: TXlsFileCellLineStyleEh);
+    procedure SetDiagonalUpBorderStyle(const Value: TXlsFileCellLineStyleEh);
+    procedure SetLeftBorderStyle(const Value: TXlsFileCellLineStyleEh);
+    procedure SetRightBorderStyle(const Value: TXlsFileCellLineStyleEh);
+    procedure SetTopBorderStyle(const Value: TXlsFileCellLineStyleEh);
+  public
+    property BottomBorderColor: TColor read FBottomBorderColor;
+    property BottomBorderStyle: TXlsFileCellLineStyleEh read FBottomBorderStyle write SetBottomBorderStyle;
+    property LeftBorderColor: TColor read FLeftBorderColor;
+    property LeftBorderStyle: TXlsFileCellLineStyleEh read FLeftBorderStyle write SetLeftBorderStyle;
+    property RightBorderColor: TColor read FRightBorderColor;
+    property RightBorderStyle: TXlsFileCellLineStyleEh read FRightBorderStyle write SetRightBorderStyle;
+    property TopBorderColor: TColor read FTopBorderColor;
+    property TopBorderStyle: TXlsFileCellLineStyleEh read FTopBorderStyle write SetTopBorderStyle;
+
+    property DiagonalDownBorderColor: TColor read FDiagonalDownBorderColor;
+    property DiagonalDownBorderStyle: TXlsFileCellLineStyleEh read FDiagonalDownBorderStyle write SetDiagonalDownBorderStyle;
+    property DiagonalUpBorderColor: TColor read FDiagonalUpBorderColor;
+    property DiagonalUpBorderStyle: TXlsFileCellLineStyleEh read FDiagonalUpBorderStyle write SetDiagonalUpBorderStyle;
+  end;
+
+{ TXlsReaderStyleBordersEh }
+
+  TXlsReaderStyleBordersEh = class(TCollection)
+  private
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    function GetBorder(Index: Integer): TXlsReaderStyleBorderEh;
+  public
+    constructor Create(AStyleSheet: TXlsReaderStyleSheetEh);
+    function Add: TXlsReaderStyleBorderEh;
+
+    property Border[Index: Integer]: TXlsReaderStyleBorderEh read GetBorder; default;
+  end;
+
+{ TXlsReaderStyleFillEh }
+
+  TXlsReaderStyleFillEh = class(TCollectionItem)
+  private
+    FForegroundColor: TColor;
+    FBackgroundColor: TColor;
+    FPatternType: TXlsFileStyleFillPatternTypeEh;
+  public
+    property ForegroundColor: TColor read FForegroundColor;
+    property BackgroundColor: TColor read FBackgroundColor;
+    property PatternType: TXlsFileStyleFillPatternTypeEh read FPatternType;
+  end;
+
+{ TXlsReaderStyleFillsEh }
+
+  TXlsReaderStyleFillsEh = class(TCollection)
+  private
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    function GetFill(Index: Integer): TXlsReaderStyleFillEh;
+  public
+    constructor Create(AStyleSheet: TXlsReaderStyleSheetEh);
+    function Add: TXlsReaderStyleFillEh;
+
+    property Fill[Index: Integer]: TXlsReaderStyleFillEh read GetFill; default;
+  end;
+
+{ TXlsReaderStyleFont }
+
+  TXlsReaderStyleFont = class(TCollectionItem)
+  private
+    FName: String;
+    FScheme: String;
+    FColor: TColor;
+    FFamily: String;
+    FSize: Integer;
+    FStyle: TFontStyles;
+  public
+    property Size: Integer read FSize;
+    property Color: TColor read FColor;
+    property Name: String read FName;
+    property Family: String read FFamily;
+    property Scheme: String read FScheme;
+    property Style: TFontStyles read FStyle;
+  end;
+
+{ TXlsReaderStyleFonts }
+
+  TXlsReaderStyleFonts = class(TCollection)
+  private
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    function GetFont(Index: Integer): TXlsReaderStyleFont;
+  public
+    constructor Create(AStyleSheet: TXlsReaderStyleSheetEh);
+    function Add: TXlsReaderStyleFont;
+    function GetMaximumDigitWidth: Integer;
+
+    property Font[Index: Integer]: TXlsReaderStyleFont read GetFont; default;
+  end;
+
+{ TXlsReaderCellFormatItemEh }
+
+  TXlsReaderCellFormatItemEh = class(TCollectionItem)
+  private
+    FBorder: TXlsReaderStyleBorderEh;
+    FFill: TXlsReaderStyleFillEh;
+    FFont: TXlsReaderStyleFont;
+    FFormat: TXlsReaderNumFormatEh;
+    FHorizontalAlignment: TXlsFileCellHorzAlign;
+    FIndent: Integer;
+    FNumFmtId: String;
+    FTextRotation: Integer;
+    FVerticalAlignment: TXlsFileCellVertAlign;
+    FWordWrap: Boolean;
+  public
+    property Border: TXlsReaderStyleBorderEh read FBorder;
+    property Fill: TXlsReaderStyleFillEh read FFill;
+    property Font: TXlsReaderStyleFont read FFont;
+    property Format: TXlsReaderNumFormatEh read FFormat;
+    property HorizontalAlignment: TXlsFileCellHorzAlign read FHorizontalAlignment;
+    property Indent: Integer read FIndent;
+    property NumFmtId: String read FNumFmtId;
+    property TextRotation: Integer read FTextRotation;
+    property VerticalAlignment: TXlsFileCellVertAlign read FVerticalAlignment;
+    property WordWrap: Boolean read FWordWrap;
+  end;
+
+{ TXlsReaderCellFormatsEh }
+
+  TXlsReaderCellFormatsEh = class(TCollection)
+  private
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    function GetFormat(Index: Integer): TXlsReaderCellFormatItemEh;
+  public
+    constructor Create(AStyleSheet: TXlsReaderStyleSheetEh);
+    function Add: TXlsReaderCellFormatItemEh;
+
+    property Format[Index: Integer]: TXlsReaderCellFormatItemEh read GetFormat; default;
+  end;
+
+{ TXlsReaderSheetCellReaderEh }
+
+  TXlsReaderSheetCellEh = class(TCollectionItem)
+  private
+    FFormula: String;
+    FSharedString: TXlsReaderShareStringEh;
+    FStyle: TXlsReaderCellFormatItemEh;
+    FTypeName: String;
+    FValue: Variant;
+    FVarType: TVarType;
+    FXMLCell: IXMLNode;
+
+  public
+
+    property Formula: String read FFormula;
+    property SharedString: TXlsReaderShareStringEh read FSharedString;
+    property Style: TXlsReaderCellFormatItemEh read FStyle;
+    property TypeName: String read FTypeName;
+    property Value: Variant read FValue;
+    property VarType: TVarType read FVarType;
+  end;
+
+{ TXlsReaderSheetCellsEh }
+
+  TXlsReaderSheetCellsEh = class(TCollection)
+  private
+    FSheetRow: TXlsReaderSheetRowEh;
+    function GetCell(Index: Integer): TXlsReaderSheetCellEh;
+  public
+    constructor Create(ASheetRow: TXlsReaderSheetRowEh);
+    function Add: TXlsReaderSheetCellEh;
+
+    property Cell[Index: Integer]: TXlsReaderSheetCellEh read GetCell; default;
+  end;
+
+{ TXlsReaderSheetRowEh }
+
+  TXlsReaderSheetRowEh = class(TCollectionItem)
+  private
+    FCells: TXlsReaderSheetCellsEh;
+    FHeight: Double;
+    FHeightHasValue: Boolean;
+    FXMLRow: IXMLNode;
+    FVisible: Boolean;
+    FCollapsed: Boolean;
+    FOutlineLevel: Integer;
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    property Height: Double read FHeight;
+    property HeightHasValue: Boolean read FHeightHasValue;
+    property Visible: Boolean read FVisible;
+    property Cells: TXlsReaderSheetCellsEh read FCells;
+    property OutlineLevel: Integer read FOutlineLevel;
+    property Collapsed: Boolean read FCollapsed;
+  end;
+
+{ TXlsReaderSheetRowsEh }
+
+  TXlsReaderSheetRowsEh = class(TCollection)
+    FSheetData: TXlsReaderSheetDataEh;
+  private
+    function GetRow(Index: Integer): TXlsReaderSheetRowEh;
+  public
+    constructor Create(ASheetData: TXlsReaderSheetDataEh);
+    function Add: TXlsReaderSheetRowEh;
+
+    property Row[Index: Integer]: TXlsReaderSheetRowEh read GetRow; default;
+  end;
+
+{ TXlsReaderSheetColumnEh }
+
+  TXlsReaderSheetColumnEh = class(TCollectionItem)
+  private
+    FCollapsed: Boolean;
+    FOutlineLevel: Integer;
+    FStyle: TXlsReaderCellFormatItemEh;
+    FVisible: Boolean;
+    FWidth: Double;
+  public
+    property Collapsed: Boolean read FCollapsed;
+    property OutlineLevel: Integer read FOutlineLevel;
+    property Style: TXlsReaderCellFormatItemEh read FStyle;
+    property Visible: Boolean read FVisible;
+    property Width: Double read FWidth;
+  end;
+
+{ TXlsReaderSheetColumnsEh }
+
+  TXlsReaderSheetColumnsEh = class(TCollection)
+  private
+    FSheetData: TXlsReaderSheetDataEh;
+    function GetCol(Index: Integer): TXlsReaderSheetColumnEh;
+  public
+    constructor Create(ASheetData: TXlsReaderSheetDataEh);
+    function Add: TXlsReaderSheetColumnEh;
+
+    property SheetData: TXlsReaderSheetDataEh read FSheetData;
+    property Col[Index: Integer]: TXlsReaderSheetColumnEh read GetCol; default;
+  end;
+
+{ TXlsReaderSheetDataEh }
+
+  TXlsReaderSheetDataEh = class(TPersistent)
+  private
+    FRowCount: Integer;
+    FRows: TXlsReaderSheetRowsEh;
+    FColumns: TXlsReaderSheetColumnsEh;
+    FSheet: TXlsReaderSheetEh;
+  public
+    constructor Create(ASheet: TXlsReaderSheetEh);
+    destructor Destroy; override;
+
+    property RowCount: Integer read FRowCount;
+    property Columns: TXlsReaderSheetColumnsEh read FColumns;
+    property Rows: TXlsReaderSheetRowsEh read FRows;
+  end;
+
+{ TXlsxPageMarginsEh }
+
+  TXlsReaderPageMarginsEh = class(TPersistent)
+  private
+    FRight: Double;
+    FBottom: Double;
+    FHeader: Double;
+    FFooter: Double;
+    FTop: Double;
+    FLeft: Double;
+  public
+    property Footer: Double read FFooter;
+    property Header: Double read FHeader;
+    property Bottom: Double read FBottom;
+    property Top: Double read FTop;
+    property Right: Double read FRight;
+    property Left: Double read FLeft;
+  end;
+
+{ TXlsReaderPageSetupEh }
+
+  TXlsReaderPageSetupEh = class(TPersistent)
+  private
+    FOrientation: TPrinterOrientation;
+    FFitToHeight: Integer;
+    FFitToWidth: Integer;
+    FScale: Integer;
+    FFitToPage: Boolean;
+    FVerticalCentered: Boolean;
+    FHorizontalCentered: Boolean;
+    FOddPageHeader: String;
+    FOddPageFooter: String;
+  public
+    property Orientation: TPrinterOrientation read FOrientation write FOrientation;
+    property FitToHeight: Integer read FFitToHeight;
+    property FitToWidth: Integer read FFitToWidth;
+    property Scale: Integer read FScale;
+    property FitToPage: Boolean read FFitToPage;
+    property HorizontalCentered: Boolean read FHorizontalCentered;
+    property VerticalCentered: Boolean read FVerticalCentered;
+    property OddPageHeader: String read FOddPageHeader;
+    property OddPageFooter: String read FOddPageFooter;
+  end;
+
+{ TXlsReaderAutoFilterEh }
+
+  TXlsReaderAutoFilterEh = class(TObject)
+  private
+    FFromCol: Integer;
+    FToCol: Integer;
+    FFromRow: Integer;
+    FToRow: Integer;
+  protected
+  public
+    function IsEmpty: Boolean;
+
+    property FromCol: Integer read FFromCol write FFromCol;
+    property ToCol: Integer read FToCol write FToCol;
+    property FromRow: Integer read FFromRow write FFromRow;
+    property ToRow: Integer read FToRow write FToRow;
+  end;
+
+
+{ TXlsReaderSheetEh }
+
+  TXlsReaderSheetEh = class(TCollectionItem)
+  private
+    FAutoFilter: TXlsReaderAutoFilterEh;
+    FName: String;
+    FXMLWorkbookNode: IXMLNode;
+    FXMLSheet: IXMLDocument;
+    FSheetData: TXlsReaderSheetDataEh;
+    FDefaultRowHeight: Double;
+    FDefaultColWidth: Double;
+    FFileName: String;
+    FRId: String;
+    FDimension: TRect;
+    FMergeCells: TXlsReaderMergeCellsEh;
+    FPageMargins: TXlsReaderPageMarginsEh;
+    FPageSetup: TXlsReaderPageSetupEh;
+    FZoomScale: Integer;
+    FFrozenColCount: Integer;
+    FFrozenRowCount: Integer;
+    FTabColor: TColor;
+    FSummaryBelow: Boolean;
+    FSummaryRight: Boolean;
+    FOutlineLevelRow: Integer;
+    function GetSheets: TXlsReaderSheetsEh;
+    function GetColCount: Integer;
+    function GetRowCount: Integer;
+  protected
+    procedure LoadSheetData;
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    property AutoFilter: TXlsReaderAutoFilterEh read FAutoFilter;
+    property Sheets: TXlsReaderSheetsEh read GetSheets;
+    property Name: String read FName;
+    property XMLWorkbookNode: IXMLNode read FXMLWorkbookNode;
+    property XMLSheet: IXMLDocument read FXMLSheet;
+    property SheetData: TXlsReaderSheetDataEh read FSheetData;
+    property RId:  String read FRId;
+    property FileName: String read FFileName;
+    property ColCount: Integer read GetColCount;
+    property RowCount: Integer read GetRowCount;
+    property MergeCells: TXlsReaderMergeCellsEh read FMergeCells;
+    property PageMargins: TXlsReaderPageMarginsEh read FPageMargins;
+    property PageSetup: TXlsReaderPageSetupEh read FPageSetup;
+    property ZoomScale: Integer read FZoomScale;
+    property FrozenColCount: Integer read FFrozenColCount;
+    property FrozenRowCount: Integer read FFrozenRowCount;
+    property DefaultRowHeight: Double read FDefaultRowHeight;
+    property DefaultColWidth: Double read FDefaultColWidth;
+    property TabColor: TColor read FTabColor;
+    property SummaryBelow: Boolean read FSummaryBelow;
+    property SummaryRight: Boolean read FSummaryRight;
+    property OutlineLevelRow: Integer read FOutlineLevelRow;
+  end;
+
+{ TXlsReaderSheetsEh }
+
+  TXlsReaderSheetsEh = class(TCollection)
+  private
+    FReader: TXlsFileReaderEh;
+    function GetSheet(Sheet: Variant): TXlsReaderSheetEh;
+  public
+    constructor Create(AReader: TXlsFileReaderEh);
+
+    function Add: TXlsReaderSheetEh;
+
+    property Reader: TXlsFileReaderEh read FReader;
+    property Sheet[Sheet: Variant]: TXlsReaderSheetEh read GetSheet; default;
+  end;
+
+{ TXlsReaderStyleSheetEh }
+
+  TXlsReaderStyleSheetEh = class(TPersistent)
+  private
+    FFonts: TXlsReaderStyleFonts;
+    FBorders: TXlsReaderStyleBordersEh;
+    FCellFormats: TXlsReaderCellFormatsEh;
+    FFileReader: TXlsFileReaderEh;
+    FFills: TXlsReaderStyleFillsEh;
+    FNumFormats: TXlsReaderNumFormatsEh;
+
+  public
+    constructor Create(FileReader: TXlsFileReaderEh);
+    destructor Destroy; override;
+
+    property FileReader: TXlsFileReaderEh read FFileReader;
+    property Fonts: TXlsReaderStyleFonts read FFonts;
+    property Fills: TXlsReaderStyleFillsEh read FFills;
+    property CellFormats: TXlsReaderCellFormatsEh read FCellFormats;
+    property NumFormats: TXlsReaderNumFormatsEh read FNumFormats;
+  end;
+
+{ TXlsFileReaderEh }
+
+  TXlsFileReaderEh = class(TPersistent)
+  private
+    FZipFileProvider: TCustomFileZipingProviderEh;
+    FFileList: TStringList;
+    FXMLWorkbookRels: IXMLDocument;
+    FXMLWorkbook: IXMLDocument;
+    FXMLSharedStrings: IXMLDocument;
+    FXMLStyles: IXMLDocument;
+    FSheets: TXlsReaderSheetsEh;
+    FSharedStrings: TXlsReaderShareStringsEh;
+    FStyleSheet: TXlsReaderStyleSheetEh;
+    FRelStructure: TXlsReaderRelStructureEh;
+    FClrScheme: TXlsReaderClrSchemeEh;
+    FIndexedColors: array of TColor;
+
+    function GetSheets: TXlsReaderSheetsEh;
+    procedure ReadFont(FontNode: IXMLNode; Font: TXlsReaderStyleFont);
+  protected
+
+  public
+
+    constructor Create;
+    destructor Destroy; override;
+
+    function GetColorByColorAttributes(sAuto, sIndexed, sRgb, sTheme, sTint: String): TColor;
+    function GetColorSchemeColorByIndex(ColorSchemeIndex: Integer): TColor;
+    function GetIndexedColor(ColorIndex: Integer): TColor;
+
+    procedure ClearAll;
+    procedure ReadFromFile(AFileName: String); virtual;
+
+    procedure LoadSheetList(XlsMemFile: TXlsMemFileEh);
+    procedure LoadSheet(Worksheet: TXlsWorksheetEh; SheetReader: TXlsReaderSheetEh);
+    procedure WriteToXlsMemFile(XlsMemFile: TXlsMemFileEh); virtual;
+
+    procedure ReadRelStructure;
+    procedure ReadWorkbookInfo;
+    procedure ReadSharedStrings;
+    procedure ReadStyles;
+    procedure ReadTheme;
+
+    property Sheets: TXlsReaderSheetsEh read GetSheets;
+  end;
+
+implementation

@@ -1,0 +1,291 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{       Utilities to sort, filter data in DataSet       }
+{                                                       }
+{      Copyright (c) 2002-2020 by Dmitry V. Bolshakov   }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBUtilsEh;
+
+interface
+
+uses
+  Variants, Messages,
+  {$IFDEF FPC}
+    EhLibLCL, LCLType, DBGridsEh,
+    {$IFDEF FPC_CROSSP}
+      LCLIntf,
+    {$ELSE}
+      Windows, Win32Extra,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBGridEh, Contnrs, Windows,
+  {$ENDIF}
+
+  {$IFDEF NEXTGEN}
+  {$ELSE}
+     {$IFDEF EH_LIB_9} WideStrings, {$ENDIF}
+  {$ENDIF}
+
+  MemTableDataEh, MemTableEh,
+  Db, SysUtils, Classes, TypInfo, ToolCtrlsEh;
+
+type
+
+  TDateValueToSQLStringProcEh = function(DataSet: TDataSet; Value: Variant): String;
+  TNullComparisonSyntaxEh = (ncsAsIsNullEh, ncsAsEqualToNullEh);
+
+var
+
+  STFilterOperatorsStrMapEh: array[TSTFilterOperatorEh] of String =
+  ('', '=', '<>',
+    '>', '<', '>=', '<=',
+    '~', '!~',
+    'In', '!In',
+    {=}'Null', {<>}'Null',
+    'AND', 'OR',
+    '',
+    {=}'Null', {<>}'Null');
+
+{$IFDEF FPC}
+  LFBr: String = '';
+  RFBr: String = '';
+{$ELSE}
+  LFBr: String = '['; 
+  RFBr: String = ']'; 
+{$ENDIF}
+
+const
+
+  STFldTypeMapEh: array[TFieldType] of TSTOperandTypeEh = (
+    botNon{ftUnknown}, botString{ftString}, botNumber{ftSmallint}, botNumber{ftInteger}, botNumber{ftWord},
+    botBoolean{ftBoolean}, botNumber{ftFloat}, botNumber{ftCurrency}, botNumber{ftBCD}, botDateTime{ftDate}, botDateTime{ftTime}, botDateTime{ftDateTime},
+    botNon{ftBytes}, botNon{ftVarBytes}, botNumber{ftAutoInc}, botNon{ftBlob}, botString{ftMemo}, botString{ftGraphic}, botString{ftFmtMemo},
+    botString{ftParadoxOle}, botString{ftDBaseOle}, botString{ftTypedBinary}, botString{ftCursor}, botString{ftFixedChar}, botString{ftWideString},
+    botNumber{ftLargeint}, botString{ftADT}, botString{ftArray}, botNon{ftReference}, botNon{ftDataSet}
+    ,botString{ftOraBlob}, botString{ftOraClob}, botString{ftVariant}, botNon{ftInterface}, botNon{ftIDispatch}, botString{ftGuid}
+    , botDateTime{ftTimeStamp}, botNumber{ftFMTBcd}
+{$IFDEF FPC}
+    ,botString ,botString
+{$ENDIF}
+{$IFDEF EH_LIB_10}
+    ,botString, botString, botNon, botString
+{$ENDIF}
+{$IFDEF EH_LIB_12}
+    ,botNumber, botNumber, botNumber, botNumber, botNon, botNon, botNon
+{$ENDIF}
+{$IFDEF EH_LIB_13}
+    ,botNon, botNon, botNumber
+{$ENDIF}
+    );
+
+  STFilterOperatorsSQLStrMapEh: array[TSTFilterOperatorEh] of String =
+  ('', '=', '<>',
+    '>', '<', '>=', '<=',
+    'LIKE', 'NOT LIKE',
+    'IN', 'NOT IN',
+    'IS NULL', 'IS NOT NULL',
+    'AND', 'OR',
+    '',
+    '= NULL', '<> NULL'
+    );
+
+procedure InitSTFilterOperatorsStrMap;
+
+{ FilterExpression }
+
+function ParseSTFilterExpressionEh(Exp: String; var FExpression: TSTFilterExpressionEh; DefaultOperator: TSTFilterDefaultOperatorEh): Boolean;
+procedure ClearSTFilterExpression(var FExpression: TSTFilterExpressionEh);
+
+type
+  TOneExpressionFilterStringProcEh = function(O: TSTFilterOperatorEh; v: Variant;
+    const FieldName: String; DataSet: TDataSet;
+    DateValueToSQLStringProc: TDateValueToSQLStringProcEh;
+    SupportsLike: Boolean;
+    NullComparisonSyntax: TNullComparisonSyntaxEh;
+    InOperIsSupported: Boolean = False): String;
+
+{ Useful routines to form filter string for dataset }
+
+function GetExpressionAsFilterString(AGrid: TCustomDBGridEh;
+  OneExpressionProc: TOneExpressionFilterStringProcEh;
+  DateValueToSQLStringProc: TDateValueToSQLStringProcEh;
+  UseFieldOrigin: Boolean = False;
+  SupportsLocalLike: Boolean = False;
+  NullComparisonSyntax: TNullComparisonSyntaxEh = ncsAsIsNullEh;
+  InOperIsSupported: Boolean = False): String;
+
+function GetOneExpressionAsLocalFilterString(O: TSTFilterOperatorEh;
+  v: Variant; const FieldName: String; DataSet: TDataSet;
+  DateValueToSQLStringProc: TDateValueToSQLStringProcEh;
+  SupportsLike: Boolean;
+  NullComparisonSyntax: TNullComparisonSyntaxEh;
+  InOperIsSupported: Boolean = False): String;
+
+function GetOneExpressionAsSQLWhereString(O: TSTFilterOperatorEh; v: Variant;
+  const FieldName: String; DataSet: TDataSet;
+  DateValueToSQLStringProc: TDateValueToSQLStringProcEh; SupportsLike: Boolean;
+  NullComparisonSyntax: TNullComparisonSyntaxEh;
+  InOperIsSupported: Boolean = False): String;
+
+function DateValueToDataBaseSQLString(DataBaseName: String; v: Variant): String;
+
+procedure ApplyFilterSQLBasedDataSet(Grid: TCustomDBGridEh; DataSet: TDataSet;
+  DateValueToSQLString: TDateValueToSQLStringProcEh; IsReopen: Boolean;
+  const SQLPropName: String);
+
+{ DatasetFeatures }
+
+type
+
+  TSimpleTextApplyFilterEh = procedure (Sender: TObject; DataSet: TDataSet;
+    FieldName: String; Operation: TLSAutoFilterTypeEh; FilterText: String) of object;
+
+  TDataSetClass = class of TDataSet;
+
+  TDatasetFeaturesEh = class
+  private
+    FDataSetClass: TDataSetClass;
+  public
+    constructor Create; virtual;
+
+    function BuildSortingString(AGrid: TCustomDBGridEh; DataSet: TDataSet): String; virtual;
+    function CanFilterField(Field: TField): Boolean; virtual;
+    function CheckFieldForSimpleTextFilter(Field: TField): Boolean; virtual;
+    function CreateAndAsignMTDateField(DataStruct: TMTDataStructEh; AField: TField): TMTDataFieldEh; virtual;
+    function GetLikeWildcardForSeveralCharacters: String; virtual;
+    function LocateText(AGrid: TCustomDBGridEh; const FieldName: string; const Text: String; AOptions: TLocateTextOptionsEh; Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh; TreeFindRange: TLocateTextTreeFindRangeEh; TimeOut: System.LongWord = 0; CheckValueEvent: TCheckColumnValueAcceptEventEh = nil): Boolean; virtual;
+    function MoveRecords(Sender: TObject; BookmarkList: TBMListEh; ToRecNo: Longint; CheckOnly: Boolean): Boolean; virtual;
+    function NullComparisonSyntax(AGrid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): TNullComparisonSyntaxEh; virtual;
+
+    procedure ApplyFilter(Sender: TObject; DataSet: TDataSet; IsReopen: Boolean); virtual;
+
+    procedure ApplyGridLocalFilter(Grid: TCustomDBGridEh; DataSet: TDataSet; IsReopen: Boolean); virtual;
+    function GetGridFilterAslFilterString(Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function GetColumnExpressionAsFilterString(Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function GetBinaryExpressionAsFilterString(FieldName: String; AnOperator: TSTFilterOperatorEh; AnOperand: Variant; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function GetColumnFilterFieldName(Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function ColumnOperatorValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; AnOperand: Variant; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function IsInOperatorSupported(Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): Boolean; virtual;
+    function IsLikeOperatorSupported(Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): Boolean; virtual;
+    function IsFilterUseFieldOrigin(Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): Boolean; virtual;
+    function GetNullComparisionFilterString(AnOperator: TSTFilterOperatorEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function GetOperatorFilterStrValue(AnOperator: TSTFilterOperatorEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function FilterFieldNameToStrValue(FieldName: String; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+
+    function ExpressionValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: Variant; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function DateTimeValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: TDateTime; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function FloatValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: Extended; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+    function VarValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: Variant; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; virtual;
+
+    function WriteDataSetToMemTable(DataSet: TDataSet; MemTable: TCustomMemTableEh; RecordCount: Integer; Mode: TLoadMode; UseCachedUpdates: Boolean): Integer; virtual;
+
+    procedure ApplyGridServerFilter(Grid: TCustomDBGridEh; DataSet: TDataSet; IsReopen: Boolean); virtual;
+
+    procedure ApplySimpleTextFilter(DataSet: TDataSet; const FieldNames: String; Operation: TLSAutoFilterTypeEh; const FilterText: String); virtual;
+    procedure ApplySorting(Sender: TObject; DataSet: TDataSet; IsReopen: Boolean); virtual;
+    procedure ExecuteFindDialog(Sender: TObject; const Text, FieldName: String; Modal: Boolean); virtual;
+    procedure FillSTFilterListDataValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings); virtual;
+    procedure FillSTFilterListCommandValues(AGrid: TCustomDBGridEh; Column: TColumnEh; Items: TStrings); virtual;
+    procedure FillFieldUniqueValues(Field: TField; Items: TStrings); virtual;
+  end;
+
+  TSQLDatasetFeaturesEh = class(TDatasetFeaturesEh)
+  private
+    FSortUsingFieldName: Boolean;
+    FSQLPropName: String;
+    FDateValueToSQLString: TDateValueToSQLStringProcEh;
+    FSupportsLocalLike: Boolean;
+
+  public
+    constructor Create; override;
+
+    procedure ApplyFilter(Sender: TObject; DataSet: TDataSet; IsReopen: Boolean); override;
+    procedure ApplySorting(Sender: TObject; DataSet: TDataSet; IsReopen: Boolean); override;
+
+    procedure ApplyGridServerFilter(Grid: TCustomDBGridEh; DataSet: TDataSet; IsReopen: Boolean); override;
+    function DateTimeValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: TDateTime; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; override;
+    function FloatValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: Extended; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; override;
+    function VarValueToFilterStrValue(AnOperator: TSTFilterOperatorEh; Value: Variant; Column: TColumnEh; Grid: TCustomDBGridEh; DataSet: TDataSet; IsLocalFilter: Boolean): String; override;
+
+    function GetSQLFilterMarker(Grid: TCustomDBGridEh; DataSet: TDataSet): String; virtual;
+    function GetServerTypeName(Grid: TCustomDBGridEh; DataSet: TDataSet): String; virtual;
+
+    property DateValueToSQLString: TDateValueToSQLStringProcEh read FDateValueToSQLString write FDateValueToSQLString;
+    property SortUsingFieldName: Boolean read FSortUsingFieldName write FSortUsingFieldName;
+    property SQLPropName: String read FSQLPropName  write FSQLPropName;
+    property SupportsLocalLike: Boolean read FSupportsLocalLike write FSupportsLocalLike;
+  end;
+
+  TCommandTextDatasetFeaturesEh = class(TSQLDatasetFeaturesEh)
+  public
+    constructor Create; override;
+  end;
+
+  TDatasetFeaturesEhClass = class of TDatasetFeaturesEh;
+
+{ Register/Unregister DatasetFeatures }
+
+procedure RegisterDatasetFeaturesEh(DatasetFeaturesClass: TDatasetFeaturesEhClass;
+  DataSetClass: TDataSetClass);
+procedure UnregisterDatasetFeaturesEh(DataSetClass: TDataSetClass);
+function GetDatasetFeaturesForDataSet(DataSet: TDataSet): TDatasetFeaturesEh;
+function GetDatasetFeaturesForDataSetClass(DataSetClass: TClass): TDatasetFeaturesEh;
+
+
+function IsSQLBasedDataSet(DataSet: TDataSet; var SQL: TStrings): Boolean;
+function IsDataSetHaveSQLLikeProp(DataSet: TDataSet; const SQLPropName: String; var SQLPropValue: WideString): Boolean;
+
+procedure ApplySortingForSQLBasedDataSet(Grid: TCustomDBGridEh; DataSet: TDataSet;
+  UseFieldName: Boolean; IsReopen: Boolean; const SQLPropName: String);
+
+function LocateDatasetTextEh(AGrid: TCustomDBGridEh;
+  const FieldName, Text: String; AOptions: TLocateTextOptionsEh;
+  Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh;
+  TreeFindRange: TLocateTextTreeFindRangeEh;
+  CheckValueEvent: TCheckColumnValueAcceptEventEh): Boolean;
+
+function DefaultLocateDatasetTextEh(AGrid: TCustomDBGridEh;
+  FieldName, Text: String; AOptions: TLocateTextOptionsEh;
+  Direction: TLocateTextDirectionEh; Matching: TLocateTextMatchingEh;
+  TimeOut: LongWord = 0;
+  CheckValueProc: TCheckColumnValueAcceptEventEh = nil): Boolean;
+
+function CharAtPos(const S: String; Pos: Integer): Char;
+
+var
+  SQLFilterMarker: String = '/*FILTER*/';
+
+type
+  TRoughStringCompareProcEh = function (s1, s2: String): Integer;
+  TRoughStringSearchEh = function (const SubStr, S: string;
+    CaseInsensitive: Boolean; WholeWord: Boolean; Offset: Integer = 1): Integer;
+  TMakeStringRoughEh = function (s: String): String;
+  TStringPosProcEh = function (const SubStr, S: string; Offset: Integer): Integer;
+
+var
+  RoughStringCompareProcEh: TRoughStringCompareProcEh;
+  RoughStringSearchProcEh: TRoughStringSearchEh;
+  RoughStringPosProcEh: TStringPosProcEh;
+  MakeStringRoughProcEh: TMakeStringRoughEh;
+
+function DefaultRoughStringPosEh(SubStr, S: string; Offset: Integer): Integer;
+function DefaultRoughStringCompareEh(s1, s2: String): Integer;
+function DefaultCaseInsensitiveStringCompareEh(s1, s2: String): Integer;
+function DefaultMakeStringRoughEh(s: String): String;
+function DefaultRoughStringSearchEh(SubStr, S: string; CaseInsensitive: Boolean; WholeWord: Boolean; Offset: Integer = 1): Integer;
+
+resourcestring
+
+  SNotOperatorEh = 'Not';
+  SAndOperatorEh = 'AND';
+  SOrOperatorEh = 'OR';
+  SLikePredicatEh = ''; 
+  SInPredicatEh = 'In';
+  SNullConstEh = 'Null';
+
+implementation

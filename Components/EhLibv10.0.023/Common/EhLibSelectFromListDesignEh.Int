@@ -1,0 +1,35 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{            TSelectFromListDesignForm form             }
+{                                                       }
+{    Copyright (c) 2013-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit EhLibSelectFromListDesignEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls;
+
+type
+  TSelectFromListDesignForm = class(TForm)
+    lDescription: TLabel;
+    ListBox1: TListBox;
+    bOk: TButton;
+    bCancel: TButton;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  SelectFromListDesignForm: TSelectFromListDesignForm;
+
+function SelectFromList(sl: TStringList; var SelectedIndex: Integer; Description: String): Boolean;
+
+implementation

@@ -1,0 +1,224 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{          Tool Controls for GridsEh component          }
+{                                                       }
+{   Copyright (c) 2013-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit GridToolCtrlsEh;
+
+interface
+
+uses SysUtils, Messages, Classes, Controls, Forms, StdCtrls,
+  Variants,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+{$IFDEF FPC}
+  {$IFDEF FPC_CROSSP}
+  LCLIntf,
+  {$ELSE}
+  Windows, UxTheme, Win32Int,
+  {$ENDIF}
+  EhLibLCL, LCLType, LMessages,
+{$ELSE}
+  EhLibVCL, Windows, 
+{$ENDIF}
+  ToolCtrlsEh,
+  Graphics, DBCtrls, Types, Themes,
+  ExtCtrls, Buttons, Menus;
+
+type
+
+{ TControlScrollBarEh }
+
+  TControlScrollBarEh = class(TScrollBar)
+  private
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMRButtonDown(var Message: TWMRButtonDown); message WM_RBUTTONDOWN;
+    procedure WMMButtonDown(var Message: TWMMButtonDown); message WM_MBUTTONDOWN;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMMouseActivate(var Message: TMessage); message WM_MOUSEACTIVATE;
+    {$ENDIF}
+    procedure CMDesignHitTest(var Msg: TCMDesignHitTest); message CM_DESIGNHITTEST;
+  public
+    procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+  end;
+
+{ TGridScrollBarPanelControlEh }
+
+  TGridScrollBarPanelControlEh = class(TCustomPanel)
+  private
+    FIgnoreCancelMode: Boolean;
+    FScrollBar: TScrollBar;
+    FKeepMaxSizeInDefault: Boolean;
+    function GetOnScroll: TScrollEvent;
+    procedure SetOnScroll(const Value: TScrollEvent);
+    procedure SetKeepMaxSizeInDefault(const Value: Boolean);
+
+  protected
+    FKind: TScrollBarKind;
+
+    function ScrollBatCode: Integer;
+    function ChildControlCanMouseDown(AControl: TControl): Boolean; virtual;
+
+    procedure AlignControls(AControl: TControl; var Rect: TRect); override;
+    procedure Resize; override;
+    procedure CreateHandle; override;
+    procedure OnScrollEvent(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
+
+    property IgnoreCancelMode: Boolean read FIgnoreCancelMode write FIgnoreCancelMode;
+  public
+    constructor Create(AOwner: TComponent; AKind: TScrollBarKind); reintroduce;
+    destructor Destroy; override;
+
+    function MaxSizeForExtraPanel: Integer;
+    procedure AdjustSize; override;
+    procedure Invalidate; override;
+    procedure SetParams(APosition, AMin, AMax, APageSize: Integer);
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: integer); override;
+
+    property OnScroll: TScrollEvent read GetOnScroll write SetOnScroll;
+    property ScrollBar: TScrollBar read FScrollBar;
+    property KeepMaxSizeInDefault: Boolean read FKeepMaxSizeInDefault write SetKeepMaxSizeInDefault;
+  end;
+
+  TGripActiveStatusEh = (gasNeverEh, gasAutoEh, gasAlwaysEh);
+
+  { TSizeGripPanelEh }
+
+  TSizeGripPanelEh = class(TCustomPanel)
+  private
+    FTriangleWindow: Boolean;
+    FGripActiveStatus: TGripActiveStatusEh;
+    FPosition: TSizeGripPosition;
+
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
+    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
+
+    procedure SetTriangleWindow(const Value: Boolean);
+    procedure SetPosition(const Value: TSizeGripPosition);
+
+  protected
+    FInitFormSize: TPoint;
+    FInitFormPos: TPoint;
+    FMouseMousePos: TPoint;
+
+    function CheckInCorner: Boolean;
+    function CheckGripActive: Boolean;
+    function GetFormSize: TPoint;
+    function GetSizableForm: TWinControl;
+
+    procedure CreateWnd; override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Paint; override;
+    procedure Resize; override;
+
+    procedure UpdateWindowRegion;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: integer); override;
+
+    property TriangleWindow: Boolean read FTriangleWindow write SetTriangleWindow default True;
+    property GripActiveStatus: TGripActiveStatusEh read FGripActiveStatus write FGripActiveStatus;
+    property Position: TSizeGripPosition read FPosition write SetPosition;
+  end;
+
+{ TGridDragWinEh }
+
+  TGridDragWinEh = class(TCustomControl)
+  private
+    FAlphaBlendValue: Byte;
+    FTransparentColorValue: TColor;
+
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure SetLayeredAttribs;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure Show;
+    procedure MoveToFor(NewPos: TPoint); overload; virtual;
+    procedure MoveToFor(NewPos: TPoint; NewWidth, NewHeight: Integer); overload; virtual;
+    procedure StartShow(Pos: TPoint; Width, Height: Integer); overload; virtual;
+    procedure StartShow(Pos: TPoint; Height: Integer); overload; virtual;
+    procedure TemporaryHide;
+
+    property AlphaBlendValue: Byte read FAlphaBlendValue write FAlphaBlendValue;
+    property TransparentColorValue: TColor read FTransparentColorValue write FTransparentColorValue;
+  end;
+
+  { TGridDragFormEh }
+
+  TGridDragFormEh = class(TPopupInactiveFormEh)
+  private
+    function GetAlphaBlendValue: Byte;
+    procedure SetAlphaBlendValue(AValue: Byte);
+  protected
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure Show;
+    procedure MoveToFor(NewPos: TPoint); overload; virtual;
+    procedure MoveToFor(NewPos: TPoint; NewWidth, NewHeight: Integer); overload; virtual;
+    procedure StartShow(Pos: TPoint; Width, Height: Integer); overload; virtual;
+    procedure StartShow(Pos: TPoint; Height: Integer); overload; virtual;
+    procedure TemporaryHide;
+
+    property AlphaBlendValue: Byte read GetAlphaBlendValue write SetAlphaBlendValue;
+  end;
+
+{ TGridDragBoxEh }
+
+  TGridDragBoxEh = class(TGridDragWinEh)
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure Paint; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
+
+{ TGridMoveLineEh }
+
+  TGridMoveLineEh = class(TGridDragFormEh)
+  private
+    FLineColor: TColor;
+  protected
+    FIsVert: Boolean;
+
+    procedure CreateParams(var Params: TCreateParams); override;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure Paint; override;
+    {$ENDIF}
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    {$IFDEF FPC}
+    procedure Paint; override;
+    {$ELSE}
+    {$ENDIF}
+    procedure StartShow(Pos: TPoint; AIsVert: Boolean; Size: Integer; ACaptureControl: TObject); virtual;
+    procedure MoveToFor(NewPos: TPoint); override;
+
+    property IsVert: Boolean read FIsVert;
+    property LineColor: TColor read FLineColor write FLineColor;
+  end;
+
+  function GetDragBoxEh: TGridDragWinEh;
+  function GetMoveLineEh: TGridMoveLineEh;
+
+implementation

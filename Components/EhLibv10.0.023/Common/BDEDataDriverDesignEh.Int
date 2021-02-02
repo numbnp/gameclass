@@ -1,0 +1,110 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{                 TBDEDesignDataBaseEh                  }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit BDEDataDriverDesignEh;
+
+{$I EHLIB.INC}
+
+interface
+
+{$IFDEF CIL}
+{$R BDEDataDriverEh.TBDEDataDriverEh.bmp}
+{$ENDIF}
+
+uses Windows, SysUtils, Classes, Controls, DB,
+  EhLibVCL, Variants, Contnrs,
+  ToolCtrlsEh, DBCommon, MemTableDataEh, DataDriverEh, DBTables,
+  SQLDriverEditEh, BDEDataDriverEh, ComCtrls, MemTableEh, Forms;
+
+type
+
+{ IBDEDesignDataBaseEh }
+
+  IBDEDesignDataBaseEh = interface
+  ['{9E53BD33-4E5E-414F-9E4A-4980A8F7637A}']
+    function GetDataBase: TDataBase;
+  end;
+
+{ TBDEDesignDataBaseEh }
+
+  TBDEDesignDataBaseEh = class(TDesignDataBaseEh, IBDEDesignDataBaseEh)
+  private
+    FDBEDataBase: TDataBase;
+    FTreeNodeMan: TCustomDBService;
+    FRuntimeDataBaseName: String;
+    FDBService: TCustomDBService;
+    FUpdateObjectsList: TStringList;
+
+  protected
+    function GetConnected: Boolean; override;
+    procedure SetConnected(const Value: Boolean); override;
+    procedure DataBaseDisconnected(Sender: TObject);
+
+  public
+    constructor Create(IsPublicDataBase: Boolean; AConProvider: TComponent); override;
+    destructor Destroy; override;
+
+    function BuildInformixObjectTree2(List: TObjectList): Boolean;
+    function BuildInterbaseObjectTree2(List: TObjectList): Boolean;
+    function BuildObjectTree(List: TObjectList): Boolean; override;
+    function BuildOracleObjectTree(List: TObjectList): Boolean;
+    function BuildUpdates(DataDriver: TCustomSQLDataDriverEh): Boolean; override;
+    function CreateDesignCopy(RTDataDriver: TCustomSQLDataDriverEh): TCustomSQLDataDriverEh; override;
+    function CreateReader(SQL: String; FParams: TParamsArr): TDataSet; override;
+    function DesignDataBaseConnetionEqual(DataDriver: TCustomSQLDataDriverEh): Boolean; override;
+    function Execute(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    function ExecuteSQL(SQL: String; FParams: TParamsArr): Integer;
+    function GetConProvider: TBDEConnectionProviderEh;
+    function GetCustomDBService: TCustomDBService; override;
+    function GetDataBase: TDataBase;
+    function GetEngineName: String; override;
+    function GetFieldList(const TableName: string; DataSet: TDataSet): Boolean; override;
+    function GetIncrementObjectsList: TStrings; override;
+    function GetServerTypeName: String; override;
+    function GetSpecParamsList: String; override;
+    function SupportCustomSQLDataDriver: Boolean; override;
+
+    procedure BuildQueryPlan(PlanTable: TMemTableEh; Command: TCustomSQLCommandEh); override;
+    procedure EditDatabaseParams; override;
+    procedure ResetDesignInfo; override;
+
+    property RuntimeDataBaseName: String read FRuntimeDataBaseName write FRuntimeDataBaseName;
+  end;
+
+{ TBDEDesignDataBaseEh }
+
+  TBDEUniService = class(TCustomDBService)
+  private
+    ServerService: TCustomDBService;
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    destructor Destroy; override;
+
+    class function GetDBServiceName: String; override;
+    function CreateRootNodes: TObjectList; override;
+    function CreateNodes(Parent: TSQLTreeNode): TObjectList; override;
+    function ShowPopup(Source: TObject; Coord: TPoint; Params: TServicePopupParams): Integer; override;
+  end;
+
+{ TBDEConnectionProviderDesignSerivceEh }
+
+  TBDEConnectionProviderDesignSerivceEh = class(TConnectionProviderDesignSerivceEh)
+    function EditDesignData(ConnectionProvider: TConnectionProviderEh): Boolean; override;
+    function CreateDesignDataBase(ConnectionProvider: TComponent): TComponent; override;
+  end;
+
+procedure UnregisterBDEAccessEngines;
+procedure RegisterBDEAccessEngines;
+
+{$IFDEF DESIGNTIME}
+procedure Register;
+{$ENDIF}
+
+implementation

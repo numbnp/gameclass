@@ -1,0 +1,102 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                 TCompChildrenEditor form              }
+{                                                       }
+{   Copyright (c) 1998-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit ComponentChildrenDesignEditorsEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, ComCtrls, ToolWin, Contnrs,
+{$IFDEF EH_LIB_17} System.UITypes, System.Types, {$ENDIF}
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
+  ObjectInspectorEh,
+{$IFDEF DESIGNTIME}
+  DesignIntf, DesignEditors, VCLEditors, ToolsAPI, DesignWindows,
+{$ENDIF}
+  DB, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh;
+
+type
+{$IFDEF DESIGNTIME}
+  TCompChildrenEditor = class(TDesignWindow)
+{$ELSE}
+  TCompChildrenEditor = class(TForm)
+{$ENDIF}
+    ToolBar1: TToolBar;
+    tbAdd: TToolButton;
+    tlDel: TToolButton;
+    ToolButton3: TToolButton;
+    tbMoveUp: TToolButton;
+    tbMoveDOwn: TToolButton;
+    DBGridEh1: TDBGridEh;
+    DataSource1: TDataSource;
+    MemTableEh1: TMemTableEh;
+    MemTableEh1CompName: TStringField;
+    MemTableEh1RefComp: TRefObjectField;
+    procedure tbAddClick(Sender: TObject);
+    procedure tlDelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tbMoveUpClick(Sender: TObject);
+    procedure tbMoveDOwnClick(Sender: TObject);
+  private
+    FMasterComponent: TComponent;
+    FChilderList: TObjectListEh;
+    FInSelection: Boolean;
+    FClosing: Boolean;
+
+    procedure SetMasterComponent(const Value: TComponent);
+    procedure AddOneChildToList(Child: TComponent);
+    procedure CheckUpdateList(Item: TPersistent);
+
+  public
+    function SelectNewChildClass: TComponentClass; virtual;
+    function CreateChild(ChildClass: TComponentClass): TComponent;
+
+    procedure InitForm;
+    procedure UpdateList;
+    procedure UpdateChildrenList;
+    procedure UpdateCaption;
+    procedure CloseEditor;
+
+{$IFDEF DESIGNTIME}
+    procedure ItemDeleted(const ADesigner: IDesigner; Item: TPersistent); override;
+    procedure DesignerClosed(const ADesigner: IDesigner; AGoingDormant: Boolean); override;
+{$ENDIF}
+
+    property MasterComponent: TComponent read FMasterComponent write SetMasterComponent;
+  end;
+
+{ TCompChildrenDesignServiceEh }
+
+  TCompChildrenDesignServiceEh = class
+    class procedure GetChildClasses(ClassList: TClassList); virtual;
+    class function CreateChild(MasterComponent: TComponent; ChildClass: TComponentClass): TComponent; virtual;
+    class function GetFormCaption(MasterComponent: TComponent): String; virtual;
+    class procedure MoveChildUp(MasterComponent: TComponent; ChildComponent: TComponent); virtual;
+    class procedure MoveChildDown(MasterComponent: TComponent; ChildComponent: TComponent); virtual;
+  end;
+
+  TCompChildrenDesignServiceClassEh = class of TCompChildrenDesignServiceEh;
+
+function ShowComponentChildrenEditor(
+{$IFDEF DESIGNTIME}
+  ADesigner: IDesigner;
+{$ENDIF}
+  AMasterComponent: TComponent): TCompChildrenEditor;
+
+procedure RegisterCompChildrenDesignService(ComponentClass: TComponentClass; DesignServiceClass: TCompChildrenDesignServiceClassEh);
+procedure UnregisterCompChildrenDesignService(DesignServiceClass: TCompChildrenDesignServiceClassEh);
+function GetDesignServiceByClass(ComponentClass: TComponentClass): TCompChildrenDesignServiceClassEh;
+
+implementation

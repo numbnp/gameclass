@@ -1,0 +1,16 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                    EhLibSplash form                   }
+{                                                       }
+{    Copyright (c) 2013-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit EhLibSplash;
+
+{$I EhLib.Inc}
+
+interface
+
+implementation

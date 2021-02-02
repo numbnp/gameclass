@@ -1,0 +1,58 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                     }
+{             Planner Design-Time Editors               }
+{                                                       }
+{    Copyright (c) 2014-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PlannerDesignEditorsEh;
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, ComCtrls, ToolWin, Contnrs,
+{$IFDEF EH_LIB_17} System.UITypes, System.Types, {$ENDIF}
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
+  ObjectInspectorEh,
+{$IFDEF DESIGNTIME}
+  {$IFDEF FPC}
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  DesignIntf, DesignEditors, VCLEditors, ToolsAPI, DesignWindows,
+  ComponentChildrenDesignEditorsEh, ComponentChildrenDesignSelectClassDialogEh,
+  DBConsts, Windows,
+  {$ENDIF}
+{$ENDIF}
+  Messages, DB, MemTableEh,
+  {$IFDEF FPC}
+  EhLibLCL, DBGridsEh,
+  {$ELSE}
+  EhLibVCL, DBGridEh, ColnEdit, DefaultItemsCollectionEditorsEh,
+  {$ENDIF}
+  GridsEh, DBAxisGridsEh,
+  EhLibDesignAbout,
+  YearPlannersEh, PlannersEh, PlannerDataEh, PlannerCalendarPickerEh;
+
+{$IFDEF FPC}
+{$ELSE}
+type
+
+{ TPlannersDesignServiceEh }
+
+  TPlannersDesignServiceEh = class(TCompChildrenDesignServiceEh)
+    class procedure GetChildClasses(ClassList: TClassList); override;
+    class function CreateChild(MasterComponent: TComponent; ChildClass: TComponentClass): TComponent; override;
+    class function GetFormCaption(MasterComponent: TComponent): String; override;
+    class procedure MoveChildUp(MasterComponent: TComponent; ChildComponent: TComponent); override;
+    class procedure MoveChildDown(MasterComponent: TComponent; ChildComponent: TComponent); override;
+  end;
+{$ENDIF}
+
+procedure Register;
+
+implementation

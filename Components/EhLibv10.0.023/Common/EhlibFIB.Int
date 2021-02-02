@@ -1,0 +1,31 @@
+{*******************************************************}
+{                                                       }
+{                  EhLib 10.0                           }
+{                  FIBPlus 6.41                         }
+{    Register object that sort data in TpFIBDataset     }
+{                                                       }
+{      Copyright (c) 2005-2006 by Roman V. Babenko      }
+{      e-mail: romb@devrace.com                         }
+{                                                       }
+{*******************************************************}
+
+{*******************************************************}
+{ Add this unit to 'uses' clause of any unit of your    }
+{ project to allow TDBGridEh to sort data in            }
+{ TpFIBDataset automatically after sorting markers      }
+{ will be changed.                                      }
+{ TFIBDatasetFeaturesEh will sort data locally          }
+{ using DoSort procedure of TpFIBDataset                }
+{ [+] SortLocal                                         }
+{ [+] FilterLocal                                       }
+{ [+] SortServer                                        }
+{ [+] FilterServer                                      }
+{*******************************************************}
+
+unit EhLibFIB;
+
+interface
+
+{$I EhLib.Inc}
+
+implementation

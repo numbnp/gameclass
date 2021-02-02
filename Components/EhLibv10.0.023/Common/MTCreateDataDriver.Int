@@ -1,0 +1,57 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{             TMemTableFieldsEditorEh component         }
+{                                                       }
+{       Copyright (c) 2003-2020 by EhLib Team and       }
+{                Dmitry V. Bolshakov                    }
+{                                                       }
+{*******************************************************}
+
+unit MTCreateDataDriver;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, MemTableEh, DataDriverEh, Db, TypInfo, DBUtilsEh,
+{$IFDEF CIL}
+  Borland.Vcl.Design.DesignIntf,
+{$ELSE}
+  DesignIntf,
+{$ENDIF}
+  ExtCtrls;
+
+type
+  TfMTCreateDataDriver = class(TForm)
+    DataSetList: TListBox;
+    DataDriversList: TListBox;
+    OkBtn: TButton;
+    CancelBtn: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Bevel1: TBevel;
+    Label3: TLabel;
+    procedure OkBtnClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+  public
+    FDataSet: TCustomMemTableEh;
+    FDesigner: IDesigner;
+    function Edit: Boolean;
+    procedure CheckComponent(const Value: string);
+  end;
+
+  TAssingDataDriverFuncPtrEh = procedure (DataDriver: TDataDriverEh; DataSet: TDataSet);
+
+var
+  fMTCreateDataDriver: TfMTCreateDataDriver;
+  DataDriversListItems: TStrings;
+  AssingDataDriverFuncPtrEh: TAssingDataDriverFuncPtrEh;
+
+function EditMTCreateDataDriver(ADataSet: TCustomMemTableEh; ADesigner: IDesigner): Boolean;
+
+implementation

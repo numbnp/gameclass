@@ -1,0 +1,715 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                   DBGridEhGrouping                    }
+{                                                       }
+{      Copyright (c) 2001-2020 by Dmitry V. Bolshakov   }
+{                                                       }
+{*******************************************************}
+
+unit DBGridEhGrouping;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Classes, Controls, Forms, Dialogs, Contnrs,
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Runtime.InteropServices, System.Reflection,
+{$ELSE}
+{$IFDEF FPC}
+  EhLibLCL, LCLType,
+{$ELSE}
+  EhLibVCL, Messages, Windows,
+{$ENDIF}
+{$ENDIF}
+  Variants, Types,
+{$IFDEF EH_LIB_17} System.UITypes, System.Generics.Collections, {$ENDIF}
+  Graphics, GridsEh, DBAxisGridsEh,
+  DBCtrls, Db, Menus, DBCtrlsEh,
+  ToolCtrlsEh, MemTreeEh, StdCtrls;
+
+type
+  TGridGroupDataTreeEh = class;
+  TGridDataGroupsEh = class;
+  TGridDataGroupLevelsEh = class;
+  TGroupDataTreeNodeEh = class;
+  TGridDataGroupFooterColumnItemsEh = class;
+  TGridDataGroupFooterEh = class;
+  TGridDataGroupFooterColumnItemEh = class;
+  TGridDataGroupFootersEh = class;
+  TGridDataGroupFootersDefValuesEh = class;
+  TGridDataGroupRowDefValuesEh = class;
+
+  TGridDataGroupFooterEhClass = class of TGridDataGroupFooterEh;
+  TGridDataGroupFooterColumnItemEhClass = class of TGridDataGroupFooterColumnItemEh;
+
+  { TGridGroupLinePenEh }
+
+  TGridGroupLinePenEh = class(TPersistent)
+  protected
+    FOwner: TPersistent;
+    FColor: TColor;
+    FWidth: Integer;
+
+    function GetColor: TColor; virtual;
+    function GetWidth: Integer; virtual;
+
+    procedure SetColor(const Value: TColor); virtual;
+    procedure SetWidth(const Value: Integer); virtual;
+
+  public
+    constructor Create(ARowDefValues: TGridDataGroupRowDefValuesEh);
+    destructor Destroy; override;
+
+  published
+    property Color: TColor read GetColor write SetColor default clDefault;
+    property Width: Integer read GetWidth write SetWidth default 1;
+  end;
+
+{ TGridDataGroupRowDefValuesEh }
+
+  TGridDataGroupRowDefValuesEh = class(TPersistent)
+  private
+    FBottomLine: TGridGroupLinePenEh;
+    FFooterInGroupRow: Boolean;
+    FRowHeight: Integer;
+    FRowLines: Integer;
+
+    procedure SetFooterInGroupRow(const Value: Boolean);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetBottomLine(const Value: TGridGroupLinePenEh);
+
+  protected
+    FDataGroups: TGridDataGroupsEh;
+
+  public
+    procedure Assign(Source: TPersistent); override;
+    constructor Create(ADataGroups: TGridDataGroupsEh);
+    destructor Destroy; override;
+
+  published
+    property FooterInGroupRow: Boolean read FFooterInGroupRow write SetFooterInGroupRow default False;
+    property RowHeight: Integer read FRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read FRowLines write SetRowLines default 0;
+    property BottomLine: TGridGroupLinePenEh read FBottomLine write SetBottomLine;
+  end;
+
+{ TGridDataGroupLevelEh }
+
+  TGridDataGroupLevelEh = class(TCollectionItem)
+  private
+    FColor: TColor;
+    FColumn: TPersistent;
+    FFont: TFont;
+    FFooterInGroupRow: Boolean;
+    FFooterInGroupRowStored: Boolean;
+    FFooters: TGridDataGroupFootersEh;
+    FGroupPanelRect: TRect;
+    FOnGetKeyValue: TNotifyEvent;
+    FOnGetTitleText: TNotifyEvent;
+    FParentColor: Boolean;
+    FParentFont: Boolean;
+    FParentFooters: Boolean;
+    FRowHeight: Integer;
+    FRowHeightStored: Boolean;
+    FRowLines: Integer;
+    FRowLinesStored: Boolean;
+    FSortOrder: TSortOrderEh;
+
+    function DefaultFooterInGroupRow: Boolean;
+    function DefaultRowHeight: Integer;
+    function DefaultRowLines: Integer;
+    function GetColor: TColor;
+    function GetFont: TFont;
+    function GetFooterInGroupRow: Boolean;
+    function GetRowHeight: Integer;
+    function GetRowLines: Integer;
+    function GetVisibleFooter(const Index: Integer): TGridDataGroupFooterEh;
+    function GetVisibleFootersCount: Integer;
+    function IsColorStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsFooterInGroupRowStored: Boolean;
+    function IsRowHeightStored: Boolean;
+    function IsRowLinesStored: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetColumn(const Value: TPersistent);
+    procedure SetFont(const Value: TFont);
+    procedure SetFooterInGroupRow(const Value: Boolean);
+    procedure SetFooterInGroupRowStored(const Value: Boolean);
+    procedure SetFooters(const Value: TGridDataGroupFootersEh);
+    procedure SetOnGetKeyValue(const Value: TNotifyEvent);
+    procedure SetOnGetTitleText(const Value: TNotifyEvent);
+    procedure SetParentColor(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetParentFooters(const Value: Boolean);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowHeightStored(const Value: Boolean);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetRowLinesStored(const Value: Boolean);
+    procedure SetSortOrder(const Value: TSortOrderEh);
+
+  protected
+    function DefaultColor: TColor;
+    function DefaultFont: TFont;
+    function DefaultFooterColor: TColor; virtual;
+    function DefaultFooterFont: TFont; virtual;
+    function GetDisplayName: string; override;
+
+    procedure DrawFormatChanged; virtual;
+    procedure FontChanged(Sender: TObject);
+    procedure RefreshDefaultFont;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function GetGroupRowText(GroupDataTreeNode: TGroupDataTreeNodeEh): String; virtual;
+    function GetKeyValue: Variant; virtual;
+    function GetKeyValueAsText(GroupDataTreeNode: TGroupDataTreeNodeEh): String; virtual;
+    function GridDataGroupLevels: TGridDataGroupLevelsEh;
+    function UsedFooters: TGridDataGroupFootersEh;
+
+    procedure CollapseNodes;
+    procedure ExpandNodes;
+    procedure ExtractNodes;
+
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property Column: TPersistent read FColumn write SetColumn;
+    property Font: TFont read GetFont write SetFont stored IsFontStored;
+    property GroupPanelRect: TRect read FGroupPanelRect write FGroupPanelRect;
+    property ParentColor: Boolean read FParentColor write SetParentColor default True;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property ParentFooters: Boolean read FParentFooters write SetParentFooters default True;
+    property RowHeight: Integer read GetRowHeight write SetRowHeight stored IsRowHeightStored;
+    property RowHeightStored: Boolean read IsRowHeightStored write SetRowHeightStored stored False;
+    property RowLines: Integer read GetRowLines write SetRowLines stored IsRowHeightStored;
+    property RowLinesStored: Boolean read IsRowLinesStored write SetRowLinesStored stored False;
+    property SortOrder: TSortOrderEh read FSortOrder write SetSortOrder default soAscEh;
+
+    property VisibleFooter[const Index: Integer]: TGridDataGroupFooterEh read GetVisibleFooter;
+    property VisibleFootersCount: Integer read GetVisibleFootersCount;
+
+    property Footers: TGridDataGroupFootersEh read FFooters write SetFooters;
+    property FooterInGroupRow: Boolean read GetFooterInGroupRow write SetFooterInGroupRow stored IsFooterInGroupRowStored;
+    property FooterInGroupRowStored: Boolean read IsFooterInGroupRowStored write SetFooterInGroupRowStored stored False;
+
+    property OnGetKeyValue: TNotifyEvent read FOnGetKeyValue write SetOnGetKeyValue;
+    property OnGetTitleText: TNotifyEvent read FOnGetTitleText write SetOnGetTitleText;
+  end;
+
+{ TGridDataGroupLevelsEh }
+
+  TGridDataGroupLevelsEh = class(TCollection)
+  private
+    FDataGroups: TGridDataGroupsEh;
+    function GetDataGroup(Index: Integer): TGridDataGroupLevelEh;
+    function GetGrid: TComponent;
+    procedure SetDataGroup(Index: Integer; const Value: TGridDataGroupLevelEh);
+
+  protected
+    function GetOwner: TPersistent; override;
+    procedure OrderChanged(Item: TGridDataGroupLevelEh); virtual;
+    procedure RefreshDefaultFont;
+    procedure Update(Item: TCollectionItem); override;
+
+  public
+    constructor Create(DataGroups: TGridDataGroupsEh; ItemClass: TCollectionItemClass);
+
+    function Add: TGridDataGroupLevelEh;
+    function DataGroup: TGridDataGroupsEh;
+
+    property Grid: TComponent read GetGrid;
+    property Items[Index: Integer]: TGridDataGroupLevelEh read GetDataGroup write SetDataGroup; default;
+  end;
+
+{ TGridDataGroupsEh }
+
+  TGridDataGroupsEh = class(TPersistent)
+  private
+    FActive: Boolean;
+    FActiveGroupColumns: TObjectListEh;
+    FActiveGroupLevels: TObjectListEh;
+    FColor: TColor;
+    FColumsLoaded: Boolean;
+    FDefaultStateExpanded: Boolean;
+    FFont: TFont;
+    FFooters: TGridDataGroupFootersEh;
+    FFootersDefValues: TGridDataGroupFootersDefValuesEh;
+    FGrid: TComponent;
+    FGroupDataTree: TGridGroupDataTreeEh;
+    FGroupLevels: TGridDataGroupLevelsEh;
+    FGroupPanelVisible: Boolean;
+    FGroupRowDefValues: TGridDataGroupRowDefValuesEh;
+    FInsertingKeyValue: Variant;
+    FParentColor: Boolean;
+    FParentFont: Boolean;
+    FShiftFolldataGroupRow: Boolean;
+
+    function GetActiveGroupLevels(const Index: Integer): TGridDataGroupLevelEh;
+    function GetActiveGroupLevelsCount: Integer;
+    function GetColor: TColor;
+    function GetFont: TFont;
+    function IsColorStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsFootersStored: Boolean;
+    function IsGroupLevelsStored: Boolean;
+
+    procedure SetActive(const Value: Boolean);
+    procedure SetColor(const Value: TColor);
+    procedure SetFont(const Value: TFont);
+    procedure SetFooters(const Value: TGridDataGroupFootersEh);
+    procedure SetGroupLevels(const Value: TGridDataGroupLevelsEh);
+    procedure SetGroupPanelVisible(const Value: Boolean);
+    procedure SetParentColor(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetFootersDefValues(const Value: TGridDataGroupFootersDefValuesEh);
+    procedure SetGroupRowDefValues(const Value: TGridDataGroupRowDefValuesEh);
+    procedure SetShiftFolldataGroupRow(const Value: Boolean);
+
+  protected
+    function CreateGroupLevels: TGridDataGroupLevelsEh; virtual;
+    function DefaultColor: TColor; virtual;
+    function DefaultFont: TFont; virtual;
+    function DefaultFooterColor: TColor; virtual;
+    function DefaultFooterFont: TFont; virtual;
+    function GetOwner: TPersistent; override;
+
+    procedure ActiveChanged; virtual;
+    procedure ActiveGroupingStructChanged; virtual;
+    procedure CheckActiveGroupLevels;
+    procedure DrawFormatChanged; virtual;
+    procedure FontChanged(Sender: TObject);
+    procedure RebuildActiveGroupLevels; virtual;
+    procedure RefreshDefaultFont;
+    procedure ResortActiveLevel(LevelIndex: Integer; SortOrder: TSortOrderEh); virtual;
+
+  public
+    constructor Create(AGrid: TComponent);
+    destructor Destroy; override;
+
+    function GetKeyValueForViewRecNo(ViewRecNo: Integer): Variant;
+    function IsGroupingWorks: Boolean; virtual;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure ColumnsChanged; virtual;
+    procedure ColumnsLoaded; virtual;
+    procedure FooterStructureChanged; virtual;
+    procedure FooterValuesChanged; virtual;
+    procedure SetInsertingKeyValue(KeyValue: Variant);
+
+    property ActiveGroupLevels[const Index: Integer]: TGridDataGroupLevelEh read GetActiveGroupLevels;
+    property ActiveGroupLevelsCount: Integer read GetActiveGroupLevelsCount;
+    property GroupDataTree: TGridGroupDataTreeEh read FGroupDataTree;
+  published
+    property Active: Boolean read FActive write SetActive default False;
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property DefaultStateExpanded: Boolean read FDefaultStateExpanded write FDefaultStateExpanded default False;
+    property Font: TFont read GetFont write SetFont stored IsFontStored;
+    property Footers: TGridDataGroupFootersEh read FFooters write SetFooters stored IsFootersStored;
+    property FootersDefValues: TGridDataGroupFootersDefValuesEh read FFootersDefValues write SetFootersDefValues;
+    property GroupLevels: TGridDataGroupLevelsEh read FGroupLevels write SetGroupLevels stored IsGroupLevelsStored;
+    property GroupPanelVisible: Boolean read FGroupPanelVisible write SetGroupPanelVisible default False;
+    property GroupRowDefValues: TGridDataGroupRowDefValuesEh read FGroupRowDefValues write SetGroupRowDefValues;
+    property ParentColor: Boolean read FParentColor write SetParentColor default True;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property ShiftFolldataGroupRow: Boolean read FShiftFolldataGroupRow write SetShiftFolldataGroupRow default True;
+  end;
+
+  TGroupDataTreeNodeTypeEh = (dntDataSetRecordEh, dntDataGroupEh, dntDataGroupFooterEh);
+
+{ TGroupDataTreeNodeEh }
+
+  TGroupDataTreeNodeEh = class(TBaseTreeNodeEh)
+  private
+    FDataGroupFooter: TGridDataGroupFooterEh;
+    FDataGroupLevel: TGridDataGroupLevelEh;
+    FDataSetRecordViewNo: Integer;
+    FDisplayValue: String;
+    FFooterItemCount: Integer;
+    FFooterValue: array of Variant;
+    FFullKey: Variant;
+    FGroupDataTreeNodeType: TGroupDataTreeNodeTypeEh;
+    FKeyValue: Variant;
+    FRowHeight: Integer;
+    FRowHeightNeedUpdate: Boolean;
+
+    function GetChildSelectionState: TCheckboxState;
+    function GetCount: Integer;
+    function GetDataItem(const Index: Integer): TGroupDataTreeNodeEh;
+    function GetFooterItem(const Index: Integer): TGroupDataTreeNodeEh;
+    function GetFooterItemCount: Integer;
+    function GetFooterValueCount: Integer;
+    function GetFooterValues(const Index: Integer): Variant;
+    function GetFullItemCount: Integer;
+    function GetParent: TGroupDataTreeNodeEh;
+    function GetRowHeight: Integer;
+
+    procedure SetFooterItemCount(const Value: Integer);
+    procedure SetRowHeight(const Value: Integer);
+
+  protected
+    function GetOwner: TGridGroupDataTreeEh; reintroduce;
+    procedure SortData(CompareProg: TCompareNodesEh; ParamSort: TObject; ARecurse: Boolean = True); override;
+
+  public
+    function CanAppendDataRec: Boolean;
+    function RecordNodeLastInGroup: Boolean;
+
+    procedure AppendDataRec(AIntMemTable: IMemTableEh; ADataSet: TDataSet);
+    procedure ResetFooters;
+    procedure RowDataChanged;
+    procedure UpdateRowHeight;
+
+    property ChildSelectionState: TCheckboxState read GetChildSelectionState;
+    property Count read GetCount;
+    property DataGroupFooter: TGridDataGroupFooterEh read FDataGroupFooter;
+    property DataGroupLevel: TGridDataGroupLevelEh read FDataGroupLevel;
+    property DataSetRecordViewNo: Integer read FDataSetRecordViewNo;
+    property DisplayValue: String read FDisplayValue;
+    property Expanded;
+    property FooterItemCount: Integer read GetFooterItemCount write SetFooterItemCount;
+    property FooterItems[const Index: Integer]: TGroupDataTreeNodeEh read GetFooterItem;
+    property FooterValueCount: Integer read GetFooterValueCount;
+    property FooterValues[const Index: Integer]: Variant read GetFooterValues;
+    property FullItemCount: Integer read GetFullItemCount;
+    property FullKey: Variant read FFullKey;
+    property Items[const Index: Integer]: TGroupDataTreeNodeEh read GetDataItem; default;
+    property KeyValue: Variant read FKeyValue;
+    property Level;
+    property NodeType: TGroupDataTreeNodeTypeEh read FGroupDataTreeNodeType;
+    property Owner: TGridGroupDataTreeEh read GetOwner;
+    property Parent: TGroupDataTreeNodeEh read GetParent;
+    property RowHeight: Integer read GetRowHeight write SetRowHeight;
+    property RowHeightNeedUpdate: Boolean read FRowHeightNeedUpdate;
+  end;
+
+{ TGridGroupDataTreeEh }
+
+  TGridGroupDataTreeEh = class(TTreeListEh)
+  private
+    FGridDataGroups: TGridDataGroupsEh;
+    FlatVisibleList: TObjectListEh;
+    FUpdateCount: Integer;
+
+    function GetFlatVisibleItem(const Index: Integer): TGroupDataTreeNodeEh;
+    function GetVisibleCount: Integer;
+    function GetRoot: TGroupDataTreeNodeEh;
+    procedure SetRoot(const Value: TGroupDataTreeNodeEh);
+
+  protected
+    procedure AggregateValuesForDataNode(Node: TGroupDataTreeNodeEh);
+    procedure CollapseLevel(LevelIndex: Integer);
+    procedure ExpandedChanged(Node: TBaseTreeNodeEh); override;
+    procedure ExpandLevel(LevelIndex: Integer);
+
+  public
+    constructor Create(AGridDataGroups: TGridDataGroupsEh; ItemClass: TTreeNodeClassEh);
+    destructor Destroy; override;
+
+    function AddChildDataNode(const Text: string; Parent: TGroupDataTreeNodeEh; Data: TObject): TGroupDataTreeNodeEh;
+    function AddRecordNodeForKey(AKey: Variant; RecViewNo: Integer): TGroupDataTreeNodeEh;
+    function CompareNodes(Node1, Node2: TBaseTreeNodeEh; ParamSort: TObject): Integer;
+    function GetFirst: TGroupDataTreeNodeEh;
+    function GetFirstNodeAtLevel(Level: Integer): TGroupDataTreeNodeEh;
+    function GetFirstVisible: TGroupDataTreeNodeEh;
+    function GetNext(Node: TGroupDataTreeNodeEh): TGroupDataTreeNodeEh;
+    function GetNextNodeAtLevel(Node: TGroupDataTreeNodeEh; Level: Integer): TGroupDataTreeNodeEh;
+    function GetNextVisible(Node: TGroupDataTreeNodeEh; ConsiderCollapsed: Boolean): TGroupDataTreeNodeEh;
+    function GetNodeByRecordViewNo(RecordViewNo: Integer): TGroupDataTreeNodeEh;
+    function GetNodeToInsertForKey1(ParentNode: TGroupDataTreeNodeEh; Key1: Variant; SortOrder: TSortOrderEh; var InsertMode: TNodeAttachModeEh): TGroupDataTreeNodeEh;
+    function GetPathVisible(Node: TGroupDataTreeNodeEh; ConsiderCollapsed: Boolean): Boolean;
+    function GetPrevious(Node: TGroupDataTreeNodeEh): TGroupDataTreeNodeEh;
+    function IndexOfVisibleNode(Node: TGroupDataTreeNodeEh): Integer;
+    function IndexOfVisibleRecordViewNo(RecordViewNo: Integer): Integer;
+
+    procedure AddDataNode(Node, Destination: TGroupDataTreeNodeEh; Mode: TNodeAttachModeEh; ReIndex: Boolean);
+    procedure BeginUpdate;
+    procedure Collapse(Node: TGroupDataTreeNodeEh; Recurse: Boolean);
+    procedure DeleteEmptyNodes;
+    procedure DeleteRecordNode(RecNode: TGroupDataTreeNodeEh);
+    procedure DeleteRecordNodes;
+    procedure DeleteRecordNodesUpToLevel(Level: Integer);
+    procedure EndUpdate;
+    procedure Expand(Node: TGroupDataTreeNodeEh; Recurse: Boolean);
+    procedure ExpandNodePathToView(Node: TGroupDataTreeNodeEh);
+    procedure RebuildDataTree(AIntMemTable: IMemTableEh);
+    procedure RebuildDataTreeEx(AIntMemTable: IMemTableEh);
+    procedure RebuildFlatVisibleList;
+    procedure RebuildFooters;
+    procedure RecalculateFootersValues;
+    procedure RecordChanged(RecNum: Integer);
+    procedure RecordDeleted(RecNum: Integer);
+    procedure RecordInserted(RecNum: Integer);
+    procedure ResortLevel(LevelIndex: Integer; SortOrder: TSortOrderEh);
+    procedure SetDataSetkeyValue;
+    procedure UpdateAllDataRowHeights;
+    procedure UpdateRecordNodePosInTree(RecNode: TGroupDataTreeNodeEh);
+
+    property FlatVisibleCount: Integer read GetVisibleCount;
+    property FlatVisibleItem[const Index: Integer]: TGroupDataTreeNodeEh read GetFlatVisibleItem;
+    property GridDataGroups: TGridDataGroupsEh read FGridDataGroups;
+    property Root: TGroupDataTreeNodeEh read GetRoot write SetRoot;
+    property UpdateCount: Integer read FUpdateCount;
+  end;
+
+{ TGridDataGroupFootersDefValuesEh }
+
+  TGridDataGroupFootersDefValuesEh = class(TPersistent)
+  private
+    FShowFunctionName: Boolean;
+    FRunTimeCustomizable: Boolean;
+    procedure SetRunTimeCustomizable(const Value: Boolean);
+    procedure SetShowFunctionName(const Value: Boolean);
+
+  protected
+    FDataGroups: TGridDataGroupsEh;
+
+  public
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    constructor Create(ADataGroups: TGridDataGroupsEh);
+
+    property ShowFunctionName: Boolean read FShowFunctionName write SetShowFunctionName default False;
+    property RunTimeCustomizable: Boolean read FRunTimeCustomizable write SetRunTimeCustomizable default False;
+  end;
+
+{ TGridDataGroupFootersEh }
+
+  TGridDataGroupFootersEh = class(TCollection)
+  private
+    FOwner: TPersistent;
+    FVisibleFooters: array of TGridDataGroupFooterEh;
+    function GetFooter(Index: Integer): TGridDataGroupFooterEh;
+    function GetVisibleFooter(Index: Integer): TGridDataGroupFooterEh;
+    function GetVisibleItemsCount: Integer;
+    procedure SetFooter(Index: Integer; const Value: TGridDataGroupFooterEh);
+
+  protected
+    function GetOwner: TPersistent; override;
+    function GridComponent: TComponent;
+
+    procedure DrawFormatChanged; virtual;
+    procedure FooterValuesChanged; virtual;
+    procedure RefreshDefaultFont;
+    procedure RefreshVisibleFooters;
+    procedure StructureChanged; virtual;
+  public
+    constructor Create(Owner: TPersistent; FooterClass: TGridDataGroupFooterEhClass);
+
+    function Add: TGridDataGroupFooterEh;
+    function GroupLevel: TGridDataGroupLevelEh;
+    function Groups: TGridDataGroupsEh;
+    function GetMasterGroups: TGridDataGroupsEh;
+
+    property Items[Index: Integer]: TGridDataGroupFooterEh read GetFooter write SetFooter; default;
+    property VisibleItems[Index: Integer]: TGridDataGroupFooterEh read GetVisibleFooter;
+    property VisibleItemsCount: Integer read GetVisibleItemsCount;
+  end;
+
+{ TGridDataGroupFooterEh }
+
+  TGridDataGroupFooterEh = class(TCollectionItem)
+  private
+    FColumnItems: TGridDataGroupFooterColumnItemsEh;
+    FFont: TFont;
+    FColor: TColor;
+    FParentColor: Boolean;
+    FParentFont: Boolean;
+    FVisible: Boolean;
+    FRowHeightNeedUpdate: Boolean;
+    FShowFunctionName: Boolean;
+    FRunTimeCustomizable: Boolean;
+    FRunTimeCustomizableStored: Boolean;
+    FShowFunctionNameStored: Boolean;
+
+    function GetColor: TColor;
+    function GetColumnItems: TGridDataGroupFooterColumnItemsEh;
+    function GetFont: TFont;
+    function GetRowHeight: Integer;
+    function GetRunTimeCustomizable: Boolean;
+    function GetShowFunctionName: Boolean;
+    function GetVisible: Boolean;
+    function IsColorStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsRunTimeCustomizableStored: Boolean;
+    function IsShowFunctionNameStored: Boolean;
+    function StoreColumnItems: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetColumnItems(const Value: TGridDataGroupFooterColumnItemsEh);
+    procedure SetFont(const Value: TFont);
+    procedure SetParentColor(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRunTimeCustomizable(const Value: Boolean);
+    procedure SetRunTimeCustomizableStored(const Value: Boolean);
+    procedure SetShowFunctionName(const Value: Boolean);
+    procedure SetShowFunctionNameStored(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+
+  protected
+    FAutoCalcHeight: Integer;
+
+    function DefaultColor: TColor;
+    function DefaultFont: TFont;
+    function CheckColumnsChanged(Columns: TCollection): Boolean; virtual;
+    function GetDisplayName: string; override;
+
+    procedure DrawFormatChanged; virtual;
+    procedure FontChanged(Sender: TObject);
+    procedure RefreshDefaultFont;
+    procedure FooterValuesChanged; virtual;
+    procedure ColumnsLoaded(Columns: TCollection);
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function DefaultRunTimeCustomizable: Boolean; virtual;
+    function DefaultShowFunctionName: Boolean;
+    function FootersCollection: TGridDataGroupFootersEh;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property RowHeight: Integer read GetRowHeight write SetRowHeight;
+    property RowHeightNeedUpdate: Boolean read FRowHeightNeedUpdate;
+
+  published
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property ColumnItems: TGridDataGroupFooterColumnItemsEh read GetColumnItems write SetColumnItems stored StoreColumnItems;
+    property Font: TFont read GetFont write SetFont stored IsFontStored;
+    property ParentColor: Boolean read FParentColor write SetParentColor default True;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property RunTimeCustomizable: Boolean read GetRunTimeCustomizable write SetRunTimeCustomizable stored IsRunTimeCustomizableStored;
+    property RunTimeCustomizableStored: Boolean read IsRunTimeCustomizableStored write SetRunTimeCustomizableStored stored False;
+    property ShowFunctionName: Boolean read GetShowFunctionName write SetShowFunctionName stored IsShowFunctionNameStored;
+    property ShowFunctionNameStored: Boolean read IsShowFunctionNameStored write SetShowFunctionNameStored stored False;
+    property Visible: Boolean read GetVisible write SetVisible;
+  end;
+
+{ TGridDataGroupFooterColumnItemsEh }
+
+  TGridDataGroupFooterColumnItemsEh = class(TCollection)
+  private
+    FOwner: TGridDataGroupFooterEh;
+    function GetItem(Index: Integer): TGridDataGroupFooterColumnItemEh;
+    procedure SetItem(Index: Integer; const Value: TGridDataGroupFooterColumnItemEh);
+
+  protected
+    function Add: TGridDataGroupFooterColumnItemEh;
+    function Footer: TGridDataGroupFooterEh;
+    function GetOwner: TPersistent; override;
+
+    procedure FooterValuesChanged; virtual;
+    procedure RefreshDefaultFont;
+    procedure ResetItems;
+    procedure Update(Item: TCollectionItem); override;
+
+  public
+    constructor Create(Owner: TGridDataGroupFooterEh; ItemClass: TGridDataGroupFooterColumnItemEhClass);
+
+    function ItemIndexByColumn(Column: TCollectionItem): Integer;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property Items[Index: Integer]: TGridDataGroupFooterColumnItemEh read GetItem write SetItem; default;
+  end;
+
+{ Every group column item in the footer corresponds to a column in the grid }
+{ TGridDataGroupFooterColumnItemEh }
+
+  TGroupFooterValueTypeEh = (gfvNonEh, gfvSumEh, gfvAvgEh, gfvCountEh,
+    gfvMaxEh, gfvMinEh, gfvStaticTextEh, gfvCustomEh);
+
+  TGridDataGroupFooterColumnItemEh = class(TCollectionItem)
+  private
+    FAlignment: TAlignment;
+    FFont: TFont;
+    FColor: TColor;
+    FParentColor: Boolean;
+    FParentFont: Boolean;
+    FValueType: TGroupFooterValueTypeEh;
+    FColumn: TPersistent;
+    FFieldName: String;
+    FDisplayFormat: String;
+    FShowFunctionName: Boolean;
+    FShowFunctionNameStored: Boolean;
+    FRunTimeCustomizable: Boolean;
+    FRunTimeCustomizableStored: Boolean;
+    FText: String;
+
+    function GetAlignment: TAlignment;
+    function GetCollection: TGridDataGroupFooterColumnItemsEh;
+    function GetColor: TColor;
+    function GetFont: TFont;
+    function GetRunTimeCustomizable: Boolean;
+    function GetShowFunctionName: Boolean;
+    function IsColorStored: Boolean;
+    function IsFontStored: Boolean;
+    function IsRunTimeCustomizableStored: Boolean;
+
+    procedure SetAlignment(const Value: TAlignment);
+    procedure SetColor(const Value: TColor);
+    procedure SetDisplayFormat(const Value: String);
+    procedure SetFont(const Value: TFont);
+    procedure SetParentColor(const Value: Boolean);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetRunTimeCustomizable(const Value: Boolean);
+    procedure SetRunTimeCustomizableStored(const Value: Boolean);
+    procedure SetShowFunctionName(const Value: Boolean);
+    procedure SetShowFunctionNameStored(const Value: Boolean);
+    procedure SetText(const Value: String);
+    procedure SetValueType(const Value: TGroupFooterValueTypeEh);
+
+  protected
+    function DefaultColor: TColor;
+    function DefaultFont: TFont;
+    function DefaultShowFunctionName: Boolean;
+    function GetDisplayName: string; override;
+
+    procedure DrawFormatChanged; virtual;
+    procedure FontChanged(Sender: TObject);
+    procedure RefreshDefaultFont;
+    procedure SetCollection(const Value: TGridDataGroupFooterColumnItemsEh); reintroduce;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function AggrValue(FooterNode: TGroupDataTreeNodeEh): Variant;
+    function CheckCustomAggregateValue(var AValue: Variant; Node: TGroupDataTreeNodeEh): Boolean;
+    function CheckCustomConvertToDisplayText(var AValue: Variant; var DisplayValue: String): Boolean;
+    function CheckCustomFinalizeValue(var AValue: Variant): Boolean;
+    function Column: TPersistent;
+    function ConvertToDisplayText(AValue: Variant): String;
+    function DefaultRunTimeCustomizable: Boolean; virtual;
+    function FieldName: String;
+    function IsShowFunctionNameStored: Boolean; virtual;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure AggregateValue(var AValue: Variant; Node: TGroupDataTreeNodeEh); virtual;
+    procedure FinalizeValue(var AValue: Variant); virtual;
+
+    property Collection: TGridDataGroupFooterColumnItemsEh read GetCollection write SetCollection;
+
+  published
+    property Alignment: TAlignment read GetAlignment write SetAlignment default taRightJustify;
+    property Color: TColor read GetColor write SetColor stored IsColorStored;
+    property DisplayFormat: String read FDisplayFormat write SetDisplayFormat;
+    property Font: TFont read GetFont write SetFont stored IsFontStored;
+    property ParentColor: Boolean read FParentColor write SetParentColor default True;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property RunTimeCustomizable: Boolean read GetRunTimeCustomizable write SetRunTimeCustomizable stored IsRunTimeCustomizableStored;
+    property RunTimeCustomizableStored: Boolean read IsRunTimeCustomizableStored write SetRunTimeCustomizableStored stored False;
+    property ShowFunctionName: Boolean read GetShowFunctionName write SetShowFunctionName stored IsShowFunctionNameStored;
+    property ShowFunctionNameStored: Boolean read IsShowFunctionNameStored write SetShowFunctionNameStored stored False;
+    property Text: String read FText write SetText;
+    property ValueType: TGroupFooterValueTypeEh read FValueType write SetValueType default gfvNonEh;
+  end;
+
+implementation

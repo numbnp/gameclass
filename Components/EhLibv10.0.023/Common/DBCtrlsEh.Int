@@ -1,0 +1,2787 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{     TDBEditEh, TDBDateTimeEditEh, TDBComboBoxEh,      }
+{      TDBNumberEditEh, TDBCheckBoxEh components        }
+{                                                       }
+{     Copyright (c) 2001-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBCtrlsEh;
+
+interface
+
+uses
+ Messages, Contnrs, Variants, StrUtils,
+  {$IFDEF EH_LIB_17} System.Generics.Collections, System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, MaskEdit, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      ComCtrls, Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBConsts, Mask, RichEdit, ComCtrls, Windows,
+  {$ENDIF}
+  SysUtils, Classes, Controls, Forms, Graphics, Menus,
+  StdCtrls, ExtCtrls, Buttons, Db, DBCtrls, Imglist, GridsEh,
+  ToolCtrlsEh, ActnList, Math, DynVarsEh, DropDownFormEh;
+
+const
+  CM_EDITIMAGECHANGEDEH = WM_USER + 101;
+
+type
+
+{ IInplaceEditHolderEh }
+
+  IInplaceEditHolderEh = interface
+    ['{4BE708F1-4EA2-4AC7-BA64-89D7D2B83E09}']
+    function InplaceEditCanModify(Control: TWinControl): Boolean;
+
+    procedure GetMouseDownInfo(var Pos: TPoint; var Time: LongInt);
+    procedure InplaceEditWndProc(Control: TWinControl; var Message: TMessage);
+    procedure InplaceEditKeyDown(Control: TWinControl; var Key: Word; Shift: TShiftState);
+    procedure InplaceEditKeyPress(Control: TWinControl; var Key: Char);
+    procedure InplaceEditKeyUp(Control: TWinControl; var Key: Word; Shift: TShiftState);
+    procedure InternalSetFocusedControl(Control: TWinControl);
+  end;
+
+{ IInplaceEditEh }
+
+  IInplaceEditEh = interface
+    ['{81F0C558-B001-4477-BAA6-2DC373FCDF88}']
+    function GetFont: TFont;
+    procedure SetInplaceEditHolder(AInplaceEditHolder: TWinControl);
+
+    procedure SetBorderStyle(ABorderStyle: TBorderStyle);
+    procedure SetFont(AFont: TFont);
+    procedure SetColor(AColor: TColor);
+    procedure SetOnKeyPress(AKeyPressEvent: TKeyPressEvent);
+    procedure SetOnExit(AKeyPressEvent: TNotifyEvent);
+  end;
+
+{ TEditImageEh }
+
+  TEditImageEh = class(TPersistent)
+  private
+    FEditControl: TWinControl;
+    FImageIndex: TImageIndex;
+    FImages: TCustomImageList;
+    FUseImageHeight: Boolean;
+    FVisible: Boolean;
+    FWidth: Integer;
+
+    procedure SetImageIndex(const Value: TImageIndex);
+    procedure SetImages(const Value: TCustomImageList);
+    procedure SetUseImageHeight(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+    procedure SetWidth(const Value: Integer);
+
+  public
+    constructor Create(EditControl: TWinControl);
+    destructor Destroy; override;
+    function Showing: Boolean;
+    function DrawWidth: Integer;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
+    property Images: TCustomImageList read FImages write SetImages;
+    property UseImageHeight: Boolean read FUseImageHeight write SetUseImageHeight default True;
+    property Visible: Boolean read FVisible write SetVisible default False;
+    property Width: Integer read FWidth write SetWidth default 0;
+  end;
+
+{ TFieldDataLinkEh }
+
+  TFieldDataLinkEh = class(TDataLink)
+  private
+    FFields: TFieldsArrEh;
+    FFieldName: string;
+    FControl: TComponent;
+    FOnDataChange: TNotifyEvent;
+    FOnEditingChange: TNotifyEvent;
+    FOnUpdateData: TNotifyEvent;
+    FOnActiveChange: TNotifyEvent;
+    FMultiFields: Boolean;
+    FDataIndepended: Boolean;
+    FEditing: Boolean;
+    FModified: Boolean;
+
+    function GetActive: Boolean;
+    function GetCanModify: Boolean;
+    function GetDataSetActive: Boolean;
+    function GetDataSource: TDataSource;
+    function GetField: TField;
+    function GetFieldsCount: Integer;
+    function GetFieldsField(Index: Integer): TField;
+
+    procedure SetDataSource(const Value: TDataSource);
+    procedure SetEditing(Value: Boolean);
+    procedure SetField(Value: TObjectList);
+    procedure SetFieldName(const Value: string);
+    procedure SetMultiFields(const Value: Boolean);
+    procedure UpdateRightToLeft;
+
+  protected
+    function FieldFound(Value: TField): Boolean;
+    procedure ActiveChanged; override;
+    procedure DataEvent(Event: TDataEvent; Info: TDataEventInfoTypeEh); override;
+    procedure EditingChanged; override;
+{$IFDEF CIL}
+    procedure FocusControl(const Field: TField); override;
+{$ELSE}
+    procedure FocusControl(Field: TFieldRef); override;
+{$ENDIF}
+    procedure LayoutChanged; override;
+    procedure RecordChanged(Field: TField); override;
+    procedure UpdateData; override;
+    procedure UpdateDataIndepended;
+    procedure UpdateField; virtual;
+  public
+    DataIndependentValue: Variant;
+
+    constructor Create;
+    function Edit: Boolean;
+    function IsDataIndepended: Boolean; virtual;
+    procedure Modified;
+    procedure SetModified(Value: Boolean);
+    procedure SetText(const Text: String);
+    procedure SetValue(Value: Variant);
+    procedure Reset;
+
+    property Active: Boolean read GetActive;
+    property CanModify: Boolean read GetCanModify;
+    property Control: TComponent read FControl write FControl;
+    property DataIndepended: Boolean read FDataIndepended;
+    property DataSetActive: Boolean read GetDataSetActive;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property Editing: Boolean read FEditing;
+    property Field: TField read GetField;
+    property FieldName: string read FFieldName write SetFieldName;
+    property Fields[Index: Integer]: TField read GetFieldsField;
+    property FieldsCount: Integer read GetFieldsCount;
+    property MultiFields: Boolean read FMultiFields write SetMultiFields;
+    property OnActiveChange: TNotifyEvent read FOnActiveChange write FOnActiveChange;
+    property OnDataChange: TNotifyEvent read FOnDataChange write FOnDataChange;
+    property OnEditingChange: TNotifyEvent read FOnEditingChange write FOnEditingChange;
+    property OnUpdateData: TNotifyEvent read FOnUpdateData write FOnUpdateData;
+  end;
+
+  TCustomDBEditEh = class;
+
+{ TCustomControlEmptyDataInfoEh }
+
+  TCustomControlEmptyDataInfoEh = class(TPersistent)
+  private
+    FAlignment: TAlignment;
+    FAlignmentIsStored: Boolean;
+    FColor: TColor;
+    FFont: TFont;
+    FParentFont: Boolean;
+    FText: String;
+    function DefaultFont: TFont;
+    function GetAlignment: TAlignment;
+    function IsAlignmentStored: Boolean;
+    function IsFontStored: Boolean;
+    procedure FontChanged(Sender: TObject);
+    procedure SetAlignment(const Value: TAlignment);
+    procedure SetAlignmentIsStored(const Value: Boolean);
+    procedure SetFont(const Value: TFont);
+    procedure SetParentFont(const Value: Boolean);
+    procedure SetText(const Value: String);
+  protected
+    FControl: TWinControl;
+
+    function GetControlAlignment: TAlignment; virtual;
+    function GetControlFont: TFont;  virtual;
+    function GetControlColor: TColor; virtual;
+    function ControlIsEmpty: Boolean; virtual;
+    function GetPaintColor: TColor; virtual;
+
+    property Color: TColor read FColor write FColor default clDefault;
+    property Text: String read FText write SetText;
+    property Font: TFont read FFont write SetFont stored IsFontStored;
+    property ParentFont: Boolean read FParentFont write SetParentFont default True;
+    property Alignment: TAlignment read GetAlignment write SetAlignment stored IsAlignmentStored;
+    property AlignmentIsStored: Boolean read IsAlignmentStored write SetAlignmentIsStored stored False;
+  public
+    constructor Create(AControl: TWinControl);
+    destructor Destroy; override;
+
+    procedure PaintEmptyDataInfo; virtual;
+    procedure RefreshDefaultFont;
+    function Showing: Boolean;
+  end;
+
+{ TControlEmptyDataInfoEh }
+
+  TControlEmptyDataInfoEh = class(TCustomControlEmptyDataInfoEh)
+  protected
+    function GetControlAlignment: TAlignment; override;
+    function GetControlFont: TFont;  override;
+    function ControlIsEmpty: Boolean; override;
+    function GetControl: TCustomDBEditEh; virtual;
+
+  public
+    constructor Create(AControl: TCustomDBEditEh);
+    destructor Destroy; override;
+
+    procedure PaintEmptyDataInfo; override;
+
+  published
+    property Color;
+    property Text;
+    property Font;
+    property ParentFont;
+    property Alignment;
+    property AlignmentIsStored;
+  end;
+
+{ TEditButtonsBoxEh  }
+
+  TEditButtonsBoxEh = class(TWinControl)
+  private
+    FLayoutCount: Integer;
+    FBtnCtlList: TEditButtonControlList;
+    FOnDown: TButtonDownEventEh;
+    FOnClick: TNotifyEvent;
+    FOnMouseMove: TMouseMoveEvent;
+    FOnMouseUp: TMouseEvent;
+    FFlat: Boolean;
+    FButtonsWidth: Integer;
+    FButtonHeight: Integer;
+    FMaxButtonHeight: Integer;
+    FBorderActive: Boolean;
+    FOnCreateEditButtonControl: TCreateEditButtonControlEvent;
+
+    function GetButtonsCount: Integer;
+
+    procedure SetBorderActive(const Value: Boolean);
+    procedure SetButtonsCount(const Value: Integer);
+
+    procedure CMParentColorChanged(var Message: TMessage); message CM_PARENTCOLORCHANGED;
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    {$IFDEF FPC}
+  protected
+    function ChildClassAllowed(ChildClass: TClass): boolean; override;
+    {$ENDIF}
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure BeginLayout;
+    procedure EndLayout;
+    procedure LayoutChanged;
+    procedure UpdateEditButtonControlList;
+    procedure UpdateEditButtonControlsState;
+
+    property BorderActive: Boolean read FBorderActive write SetBorderActive;
+    property BtnCtlList: TEditButtonControlList read FBtnCtlList;
+    property ButtonHeight: Integer read FButtonHeight;
+    property ButtonsCount: Integer read GetButtonsCount write SetButtonsCount;
+    property ButtonsWidth: Integer read FButtonsWidth;
+    property Flat: Boolean read FFlat write FFlat;
+    property MaxButtonHeight: Integer read FMaxButtonHeight write FMaxButtonHeight;
+
+    property OnClick: TNotifyEvent read FOnClick write FOnClick;
+    property OnCreateEditButtonControl: TCreateEditButtonControlEvent read FOnCreateEditButtonControl write FOnCreateEditButtonControl;
+    property OnDown: TButtonDownEventEh read FOnDown write FOnDown;
+    property OnMouseMove: TMouseMoveEvent read FOnMouseMove write FOnMouseMove;
+    property OnMouseUp: TMouseEvent read FOnMouseUp write FOnMouseUp;
+  end;
+
+{ IControlLabelOwnerEh }
+
+  IControlLabelOwnerEh = interface
+  ['{5EE8C2C7-BD36-4131-9617-FF023104A331}']
+    function GetControlLabelCaption: String;
+    function GetControlTextBaseLine: Integer;
+    procedure AdjustLabelBounds;
+    procedure LabelSpacingChanged;
+  end;
+
+{ TControlLabelEh }
+
+  TControlLabelEh = class(TCustomLabel)
+  private
+    FCaptionStored: Boolean;
+    FVisible: Boolean;
+
+    function GetCaption: TCaption;
+    function GetHeight: Integer;
+    function GetLeft: Integer;
+    function GetTop: Integer;
+    function GetVisible: Boolean;
+    function GetWidth: Integer;
+    function IsCaptionStored: Boolean;
+
+    procedure SetCaption(const Value: TCaption);
+    procedure SetHeight(const Value: Integer);
+    procedure SetVisible(const Value: Boolean); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetWidth(const Value: Integer);
+    function IsHeightStored: Boolean;
+    function IsWidthStored: Boolean;
+
+  protected
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure AdjustBounds; override;
+    {$ENDIF}
+    procedure Loaded; override;
+    procedure UpdateVisibility; virtual;
+    procedure UpdateCaption; virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    {$IFDEF FPC}
+    procedure AdjustSize; override;
+    {$ENDIF}
+    procedure UpdateParent;
+
+  published
+    property BiDiMode;
+    property Caption: TCaption read GetCaption write SetCaption stored IsCaptionStored;
+    property Color;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Font;
+    property Height: Integer read GetHeight write SetHeight stored IsHeightStored;
+    property Layout;
+    property Left: Integer read GetLeft;
+    property ParentBiDiMode;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowAccelChar;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property Top: Integer read GetTop;
+    {$IFDEF EH_LIB_13}
+    property Touch;
+    {$ENDIF}
+    property Transparent;
+    property Visible: Boolean read GetVisible write SetVisible default False;
+    property Width: Integer read GetWidth write SetWidth stored IsWidthStored;
+    property WordWrap;
+
+    property OnClick;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    {$IFDEF EH_LIB_13}
+    property OnGesture;
+    {$ENDIF}
+    {$IFDEF EH_LIB_9}
+    property OnMouseActivate;
+    {$ENDIF}
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnStartDock;
+    property OnStartDrag;
+  end;
+
+  TSpacingBoundEh = (sbNearBoundEh, sbFarBoundEh);
+  TLabelPositionEh = (lpAboveLeftEh, lpAboveCenterEh, lpAboveRightEh,
+                      lpBelowLeftEh, lpBelowCenterEh, lpBelowRightEh,
+                      lpLeftTopEh, lpLeftTextBaselineEh,  lpLeftCenterEh, lpLeftBottomEh,
+                      lpRightTopEh, lpRightTextBaselineEh, lpRightCenterEh, lpRightBottomEh);
+
+
+{ TControlLabelLocationEh }
+
+  TControlLabelLocationEh = class(TPersistent)
+  private
+    FSpacing: Integer;
+    FOffset: Integer;
+    FPosition: TLabelPositionEh;
+    FEditControl: TControl;
+    FLabelSpacingBound: TSpacingBoundEh;
+    procedure SetOffset(const Value: Integer);
+    procedure SetPosition(const Value: TLabelPositionEh);
+    procedure SetSpacing(const Value: Integer);
+    procedure SetLabelSpacingBound(const Value: TSpacingBoundEh);
+
+  public
+    constructor Create(AEditControl: TControl);
+    destructor Destroy; override;
+    procedure CalcLabelPosForControl(LabelWidth, LabelHeight: Integer; var LabelPos: TPoint);
+
+  published
+    property LabelSpacingBound: TSpacingBoundEh read FLabelSpacingBound write SetLabelSpacingBound default sbNearBoundEh;
+    property Spacing: Integer read FSpacing write SetSpacing default 3;
+    property Offset: Integer read FOffset write SetOffset default 0;
+    property Position: TLabelPositionEh read FPosition write SetPosition default lpAboveLeftEh;
+  end;
+
+{ TCustomDBEditEh }
+
+  TGetImageIndexEventEh = procedure(Sender: TObject; var ImageIndex: Integer) of object;
+  TOnCheckDrawRequiredStateEventEh = procedure(Sender: TObject; var DrawState: Boolean) of object;
+  TEditButtonDefaultActionProc = procedure(EditControl: TControl;
+    EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh;
+    IsMouseDown: Boolean; var Handled: Boolean);
+
+
+  TDBEditEhValue = (evAlignmentEh, evEditMaskEh);
+  TDBEditEhValues = set of TDBEditEhValue;
+
+  TCustomDBEditEh = class(TCustomMaskEdit, IInplaceEditEh, IComboEditEh,
+    IControlLabelOwnerEh, IUnknown)
+  private
+    FAlwaysShowBorder: Boolean;
+    FAssignedValues: TDBEditEhValues;
+    FCanvas: TControlCanvas;
+    FCompleteKeyPress: String;
+    FControlLabel: TControlLabelEh;
+    FControlLabelLocation: TControlLabelLocationEh;
+    FDynProps: TDynVarsEh;
+    FEditButton: TEditButtonEh;
+    FEditButtons: TEditButtonsEh;
+    FEditImage: TEditImageEh;
+    FEmptyDataInfo: TControlEmptyDataInfoEh;
+    FFlat: Boolean;
+    FHighlightRequired: Boolean;
+    FMRUList: TMRUListEh;
+    FMRUListControl: TWinControl;
+    FReadOnly: Boolean;
+    FShowHint: Boolean;
+    FTooltips: Boolean;
+    FWantReturns: Boolean;
+    FWantTabs: Boolean;
+    FWordWrap: Boolean;
+
+    FOnButtonClick: TButtonClickEventEh;
+    FOnButtonDown: TButtonDownEventEh;
+    FOnCheckDrawRequiredState: TOnCheckDrawRequiredStateEventEh;
+    FOnCloseDropDownForm: TEditControlCloseDropDownFormEventEh;
+    FOnGetFieldData: TGetFieldDataEventEh;
+    FOnGetImageIndex: TGetImageIndexEventEh;
+    FOnOpenDropDownForm: TEditControlShowDropDownFormEventEh;
+    FOnUpdateData: TUpdateDataEventEh;
+
+    function CheckHintTextRect(var TextWidth, TextHeight: Integer): Boolean;
+    function GetAlignment: TAlignment;
+    function GetCanvas: TCanvas;
+    function GetEditMask: String;
+    function GetField: TField;
+    function GetImages: TCustomImageList;
+    function GetMRUListControl: TWinControl;
+    function GetPasswordChar: Char;
+    function GetReadOnly: Boolean; {$IFDEF FPC} reintroduce; {$ENDIF}
+    function GetShowHint: Boolean;
+    function GetText: String;
+    function GetTextMargins: TPoint;
+    function GetValue: Variant;
+    function GetVisible: Boolean;
+    function ImageRect: TRect;
+    function IsAlignmentStored: Boolean;
+    function IsEditMaskStored: Boolean;
+    function IsTextStored: Boolean;
+    function IsValueStored: Boolean;
+
+    procedure ActiveChange(Sender: TObject);
+    procedure CheckCursor;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    procedure CMRecreateWnd(var Message: TMessage); message CM_RECREATEWND;
+    procedure CMDialogKey(var Message: TCMDialogKey); message CM_DIALOGKEY;
+    procedure CMSysColorChange(var Message: TMessage); message CM_SYSCOLORCHANGE;
+    {$ENDIF}
+    procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
+    procedure CMEditImageChangedEh(var Message: TMessage); message CM_EDITIMAGECHANGEDEH;
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+    procedure CMGetDataLink(var Message: TMessage); message CM_GETDATALINK;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+    procedure CMParentShowHintChanged(var Message: TMessage); message CM_PARENTSHOWHINTCHANGED;
+    procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
+    procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
+    procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+
+    procedure DataChange(Sender: TObject);
+    procedure DrawBorder(DC: HDC; ActiveBorder: Boolean);
+    procedure DrawEditImage(DC: HDC);
+    procedure EditButtonChanged(Sender: TObject);
+    procedure EditingChange(Sender: TObject);
+    procedure InternalMove(const Loc: TRect; Redraw: Boolean);
+    procedure InternalUpdateData(Sender: TObject);
+    procedure ReadEditMask(Reader: TReader);
+    procedure RecreateWndHandle;
+    procedure SetAlignment(const Value: TAlignment);
+    procedure SetAlwaysShowBorder(const Value: Boolean);
+    procedure SetControlLabelParams(const Value: TControlLabelLocationEh);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetEditButton(const Value: TEditButtonEh);
+    procedure SetEditButtons(const Value: TEditButtonsEh);
+    procedure SetEditImage(const Value: TEditImageEh);
+    procedure SetEditMask(const Value: String);
+    procedure SetEditRect;
+    procedure SetEmptyDataInfo(const Value: TControlEmptyDataInfoEh);
+    procedure SetFlat(const Value: Boolean);
+    procedure SetImages(const Value: TCustomImageList);
+    procedure SetMRUList(const Value: TMRUListEh);
+    procedure SetOnGetImageIndex(const Value: TGetImageIndexEventEh);
+    procedure SetPasswordChar(const Value: Char);
+    procedure SetReadOnly(Value: Boolean); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetShowHint(const Value: Boolean);
+    procedure SetText(const Value: String); {$IFDEF CIL} reintroduce; {$ENDIF}
+    procedure SetTooltips(const Value: Boolean);
+    procedure SetValue(const Value: Variant);
+    procedure SetVisible(const Value: Boolean); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetWordWrap(const Value: Boolean);
+    procedure UpdateDrawBorder;
+    procedure WriteEditMask(Writer: TWriter);
+
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
+    procedure WMUndo(var Message: TWMUndo); message WM_UNDO;
+    {$ENDIF}
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    procedure WMCut(var Message: TWMCut); message WM_CUT;
+    procedure WMClear(var Message: TWMCut); message WM_CLEAR;
+    procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+    procedure WMPaste(var Message: TWMPaste); message WM_PASTE;
+    procedure WMSetCursor(var Message: TWMSetCursor); message WM_SETCURSOR;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+
+  protected
+    FAlignment: TAlignment;
+    FBorderActive: Boolean;
+    FButtonHeight: Integer;
+    FButtonsBox: TEditButtonsBoxEh;
+    FDataLink: TFieldDataLinkEh;
+    FDataPosting: Boolean;
+    FDownButton: Integer;
+    FDroppedDown: Boolean;
+    FDroppedDownButton: TEditButtonEh;
+    FDroppedDownButtonControl: TEditButtonControlEh;
+    FFocused: Boolean;
+    FImageWidth: Integer;
+    FInplaceEditHolder: TWinControl;
+    FInplaceMode: Boolean;
+    FInternalDataSourceRef: TDataSource;
+    FInternalTextSetting: Boolean;
+    FIntfInplaceEditHolder: IInplaceEditHolderEh;
+    FMouseAboveControl: Boolean;
+    FNoClickCloseUp: Boolean;
+    FPressed: Boolean;
+    FPressedRect: TRect;
+    FUserTextChanged: Boolean;
+    FKeepMRUList: Boolean;
+
+    {$IFDEF FPC}
+    function ChildClassAllowed(ChildClass: TClass): boolean; override;
+    procedure DoAutoSize; override;
+    procedure Resize; override;
+    {$ENDIF}
+
+    function EditCanModify: Boolean; override;
+
+    function ButtonEnabled: Boolean; virtual;
+    function ButtonRect: TRect;
+    function CreateDataLink: TFieldDataLinkEh; virtual;
+    function CreateEditButton: TEditButtonEh; virtual;
+    function CreateEditButtons: TEditButtonsEh; virtual;
+    function CreateEditImage: TEditImageEh; virtual;
+    function CreateMRUListControl: TWinControl; virtual;
+    function DataIndepended: Boolean; virtual;
+    function DefaultAlignment: TAlignment; virtual;
+    function DefaultEditMask: String; virtual;
+    function DefaultImageIndex: Integer; virtual;
+    function EditButtonDefaultAction(AEditButton: TEditButtonEh): Boolean; virtual;
+    function EditRect: TRect;
+    function FixClipboardText(const Text: String): String; virtual;
+    function GetControlLabelCaption: String; virtual;
+    function GetControlTextBaseLine: Integer; virtual;
+    function GetDataField: string; virtual;
+    function GetDataSource: TDataSource; virtual;
+    function GetDisplayTextForPaintCopy: String; virtual;
+    function GetEditButtonByShortCut(ShortCut: TShortCut): TEditButtonEh;
+    function GetFillColor: TColor; virtual;
+    function GetFont: TFont;
+    function GetFontColor: TColor; virtual;
+    function GetVariantValue: Variant; virtual;
+    function IsValidChar(InputChar: Char): Boolean; virtual;
+    function IsWindowVisibleState: Boolean;
+    function PostDataEvent: Boolean;
+
+    procedure Change; override;
+    procedure ChangeScale(M, D: Integer {$IFDEF EH_LIB_24}; isDpiChange: Boolean {$ENDIF}); override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure PaintWindow(DC: HDC); override;
+    procedure SetName(const Value: TComponentName); override;
+    procedure SetParent(AParent: TWinControl); override;
+    procedure WndProc(var Message: TMessage); override;
+
+    procedure ActiveChanged; virtual;
+    procedure AdjustHeight; virtual;
+    procedure AdjustLabelBounds; virtual;
+    procedure BeforeShowDefaulEditDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm; DynParams: TDynVarsEh); virtual;
+    procedure CalcEditRect(var ARect: TRect); virtual;
+    procedure CheckEditButtonsRemoveNotification(AComponent: TComponent);
+    procedure CheckInplaceEditHolderKeyDown(var Key: Word; Shift: TShiftState);
+    procedure CheckInplaceEditHolderKeyPress(var Key: Char);
+    procedure CheckInplaceEditHolderKeyUp(var Key: Word; Shift: TShiftState);
+    procedure CloseUp(Accept: Boolean); virtual;
+    procedure CreateEditButtonControl(var EditButtonControl: TEditButtonControlEh); virtual;
+    procedure DataChanged; virtual;
+    procedure DropDownAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); virtual;
+    procedure DropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+    procedure DropDownFormCloseProc(EditControl: TControl; Button: TEditButtonEh; Accept: Boolean; DropDownForm: TCustomForm; DynParams: TDynVarsEh);
+    procedure EditButtonClick(Sender: TObject); virtual;
+    procedure EditButtonClickDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var Handled: Boolean); virtual;
+    procedure EditButtonDown(Sender: TObject; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure EditButtonImagesRefComponentNotifyEvent(Sender: TObject; RefComponent: TComponent);
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure EditButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure EditingChanged; virtual;
+    procedure FilterMRUItem(const AText: String; var Accept: Boolean); virtual;
+    procedure GetDefaultDropDownForm(var DropDownForm: TCustomForm; var FreeFormOnClose: Boolean); virtual;
+    procedure GetVarValue(var VarValue: Variant); virtual;
+    procedure InternalSetText(const AText: String); virtual;
+    procedure InternalSetValue(AValue: Variant); virtual;
+    procedure InternalUpdatePostData; virtual;
+    procedure LabelSpacingChanged; virtual;
+    procedure MRUListCloseUp(Sender: TObject; Accept: Boolean);
+    procedure MRUListControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MRUListDropDown(Sender: TObject);
+    procedure MRUListFillAutogenItems(Sender: TMRUListEh; AutogenItems: TStrings); virtual;
+    procedure PaintRequiredState(ACanvas: TCanvas); virtual;
+    procedure ResetMaxLength; virtual;
+    procedure SetAutoSize(Value: Boolean); override;
+    procedure SetBorderStyle(ABorderStyle: TBorderStyle); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetColor(AColor: TColor); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetControlEditMask(const Value: string);
+    procedure SetControlReadOnly(Value: Boolean);
+    procedure SetDataField(const Value: string); virtual;
+    procedure SetDataSource(Value: TDataSource); virtual;
+    procedure SetEditButtonClosedUp; virtual;
+    procedure SetEditButtonDroppedDown(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh); virtual;
+    procedure SetFocused(Value: Boolean); virtual;
+    procedure SetFont(AFont: TFont);
+    procedure SetInplaceEditHolder(AInplaceEditHolder: TWinControl);
+    procedure SetOnExit(AKeyPressEvent: TNotifyEvent);
+    procedure SetOnKeyPress(AKeyPressEvent: TKeyPressEvent);
+    procedure SetVariantValue(const VariantValue: Variant); virtual;
+    procedure SetVarValue(const VarValue: Variant); virtual;
+    procedure UpdateControlReadOnly; virtual;
+    procedure UpdateEditButtonControlList;
+    procedure UpdateEditButtonControlsState;
+    procedure UpdateHeight; virtual;
+    procedure UpdateHintProcessing; virtual;
+    procedure UpdateImageIndex; virtual;
+    procedure UserChange; virtual;
+
+    property AssignedValues: TDBEditEhValues read FAssignedValues;
+    property Canvas: TCanvas read GetCanvas;
+    property EditButton: TEditButtonEh read FEditButton write SetEditButton;
+    property EditButtons: TEditButtonsEh read FEditButtons write SetEditButtons;
+    property EditImage: TEditImageEh read FEditImage write SetEditImage;
+    property HighlightRequired: Boolean read FHighlightRequired write FHighlightRequired default False;
+    property Images: TCustomImageList read GetImages write SetImages;
+    property MRUList: TMRUListEh read FMRUList write SetMRUList;
+    property MRUListControl: TWinControl read GetMRUListControl;
+    property PasswordChar: Char read GetPasswordChar write SetPasswordChar default #0;
+    property WantReturns: Boolean read FWantReturns write FWantReturns default False;
+    property WantTabs: Boolean read FWantTabs write FWantTabs default False;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
+
+    property OnButtonClick: TButtonClickEventEh read FOnButtonClick write FOnButtonClick;
+    property OnButtonDown: TButtonDownEventEh read FOnButtonDown write FOnButtonDown;
+    property OnCheckDrawRequiredState: TOnCheckDrawRequiredStateEventEh read FOnCheckDrawRequiredState write FOnCheckDrawRequiredState;
+    property OnGetImageIndex: TGetImageIndexEventEh read FOnGetImageIndex write SetOnGetImageIndex;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    function GetCompleteKeyPress: String;
+    function GetEditButtonControlByEditButton(AEditButton: TEditButtonEh): TEditButtonControlEh;
+    function GetFirstDefaultActionEditButton: TEditButtonEh;
+    function IsEmpty: Boolean; virtual;
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+    function UseRightToLeftAlignment: Boolean; override;
+
+    {$IFDEF FPC}
+    procedure Clear; virtual;
+    {$ELSE}
+    procedure Clear; override;
+    {$ENDIF}
+    procedure DefaultHandler(var Message); override;
+    procedure Deselect;
+    procedure Hide;
+    procedure Move(const Loc: TRect);
+    procedure Reset; override;
+    procedure SetFocus; override;
+    procedure Undo; {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure UpdateData; virtual;
+    procedure UpdateLoc(const Loc: TRect);
+    {$IFDEF FPC}
+    function Ctl3D: Boolean;
+    {$ENDIF}
+
+    property Alignment: TAlignment read GetAlignment write SetAlignment stored IsAlignmentStored;
+    property AlwaysShowBorder: Boolean read FAlwaysShowBorder write SetAlwaysShowBorder default False;
+    property ControlLabel: TControlLabelEh read FControlLabel;
+    property ControlLabelLocation: TControlLabelLocationEh read FControlLabelLocation write SetControlLabelParams;
+    property DataField: String read GetDataField write SetDataField;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property DisplayTextForPaintCopy: String read GetDisplayTextForPaintCopy;
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property EditMask: String read GetEditMask write SetEditMask stored False;
+    property EmptyDataInfo: TControlEmptyDataInfoEh read FEmptyDataInfo write SetEmptyDataInfo;
+    property Field: TField read GetField;
+    property Flat: Boolean read FFlat write SetFlat default False;
+    property Font;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+    property ShowHint: Boolean read GetShowHint write SetShowHint default False;
+    property Text: String read GetText write SetText stored IsTextStored;
+    property Tooltips: Boolean read FTooltips write SetTooltips default False;
+    property Value: Variant read GetValue write SetValue stored IsValueStored;
+    property Visible: Boolean read GetVisible write SetVisible;
+
+    property OnCloseDropDownForm: TEditControlCloseDropDownFormEventEh read FOnCloseDropDownForm write FOnCloseDropDownForm;
+    property OnGetFieldData: TGetFieldDataEventEh read FOnGetFieldData write FOnGetFieldData;
+    property OnOpenDropDownForm: TEditControlShowDropDownFormEventEh read FOnOpenDropDownForm write FOnOpenDropDownForm;
+    property OnUpdateData: TUpdateDataEventEh read FOnUpdateData write FOnUpdateData;
+  end;
+
+  TDBEditEh = class(TCustomDBEditEh)
+  published
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+    {$ENDIF}
+    property BiDiMode;
+    property BorderStyle;
+    property CharCase;
+    property Color;
+    property ControlLabel;
+    property ControlLabelLocation;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DynProps;
+    property EditButtons;
+    property EmptyDataInfo;
+    property Enabled;
+    property EditMask;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property Images;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property MaxLength;
+    property MRUList;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PasswordChar;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+    property Text;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Visible;
+    property WantTabs;
+    property WantReturns;
+    property WordWrap;
+
+    property OnChange;
+    property OnCheckDrawRequiredState;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetFieldData;
+    property OnGetImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnOpenDropDownForm;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+var
+  DBEditEhEditButtonDefaultActionProc: TEditButtonDefaultActionProc;
+  DefaultDBEditEhDropDownFormClass: TCustomDropDownFormClassEh;
+
+procedure DefaultDBEditEhEditButtonDefaultAction(EditControl: TControl;
+    EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh;
+    IsMouseDown: Boolean; var Handled: Boolean);
+
+type
+
+{ TCustomDBDateTimeEditEh }
+
+  TDateTimeKindEh = (dtkDateEh, dtkTimeEh, dtkDateTimeEh, dtkCustomEh);
+
+  TElementMaskPosEh = record
+    Pos, Length: Integer;
+    Present: Boolean;
+  end;
+
+  TDateTimeElementsMaskPosEh = record
+    Year: TElementMaskPosEh;
+    Month: TElementMaskPosEh;
+    Day: TElementMaskPosEh;
+    Hour: TElementMaskPosEh;
+    Min: TElementMaskPosEh;
+    Sec: TElementMaskPosEh;
+  end;
+
+  TDateTimeStampEh = packed record
+    Year : Integer;
+    Month : Integer;
+    Day : Integer;
+    Hour : Integer;
+    Minute : Integer;
+    Second : Integer;
+  end;
+
+  function DateTimeStampToVarValue(DateTimeStamp: TDateTimeStampEh;
+    var DateTimeMaskPos: TDateTimeElementsMaskPosEh; var DateTimeVal: Variant;
+    AutoCorrect, RaiseError: Boolean): Boolean;
+  function DateTimeStrToDate(const DateTimeStr: String;
+    var DateTimeMaskPos: TDateTimeElementsMaskPosEh; var DateTimeStamp: TDateTimeStampEh): Boolean;
+  function RemoveNonFormatDateTimeText(const EditFormat: String): String;
+
+type
+  TCustomDBDateTimeEditEh = class(TCustomDBEditEh)
+  private
+    FCalendarVisible: Boolean;
+    FDateTimeFormat: String;
+    FDropDownCalendar: TWinControl;
+    FEditFormat: String;
+    FEditValidating: Boolean;
+    FInternalTextSetting: Boolean;
+    FKind: TDateTimeKindEh;
+    FIgnoreMouseScreenRect: TRect;
+    FIgnoreNextDropDown: Boolean;
+
+    FOnCloseUp: TCloseUpEventEh;
+    FOnDropDown: TNotifyEvent;
+
+    function GetDropDownCalendar: TWinControl;
+    function IsEditFormatStored: Boolean;
+    function IsKindStored: Boolean;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    {$ENDIF}
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+
+    procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMPaste(var Message: TWMPaste); message WM_PASTE;
+
+    procedure CloseWinCallbackProc(Control: TWinControl; Accept: Boolean);
+    procedure ReadEditFormat(Reader: TReader);
+    procedure SetEditFormat(const Value: String);
+    procedure SetKind(const Value: TDateTimeKindEh);
+    procedure UpdateValueFromText;
+    procedure WriteEditFormat(Writer: TWriter);
+  protected
+    FDateTimeMaskPos: TDateTimeElementsMaskPosEh;
+    FFourDigitYear: Boolean;
+    FValue: Variant;
+
+    function CreateEditButton: TEditButtonEh; override;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function GetDisplayTextForPaintCopy: String; override;
+    function GetVariantValue: Variant; override;
+    function TextDateTimeToVarValue(const AText: string; var AValue: Variant; const AAutoCorrect, ARaiseError: Boolean): Boolean; virtual;
+
+    procedure Change; override;
+    procedure DataChanged; override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DropDownAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); override;
+    procedure EditButtonClickDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var Handled: Boolean); override;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); override;
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); override;
+    procedure FilterMRUItem(const AText: String; var Accept: Boolean); override;
+    procedure IncrementItemAtCurPos(IsIncrease: Boolean); virtual;
+    procedure InternalSetControlText(const AText: String); virtual;
+    procedure InternalSetText(const AText: String); override;
+    procedure InternalSetValue(AValue: Variant); override;
+    procedure InternalUpdatePostData; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure UpdateFourDigitYear; virtual;
+    procedure WndProc(var Message: TMessage); override;
+
+    property DropDownCalendar: TWinControl read GetDropDownCalendar;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DateTimeFormat: String;
+    function IsEmpty: Boolean; override;
+
+    procedure CloseUp(Accept: Boolean); override;
+    procedure DropDown; virtual;
+    procedure UpdateMask; virtual;
+    procedure ValidateEdit; override;
+
+    property CalendarVisible: Boolean read FCalendarVisible;
+    property EditFormat: String read FEditFormat write SetEditFormat stored False;
+    property Kind: TDateTimeKindEh read FKind write SetKind stored IsKindStored;
+    property OnCloseUp: TCloseUpEventEh read FOnCloseUp write FOnCloseUp;
+    property OnDropDown: TNotifyEvent read FOnDropDown write FOnDropDown;
+  end;
+
+{ TDBDateTimeEditEh }
+
+  TDBDateTimeEditEh = class(TCustomDBDateTimeEditEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+    {$ENDIF}
+    property BiDiMode;
+    property BorderStyle;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DynProps;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property EditButton;
+    property EditButtons;
+    property EditFormat;
+    property EmptyDataInfo;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property Images;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property Kind;
+    property MRUList;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Value;
+    property Visible;
+
+    property OnButtonClick;
+    property OnButtonDown;
+    property OnChange;
+    property OnCheckDrawRequiredState;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnCloseUp;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnDropDown;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnOpenDropDownForm;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+{ TDropDownBoxEh }
+
+  TDropDownBoxEh = class(TPersistent)
+  private
+    FAlign: TDropDownAlign;
+    FAutoDrop: Boolean;
+    FAutoFilterType: TLSAutoFilterTypeEh;
+    FAutoFilter: Boolean;
+    FRows: Integer;
+    FSizable: Boolean;
+    FWidth: Integer;
+  public
+    procedure Assign(Source: TPersistent); override;
+  published
+    property Align: TDropDownAlign read FAlign write FAlign default daLeft;
+    property AutoDrop: Boolean read FAutoDrop write FAutoDrop default False;
+    property AutoFilter: Boolean read FAutoFilter write FAutoFilter default False;
+    property AutoFilterType: TLSAutoFilterTypeEh read FAutoFilterType write FAutoFilterType default lsftBeginsWithEh;
+    property Rows: Integer read FRows write FRows default 7;
+    property Sizable: Boolean read FSizable write FSizable default False;
+    property Width: Integer read FWidth write FWidth default 0;
+  end;
+
+  TCustomDBComboBoxEh = class;
+
+  TCustomComboBoxStringsEh = class(TStringList)
+  private
+    FComboBox: TCustomDBComboBoxEh;
+  protected
+    property ComboBox: TCustomDBComboBoxEh read FComboBox write FComboBox;
+  public
+  end;
+
+  TStringsClass = class of TStrings;
+
+{ TCustomDBComboBoxEh }
+
+  TCustomDBComboBoxEh = class(TCustomDBEditEh)
+  private
+    FCaseInsensitiveTextSearch: Boolean;
+    FDropDownBox: TDropDownBoxEh;
+    FItems: TStrings;
+    FKeyItems: TStrings;
+    FLimitTextToListValues: Boolean;
+    FLimitTextToListValuesStored: Boolean;
+    FListVisible: Boolean;
+    FPopupListbox: TWinControl;
+    FPopupListboxClass: TWinControlClass;
+    FWheelEventInListbox: Boolean;
+
+    FOnCloseUp: TCloseUpEventEh;
+    FOnClosingUp: TAcceptEventEh;
+    FOnDropDown: TNotifyEvent;
+    FOnGetItemImageIndex: TListGetImageIndexEventEh;
+    FOnGetItemsList: TNotifyEvent;
+    FOnNotInList: TNotInListEventEh;
+
+    function DefaultLimitTextToListValues: Boolean;
+    function GetImages: TCustomImageList;
+    function GetLimitTextToListValues: Boolean;
+    function IsLimitTextToListValuesStored: Boolean;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    {$ENDIF}
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+
+    procedure WMClear(var Message: TWMCut); message WM_CLEAR;
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+    procedure WMSetCursor(var Message: TWMSetCursor); message WM_SETCURSOR;
+
+    procedure ItemsChanged(Sender: TObject);
+    procedure KeyItemsChanged(Sender: TObject);
+    procedure ListMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure SetCaseInsensitiveTextSearch(const Value: Boolean);
+    procedure SetDropDownBox(const Value: TDropDownBoxEh);
+    procedure SetImages(const Value: TCustomImageList);
+    procedure SetItemIndex(const Value: Integer);
+    procedure SetItems(const Value: TStrings);
+    procedure SetKeyItems(const Value: TStrings);
+    procedure SetLimitTextToListValues(const Value: Boolean);
+    procedure SetLimitTextToListValuesStored(const Value: Boolean);
+
+  protected
+    FDefaultItemIndex: Integer;
+    FItemIndex: Integer;
+    FItemsCount: Integer;
+    FKeyBased: Boolean;
+    FVarValue: Variant;
+
+    function ConvertDataText(const Value: String): String;
+    function CreateDropDownBox: TDropDownBoxEh; virtual;
+    function CreateEditButton: TEditButtonEh; override;
+    function DefaultAlignment: TAlignment; override;
+    function DefaultImageIndex: Integer; override;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function GetDisplayTextForPaintCopy: String; override;
+    function GetItemsClass: TStringsClass;
+    function GetPopupListbox: TWinControl;
+    function GetPopupListboxColor: TColor; virtual;
+    function GetVariantValue: Variant; override;
+    function IsValidChar(InputChar: Char): Boolean; override;
+    function LocateStr(const Str: String; PartialKey: Boolean): Boolean; virtual;
+    function ProcessSearchStr(const Str: String): Boolean; virtual;
+    function SelfPopupListboxFont: TFont; virtual;
+    function TextListIndepended: Boolean;
+    function TraceMouseMoveForPopupListbox(Sender: TObject; Shift: TShiftState; X, Y: Integer): Boolean;
+
+    procedure Change; override;
+    procedure Click; override;
+    procedure DataChanged; override;
+    procedure DropDownAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); override;
+    procedure EditButtonClick(Sender: TObject); override;
+    procedure EditButtonClickDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var Handled: Boolean); override;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); override;
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); override;
+    procedure GetItemsList; virtual;
+    procedure InternalSetItemIndex(const Value: Integer); virtual;
+    procedure InternalSetText(const AText: String); override;
+    procedure InternalSetValue(AValue: Variant); override;
+    procedure InternalUpdatePostData; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure PopupListboxGetImageIndex(Sender: TObject; ItemIndex: Integer; var ImageIndex: Integer);
+    procedure ResetMaxLength; override;
+    procedure SetPopupListboxFilterFromSelection;
+    procedure SetVariantValue(const VariantValue: Variant); override;
+    procedure UpdateControlReadOnly; override;
+    procedure UpdateImageIndex; override;
+    procedure UpdateItemIndex; virtual;
+    procedure UpdateItems;
+    procedure UpdatePopupListboxItemIndex; virtual;
+    procedure WndProc(var Message: TMessage); override;
+
+    property PopupListbox: TWinControl read GetPopupListbox;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure Clear; override;
+    procedure CloseUp(Accept: Boolean); override;
+    procedure DefaultHandler(var Message); override;
+    procedure DropDown(AEditButton: TEditButtonEh = nil); virtual;
+    procedure SelectNextValue(IsPrior: Boolean); virtual;
+    procedure UpdateData; override;
+
+    property CaseInsensitiveTextSearch: Boolean read FCaseInsensitiveTextSearch write SetCaseInsensitiveTextSearch default True;
+    property DropDownBox: TDropDownBoxEh read FDropDownBox write SetDropDownBox;
+    property HighlightRequired;
+    property Images: TCustomImageList read GetImages write SetImages;
+    property ItemIndex: Integer read FItemIndex write SetItemIndex default -1;
+    property Items: TStrings read FItems write SetItems;
+    property KeyItems: TStrings read FKeyItems write SetKeyItems;
+    property LimitTextToListValues: Boolean read GetLimitTextToListValues write SetLimitTextToListValues stored IsLimitTextToListValuesStored;
+    property LimitTextToListValuesStored: Boolean read IsLimitTextToListValuesStored write SetLimitTextToListValuesStored stored False;
+    property ListVisible: Boolean read FListVisible;
+    property PopupListboxClass: TWinControlClass read FPopupListboxClass write FPopupListboxClass;
+
+    property OnCloseUp: TCloseUpEventEh read FOnCloseUp write FOnCloseUp;
+    property OnClosingUp: TAcceptEventEh read FOnClosingUp write FOnClosingUp;
+    property OnDropDown: TNotifyEvent read FOnDropDown write FOnDropDown;
+    property OnGetItemImageIndex: TListGetImageIndexEventEh read FOnGetItemImageIndex write FOnGetItemImageIndex;
+    property OnGetItemsList: TNotifyEvent read FOnGetItemsList write FOnGetItemsList;
+    property OnNotInList: TNotInListEventEh read FOnNotInList write FOnNotInList;
+  end;
+
+{ TDBComboBoxEh }
+
+  TDBComboBoxEh = class(TCustomDBComboBoxEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+    {$ENDIF}
+
+    property BiDiMode;
+    property BorderStyle;
+    property CharCase;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DynProps;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DropDownBox;
+    property EmptyDataInfo;
+    property Enabled;
+    property EditButton;
+    property EditButtons;
+    property EditMask;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property Images;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property Items;
+    property KeyItems;
+    property LimitTextToListValues;
+    property LimitTextToListValuesStored;
+    property MaxLength;
+    property MRUList;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+    property Text;
+    property CaseInsensitiveTextSearch;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Visible;
+    property WordWrap;
+
+    property OnButtonClick;
+    property OnButtonDown;
+    property OnChange;
+    property OnCheckDrawRequiredState;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnCloseUp;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnDropDown;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetImageIndex;
+    property OnGetItemImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnNotInList;
+    property OnOpenDropDownForm;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+{ TCustomDBNumberEdit }
+
+  TDBNumberValue = (evDisplayFormatEh, evCurrencyEh, evMaxValueEh, evMinValueEh);
+  TDBNumberValues = set of TDBNumberValue;
+
+  TCustomDBNumberEditEh = class(TCustomDBEditEh)
+  private
+    FAssignedValues: TDBNumberValues;
+    FCalculatorVisible: Boolean;
+    FCurrency: Boolean;
+    FDecimalPlaces: Cardinal;
+    FDisplayFormat: String;
+    FDropDownCalculator: TWinControl;
+    FEditFormat: String;
+    FIgnoreNextDropDown: Boolean;
+    FIgnoreMouseScreenRect: TRect;
+    FIncrement: Extended;
+    FInternalTextSetting: Boolean;
+    FMinValue, FMaxValue: Extended;
+    FValue: Variant;
+
+    FOnCloseUp: TCloseUpEventEh;
+    FOnDropDown: TNotifyEvent;
+
+    function CheckValue(NewValue: Extended): Extended;
+    function DisplayFormatToEditFormat(const AFormat: string): string;
+    function GetCurrency: Boolean;
+    function GetDisplayFormat: string;
+    function GetMaxValue: Extended;
+    function GetMinValue: Extended;
+    function IsCurrencyStored: Boolean;
+    function IsDisplayFormatStored: Boolean;
+    function IsIncrementStored: Boolean;
+    function IsMaxValueStored: Boolean;
+    function IsMinValueStored: Boolean;
+    function TextToValText(const AValue: string): string;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    {$ENDIF}
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+
+    procedure SetCurrency(const Value: Boolean);
+    procedure SetDecimalPlaces(Value: Cardinal);
+    procedure SetDisplayFormat(const Value: string);
+    procedure SetMaxValue(AValue: Extended);
+    procedure SetMinValue(AValue: Extended);
+
+  protected
+    function CreateEditButton: TEditButtonEh; override;
+    function DefaultAlignment: TAlignment; override;
+    function DefaultCurrency: Boolean;
+    function DefaultDisplayFormat: String;
+    function DefaultMaxValue: Extended;
+    function DefaultMinValue: Extended;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function FormatDisplayText(Value: Extended): string;
+    function GetDisplayText: string; virtual;
+    function GetDropDownCalculator: TWinControl; virtual;
+    function GetVariantValue: Variant; override;
+    function IntDigitsInText: Integer;
+    function IsValidChar(Key: Char): Boolean; override;
+
+    procedure CloseWinCallbackProc(Control: TWinControl; Accept: Boolean);
+    procedure Change; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure DataChanged; override;
+    procedure DropDownAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); override;
+    procedure EditButtonClickDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var Handled: Boolean); override;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); override;
+    procedure InternalSetControlText(const AText: String);
+    procedure InternalSetText(const AText: String); override;
+    procedure InternalSetValue(AValue: Variant); override;
+    procedure InternalUpdatePostData; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure ReformatEditText(const NewText: String); dynamic;
+    procedure UpdateValueFromText;
+    procedure WndProc(var Message: TMessage); override;
+
+    property AssignedValues: TDBNumberValues read FAssignedValues;
+    property currency: Boolean read GetCurrency write SetCurrency stored IsCurrencyStored;
+    property DecimalPlaces: Cardinal read FDecimalPlaces write SetDecimalPlaces default 2;
+    property DisplayFormat: String read GetDisplayFormat write SetDisplayFormat stored IsDisplayFormatStored;
+    property DropDownCalculator: TWinControl read GetDropDownCalculator;
+    property Increment: Extended read FIncrement write FIncrement stored IsIncrementStored;
+    property MaxLength default 0;
+    property MaxValue: Extended read GetMaxValue write SetMaxValue stored IsMaxValueStored;
+    property MinValue: Extended read GetMinValue write SetMinValue stored IsMinValueStored;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure CloseUp(Accept: Boolean); override;
+    procedure DropDown; virtual;
+    procedure IncrementValue(IsIncrease: Boolean);
+
+    property CalculatorVisible: Boolean read FCalculatorVisible;
+    property HighlightRequired;
+    property DisplayText: string read GetDisplayText;
+
+    property OnCloseUp: TCloseUpEventEh read FOnCloseUp write FOnCloseUp;
+    property OnDropDown: TNotifyEvent read FOnDropDown write FOnDropDown;
+  end;
+
+{ TNumberEdit }
+
+  TDBNumberEditEh = class(TCustomDBNumberEditEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+     {$ENDIF}
+    property BiDiMode;
+    property BorderStyle;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property currency;
+    property DataField;
+    property DataSource;
+    property DecimalPlaces;
+    property DisplayFormat;
+    property DynProps;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property EmptyDataInfo;
+    property Enabled;
+    property EditButton;
+    property EditButtons;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property Images;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property Increment;
+    property MaxValue;
+    property MinValue;
+    property MRUList;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PasswordChar;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Value;
+    property Visible;
+
+    property OnButtonClick;
+    property OnButtonDown;
+    property OnChange;
+    property OnCheckDrawRequiredState;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnOpenDropDownForm;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+{ TCustomDBCheckBoxEh }
+
+  TCustomDBCheckBoxEh = class(TCustomCheckBox)
+  private
+    FAlignment: TLeftRight;
+    FAllowGrayed: Boolean;
+    FAlwaysShowBorder: Boolean;
+    FCanvas: TCanvas;
+    FClicksDisabled: Boolean;
+    FDataLink: TFieldDataLinkEh;
+    FDynProps: TDynVarsEh;
+    FFlat: Boolean;
+    FModified: Boolean;
+    FMouseAboveControl: Boolean;
+    FState: TCheckBoxState;
+    FValueCheck: string;
+    FValueUncheck: string;
+
+    FOnUpdateData: TUpdateDataEventEh;
+
+    function GetDataField: string;
+    function GetDataSource: TDataSource;
+    function GetField: TField;
+    function GetFieldState: TCheckBoxState;
+    function GetModified: Boolean;
+    function GetReadOnly: Boolean;
+    function IsStateStored: Boolean;
+    function IsValueCheckedStored: Boolean;
+    function IsValueUncheckedStored: Boolean;
+    function ValueMatch(const ValueList, Value: string): Boolean;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    procedure CMDialogChar(var Message: TCMDialogChar); message CM_DIALOGCHAR;
+    {$ENDIF}
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMGetDataLink(var Message: TMessage); message CM_GETDATALINK;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
+
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+
+    procedure DataChange(Sender: TObject);
+    procedure InternalUpdateData(Sender: TObject);
+    procedure ReadValueChecked(Reader: TReader);
+    procedure ReadValueUnchecked(Reader: TReader);
+    procedure SetAlignment(const Value: TLeftRight);
+    procedure SetAlwaysShowBorder(const Value: Boolean);
+    procedure SetDataField(const Value: string);
+    procedure SetDataSource(Value: TDataSource);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetFlat(const Value: Boolean);
+    procedure SetReadOnly(Value: Boolean);
+    procedure SetState(const Value: TCheckBoxState);
+    procedure SetValueCheck(const Value: string);
+    procedure SetValueUncheck(const Value: string);
+    procedure WriteValueChecked(Writer: TWriter);
+    procedure WriteValueUnchecked(Writer: TWriter);
+
+  protected
+    FDataPosting: Boolean;
+    FToggleKeyDown: Boolean;
+
+    function DataIndepended: Boolean; virtual;
+    function GetChecked: Boolean; override;
+    function PostDataEvent: Boolean;
+
+    procedure Click; override;
+    procedure CreateWnd; override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DrawCaptionRect(ARect: TRect; AFocused, AMouseAboveControl, ADown: Boolean); virtual;
+    procedure DrawCheckBoxRect(ARect: TRect; AState: TCheckBoxState; AFocused, AMouseAboveControl, ADown: Boolean); virtual;
+    procedure DrawState(AState: TCheckBoxState; AFocused, AMouseAboveControl, ADown: Boolean); virtual;
+    procedure InternalSetState(Value: TCheckBoxState); virtual;
+    procedure InternalUpdatePostData; virtual;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure Paint; virtual;
+    procedure PaintWindow(DC: HDC); override;
+    procedure RecreateWndHandle;
+    procedure SetChecked(Value: Boolean); override;
+    procedure Toggle; override;
+    procedure WndProc(var Message: TMessage); override;
+
+    property Canvas: TCanvas read FCanvas;
+    property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    {$IFDEF FPC}
+    function GetControlsAlignment: TAlignment;
+    {$ELSE}
+    function GetControlsAlignment: TAlignment; override;
+    {$ENDIF}
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+    function UseRightToLeftAlignment: Boolean; override;
+
+    procedure UpdateData; virtual;
+
+    property Alignment: TLeftRight read FAlignment write SetAlignment default taRightJustify;
+    property AllowGrayed: Boolean read FAllowGrayed write FAllowGrayed default False;
+    property AlwaysShowBorder: Boolean read FAlwaysShowBorder write SetAlwaysShowBorder default False;
+    property Checked;
+    property DataField: string read GetDataField write SetDataField;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property Field: TField read GetField;
+    property Flat: Boolean read FFlat write SetFlat default False;
+    property Modified: Boolean read GetModified;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+    property State: TCheckBoxState read FState write SetState stored IsStateStored;
+    property TabStop default True;
+    property ValueChecked: String read FValueCheck write SetValueCheck stored False;
+    property ValueUnchecked: String read FValueUncheck write SetValueUncheck stored False;
+    {$IFDEF FPC}
+    {$ELSE}
+    property WordWrap;
+    {$ENDIF}
+
+    property OnUpdateData: TUpdateDataEventEh read FOnUpdateData write FOnUpdateData;
+  end;
+
+{ TDBCheckBoxEh }
+
+  TDBCheckBoxEh = class(TCustomDBCheckBoxEh)
+  published
+    property Align;
+    property Action;
+    property Alignment;
+    property AllowGrayed;
+    property AlwaysShowBorder;
+    property Anchors;
+    property BiDiMode;
+    property Caption;
+    property Checked;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DynProps;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property Flat;
+    property Font;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+    property State;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property ValueChecked;
+    property ValueUnchecked;
+    property Visible;
+    {$IFDEF FPC}
+    {$ELSE}
+    property WordWrap;
+    {$ENDIF}
+    property OnClick;
+    property OnContextPopup;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+{ TCustomDBMemoEh }
+
+  TCustomDBMemoEh = class(TCustomDBEditEh)
+  private
+    FLines: TStrings;
+    FScrollBars: TScrollStyle;
+    FWantTabs: Boolean;
+
+    procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
+
+    function GetWordWrap: Boolean;
+    function IsLinesStored: Boolean;
+
+  protected
+    function GetCaretPos: TPoint; {$IFDEF FPC} reintroduce; {$ELSE} virtual; {$ENDIF}
+
+    procedure SetCaretPos(const Value: TPoint); {$IFDEF FPC} reintroduce; {$ELSE} virtual; {$ENDIF}
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure Loaded; override;
+    procedure SetLines(Value: TStrings);
+    procedure SetScrollBars(Value: TScrollStyle);
+    procedure SetWordWrap(Value: Boolean);
+    procedure SetEditMode;
+    procedure PutToFieldAfterChange;
+
+    property ScrollBars: TScrollStyle read FScrollBars write SetScrollBars default ssNone;
+    property WantTabs: Boolean read FWantTabs write FWantTabs default False;
+    property WordWrap: Boolean read GetWordWrap write SetWordWrap default True;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    property CaretPos: TPoint read GetCaretPos write SetCaretPos;
+    property Lines: TStrings read FLines write SetLines stored IsLinesStored;
+  end;
+
+{ TDBMemoEh }
+
+  TDBMemoEh = class(TCustomDBMemoEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+    property Lines;
+    property ScrollBars;
+
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property Anchors;
+    property AutoSelect;
+    property AutoSize;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+     {$ENDIF}
+    property BiDiMode;
+    property BorderStyle;
+    property CharCase;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DynProps;
+    property EditButtons;
+    property EmptyDataInfo;
+    property Enabled;
+    property EditMask;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property Images;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property MaxLength;
+    property MRUList;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PasswordChar;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Visible;
+    property WantTabs;
+    property WantReturns;
+    property WordWrap;
+
+    property OnChange;
+    property OnCheckDrawRequiredState;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetFieldData;
+    property OnGetImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnOpenDropDownForm;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+  TSelectionDrawStyleEh = (sdsDefaultEh, sdsClassicEh, sdsFramedEh, sdsThemedEh);
+
+{ TDBImageEmptyDataInfoEh }
+
+  TCustomDBImageEh = class;
+
+  TDBImageEmptyDataInfoEh = class(TCustomControlEmptyDataInfoEh)
+  protected
+    function ControlIsEmpty: Boolean; override;
+    function GetControl: TCustomDBImageEh; virtual;
+    function GetControlAlignment: TAlignment; override;
+    function GetControlColor: TColor; override;
+    function GetControlFont: TFont;  override;
+
+    procedure GetDrawRect(var ADrawRect: TRect); virtual;
+
+  public
+    constructor Create(AControl: TCustomDBImageEh);
+    destructor Destroy; override;
+
+    procedure PaintEmptyDataInfo; override;
+
+  published
+    property Color;
+    property Text;
+    property Font;
+    property ParentFont;
+    property Alignment;
+    property AlignmentIsStored;
+  end;
+
+
+{ TCustomDBImageEh }
+
+  TCustomDBImageEh = class(TCustomControlEh, IControlLabelOwnerEh)
+  private
+    FAutoDisplay: Boolean;
+    FBorderStyle: TBorderStyle;
+    FControlLabel: TControlLabelEh;
+    FControlLabelLocation: TControlLabelLocationEh;
+    FDataLink: TFieldDataLinkEh;
+    FDataUpdating: Boolean;
+    FDynProps: TDynVarsEh;
+    FEditButton: TEditButtonEh;
+    FEmptyDataInfo: TDBImageEmptyDataInfoEh;
+    FPicture: TPictureEh;
+    FPictureLoaded: Boolean;
+    FPicturePlacement: TImagePlacementEh;
+    FSelectionDrawStyle: TSelectionDrawStyleEh;
+    FSystemPopupMenu: TPopupMenu;
+    FZoom: Integer;
+    FZoomAllowed: Boolean;
+
+    FOnButtonClick: TButtonClickEventEh;
+    FOnButtonDown: TButtonDownEventEh;
+    FOnCloseDropDownForm: TEditControlCloseDropDownFormEventEh;
+    FOnOpenDropDownForm: TEditControlShowDropDownFormEventEh;
+
+    function GetDataField: string;
+    function GetDataSource: TDataSource;
+    function GetField: TField;
+    function GetReadOnly: Boolean;
+    function IsPictureStored: Boolean;
+
+    procedure CMGetDataLink(var Message: TMessage); message CM_GETDATALINK;
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+    procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
+    procedure WMCut(var Message: TMessage); message WM_CUT;
+    procedure WMCopy(var Message: TMessage); message WM_COPY;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+    procedure WMSize(var Message: TMessage); message WM_SIZE;
+
+    procedure CheckEditButtonsRemoveNotification(AComponent: TComponent);
+    procedure DataChange(Sender: TObject);
+    procedure PictureChanged(Sender: TObject);
+    procedure SetAutoDisplay(Value: Boolean);
+    procedure SetBorderStyle(Value: TBorderStyle); {$IFDEF FPC} reintroduce; {$ENDIF}
+    procedure SetControlLabelParams(const Value: TControlLabelLocationEh);
+    procedure SetDataField(const Value: string);
+    procedure SetDataSource(Value: TDataSource);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetEditButton(const Value: TEditButtonEh);
+    procedure SetEmptyDataInfo(const Value: TDBImageEmptyDataInfoEh);
+    procedure SetPicture(Value: TPictureEh);
+    procedure SetPicturePlacement(const Value: TImagePlacementEh);
+    procedure SetReadOnly(Value: Boolean);
+    procedure SetSelectionDrawStyle(const Value: TSelectionDrawStyleEh);
+    procedure SetZoom(const Value: Integer);
+    procedure UpdateData(Sender: TObject);
+
+  protected
+    EditButtonControlLineRec: TEditButtonControlLineRec;
+    FDroppedDown: Boolean;
+    FEditButtonControl: TEditButtonControlEh;
+    FImageMouseDownPos: TPoint;
+    FImagePos: TPoint;
+    FMouseDownPos: TPoint;
+    FNoClickCloseUp: Boolean;
+    FZoomIsTemporary: Boolean;
+
+    function ButtonEnabled: Boolean; virtual;
+    function CreateEditButton: TEditButtonEh; virtual;
+    function CreateEditButtonControl: TEditButtonControlEh; virtual;
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+    function GetControlLabelCaption: String;
+    function GetControlTextBaseLine: Integer; virtual;
+    function GetPalette: HPALETTE; override;
+    function GetPopupMenu: TPopupMenu; override;
+    function GetSystemPopupMenu: TPopupMenu; virtual;
+
+    procedure AdjustLabelBounds; virtual;
+    procedure ButtonDown(IsDownButton: Boolean); virtual;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DoContextPopup(MousePos: TPoint; var Handled: Boolean); override;
+    procedure DropDown; virtual;
+    procedure DropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+    procedure EditButtonChanged(Sender: TObject);
+    procedure EditButtonClick(Sender: TObject); virtual;
+    procedure EditButtonDown(Sender: TObject; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure EditButtonImagesRefComponentNotifyEvent(Sender: TObject; RefComponent: TComponent);
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure EditButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure LabelSpacingChanged; virtual;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure Paint; override;
+    procedure SetName(const Value: TComponentName); override;
+    procedure SetParent(AParent: TWinControl); override;
+    procedure UpdateEditButtonControlList;
+    procedure UpdateEditButtonControlsState;
+
+    property Font;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ActualSelectionDrawStyle: TSelectionDrawStyleEh; virtual;
+    function CanModify: Boolean;
+    function IsEmpty: Boolean; virtual;
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    function ScaleRect(const ARect: TRect; ZoomPercent: Integer): TRect; virtual;
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+    {$IFDEF FPC}
+    function Ctl3D: Boolean;
+    {$ENDIF}
+
+    procedure FormPopupMenu(APopupMenu: TPopupMenu); virtual;
+    procedure CloseUp(Accept: Boolean); virtual;
+    procedure CopyToClipboard; virtual;
+    procedure CutToClipboard; virtual;
+    procedure LoadPicture; virtual;
+    procedure MenuItemCopy(Sender: TObject); virtual;
+    procedure MenuItemCut(Sender: TObject); virtual;
+    procedure MenuItemDefaultZoom(Sender: TObject); virtual;
+    procedure MenuItemDelete(Sender: TObject); virtual;
+    procedure MenuItemLoad(Sender: TObject); virtual;
+    procedure MenuItemPaste(Sender: TObject); virtual;
+    procedure MenuItemSave(Sender: TObject); virtual;
+    procedure PasteFromClipboard; virtual;
+    procedure ResetPos;
+    procedure ResetZoom;
+    procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+    procedure TemporaryMoveImageTo(AImagePos: TPoint); virtual;
+    procedure TemporaryZoomTo(ZoomPercent: Integer); virtual;
+
+    property AutoDisplay: Boolean read FAutoDisplay write SetAutoDisplay default True;
+    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
+    property ControlLabel: TControlLabelEh read FControlLabel;
+    property ControlLabelLocation: TControlLabelLocationEh read FControlLabelLocation write SetControlLabelParams;
+    property DataField: string read GetDataField write SetDataField;
+    property DataLink: TFieldDataLinkEh read FDataLink;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property EditButton: TEditButtonEh read FEditButton write SetEditButton;
+    property EmptyDataInfo: TDBImageEmptyDataInfoEh read FEmptyDataInfo write SetEmptyDataInfo;
+    property Field: TField read GetField;
+    property Picture: TPictureEh read FPicture write SetPicture stored IsPictureStored;
+    property PicturePlacement: TImagePlacementEh read FPicturePlacement write SetPicturePlacement default ipReduceFitEh;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+    property SelectionDrawStyle: TSelectionDrawStyleEh read FSelectionDrawStyle write SetSelectionDrawStyle default sdsDefaultEh;
+    property Zoom: Integer read FZoom write SetZoom default 100;
+    property ZoomAllowed: Boolean read FZoomAllowed write FZoomAllowed default True;
+    property ZoomIsTemporary: Boolean read FZoomIsTemporary;
+
+    property OnButtonClick: TButtonClickEventEh read FOnButtonClick write FOnButtonClick;
+    property OnButtonDown: TButtonDownEventEh read FOnButtonDown write FOnButtonDown;
+    property OnCloseDropDownForm: TEditControlCloseDropDownFormEventEh read FOnCloseDropDownForm write FOnCloseDropDownForm;
+    property OnOpenDropDownForm: TEditControlShowDropDownFormEventEh read FOnOpenDropDownForm write FOnOpenDropDownForm;
+  end;
+
+  TDBImageEhPopupMenuProc = procedure (DBImage: TCustomDBImageEh; PopupMenu: TPopupMenu);
+
+{ TDBImageEh }
+
+  TDBImageEh = class(TCustomDBImageEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Anchors;
+    property AutoDisplay;
+    property BorderStyle;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DynProps;
+    property EditButton;
+    property Enabled;
+    property Font;
+    property ParentColor default False;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property Picture;
+    property PicturePlacement;
+    property PopupMenu;
+    property ReadOnly;
+    property SelectionDrawStyle;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop default True;
+    property Visible;
+    property OnButtonClick;
+    property OnButtonDown;
+    property OnClick;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnStartDock;
+    property OnStartDrag;
+  end;
+
+var
+  DBImageEhEditButtonDefaultActionProc: TEditButtonDefaultActionProc;
+  DefaultDBImageEhDropDownFormClass: TCustomDropDownFormClassEh;
+  DBImageEhFormPopupMenuProc: TDBImageEhPopupMenuProc;
+
+procedure DefaultDBImageEhEditButtonDefaultAction(EditControl: TControl;
+  EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh;
+  IsMouseDown: Boolean; var Handled: Boolean);
+
+procedure DefaultFormDBImageEhPopupMenu(DBImage: TCustomDBImageEh;
+  PopupMenu: TPopupMenu);
+
+type
+
+{ TCustomDBRadioGroupEh }
+
+  TCustomDBRadioGroupEh = class(TCustomRadioGroup)
+  private
+    FDataLink: TFieldDataLinkEh;
+    FDynProps: TDynVarsEh;
+    FValue: string;
+    FValues: TStrings;
+    FInSetValue: Boolean;
+
+    FOnChange: TNotifyEvent;
+    FOnGetFieldData: TGetFieldDataEventEh;
+    FOnUpdateData: TUpdateDataEventEh;
+
+    function GetDataField: string;
+    function GetDataSource: TDataSource;
+    function GetField: TField;
+    function GetReadOnly: Boolean;
+    function GetButtonValue(Index: Integer): string;
+
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMGetDataLink(var Message: TMessage); message CM_GETDATALINK;
+
+    procedure DataChange(Sender: TObject);
+    procedure InternalUpdateData(Sender: TObject);
+    procedure SetDataField(const Value: string);
+    procedure SetDataSource(Value: TDataSource);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetItems(Value: TStrings);
+    procedure SetReadOnly(Value: Boolean);
+    procedure SetValue(const Value: string);
+    procedure SetValues(Value: TStrings);
+    procedure UpdateData;
+  protected
+    FDataPosting: Boolean;
+
+    {$IFDEF FPC}
+  public
+    function CanModify: Boolean; override;
+  protected
+    {$ELSE}
+    function CanModify: Boolean; override;
+    {$ENDIF}
+    function CreateDataLink: TFieldDataLinkEh; virtual;
+    function DataIndepended: Boolean; virtual;
+    function PostDataEvent: Boolean;
+
+    procedure InternalUpdatePostData; virtual;
+    procedure Change; virtual;
+    procedure Click; override;
+    procedure DataChanged; virtual;
+    procedure InternalSetValue(const Value: string); virtual;
+    procedure KeyPress(var Key: Char); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+    property DataLink: TFieldDataLinkEh read FDataLink;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+    function UseRightToLeftAlignment: Boolean; override;
+
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property Field: TField read GetField;
+    property ItemIndex;
+    property Value: string read FValue write SetValue;
+    property DataField: string read GetDataField write SetDataField;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property Items write SetItems;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+    property Values: TStrings read FValues write SetValues;
+
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property OnGetFieldData: TGetFieldDataEventEh read FOnGetFieldData write FOnGetFieldData;
+    property OnUpdateData: TUpdateDataEventEh read FOnUpdateData write FOnUpdateData;
+  end;
+
+{ TDBRadioGroupEh }
+
+  TDBRadioGroupEh = class(TCustomDBRadioGroupEh)
+  published
+    property Align;
+    property Anchors;
+    property BiDiMode;
+    property Caption;
+    property Color;
+    property Columns;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property Font;
+    property Items;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentBackground;
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Values;
+    property Visible;
+
+    property OnChange;
+    property OnClick;
+    property OnContextPopup;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnGetFieldData;
+    property OnStartDock;
+    property OnStartDrag;
+    property OnUpdateData;
+  end;
+
+{$IFDEF FPC}
+  
+{$ELSE}
+{ TCustomDBRichEditEh }
+
+  TCustomDBRichEditEh = class(TCustomRichEdit, IControlLabelOwnerEh)
+  private
+    FDataLink: TFieldDataLinkEh;
+    FAutoDisplay: Boolean;
+    FFocused: Boolean;
+    FMemoLoaded: Boolean;
+    FDataSave: string;
+    FCreatingWnd: Integer;
+    FDynProps: TDynVarsEh;
+    FOnOpenDropDownForm: TEditControlShowDropDownFormEventEh;
+    FOnCloseDropDownForm: TEditControlCloseDropDownFormEventEh;
+    FControlLabel: TControlLabelEh;
+    FControlLabelLocation: TControlLabelLocationEh;
+
+    function BeginEditing: Boolean;
+    function GetDataField: string;
+    function GetDataSource: TDataSource;
+    function GetField: TField;
+    function GetReadOnly: Boolean;
+    function GetRtfText: String;
+
+    procedure DataChange(Sender: TObject);
+    procedure EditingChange(Sender: TObject);
+    procedure SetAutoDisplay(Value: Boolean);
+    procedure SetControlLabelParams(const Value: TControlLabelLocationEh);
+    procedure SetDataField(const Value: string);
+    procedure SetDataSource(Value: TDataSource);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetEditButtons(const Value: TEditButtonsEh);
+    procedure SetEditRect;
+    procedure SetFocused(Value: Boolean);
+    procedure SetReadOnly(Value: Boolean);
+    procedure SetRtfText(const Value: String);
+    procedure UpdateData(Sender: TObject);
+
+    procedure EMSetCharFormat(var Message: TMessage); message EM_SETCHARFORMAT;
+    procedure EMSetParaFormat(var Message: TMessage); message EM_SETPARAFORMAT;
+
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMGetDataLink(var Message: TMessage); message CM_GETDATALINK;
+    procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
+
+    procedure WMClear(var Message: TMessage); message WM_CLEAR;
+    procedure WMCut(var Message: TMessage); message WM_CUT;
+    procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+
+  protected
+    FButtonsBox: TEditButtonsBoxEh;
+    FDataPosting: Boolean;
+    FDroppedDown: Boolean;
+    FEditButtons: TEditButtonsEh;
+    FInternalRtfText: String;
+    FNoClickCloseUp: Boolean;
+
+    function CreateEditButtons: TEditButtonsEh; virtual;
+    function ButtonRect: TRect; virtual;
+    function GetControlLabelCaption: String; virtual;
+    function GetControlTextBaseLine: Integer; virtual;
+
+    procedure Change; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure DestroyWnd; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure Resize; override;
+    procedure SetName(const Value: TComponentName); override;
+    procedure SetParent(AParent: TWinControl); override;
+    procedure WndProc(var Message: TMessage); override;
+
+    procedure AdjustLabelBounds; virtual;
+    procedure CalcEditRect(var ARect: TRect); virtual;
+    procedure CheckShowDropDownForm(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); virtual;
+    procedure CloseUp(Accept: Boolean); virtual;
+    procedure CreateEditButtonControl(var EditButtonControl: TEditButtonControlEh); virtual;
+    procedure DropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+    procedure DropDownFormCloseProc(EditControl: TControl; Button: TEditButtonEh; Accept: Boolean; DropDownForm: TCustomForm; DynParams: TDynVarsEh);
+    procedure EditButtonChanged(Sender: TObject);
+    procedure EditButtonClick(Sender: TObject); virtual;
+    procedure EditButtonDown(Sender: TObject; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure EditButtonImagesRefComponentNotifyEvent(Sender: TObject; RefComponent: TComponent);
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure EditButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure GetDefaultDropDownForm(var DropDownForm: TCustomForm; var FreeFormOnClose: Boolean); virtual;
+    procedure GetVarValue(var VarValue: Variant);
+    procedure LabelSpacingChanged; virtual;
+    procedure LoadMemoFromString(const Data: string);
+    procedure ReadLines_Data(Stream: TStream);
+    procedure ReadRtfText(Reader: TReader);
+    procedure SetEnableChangeNotification(const Value: Boolean); virtual;
+    procedure SetVarValue(const VarValue: Variant);
+    procedure UpdateEditButtonControlList;
+    procedure UpdateEditButtonControlsState;
+    procedure WriteLines_Data(Stream: TStream);
+    procedure WriteRtfText(Writer: TWriter);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ExecuteAction(Action: TBasicAction): Boolean; override;
+    function UpdateAction(Action: TBasicAction): Boolean; override;
+    function UseRightToLeftAlignment: Boolean; override;
+    function DataIndepended: Boolean; virtual;
+
+    procedure LoadMemo; virtual;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+
+
+    property AutoDisplay: Boolean read FAutoDisplay write SetAutoDisplay default True;
+    property ControlLabel: TControlLabelEh read FControlLabel;
+    property ControlLabelLocation: TControlLabelLocationEh read FControlLabelLocation write SetControlLabelParams;
+    property DataField: string read GetDataField write SetDataField;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property EditButtons: TEditButtonsEh read FEditButtons write SetEditButtons;
+    property Field: TField read GetField;
+    property Lines stored False;
+    property ParentFont default False;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+    property RtfText: String read GetRtfText write SetRtfText;
+
+    property OnCloseDropDownForm: TEditControlCloseDropDownFormEventEh read FOnCloseDropDownForm write FOnCloseDropDownForm;
+    property OnOpenDropDownForm: TEditControlShowDropDownFormEventEh read FOnOpenDropDownForm write FOnOpenDropDownForm;
+  end;
+
+{ TDBRichEditEh }
+
+  TDBRichEditEh = class(TCustomDBRichEditEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Alignment;
+    property Anchors;
+    property AutoDisplay;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+     {$ENDIF}
+    property BevelWidth;
+    property BiDiMode;
+    property BorderStyle;
+    property Color;
+    property Constraints;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property DynProps;
+    property EditButtons;
+    property Enabled;
+    property Font;
+    property HideSelection;
+    property HideScrollBars;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property MaxLength;
+    property ParentBiDiMode;
+    property ParentColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    {$ENDIF}
+    property ParentFont;
+    property ParentShowHint;
+    property PlainText;
+    property PopupMenu;
+    property ReadOnly;
+    property ScrollBars;
+    property ShowHint;
+{$IFDEF EH_LIB_17}
+    property StyleElements;
+{$ENDIF}
+    property TabOrder;
+    property TabStop;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Visible;
+    property WantReturns;
+    property WantTabs;
+    property WordWrap;
+
+    property OnChange;
+    property OnClick;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+{$IFDEF EH_LIB_9}
+    property OnMouseActivate;
+{$ENDIF}
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResizeRequest;
+    property OnSelectionChange;
+    property OnProtectChange;
+    property OnSaveClipboard;
+    property OnStartDock;
+    property OnStartDrag;
+
+    property BorderWidth;
+    property Lines;
+  end;
+
+var
+  DBRichEditEhEditButtonDefaultActionProc: TEditButtonDefaultActionProc;
+  DefaultDBRichEditEhDropDownFormClass: TCustomDropDownFormClassEh;
+
+procedure DefaultDBRichEditEhEditButtonDefaultAction(EditControl: TControl;
+    EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh;
+    IsMouseDown: Boolean; var Handled: Boolean);
+{$ENDIF}
+
+var
+  OldStyleFlatBorder: Boolean = False;
+
+const
+  SLoadPictureTitle = 'Load Picture';
+  SSavePictureTitle = 'Save Picture As';
+
+implementation

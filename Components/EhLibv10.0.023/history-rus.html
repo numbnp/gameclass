@@ -1,0 +1,863 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
+<title>EhLib History</title>
+<link href="styles/default.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h3 class="maintitle">История изменений библиотеки EhLib</h3>
+<h4>Версия 10.0</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Методы быстрой загрузки данных из разных 
+  DataSet’ов в TMemTableEh. </p>
+  <p class="body-text-1-red-line">+ Возможность загрузки Xlsx файлов в класс 
+  TXlsMemFileEh. </p>
+  <p class="body-text-1-red-line">+ Расширены возможности класса TXlsMemFileEh: 
+  Группировка строк, Параметры строк (Высота, Видимость), Масштаб, Параметры 
+  печати и т.д. </p>
+  <p class="body-text-1-red-line">+ Расширенная версия процедур выгрузки 
+  DBGridEh в Xlsx файл. </p>
+  <p class="body-text-1-red-line">+ Расширенная версия процедур выгрузки 
+  DBGridEh в текстовый файл.</p>
+  <p class="body-text-1-red-line">+ История поиска в DBGridEh.SeachPanel.</p>
+  <p class="body-text-1-red-line">+ Поддержка High DPI мониторов.</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.5</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ SearchPanel - Поиск и фильтрация по месту, 
+  напримую в ячейке грида</p>
+  <p class="body-text-1-red-line">+ Расширенная фильтрация выпадающих списков в 
+  компонентах TDBComboboxEh и TDBLookupComboboxEh</p>
+  <p class="body-text-1-red-line">+ Событие при печати ячеек грида 
+  TPrintDBGridEh.OnPrintDataCell</p>
+  <p class="body-text-1-red-line">+ Тонкая настройка формирования строки фильтра 
+  DBGridEh.STFilter для DataSet’а через компонент TDatasetFeaturesEh</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.4</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Новый вид отображения данных в TPlannerEh - 
+  годовой период в разрезе по дням.</p>
+  <p class="body-text-1-red-line">+ В DBGridEh возможность сохранения фильтров 
+  через SettingsKeeper, указанных в разделе STFilter.</p>
+  <p class="body-text-1-red-line">+ Генератор Xlsx файлов.</p>
+  <p class="body-text-1-red-line">+ Поддержка экспорта DBGridEh и DBVertGridEh в 
+  Xlsx файлы в Lazarus в режиме Win32/64 и CrossPlatform.</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.3</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Поддержка Lazarus под Linux</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.2</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Поддержка ARC (Automatic Reference Counting) 
+  Delphi компиляторов</p>
+  <p class="body-text-1-red-line">+ Совместимость с библиотекой CrossVCL. Теперь 
+  вы можете скомпилировать ваш VCL проект в GUI приложение под OS X и Linux.</p>
+  <p class="body-text-1-red-line">+ Технология сохранения настроек - 
+  SettingsKeeper</p>
+  <p class="body-text-1-red-line">+ Анимация при перемещении столбцов в DBGridEh</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.1</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Хранение языковых ресурсов библиотеки с 
+  возможность динамической загрузки</p>
+  <p class="body-text-1-red-line">+ Авто-сохранение макета PivotGridEh при 
+  повторной загрузки данных</p>
+  <p class="body-text-1-red-line">+ Отображение/Скрытие общих сумм в PivotGridEh </p>
+  <p class="body-text-1-red-line">+ Новые агрегатные функции в PivotGridEh 
+  (Product, StDev, StDevp, Var, Varp)</p>
+  <p class="body-text-1-red-line">+ Редактирование ячеек в PivotGridEh</p>
+  <p class="body-text-1-red-line">+ Динамический подсчет найденных ячеек в 
+  SearchPanel</p>
+  <p class="body-text-1-red-line">+ Функции по сохранению/восстановлению 
+  состояния колонок в INI-файл и Registry в DBVertGridEh</p>
+  <p class="body-text-1-red-line">+ Значок отображения фильтра в заголовке 
+  DBGridEh</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 9.0</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Новое окно DropDown календаря с поддержкой 
+  ввода даты и времени </p>
+  <p class="body-text-1-red-line">+ Подсветка праздников, выходных и текущего 
+  дня в компоненте TPlannerCalendarPickerEh</p>
+  <p class="body-text-1-red-line">+ Подсветка текущего дня и текущего времени в 
+  компоненте TPlannerControlEh </p>
+  <p class="body-text-1-red-line">+ AllowedOperations в компоненте 
+  TPlannerControlEh </p>
+  <p class="body-text-1-red-line">+ Статус ReadOnly в TPlannerControlEh и 
+  TPlannerDataItemEh</p>
+  <p class="body-text-1-red-line">+ Делитель времени на 5, 6, 10, 15, 30 и 60 
+  минут в компонентах TPlannerDayViewEh и TPlannerWeekViewEh </p>
+  <p class="body-text-1-red-line">+ Новые свойства и события в компонентах 
+  TPlannerXXXViewEh (TPlannerDayViewEh, TPlannerWeekViewEh …) </p>
+  <p class="body-text-1-red-line">+ Коллекция CellButtons в колонках DBGridEh и 
+  строках DBVertGridEh для создания кнопок в ячейках грида работающих без 
+  активации текстового редактора InplaceEditor </p>
+  <p class="body-text-1-red-line">+ Режим поиска &quot;Начинается с&quot; в SearchPanel </p>
+	<p class="body-text-1-red-line">+ Выбор записей в режиме 
+	DBGridEh.DataGrouping нажатием на групповую запись в разделе столбца 
+	индикатора </p>
+	<p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 8.2</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Новые возможности SearchPanel в TDBGridEh</p>
+  <p class="body-text-1-red-line">+ SearchPanel в TDBVertGridEh</p>
+  <p class="body-text-1-red-line">+ Заполнение пустого пространства справа от грида стилем ячеек грида</p>
+  <p class="body-text-1-red-line">+ События для отрисовки и настройки заголовков грида.</p>
+  <p class="body-text-1-red-line">+ Закраска кнопок редактора (EditButtons) в режиме прозрачного фона.</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 8.1</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Bookmark’и как указатели на запись в TMemTableEh</p>
+  <p class="body-text-1-red-line">+ Печать компонент TDBVertGridEh, TPivotGridEh, TPlannerControlEh</p>
+  <p class="body-text-1-red-line">+ Событие для настойки отображения хинтов для элементов плана.</p>
+  <p class="body-text-1-red-line">+ Формирование списка элементов в окнах MRUList на основе списка уникальных значений поля DataSet'а.</p>
+  <p class="body-text-1-red-line">+ Новые события в TDBGridEh.SearchPanel</p>
+  <p class="body-text-1-red-line">&nbsp;</p>
+</blockquote>
+<h4>Версия 8.0</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Новые компоненты для планирования и визуального управления событиями</p>
+  <p class="body-text-1-red-line">+ Новые компоненты для выгрузки содержимого 
+  DataSet'а в текстовой файл и загрузка из текстового файла .</p>
+  <p class="body-text-1-red-line">+ Новые компоненты редактирования данных:</p>
+</blockquote>
+  <blockquote>
+    <p class="body-text-1"> Компонент TDBMemoEh<br />
+      Компонент  TDBImageEh<br />
+      Компонент  TDBRadioGroupEh<br />
+    Компонент  TDBRichEditEh</p>
+  <p class="body-text-1-red-line">+ Выгрузка DBGridEh в Xlsx формат.</p>
+	  <p class="body-text-1-red-line">&nbsp;+ Новое свойство DefaultAction в 
+	  классе TEditButtonEh. </p>
+  </blockquote>
+<blockquote>
+    <p class="body-text-1-red-line">+ Новое свойство CellDataIsLink в классах DBGridEh.TColumnEh и DBVertGridEh.TFieldRowEh</p>
+    <p class="body-text-1-red-line">+ Перенос данных из DBGridEh и DBVertGridEh в MS Excel через буфер обмена с поддержкой формата данных</p>
+    <p class="body-text-1-red-line">+ Индикатор формирования данных TPivotGridEh с возможностью прерывания процесса</p>
+    <p class="body-text-1-red-line">+ Скрытие компонент формы в Design-Time</p>
+    <p class="body-text-1-red-line">+ Выгрузка содержимого компоненты TDBVertGridEh в Xlsx файл </p>
+	<p class="body-text-1-red-line">&nbsp;</p>
+  </blockquote>
+  <h4>Версия 7.0</h4>
+  <blockquote>
+    <p class="body-text-1-red-line">+ Поддержка библиотеки LCL (L</p>
+  </blockquote>
+  <blockquote>
+    <p class="body-text-1">Интерактивные кнопки редактирования при отображении графических данных<br />
+      Ширина и высота областей прокрутки (SсrollBar’ов)<br />
+      Расширенное окно выпадающего список для фильтрации данных (STFilter) с возможностью поиска и внутренней фильтрацией данных.<br />
+    Новое свойство PopupMenuParams и настройка глобального выпадающего меню для всех &laquo;гридов&raquo; проекта через TDBGridEhCenter</p>
+    <p class="body-text-1-red-line">+ Глобальный класс TDBAxisGridEhCenter для реализации единой точки модификации поведения компонент DBGridEh и DBVertGridEh.</p>
+    <p class="body-text-1-red-line">+ 
+    ControlLabel - встроенный текст для подписи контролов редактирования данных.</p>
+    <p class="body-text-1-red-line">+ 
+    Новые компоненты для сводного анализа данных: TPivotGridEh, TPivotDataSourceEh, TPivotGridToolBoxEh. </p>
+    <p class="body-text-1-red-line">&nbsp;</p>
+  </blockquote>
+<h4>Версия 6.3</h4>
+<blockquote>
+  <p class="body-text-1-red-line" id="left-margin-0-"> <span id="red-line">+ Новое свойство <strong>SelectionDrawParams: TGridSelectionDrawParamsEh</strong></span></p>
+  <p id="margin0-5">    В DBGridEh и DBVertGridEh добавлено новой свойство SelectionDrawParams, которое позволяет настроить стиль отображения текущей выделенной ячейки</p>
+  <p id="margin0-5"> Свойство имеет следующие подсвойства:</p>
+  <blockquote>
+    <p id="margin0-5"> SelectionStyle: TGridSelectionDrawStyleEh - стиль закраски отображения текущей выделенной ячейки</p>
+    <p id="margin0-5">DrawFocusFrame: Boolean - определяет, надо ли рисовать точечную окантовку вокруг текущей выделенной ячейки.</p>
+    <p>&nbsp;</p>
+    <p> Тип TGridSelectionStyleEh содержит следующие значения:</p>
+    <blockquote>
+      <p class="body-text-1"> gsdsDefaultEh        Стиль по умолчанию, определяется в зависимости от версии ОС и включенных схем Windows и схем Delphi. В случае наличия схем Windows устанавливается стиль gssListViewThemedEh, который использует для отображение текущей выделенной ячейки грида схему ListView. Если активен стиль Delphi XE то устанавливается стиль GridThemed.</p>
+      <p class="body-text-1">gsdsClassicEh         Классический стиль. Ячейка закрашивается однородно цветом clSelected;</p>
+      <p class="body-text-1">gsdsGridThemedEh      Для закраски используется Delphi XE стиль.</p>
+      <p class="body-text-1">gsdsListViewThemedEh  Для закраски используется Windows схема ListView.</p>
+    </blockquote>
+  </blockquote>
+  <p class="body-text-1">Для глобального управления стилем подсветки во всех гридах проекта (если в гриде стоит значение gssDefaultEh) используйте свойства глобального объекта GridDrawStyle типа TGridDrawStyleEh.</p>
+  <p class="body-text-1"> Для получения доступа к объекту используйте процедуры GridDefaultDrawStyleEh, SetGridDefaultDrawStyleEh, объявленные в модуле GridsEh.pas.</p>
+  <p class="body-text-1">Типа TGridDrawStyleEh имеет следующие свойства:</p>
+  <blockquote>
+    <p class="body-text-1">SelectionStyle: TGridSelectionStyleEh - стиль закраски отображения текущей выделенной ячейки</p>
+    <p class="body-text-1"> DrawFocusFrame: Boolean - определяет, надо ли рисовать точечную окантовку вокруг текущей выделенной ячейки.</p>
+  </blockquote>
+  <p class="body-text-1"><span class="body-text-1">Для изменения стиля подсветки во всех сеток проекта используйте подобный код:</span></p>
+  <blockquote>
+    <p><br />
+      <span class="fixedtext">      unit MyMainForm;</span></p>
+    <p class="fixedtext">&nbsp; </p>
+    <p class="fixedtext">uses ... GridsEh;</p>
+    <p class="fixedtext">....<br />
+    </p>
+<p class="fixedtext">&nbsp;</p>
+<p class="fixedtext">initialization</p>
+    <blockquote>
+      <p class="fixedtext">GridDefaultDrawStyleEh.SelectionStyle := gsdsClassicEh; </p>
+      <p class="fixedtext">//Отрисовываем выделенные ячейки классическим стилем.</p>
+    </blockquote>
+    <p class="fixedtext">end.</p>
+    <p class="fixedtext">&nbsp;</p>
+  </blockquote>
+<p><strong>Настройка Lookup отношений непосредственно в колонках грида без использования lookup полей.</strong></p>
+  <p class="body-text-1" id="red-line">+ Новое свойство Column.LookupParams: TDBLookupDataEh в колонках грида DBGridEh и DBVertGridEh.</p>
+  <p class="body-text-1">Свойство позволяет настроить lookup отношения в колонках грида.</p>
+<p class="body-text-1">Свойство содержит следующие подсвойства:</p>
+  <blockquote>
+    <p class="body-text-1"> KeyFieldNames: String - Определяет поле (или поля) в Grid.DataSource.DataSet которое задает значение для поиска записи в LookupDataSet в поле заданном свойством LookupKeyFieldNames. Несколько полей разделяются знаком ';'.</p>
+    <p class="body-text-1">LookupCache: Boolean - Определяет что надо скопировать ключевые значения во внутренний буфер для ускорения операция отрисовки ячеек грида.</p>
+    <p class="body-text-1">LookupDataSet: TDataSet - Задает dataset значения записей которого будут отображаться в lookup контроле вместо значения поля KeyField.</p>
+    <p class="body-text-1">LookupDisplayFieldName: String Определяет поле, значение которого будет отображаются на экране.</p>
+    <p class="body-text-1">LookupKeyFieldNames: String Определяет поле (или поля) в LookupDataSet значение которого будет использоваться для поиска записей для значения поля заданного свойством KeyFieldNames.<br />
+    </p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p id="red-line2">&nbsp;</p>
+<p><strong>Другие возможности этой версии</strong></p>
+<p>&nbsp;</p>
+<p class="body-text-1" id="red-line">+ TBaseColumnEh.CaseInsensitiveTextSearch: Boolean default True - Регистронезависимый поиск в редакторе текста для Комбобоксов.<br />
+В колонках грида DBGridEh и DBVertGridEh и в контролах TDBComboboxEh TDBLookupcomboboxEh</p>
+<p class="body-text-1" id="red-line">+ LimitTextToListValues: Boolean Ограничивать список значений, которые можно ввести в контрол, только значениями выпадающего списка. В колонках грида DBGridEh и DBVertGridEh и в контролах TDBComboboxEh</p>
+<p class="body-text-1-red-line"><span class="body-text-1-red-line"><span class="body-text-1-red-line">+ В DBGridEh. В Design-Time при создании нового DataSet через Grid Design Panel можно выбрать Favorite DataSet'ы. </span></span>В выпадающем меню &quot;Create DataSet as&quot; отображается список типов DataSet'ов только из списка Favorite.</p>
+<p class="body-text-1-red-line">+ В выпадающих списках фильтрации данных в гриде по столбцам можно быстро отметить несколько значений мышкой нажав, потянув вниз или вверх по списку и отпустив кнопку мышки.</p>
+<p class="body-text-1-red-line">+ В DBGridEh.</p>
+<p class="body-text-1">Если в DBGridEh установлено значение gioShowRowselCheckboxesEh в IndicatorOptions, то записи можно выделять массово нажав и потянув мышку.</p>
+<p class="body-text-1-red-line">+ В DBGridEh.Pas<br />
+  </p>
+<p class="body-text-1">В глобальном типе TDBGridEhCenter определено свойство ColWidthsOptimizationMaxWaitingTime. В это свойство можно прописать максимальное время, которое будет использоваться при вычислении ширины столба, когда пользователь два раза кликает линию разделяющую колонки. Если во время подсчета установленное время превышается то для оставшихся записей в DataSet'е ширина не вычисляется. По умолчанию используется значение 2000 (2 сек). </p>
+<p class="body-text-1-red-line">+ В заголовках колонок грида TColumnTitleEh появилось новой свойство ShowImageAndText.<br />
+  Если ShowImageAndText = True и заголовок грида настроен на отображение картинок из TitleParams.Images, то текст заголовка колонки будет отображаться вместе с картинкой. Если ShowImageAndText = False, то будет отображаться только картинка без текста.</p>
+<p class="body-text-1-red-line"><span class="body-text-1">+ В классе глобального управления поведением гридов проекта - TDBGridEhCenter, добавились методы GetColCellParams GetTitleParams RowDetailPanelShow RowDetailPanelHide. Это виртуальные методы, которые вы можете переопределить в своем порожденном классе TMyDBGridEhCenter и управлять реакцией на соответствующие события для всех гридов проекта.</span><br />
+</p>
+<p>&nbsp; </p>
+<p id="red-line2">&nbsp;</p>
+<p><strong>(DBVertGridsEh.pas)</strong></p>
+  <p class="body-text-1-red-line">+ Новое свойство OptionsEh тип TDBVHGridOptionsEh.<br />
+    Тип TDBVHGridOptionsEh содержит следующие значения:<br />
+    </p>
+  <p class="body-text-1">dgvhHighlightFocusEh - Подсвечивать текущую ячейку когда грид имеет фокус ввода.<br />
+    </p>
+  <p class="body-text-1">dgvhClearSelectionEh - Очищать выделение при выделении другой текущей ячейки мышкой или с клавиатуры.</p>
+  <p class="body-text-1"> dgvhEnterToNextRowEh - Переходит на следующую строку в гриде при нажатии на клавишу Enter.</p>
+  <p class="body-text-1">dgvhTabToNextRowEh   - Переходит на следующую строку в гриде при нажатии на клавишу Tab.</p>
+  <p class="body-text-1">dgvhRowsIsTabControlsEh - Работать со строка грида как с набором Edit контролов не связанных с горизонтальной навигацией по DataSet'у. Т.е.:</p>
+  <blockquote>
+    <p class="body-text-1-red-line">- Не разрешать переходить на другую запись с клавиатуры.</p>
+    <p class="body-text-1-red-line">- Когда в гриде текущая ячейка находится на последней строке, то по клавише Tab грид переведет фокус ввода на следующий TabStop Control на Форме (dgvhTabToNextRowEh property must be included)</p>
+    <p class="body-text-1-red-line">- Когда в гриде текущая ячейка находится на первой строке, то по клавише Alt+Tab грид переведет фокус ввода на предыдущий TabStop Control на Форме (dgvhTabToNextRowEh property must be included)<br />
+    </p>
+  </blockquote>
+  <p class="body-text-1-red-line">+ В компоненте TDBVertGridEh появилась возможность выделять строки и прямоугольные области ячеек с поддержкой ClipBoard операций.</p>
+  <p class="body-text-1-red-line">+  Новое свойство AllowedSelections: TDBVertGridAllowedSelectionsEh задает разрешенные виды выделение в гриде.</p>
+  <p class="body-text-1">vgstRowsEh        - Разрешать выделять строки в гриде мышкой или с клавиатуры.</p>
+  <p class="body-text-1">vgstRectangleEh   - Разрешать выделять квадратные области в гриде мышкой или с клавиатуры.</p>
+  <p class="body-text-1">vgstAllEh         - Разрешать выделять все данные в гриде по комбинации Ctrl+A.</p>
+  <p class="body-text-1-red-line">+ Новое свойство EditActions типа TGridEditActionsEh - определяет разрешенные операции с выделенной областью. geaCutEh, geaCopyEh, geaPasteEh, geaDeleteEh, geaSelectAllEh.</p>
+  <p class="body-text-1-red-line">+ Новое свойство Selection: TDBVertGridSelectionEh. Свойство содержит информацию о выбранной области грида.</p>
+  <p class="body-text-1-red-line"><span class="body-text-1-red-line">+ Добавлены события TDBVertGridEh.OnRowCategoriesNodeExpanded TDBVertGridEh.OnRowCategoriesNodeCollapsed.</span><br />
+  </p>
+<p id="red-line2">&nbsp;</p>
+  <p><strong>(DataDriverEh.pas)</strong></p>
+  <p class="body-text-1-red-line">* Изменение: </p>
+  <p class="body-text-1">Изменены параметры published события TConnectionProviderEh.OnGetServerSpecOperations: TResolverGetServerSpecOperationsEh</p>
+  <p class="body-text-1">Old declaration: <span class="fixedtext">TResolverGetServerSpecOperationsEh = function (var Processed: Boolean): TServerSpecOperationsEh of object;</span></p>
+  <p class="body-text-1">New declaration: <span class="fixedtext">TResolverGetServerSpecOperationsEh = procedure (var Processed: Boolean; var ServerSpecOperations: TServerSpecOperationsEh) of object;</span></p>
+  <p class="body-text-1"> Объявление через function вызывало необъяснимую ошибку компиляции проектов под C++ Builder.</p>
+  <p>&nbsp; </p>
+  <p><strong>(DBCtrlsEh.pas)</strong></p>
+  <p class="body-text-1-red-line" id="red-line4">+ В TDBEditEh, TDBDateTimeEditEh, TDBComboBoxEh добавлены события OnCloseDropDownForm OnOpenDropDownForm.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h4>Версия 6.2</h4>
+<blockquote>
+  <p id="left-margin-0-5"> + Технология DropDownForms - пользовательские выпадающие окна.</p>
+  <p id="margin0-5">Типичное DropDown окно - это список, который появляется в контроле TComboBox при нажатии на кнопку со стрелкой вниз внутри контрола.<br />
+  Новая технология DropDropForms позволяет создавать формы, которые отображаются и работают аналогично выпадающему списку TComboBox. Эти формы можно выводить по нажатию на одну из кнопок редакторов внутри контролов TDBEditEh, TDBNumberEditEh, TInplaceEditor в DBGridEh и т.д.</p>
+  <p align="justify" id="margin0-5"><br />
+    
+  Детальное описание работы с DropDownForms смотрите в файле <u>&lt;About EhLib 6.2 Rus.doc&gt;, </u> раздел DropDownForms и в примере:</p>
+  <blockquote>
+    <p id="margin0-5">&lt;EhLib Archive&gt;\Demos\DropDownForm\Project1.dpr <br />
+    </p>
+  </blockquote>
+  <p id="margin0-5">скомпилированный проект:</p>
+  <blockquote id="margin0-5">
+    <p><em id="margin0-5">&lt;EhLib Archive&gt;\Demos\Bin\DropDownForm.Exe</em> </p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p>Новые свойcтва для настройки отображения выпадающих форм появились в классах:<br />
+    (Для DBGridEh)</p>
+  <blockquote>
+    <p>TColumnEh.DropDownFormParam<br />
+    TColumnEh.EditButtons[i].DropDownFormParam</p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p>(Для DBVertGridEh)</p>
+  <blockquote>
+    <p>TFieldRowEh.DropDownFormParam<br />
+      TFieldRowEh.EditButtons[i].DropDownFormParam<br />
+      <br />
+      TDBEditEh.EditButton.DropDownFormParam<br />
+    TDBEditEh.EditButtons[i].DropDownFormParam</p>
+  </blockquote>
+  <p><br />
+  В EditButtons для контролов TDBNumberEditEh, TDBDateTimeEditEh, TDBComboBoxEh, TDBLookupComboBoxEh.</p>
+  <p>&nbsp;</p>
+  <p><strong>(В DBVertGridEh)</strong></p>
+<p id="red-line">+ Появилась возможность группировки строк по категориям. См. свойства TDBVertGridEh.RowCategories</p>
+  <p id="margin0-5">Имя категории прописывается в свойстве TFieldRowEh.CategoryName<br />
+  Строки можно группировать по: Названию категории, Типу поля или, Наличию/Отсутствию   значения в поле текущей записи.</p>
+  <p id="red-line">+ Появилась возможность сортировки строк по Заголовку поля. См. свойство TDBVertGridEh.RowsSortOrder.</p>
+  <p>&nbsp;</p>
+  <p><strong>(В DBGridEh)</strong></p>
+  <p id="red-line">+ В DBGridEh в Design-Time появилась возможность быстро создавать компоненты и присваивать свойства DataSource и DataSource.DataSet. Кликните правой кнопкой мышки над Design-Time панелью в нижнем правом углу грида и выберите необходимую операцию присваивания или создания компонента работы с табличными данными.</p>
+  <p>&nbsp;</p>
+  <p><strong>(В TIniPropStorageManEh)</strong></p>
+  <p id="red-line">* В методе TIniPropStorageManEh.WritePropertiesText изменен класс, используемый для записи данных в файл. Вместо TIniFile теперь используется TMemIniFile. Это значительно ускорило операцию записи в файл, но изменилось место сохранения файла, когда в свойстве IniFileName не указан полный путь. В новой версии файл будет сохраняться в текущую директорию вместо директории WINDOWS.<br />
+  </p>
+  <p><br />
+  </p>
+</blockquote>
+<h4>Версия 6.1</h4>
+<blockquote>
+  <p align="justify" id="left-margin-0-5"> + Новый компонент TDBVertGridEh - Вертикальный грид.</p>
+  <p align="justify" id="margin0-5">Компонент предназначен для отображения и редактирования одной записи DataSet'а в вертикальной ориентации.<br />
+  </p>
+  <p align="justify">&nbsp;</p>
+  <p>Основные свойства компонента TDBVertGridEh  </p>
+  <blockquote>
+    <p class="body-text-1"><span class="fixedtext">Rows: TDBVerGridRows</span> - Коллекция элементов типа TFieldRowEh для отображения полей записи. Аналог коллекции Columns в TDBGridEh.</p>
+    <p class="body-text-1"><span class="fixedtext">Options: TDBVHGridOptions</span> - Настройка основных свойств вертикального грида.</p>
+    <p class="body-text-1"><span class="fixedtext">RowsDefValues: TFieldRowDefValuesEh</span> - значения по умолчанию для строки <br />
+      грида TFieldRowEh. Аналог ColumnDefValues в TDBGridEh.</p>
+    <p class="body-text-1"><span class="fixedtext">GridLineParams: TDBVertGridLineParamsEh</span> - Настройки цветов разделительных линий в <br />
+      вертикальном гриде.</p>
+    <p class="body-text-1"><span class="fixedtext">DataColParams: TDBVertGridDataColParamsEh</span> - Настройка параметров колонки <br />
+      отображения данных.</p>
+    <p class="body-text-1"><span class="fixedtext">LabelColParams: TDBVertGridLabelColParamEh</span> - Настройка параметров колонки <br />
+      отображения заголовков строк данных.</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p>См. пример, демонстрирующий работу компоненты TDBVertGridEh в проекте:</p>
+  <blockquote id="margin0-5">
+    <p>&lt;EhLib Archive&gt;\Demos\DBVertGridEh.SimpleDemo\Project1.dpr </p>
+  </blockquote>
+  <p>скомпилированный проект:</p>
+  <blockquote id="margin0-5">
+    <p>&lt;EhLib Archive&gt;\Demos\Bin\DBVertGridEh.SimpleDemo.Exe</p>
+    <p><br />
+    </p>
+  </blockquote>
+  <p id="left-margin-0-5">  * Изменилось дерево наследования компонент-сеток:</p>
+  <blockquote>
+    <p id="margin0-5"> <span class="fixedtext">TCustomControl</span></p>
+    <p id="margin-0-5"><span class="fixedtext">|</span></p>
+  <p><span class="fixedtext">- TCustomGridEh</span></p>
+    <p id="margin-0-5"><span class="fixedtext">| </span></p>
+    <p id="margin-0-5"><span class="fixedtext">- TCustomDBAxisGridEh</span></p>
+    <p><span class="fixedtext">|</span></p>
+    <p><span class="fixedtext">- TCustomDBGridEh</span></p>
+    <p id="margin-0-5"><span class="fixedtext">|     |</span></p>
+    <p><span class="fixedtext">|      - TDBGridEh</span></p>
+    <p id="margin-0-5"><span class="fixedtext">| </span></p>
+    <p><span class="fixedtext">- TCustomDBVertGridEh</span></p>
+    <p id="margin-0-5"><span class="fixedtext">|</span></p>
+    <p><span class="fixedtext">- TDBVertGridEh</span></p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p>Некоторые константы и процедуры были перенесены из модуля DBGridEh в модуль <br />
+    DBAxisGridsEh.</p>
+  <p>&nbsp; </p>
+  <p id="left-margin-0-5">+ Добавлена новая глобальная функция для отображения формы вида ObjectInspector.<br />
+    </p>
+  <p>&nbsp;</p>
+  <p>Используйте следующую процедуру для отображения формы-ObjectInspector</p>
+  <blockquote id="margin0-5">
+    <p class="fixedtext">procedure ShowObjectInspectorForm(</p>
+    <blockquote>
+      <p class="fixedtext">Component: TObject; // Компонент исследования</p>
+      <p class="fixedtext">FormBounds: TRect;  // Границы формы</p>
+      <p class="fixedtext">NewForm: Boolean = False // Отображать как новую форму</p>
+    </blockquote>
+    <p class="fixedtext">);</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <p>Это простой ObjectInspector, который можно использовать для отладки компонент во время выполнения при изменении значений свойств.</p>
+  <p id="margin0-5"> См. пример, демонстрирующий работу c ShowObjectInspectorForm здесь:</p>
+  <blockquote>
+    <p id="margin0-5"><span class="fixedtext">&lt;EhLib Archive&gt;\Demos\ObjectInspectorForm.SimpleDemo\Project1.dpr </span></p>
+  </blockquote>
+  <p id="margin0-5">скомпилированный проект:</p>
+  <blockquote>
+    <p class="fixedtext" id="margin0-5">&lt;EhLib Archive&gt;\Demos\Bin\ObjectInspectorForm.SimpleDemo.Exe</p>
+  </blockquote>
+  <p> <br />
+    В DBGridEh</p>
+  <p id="left-margin-0-5">+ Добавлена возможность изменения размера RowDetailPanel'и мышкой в RunTime.</p>
+  <p id="margin0-5">Новые свойства в RowDetailPanel:</p>
+  <blockquote>
+    <p id="margin0-5"><span class="fixedtext">property VertSizing: Boolean</span> - Выводить внизу RowDetailPanel Splitter и разрешать менять размер.<br />
+      <span class="fixedtext">property MinHeight: Integer</span> - Минимальная высота RowDetailPanel'и<br />
+      <span class="fixedtext">property MaxHeight: Integer</span> - Максимальная высота RowDetailPanel'и<br />
+      <span class="fixedtext">property SizingBarBeveled: Boolean</span> - Splitter область имеет 3D границу.<br />
+      <span class="fixedtext">property SizingBarHeight: Integer</span> - Высота Splitter области.</p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <p id="left-margin-0-5">+ Добавлена возможность &quot;затемнения&quot; грида на время загрузки данных.</p>
+  <p id="margin0-5">См. методы TDBGridEh1: StartLoadingStatus и FinishLoadingStatus.<br />
+    См. пример, демонстрирущий эту возможность в проекте:</p>
+  <blockquote id="margin0-5">
+    <p class="fixedtext">&lt;EhLib Archive&gt;\Demos\DBGridEh.LoadingStatus\Project1.dpr </p>
+  </blockquote>
+  <p id="margin0-5">скомпилированный проект:</p>
+  <blockquote id="margin0-5">
+    <p class="fixedtext">&lt;EhLib Archive&gt;\Demos\Bin\DBGridEh.LoadingStatus.Exe</p>
+  </blockquote>
+  <p>&nbsp;</p>
+</blockquote>
+<h4>Версия 6.0</h4>
+<blockquote>
+  <p id="red-line"> + Добавлены новые компоненты для обслуживания доступа через технологию DataDrivers.</p>
+  <p><br />
+    ConnectionProviders:</p>
+  <p>TADOConnectionProviderEh  - компонент обеспечивает взаимодействие между TADODataDriver и TADOConnection в Design-Time и в Run-Time. Содержит встроенный TADOConnection компонент. Задает тип сервера данных для корректной работы дополнительных операций с сервером, таких какполучение значения инкрементных полей таблицы после вставки записи и т.п.</p>
+  <p> Аналогичные функции выполняют компоненты:</p>
+  <blockquote>
+    <p class="body-text-1-red-line">TDBXConnectionProviderEh для обслуживания доступа через средства доступа к данным DBX.</p>
+    <p class="body-text-1-red-line">TIBXConnectionProviderEh для обслуживания доступа через средства доступа к данным IBX.</p>
+    <p class="body-text-1-red-line">TBDEConnectionProviderEh для обслуживания доступа через средства доступа к данным BDE.</p>
+<p>&nbsp; </p>
+  </blockquote>
+  <p id="red-line">+ Динамические свойства в компонентах - DynProps.<br />
+    Коллекция элементов, реализующих динамические свойства в компонентах и классах библиотеки.</p>
+  <p>&nbsp; </p>
+  <p>В компоненте DBGridEh:<br />
+  </p>
+  <p id="red-line">+   Добавлены значки маркеров сортировки и изменился порядок сортировки дaнных.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность настройки цветов разделительных линий, наличие/отсутствие. линий в различных областях грида.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность гибкой настройки отрисовки заголовков грида.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность гибкой настройки отрисовки области футера.</p>
+  <p class="body-text-1-red-line">+ Добавлена возможность гибкой настройки отрисовки области SubtitleFilter.</p>
+  <p class="body-text-1-red-line">+ Добавлена возможность отображения графических данных в ячейках из полей DataSet'а в различных графических форматах.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность отображения графического фона грида.</p>
+  <p class="body-text-1-red-line">+   Добавлена  панель поиска и фильтрации данных.</p>
+  <p class="body-text-1-red-line">+   Добавлена экстра панель бегунка горизонтальной прокрутки.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность гибкой настройки заголовка группировки.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность отображения суммирующих записей в группах.</p>
+  <p class="body-text-1-red-line">+   Добавлена возможность гибкой настройки для режима HideDuplicates</p>
+  <p class="body-text-1-red-line">+   Добавлена настройка отображения элементов древовидной структуры записей.</p>
+  <p class="body-text-1-red-line"><span class="body-text-1-red-line">+   Добавлена возможность фильтрация данных в выпадающих lookup списках при наборе текста.</span><br />
+    <br />
+    В компоненте MemTableEh</p>
+  <p class="body-text-1-red-line">+  Добавлена возможность изменения структуры внутреннего массива без потери данных.</p>
+  <p class="body-text-1-red-line">+  Добавлена возможность сохранения/загрузки данных из/в файл(а).</p>
+  <p class="body-text-1-red-line">-  Закрыта поддержка Delphi и С++ Builder версии ниже чем 7.</p>
+  <p class="body-text-1-red-line">+  Добавлена поддержка Embarcadero RAD Studio XE3.<br />
+  </p>
+</blockquote>
+<h4>Версия 5.6</h4>
+<blockquote>
+<p class="body-text-1-red-line">* Исправлена ошибка обработки глобальной переменной OldStyleFlatBorder.</p>
+  <p><br />
+    В предыдущих версиях если OldStyleFlatBorder = False (По умолчанию было значение False), то в режиме TDBEditEh.Flat = True плоский (Flat) стиль отрисовки границы в TDBEditEh не работал никогда.В этой версии если OldStyleFlatBorder = False то плоский стиль границы отрисовывается в Classic стиле Windwos (Или если в проекте нет поддержки схем Themes) и НЕ отрисовывается в Themed окружении.</p>
+  <p class="body-text-1-red-line">+ В класс TEditButtonEh добавлено новое свойство Images (TEditEh.EditButtons[i].Images)<br />
+    типа TEditButtonImagesEh.</p>
+  <p>&nbsp;</p>
+  <p> TEditButtonImagesEh = class(TPersistent)<br />
+    published</p>
+  <blockquote>
+    <p>property NormalImages: TCustomImageList;<br />
+      property HotImages: TCustomImageList;<br />
+      property PressedImages: TCustomImageList;<br />
+      property DisabledImages: TCustomImageList;</p>
+    <p> property NormalIndex: Integer;<br />
+      property HotIndex: Integer;<br />
+      property PressedIndex: Integer;<br />
+      property DisabledIndex: Integer;</p>
+  </blockquote>
+  <p>end;<br />
+    <br />
+    Теперь в кнопках редактирования EditButtons для Edit контролов и для TDBGridEh можно выводить картинки из компонента TCustomImageList. Картинки выводятся когда TEditButtonEh.Style = ebsGlyphEh.</p>
+  <p class="body-text-1-red-line"><span class="body-text-1-red-line">+ Добавлено свойство EmptyDataInfo в DBGridEh. Если это свойство включено, DataSet активен и не содержит данные, то DBGridEh покажет надпись &laquo;No data&raquo;. Вы можете задать надпись для каждого Грида в отдельности или присвоить глобальную переменную DBGridEhEmptyDataInfoText находящуюся в модуле DBGridEh.</span></p>
+  <p class="body-text-1-red-line">+ Добавлено свойство EmptyDataInfo в TDBEditEh, TDBNumberEditEh, TDBComboBoxEh, TDBLookupComboBoxEh.<br />
+    Используйте свойство EmptyDataInfo.Text для отображения текста, который будет отображаться в Edit контроле когда он не содержит данных.</p>
+  <p class="body-text-1-red-line">+ Добавлено стандартное свойство Touch (поддерживается Delphi 2010 и старше) для DBGridEh, <br />
+    TDBEditEh, TDBNumberEditEh, TDBComboBoxEh, TDBLookupComboBoxEh, TDBDateTimeEditEh.</p>
+  <p class="body-text-1-red-line">+ Добавлена возможность в design-time открывать окно редактора коллекции кнопок редактирования (EditButtons) для контролов TDBEditEh, TDBNumberEditEh, TDBComboBoxEh, TDBLookupComboBoxEh, TDBDateTimeEditEh. <br />
+    Элемент меню открытия окна коллекции находится в контекстном меню компонента, который открывается по правой кнопки мыши.</p>
+  <p class="body-text-1-red-line">+ В TDBCheckBoxEh добавлена возможность устанавливать Пустые значения ('') для свойств <br />
+    ValueChecked, ValueUnchecked. Это позволяет задавать состояние CheckBox'ов для значения поля БД Null.</p>
+  <p class="body-text-1-red-line">+ Добавлено событие OnDataGroupGetRowParams в DBGridEh. Событие используется для настройки отображения информации для записей группировки (когда грид работает в режиме группировки Grid.DataGrouping.Active = True). В событии можно задать Цвет, Фонт, Текст и Картинку для групповой записи.</p>
+  <p class="body-text-1-red-line">+ Добавлена глобальная процедура ExportDBGridEhToOleExcel в модуль DBGridEhImpExp.Процедура предназначена для экспортирования данных из DBGridEh в MS Excel. Для экспорта процедура использует технологию OLE, а это значит что для ее вызова необходимо чтобы MS Excel был установлен на компьютере.</p>
+  <p class="body-text-1-red-line">+ В дизаин-тайме при вызове контекстного меню компоненты TDBGridEh отображается информация <br />
+    о версии библиотеки.</p>
+  <p class="body-text-1-red-line">+ Добавлена глобальная процедура DrawProgressBarEh. Процедура позволяет рисовать картинку <br />
+    в виде индикатора выполнения (ProgressBar). Ее можно использовать для отображения индикатора выполнения в ячейках грида. Пример использования смотрите в DEMOS\DEMO1</p>
+</blockquote>
+<h4>Версия 5.5</h4>
+<blockquote>
+  <p class="body-text-1-red-line"> + Добавлена поддержка Embarcadero RAD Studio XE2.</p>
+  <p class="body-text-1-red-line">+ В глобальный объект TDBGridEhStyle добавлено свойство ThemeTitleFillElement.<br />
+    property ThemeTitleFillElement: TGridThemeTitleFillElementEh;<br />
+    TGridThemeTitleFillElementEh = (gtfeHeaderItemEh, gtfeSplitButtonEh);<br />
+    Это свойство определяет Themes элемент, который будет использоваться при закраски заголовков в гриде когда у грида Flat = False.</p>
+  <p class="body-text-1-red-line">* При работе под RAD Studio XE2 свойство TDBGridEh.Flat не влияет на закраску заголовков грида, если активирован пользовательский стиль (TStyleManager.IsCustomStyleActive = True).<br />
+    В этом случае заголовки грида закрашиваются с использованием Themes стиля заданного свойством DBGridEhDefaultStyle.ThemeTitleFillElement.</p>
+  <p class="body-text-1-red-line">* При выводе заголовков в гриде при доступных XP стилях (Themes) начиная с версии 5.5 используется элементы thHeaderItem вместо ttbSplitButton. Чтобы отображать заголовки старым стилем, установите глобальное свойство DBGridEhDefaultStyle.ThemeTitleFillElement = gtfeSplitButtonEh.</p>
+</blockquote>
+<h4>Версия 5.4</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ В DBGridEh. Добавлена возможность вывода чекбоксов в столбце индикатора. Чекбоксы используются чтобы выбирать записи в гриде. Чтобы при нажатии мышкой на чекбоксы запись выбиралась, необходимо также настроить свойства грида, позволяющие делать множественный выбор записей: dgMultiSelect в Options, gstRecordBookmarks в AllowedSelections.  </p>
+  <p class="body-text-1-red-line">+ В DBGridEh добавлено свойство IndicatorOptions типа TDBGridEhIndicatorOptions.<br />
+    TDBGridEhIndicatorOptions = set of TDBGridEhIndicatorOption;<br />
+  TDBGridEhIndicatorOption = (gioShowRowIndicatorEh, gioShowRecNoEh, gioShowRowselCheckboxesEh);</p>
+  <blockquote>
+    <p class="body-text-1-red-line">gioShowRowIndicatorEh - аналогично свойству dgIndicator в Options.<br />
+      gioShowRecNoEh - аналогично свойству dghShowRecNo в OptionsEh.<br />
+      gioShowRowselCheckboxesEh - отображать чекбоксы в столбце индикатора.</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p class="body-text-1-red-line">+ В MemTableEh. Изменен принцип хранения данных для полей типа Calculated и Lookup. <br />
+    Теперь значение этих полей храниться в отдельном буфере для каждой записи, и не пересчитывается при каждом отображении и прокрутке данных в гриде. Это позволило значительно ускорить отображение Lookup полей в гриде и Calculated полей, которые &quot;долго&quot; рассчитываются. Calculated и Lookup пересчитываются только при открытии MemTableEh или когда меняется запись.</p>
+  <p class="body-text-1-red-line">* В MemTableEh. Когда MemTableEh подключен к DataDriver и поля Fields созданы в Design-Time (Persistent Field Components), то при открытии MemTableEh формирует внутреннюю структуру на основе списка полей в Fields, а не на основе структуры получаемой от DataDriver. При загрузке данных, типы и количество полей могут не совпадать с данными поступающими от DataDriver. Поля записей MemTableEh, <br />
+    которых нет в записях, поступающих от DataDriver, будут заполняться значениями Null.</p>
+</blockquote>
+<h4>Версия 5.3</h4>
+<blockquote>
+  <p class="body-text-1-red-line">+ Добавлена поддержка Embarcadero RAD Studio XE.  </p>
+<p class="body-text-1-red-line">+ В MemTableEh добавлено свойство Options типа TMemTableOptionsEh.</p>
+  <blockquote>
+    <p class="body-text-1-red-line">TMemTableOptionsEh = set of TMemTableOptionEh;<br />
+      TMemTableOptionEh = (mtoTextFieldsCaseInsensitive);<br />
+      mtoTextFieldsCaseInsensitive - Определяет что в операциях сравнения при фильтрации данных и сортировки значения полей записей регистронезависимо.</p>
+  </blockquote>
+  <p class="body-text-1-red-line">+ В TPrintDBGridEh добавлена поддержка печати грида в режиме группировки.</p>
+  <p class="body-text-1-red-line">+ В TADOCommandEh добавлено свойство CommandTimeout.</p>
+</blockquote>
+<h4>Версия 5.2</h4>
+<blockquote>
+  <p> В грид добавлена возможность группировки записей.<br />
+    Группировку можно создавать и менять как в Design так и RunTime режиме.<br />
+    Группировка работает только когда грид подключен к датасету типа TMemTableEh.</p>
+  <p> Используйте подсвойства свойства Grid.DataGrouping для управления группировками.<br />
+    Active: Boolean - Используйте это свойство для активизации группировки в гриде.<br />
+    DefaultStateExpanded: Boolean - Задает значение Expanded для вновь создаваемых элементов дерева группировки.<br />
+    GroupLevels: TGridDataGroupLevelsEh - Коллекция уровней группировки. Используйте это свойство для формирования шаблона построения дерева группировки.<br />
+    GroupPanelVisible: Boolean - Установите это свойство в True чтобы отобразить панель группировки в верхней части грида. Когда панель видна, то имеется возможность формировать уровни группировки с помощью мыши, перетаскивая заголовки колонок грида в панель группировки.</p>
+  <p> Font: TFont - Задает шрифт записей группировки.<br />
+    Color: Tcolor - Задает цвет закраски записей группировки.<br />
+    <br />
+    OnActiveGroupingStructChanged</p>
+  <p> См. пример проекта с группировками в DEMOS\DataGrouping</p>
+  <p> + TDBGridEhCenter.UseExtendedScrollingForMemTable</p>
+</blockquote>
+<h4>Версия 5.1</h4>
+<blockquote>
+  <p> * Свойство RowPanel поменяло свой тип. Вместо типа Boolean теперь это объектное свойство с подсвойствами: Active: Boolean - Определяет возможность выводить ячейки записи грида друг <br />
+    под другом и менять высоту каждой ячейки.<br />
+    +   NavKeysNavigationType: TGridRowPanelNavKeysNavigationTypeEh - задает порядок движения по ячейкам грида при навигации кнопками Вверх, Вниз, Влево, Вправо. rpntRowToRowEh - (по умолчанию) Кнопки Вниз, Вверх перемещают курсор на следующую и предыдущую запись соответственно. Кнопки Влево, Вправо работают аналогично Tab, Shift-Tab<br />
+    rpntCellToCellEh - Кнопки Вниз, Вверх перемещают курсор на следующую и предыдущую ячейку соответственно. Кнопки Влево, Вправо перемещают курсор на левую или в правую ячейку соответственно.</p>
+  <p> +   TabNavigationType: TGridRowPanelTabNavigationTypeEh - задает порядок обхода ячеек клавишей Tab<br />
+    rpntUpToDownPriorityEh - Обход вначале сверху вниз, затем слева на право.<br />
+    rpntLeftToRightPriorityEh - Обход вначале слева на право, затем сверху вниз.</p>
+  <p> + Добавлена программа для автоматической установки библиотеки в Delphi/C++ Builder IDE. Программа находится здесь Installer\EhLibInstaller.exe.<br />
+    Программа создает папку для хранения кодов библиотеки, копирует туда необходимые<br />
+    файлы, компилирует пакеты и регистрирует скомпилированные пакеты в IDE.</p>
+  <p> + В TColumnEhRestoreParam добавлено значение crpRowPanelColPlacementEh, в тип TDBGridEhRestoreParam добавлено значение grpRowPanelColPlacementEh. Теперь в процедуре RestoreGridLayout можно восстанавливать положение ячеек в режиме RowPanel.</p>
+  <p> + Добавлено public свойство RowDetailPanelControl. Используйте это свойство чтобы добавлять компоненты на панель детальной информации в режиме RunTime. Для добавления компонентов на RowDetailPanel используйте следующий код MyControl.Parent := DBGridEh1.RowDetailPanelControl;</p>
+  <p> + В свойство Grid.STFilter добавлено подсвойство<br />
+    InstantApply: Boolean - определяет, что фильтр будет применяться сразу при изменении или закрытии выпадающего списка значений для фильтрации (STFilter). Location: TSTFilterLocationEh - определяет местоположение STFilter'а. Под заголовком (stflUnderTitleFilterEh) или в заголовке (stflInTitleFilterEh). В режиме 'в заголовке' STFilter не поддерживает встроенную строку ввода фильтра.</p>
+  <p> + Изменился интерфейс отображения выпадающего списка в SubTitleFilter. Теперь можно галочками выбирать необходимые значения для фильтрации.В списке появился пункт (Custom...). При выборе этого пункта появляется простой диалог задания фильтра.</p>
+  <p> + В режиме автоматического формирования списка значений для выпадающего фильтра (Когда грид подключен к MemTableEh), список формируется с учетом наложенного фильтра в других колонках.</p>
+  <p> + Глобальная перерменная DBGridEhShowInTitleFilterBox. Содержит комбинацию клавиш для открытия выпадающего списка значений фильтрации когда STFilter.Location = stflInTitleFilterEh. По умолчанию оно содержит значение 'Ctrl-T'.<br />
+    <br />
+    + Определен новый тип события<br />
+    TDBGridEhFillSTFilterListValuesEvent = procedure(Sender: TCustomDBGridEh; Column: TColumnEh; Items: TStrings; var Processed: Boolean) of object;</p>
+  <p> Событие этого типа добавлено в Grid (TDBGridEh.OnFillSTFilterListValues), в колонку грида (TColumnEh.OnFillSTFilterListValues) и в TDBGridEhCenter (TDBGridEhCenter.OnFillSTFilterListValues)<br />
+    Напишите обработчик этого события, чтобы изменить алгоритм заполнения выпадающего списка значений в ячейки задания фильтра (STFilter). В событии вы можете вызвать обработчик события по умолчанию <br />
+    DefaultFillSTFilterListValues. Каждый элемент списка Items должен состоять из двух значений: Строки Items[i] и объекта Items.Objects[i]. Элементы объектного типа должны наследоваться от типа TPopupListboxItemEh и должны быть созданы глобально. В модуле DBGridEh уже предопределены следующие глобальные переменные <br />
+    PopupListboxItemEhSortAsc: TPopupListboxItemEhSort;<br />
+    // Элемент списка отображает значок сортировки Asc и выполняет сортировку по возрастанию.<br />
+    PopupListboxItemEhSortDes: TPopupListboxItemEhSort;<br />
+    // Элемент списка отображает значок сортировки Des и выполняет сортировку по убыванию.<br />
+    PopupListboxItemEhLine: TPopupListboxItemEhLine;<br />
+    // Элемент списка отображает горизонтальную линию. При выборе не выполняет никаких действий.</p>
+  <p> PopupListboxItemEhClearFilter: TPopupListboxItemEhSpec;<br />
+    PopupListboxItemEhAll: TPopupListboxItemEhSpec;<br />
+    PopupListboxItemEhEmpties: TPopupListboxItemEhSpec;<br />
+    PopupListboxItemEhNotEmties: TPopupListboxItemEhSpec;<br />
+    PopupListboxItemEhDialog: TPopupListboxItemEhSpec;<br />
+    PopupListboxItemEhApplyFilter: TPopupListboxItemEhSpec;</p>
+  <p> PopupListboxItemEhData: TPopupListboxItemEhData;<br />
+    // Элемент списка отображает текст, определяющий значение для фильтрации. <br />
+    </p>
+  <p>При выборе, помечает текущий элемент галочкой и добавляет в список элементов, которые задают значения для фильтрации. Для заполнения списка уникальных значений колонки, процедура <br />
+    DefaultFillSTFilterListValues вызывает процедуру DatasetFeatures.FillSTFilterListDataValues. Реализация последней процедуры зависит от типа DataSet'а. На текущий момент библиотека умеет заполнять <br />
+    список уникальных значений колонки только для датасета типа TMemTableEh. Для заполнения уникальных значений при подключении грида к другому датасету перепишите функцию TDatasetFeaturesEh.FillSTFilterListDataValues и по необходимости зарегистрируйте новый класс, наследуемый от TDatasetFeaturesEh.Читайте про класс TDatasetFeaturesEh в документации к EhLib и EhLibMTE.Pas.<br />
+    <br />
+    + В TDBGridEhCenter добавлены свойства STFilterDefaultStringOperator, STFilterDefaultNumberOperator, STFilterDefaultDateTimeOperator, STFilterDefaultBooleanOperator. Используйте эти свойства, чтобы задать <br />
+    оператор по умолчанию, который будет использоваться, когда в строке фильтрации STFilter явно не прописывается оператор. Операторы можно задать отдельно для строковых полей, числовых полей, полей типа DateTime и логических полей.</p>
+</blockquote>
+<h4>Версия 5.0</h4>
+<blockquote>
+  <p> + В период разработки добавлена возможность отображать компоненты данных<br />
+    (Такие как DataSource, DataSet, DataDriver) в нижнем правом углу грида. Компоненты можно выбирать в ObjectInspecor'e кликнув на них мышкой.</p>
+  <p> + Режим RowPanel. Добавлена возможность выводить ячейки записи грида друг под другом и менять высоту каждой ячейки.</p>
+  <p> + В грид добавлена возможность создавать и настраивать дополнительную панель детальной информации для записей грида. В панель можно добавлять любой контрол из палитры компонент. Во время работы программы панель скрыта и открывается по нажатию на '+', который отображается в начале каждой записи.</p>
+  <p> + Добавлена возможность плавной &quot;попиксельной&quot; прокрутки грида по вертикали и горизонтали.</p>
+  <p> + Добавлена возможность HotTrack'а. При включенном HotTrack'е грид подсвечивает ячейку или строку (в зависимости от настроек RowHighlight) над которой находится курсор мыши.</p>
+  <p> + Добавлена возможность отображать вертикальные линии в градиентном режиме для заполнения пустого пространства между строками с данных и нижней частью грида.</p>
+  <p> + В режиме Column.AlwaysShowEditButton грид отображает EditButtons в затененном режиме. Это не раздражают глаза большим количеством кнопок редактирования.</p>
+  <p> + В грид добавлено новое свойство - EditButtonsShowOptions: TEditButtonsShowOptionsEh. <br />
+    TEditButtonsShowOptionsEh =  set of (sebShowOnlyForCurCellEh, sebShowOnlyForCurRowEh, sebShowOnlyWhenGridActiveEh, sebShowOnlyWhenDataEditingEh);<br />
+    Когда у колонки стоит Column.AlwaysShowEditButton это свойство позволяет дополнительно настраивать, в каких случаях отображать EditButtons. : Смотрите подробное описание новых возможностей в файле </p>
+  <p>AboutEhlib5.rus.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h4>Версия 4.51</h4>
+<blockquote>
+  <p> + Добавлена поддержка Embarcadero RAD Studio 2010.</p>
+</blockquote>
+<h4>Версия 4.5</h4>
+<blockquote>
+  <p> + В TColumnEh добавлено свойство TextEditing. Используйте это свойство чтобы запрещать отображение текстового редактора в ячейке колонки грида.</p>
+  <p> + В TColumnEh и TDBGridEh добавлено событие OnHintShowPause. Используйте это событие чтобы установить длительность задержки перед отображением подсказки (хинта).</p>
+  <p> + В TColumnEh и TDBGridEh добавлено событие OnDataHintShow. Используйте это событие чтобы установить Текст, Фонт, Цвет, Позицию или другие параметры окна подсказки (хинта) для каждой ячейки колонки грида. Это событие будет вызываться только если Grid.ShowHint установлен в True. В момент вызова события грид установит текущую запись в датасете согласно номеру строки грида, так что вы можете обращаться к данным записи. Например: Grid.DataSource.DataSet. FieldByName('FieldName').AsString.</p>
+  <p> + В TColumnEh и TDBGridEh добавлено событие OnAdvDrawDataCell. Используйте это событие чтобы нарисовать данные в ячейки данных грида. В коде события установите Processed в true чтобы определить что вы обработали процесс прорисовки. Иначе грид вызовет метод для прорисовки содержимого <br />
+    ячеки по умолчанию. Вы можете, если необходимо, изменить параметры ARect и Params и вызвать Grid.DefaultDrawColumnDataCell либо оставить Processed в состоянии False и не вызывать <br />
+    Grid.DefaultDrawColumnDataCell. В последнем случае событие OnAdvDrawDataCell будет работать подобно событию OnGetCellParams. В момент вызова события грид установит текущую запись в датасете согласно <br />
+    номеру строки грида, так что вы можете обращаться к данным записи. Например:<br />
+    Grid.DataSource.DataSet.FieldByName('FieldName').AsString. Не изменяйте свойства Grid'а в событии. Для изменения параметров вывода данных на экран используйте параметры события Params или Grid.Canvas если вы выводите данные в ячейку сами через функции GDI.</p>
+  <p> + В class TColCellParamsEh добавлены свойства: BlankCell: Boolean. Установите это свойство чтобы отобразить ячейку как пустую ячейку с 3D окантовкой.<br />
+    SuppressActiveCellColor: Boolean. Установите это свойство чтобы запретить цвету активной ячейки перекрывать цвет установленный в свойстве Background.<br />
+    TextEditing: Boolean. Установите это свойство чтобы запретить отображение текстового редактора в ячейке колонки грида. Класс TColCellParamsEh используется как тип параметра Params в таких событиях как OnGetCellParams и OnAdvDrawDataCell.</p>
+  <p> * Исправлены некоторые ошибки.</p>
+</blockquote>
+<h4>Версия 4.4</h4>
+<blockquote>
+  <p> + Добавлена возможность в Design-Time перемещать столбцы мышкой в гриде.</p>
+  <p> + Добавлена возможность в Design-Time выбирать столбцы в Object Inspector <br />
+    кликая на заголовок столбца.</p>
+  <p> + Добавлено свойство DrawGraphicData: Boolean. При установки в True, грид<br />
+    выводит значение полей TBlobField с типом BlobType = ftGraphic в <br />
+    графическом виде.</p>
+  <p> + В грид добавлено событие OnGetRowHeight. В этом событии можно установить<br />
+    высоту  строк для каждой строки данных. Событие вызывается при изменении <br />
+    данных в DataSet'е. Событие вызывается только когда грид подключен к <br />
+    TMemTableEh и MemTable не в режиме TreeView.</p>
+  <p> + В тип TDBGridEhOption (OptionsEh) добавлено значение dghAutoFitRowHeight. В<br />
+    этом режиме грид подсчитывает высоту строк динамически на основе строковых <br />
+    данных в столбцах, у которых TColumnEh.WordWrap = True. Режим работает <br />
+    только когда грид подключен к TMemTableEh и MemTable не в режиме TreeView.<br />
+    Грид обновляет высоту строк не при всех изменениях свойств грида. Например <br />
+    грид не обновляет высоту строк если поменять свойство Grid.Font. По этому <br />
+    в программах, вызывайте Grid.UpdateAllDataRowHeights там, где это нужно.</p>
+  <p> + В режиме dgRowSelect in Options горизонтальная прокрутка работает в плавном <br />
+    режиме. (Шаг бегунка не ограничивается границами столбцов).</p>
+  <p> + В тип TDBGridEhOption (OptionsEh) добавлены значения dghColumnResize, <br />
+    dghColumnMove. Теперь ресайзинг и перемещение колонок можно настраивать <br />
+    отдельно.</p>
+  <p> + В тип TDBGridEhOption (OptionsEh) добавлено значение dghShowRecNo. При<br />
+    выставлении этого значения, в столбце индикатора будет отображаться<br />
+    номер записи. Свойство работает только для DataSet'ов с поддержкой <br />
+    IsSequenced.</p>
+  <p> + Изменена прорисовка 3D ячеек в режиме Flat при условии активности XP<br />
+    тем (ThemeServices.ThemesEnabled = True). Теперь эти ячейки<br />
+    закрашиваются градиентной заливкой. Стиль закраски 3D ячейки теперь<br />
+    вписывается в общий стиль отрисовки тем операционной системы.</p>
+  <p> * Исправлены некоторые ошибки.</p>
+</blockquote>
+<h4>Версия 4.3</h4>
+<blockquote>
+  <p> + Добавлена поддержка CodeGear RAD Studio 2009.</p>
+  <p> * Исправлены некоторые ошибки.</p>
+</blockquote>
+<h4>Версия 4.2</h4>
+<blockquote>
+  <p> + Добавлена поддержка Delphi 2007.<br />
+    <br />
+    В DBGridEh<br />
+    + Добавлено свойство IndicatorTitle типа TDBGridEhIndicatorTitle:<br />
+    Верхняя левая ячейка может реагировать как кнопка, выводить значок-треугольник, <br />
+    и по нажатию, отображать выпадающее меню ( с возможностью вывода глобального меню,<br />
+    которое настраивается с помощью глобальных свойств DBGridEhCenter.IndicatorTitleMenus<br />
+    и IndicatorTitleMenus.OnBuildIndicatorTitleMenu).<br />
+    Свойство IndicatorTitle имеет следующие подсвойства:<br />
+    DropdownMenu: TPopupMenu  - Локально выпадающее меню, появляющееся при нажатии на <br />
+    верхнюю левую ячейку грида.<br />
+    ShowDropDownSign: Boolean - Определяет, нужно ли выводить значок-треугольник <br />
+    направленный вниз. Удобно выставлять это свойство, чтобы показать, что по нажатию на <br />
+    верхнюю-левую ячейку будет выпадать меню.<br />
+    TitleButton: Boolean - Определяет, что верхняя левая ячейка реагирует на нажатие мышки<br />
+    как на кнопку, т.е. по нажатию будет иметь вдавленный вид. Кроме того, только когда <br />
+    TitleButton = True будет появляться выпадающее меню.<br />
+    UseGlobalMenu: Boolean - Определяет, будут ли использоваться свойства глобального <br />
+    обьекта DBGridEhCenter.IndicatorTitleMenus при формировании глобального меню.</p>
+  <p> Добавлено событие OnIndicatorTitleMouseDown. Событие срабатывает при нажатии <br />
+    мышкой на самую верхнюю левую ячейку грида. Ячейка должна быть настроена в <br />
+    режим работы кнопки (IndicatorTitle.TitleButton = True). В событии можно <br />
+    вызывать метод DefaultIndicatorTitleMouseDown который передает управление <br />
+    в глобальный объект DBGridEhCenter.</p>
+  <p> Добавлено событие OnBuildIndicatorTitleMenu. Срабатывает при формировании <br />
+    выпадающего меню, после нажатия на верхнюю левую ячейку грида. В событии<br />
+    можно вызывать метод DefaultBuildIndicatorTitleMenu, который передает<br />
+    управление в глобальный объект DBGridEhCenter.</p>
+  <p> Добавлено событие OnCellMouseClick. Срабатывает при нажатии любой ячейки грида.<br />
+    Передает координаты ячейки и смещение мышки относительно верхнего левого угла <br />
+    ячейки. В событии можно вызывать метод DefaultCellMouseClick который, передает <br />
+    управление в глобальный объект DBGridEhCenter.<br />
+  </p>
+  <p> + В модуле DBGridEh.Pas появился новый глобальный объект DBGridEhCenter типа TDBGridEhCenter.<br />
+    Этот объект предназначен для управления поведением всех созданных в проекте объектов<br />
+    типа TCustomGridEh или порожденных от него. Например, в DBGridEhCenter можно задать<br />
+    список меню, которые будут появляется в выпадающем меню всех гридов при нажатии на<br />
+    верхнюю левую ячейку столбца индикатора. Кроме того, вы можете написать событие этого <br />
+    объекта и оно будет вызываться при активации аналогичного события в любом гриде проекта.</p>
+  <p> Глобальный объект TDBGridEhCenter имеет следующие свойства и события<br />
+    IndicatorTitleMenus: <br />
+    Свойство задает список выпадающих меню, которые будут формироваться при <br />
+    нажатии на верхнюю левую ячейку грида. Это свойство глобального объекта и<br />
+    будет работать для всех гридов, у которых IndicatorTitle.TitleButton = True.<br />
+    (itmVisibleColumnsEh, itmCut, itmCopy, itmPaste, itmDelete, itmSelectAll).<br />
+    OnBuildIndicatorTitleMenu: Срабатывает при формировании <br />
+    выпадающего меню при нажатии на верхнюю левую ячейку грида.<br />
+    OnCellMouseClick: Срабатывает при нажатии в любой ячейки грида.<br />
+    Передает координаты ячейки и смещение мышки относительно верхнего левого <br />
+    угла ячейки.<br />
+    OnIndicatorTitleMouseDown: Событие срабатывает при нажатии <br />
+    мышкой на самую верхнюю левую ячейку грида.</p>
+  <p> + Глобальная переменная DBGridEhCenter. Эта переменная управляет частью <br />
+    поведения гридов если в них не переопределена функциональность через <br />
+    событие. Вы можете установить свойства или события этой переменной <br />
+    чтобы изменить поведение всех гридов.<br />
+    <br />
+    В других объектах и процедурах.<br />
+    * Исправления в ADODataDriverEh, свойства SelectCommand, UpdateCommand ... теперь <br />
+    имеют тип TADOCommandEh. <br />
+    * Изменились параметры вызова событий OnAssignCommandParameter и OnGetBackUpdatedValues<br />
+    в ADODataDriverEh.<br />
+    * Все dfm файлы хранят данные в текстовом виде.<br />
+    * Исправлена ошибка прорисовки линий в гриде при установленном свойстве <br />
+    TColumnEh.HideDuplicated в True<br />
+    * Исправлена утечка памяти при работе окна поиска TDBGridEhFindDlg.<br />
+    * Исправлена ошибка в поиске диалога, когда есть невидимые столбцы.<br />
+    * Добавлена поддержка ftWideMemo.<br />
+    * Исправлена ошибка зацикливания в компоненте TPrintDBGridEh при печати строк <br />
+    выше высоты страницы.<br />
+    * Исправлена ошибка создания нового компонента TDataDriver на форме через меню<br />
+    Popup menu компоненты TMemTableEh -&gt; Create DataDriver...<br />
+    + TDBLookupComboboxEh добавлена поддержка отображения Memo полей.<br />
+    * Исправлена ошибка ввода значения из предыдущей записи по Ctrl+' при подключении<br />
+    DBGridEh к TMemTableEh.</p>
+</blockquote>
+<h4>Версия 4.1</h4>
+<blockquote>
+  <p>+ Добавлена поддержка Borland Developer Studio 2006 (Под VCL.Win32 and VCL.NET).
+  </p>
+  <p> * Исправлена ошибка мерцания грида в режиме дерева при раскрытии ветки.<br />
+    * Исправлена ошибка формирования списка значений в фильтре когда для колонки <br />
+    заполнен PickList и KeyList.<br />
+    * Другие небольшие исправления.</p>
+</blockquote>
+<h4>Версия 4.0</h4>
+<blockquote>
+  <p> * Начиная с этой версии библиотека больше не поддерживает Delphi 4 и C++ Builer 4.</p>
+  <p> + Новые компоненты:<br />
+    TMemTableEh - dataset, который держит все данные в памяти.<br />
+    TDataDriverEh - поставляет записи в TMemTableEh и обрабатывает измененные записи.<br />
+    TSQLDataDriverEh, TBDEDataDriverEh, TIBXDataDriverEh, TDBXDataDriverEh и <br />
+    TADODataDriverEh.</p>
+  <p> Смотри подробное описание в файле AboutEhlib4_0.rus.</p>
+</blockquote>
+<h4>Версия 3.6b</h4>
+<blockquote>
+  <p> * Исправлена прорисовка EditButtons при Ctl3D = False.<br />
+    * Исправлена независимость от верхнего/нижнего регистра букв в <br />
+    TCustomDBComboBoxEh.KeyItems. Теперь зависит от регистра.<br />
+    * Исправлена ошибка прорисовки ячейки при работе с большими числами в <br />
+    DBGridEh.<br />
+    * Исправлена ошибка незаполнения ячейки при выборе из MRUList и <br />
+    установленном dghEnterAsTab.<br />
+    * Выставление оптимальной ширины колонки учитывает картинки из <br />
+    Column.ImageList.<br />
+    * В компоненте TDBLookupComboboxEh свойство Tooltips вынесено в published.<br />
+    * Исправлена ошибка преобразования типа когда TPreviewBox помещен во Frame.</p>
+</blockquote>
+<h4>Версия 3.6</h4>
+<blockquote>
+  <p> + Добавлена поддержка Delphi 2005 (Под VCL.Win32 и VCL.NET).</p>
+  <p> + Добавлено свойство Tooltips в TDBEditEh, TDBDateTimeEditEh, TDBNumberEditEh,<br />
+    TDBLookupComboboxEh. Позволяет показывать весь текст edit control'а в<br />
+    специальном окне подсказок если текст не умещается в видимую область. Текст<br />
+    выводится когда курсор мыши находится над окном редактирования.</p>
+  <p> В TDBGridEh<br />
+    + Добалвены свойства OddRowColor и EvenRowColor для вывода четных и нечетных<br />
+    строк различными цветами. Это работает только когда DataSet поддерживает<br />
+    нумерацию записей (DataSet.IsSequenced = True) и DataSet.RecNo возвращает <br />
+    правильную информацию.</p>
+  <p> + Добавлено значение dghRecordMoving в тип TDBGridEhOption (свойство <br />
+    OptionsEh). Разрешает перемещать записи в dataset'е. Запись перемещается <br />
+    нажатием и перемещением мыши над колонной указателя записей. По умолчанию <br />
+    Grid вызывает TDatasetFeaturesEh.MoveRecords. Код TDatasetFeaturesEh.MoveRecords<br />
+    сохраняет значения полей записи, удаляет запись и добавляет новую запись<br />
+    в позицию, заданную параметром RecNo.</p>
+  <p> + Добавлено событие OnMoveRecords типа TGridMoveRecordsEventEh.<br />
+    TGridMoveRecordsEventEh = function(Sender: TObject; BookmarkList: TStrings;<br />
+    ToRecNo: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean of object;<br />
+    BookmarkList это список букмарков которые надо переместить. <br />
+    ToRecNo это номер записи в которую надо переместить.<br />
+    TreeLevel это уровень в дереве в который надо переместить, используется только<br />
+    когда грид поключен к MemTableEh.<br />
+    CheckOnly - определеят что функция должна возвратить результат, возможно ли <br />
+    переместить букмарки в запись ToRecNo, но не перемещать сами букмарки.</p>
+  <p> + Добавлено событие OnSelectionChanged. Происходит, после того как <br />
+    multiselected область была изменена.</p>
+  <p> * В AdvTech\MemTableEh: Добавлена возможность фильтрации данных в режиме дерева,<br />
+    использования общих данных несколькими датасетами и перетаскивание записей <br />
+    внутри дерева в режиме dghRecordMoving.</p>
+</blockquote>
+<h4>Версия 3.5</h4>
+<blockquote>
+  <p> + Добавлено свойство HighlightRequired в компоненты TDBEditEh, TDBDateTimeEditEh, <br />
+    TDBNumberEditEh, TDBLookupComboboxEh и в объект TColumnEh, TColumnDefValuesEh. Свойство <br />
+    определяет необходимость рисования пунктирной красной линии под редактором ввода текста <br />
+    для обязательных полей (когда TField.Required = True и поле пусто).</p>
+  <p> + Добавлено событие OnCheckDrawRequiredState в TDBEditEh, TDBDateTimeEditEh, <br />
+    TDBNumberEditEh, TDBLookupComboboxEh и в объект TColumnEh. Событие запрашивает <br />
+    необходимость рисования состояние RequiredState (пунктирная красная линия под <br />
+    редактором ввода текста).</p>
+  <p> + Добавлено свойство Layout: TTextLayout в TColumnEh. Свойство задает вертикальное <br />
+    выравнивание текста в ячейке грида.</p>
+  <p> + Добавлено свойство HideDuplicates: Boolean в TColumnEh. Свойство определяет скрывать <br />
+    ли повторяющиеся значения в столбце.</p>
+  <p> * Изменено отображение 3D границ в гриде при работе программы в режиме поддержки стилий XP.</p>
+  <p> * Процедура ExcecuteDBGridEhFindDialog переименована в ExecuteDBGridEhFindDialog.</p>
+  <p> * В AdvTech\MemTableEh: Добавлены индексы и автогенерация списка значений для <br />
+    выпадающего окна в ячейках фильтра.</p>
+</blockquote>
+<h4>Версия 3.4</h4>
+<blockquote>
+  <p> + Добавлена поддержка Delphi 8 (VCL.NET).</p>
+  <p> В  TDBGridEh<br />
+    + Добавлено свойство ToolTips в Footer и в ColumnDefValues.Footer.<br />
+    + Добавлено свойство SumValue: Variant в TColumnFooterEh.</p>
+  <p> + Добавлено свойство ShowImageAndText в TColumnEh. Позволяет выводить Изображение из ImageList <br />
+    и текст из поля в ячейке грида одновременно. Устанавливайте ImageIndex в событии OnGetCellParams.</p>
+  <p> В TCustomDBEditEh<br />
+    + Добавлено свойство Images: TCustomImageList. Изображения из ImageList'а могут выводиться в левой <br />
+    части TDBEditEh, TDBDateTimeEditEh, TDBNumberEditEh or TDBLookupComboboxEh.<br />
+    + Добавлено событие OnGetImageIndex: TGetImageIndexEventEh.<br />
+    TGetImageIndexEventEh = procedure(Sender: TObject; var ImageIndex: Integer) of object;<br />
+    Событие вызывается, когда Text or Value в TCustomDBEditEh изменяется. Устанавливайте ImageIndex <br />
+    в зависимости от Text or Value.</p>
+</blockquote>
+<p></p>
+</body>
+</html>

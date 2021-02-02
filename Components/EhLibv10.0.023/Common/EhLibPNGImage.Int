@@ -1,0 +1,29 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{        Classes for detection Images stream format     }
+{                                                       }
+{   Copyright (c) 2011-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit EhLibPNGImage;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics, Controls, Forms,
+{$IFDEF EH_LIB_12} PNGImage, {$ENDIF} { CodeGear RAD Studio 2009 }
+  Dialogs, ToolCtrlsEh;
+
+type
+
+  TPNGGraphicProviderEh = class(TGraphicProviderEh)
+  public
+    class function GetImageClassForStream(Start: Pointer): TGraphicClass; override;
+  end;
+
+implementation

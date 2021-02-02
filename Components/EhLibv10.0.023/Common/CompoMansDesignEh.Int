@@ -1,0 +1,134 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{               Design Time TCompoListEditor            }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit CompoMansDesignEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, ComCtrls, ToolWin, Contnrs,
+{$IFDEF EH_LIB_9} Types, {$ENDIF}
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
+  ObjectInspectorEh,
+{$IFDEF DESIGNTIME}
+  {$IFDEF FPC}
+  LCLType, PropEdits, ComponentEditors,
+  {$ELSE}
+  DesignIntf, DesignEditors, VCLEditors, ToolsAPI, DesignWindows, TypInfo,
+  {$ENDIF}
+  EhLibReg,
+{$ENDIF}
+  {$IFDEF FPC}
+  EhLibLCL, MaskEdit, DBGridsEh,
+  {$ELSE}
+  EhLibVCL, Mask, DBGridEh,
+  {$ENDIF}
+  CompoMansEh, EhLibMTE, StrUtils,
+  DB, MemTableEh, GridsEh, DBAxisGridsEh, StdCtrls,
+  DBCtrlsEh;
+
+type
+  TCompoListEditor = class(TDesignWindow)
+    ToolBar1: TToolBar;
+    ToolButton3: TToolButton;
+    tbShowAll: TToolButton;
+    tbHideAll: TToolButton;
+    DBGridEh1: TDBGridEh;
+    DataSource1: TDataSource;
+    MemTableEh1: TMemTableEh;
+    MemTableEh1CompName: TStringField;
+    MemTableEh1RefComp: TRefObjectField;
+    tbHide: TToolButton;
+    tbShow: TToolButton;
+    MemTableEh1PositionStr: TStringField;
+    MemTableEh1OldPositionsX: TIntegerField;
+    MemTableEh1OldPositionsY: TIntegerField;
+    MemTableEh1CompTypeName: TStringField;
+    procedure tbAddClick(Sender: TObject);
+    procedure tlDelClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tbHideClick(Sender: TObject);
+    procedure tbShowClick(Sender: TObject);
+    procedure ToolButton6Click(Sender: TObject);
+    procedure tbHideAllClick(Sender: TObject);
+    procedure DBGridEh1ApplyFilter(Sender: TObject);
+    procedure DBGridEh1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
+    procedure DBGridEh1Columns0GetCellParams(Sender: TObject; EditMode: Boolean;
+      Params: TColCellParamsEh);
+    procedure DBGridEh1SelectionChanged(Sender: TObject);
+  private
+    FCompoList: TCompoManEh;
+    FChilderList: TObjectListEh;
+    FInSelection: Boolean;
+    FOldPosList: TStringList;
+    FClosing: Boolean;
+    FCollectionClassName: string;
+    FInertnalSetSelection: Boolean;
+    procedure SetCompoList(const Value: TCompoManEh);
+    procedure SaveOldPos(const Comp: TComponent);
+    procedure SaveCompoList;
+    procedure LoadCompoList;
+    procedure HideComponent(const Comp: TComponent);
+    function GetDelOldPos(const Comp: TComponent; var DesignInfo: LongInt): Boolean;
+    function IsComponentHiden(const Comp: TComponent): Boolean;
+    function GetRegKey: string;
+    procedure ReadRegState;
+    procedure WriteRegState;
+
+  public
+    procedure InitForm;
+    procedure UpdateList;
+    procedure UpdateChildrenList;
+
+    function SelectNewChildClass: TComponentClass; virtual;
+    function CreateChild(ChildClass: TComponentClass): TComponent;
+    function GetSelectedList: IDesignerSelections;
+    function CheckItemInList(Item: TPersistent): Boolean;
+
+    procedure XModuleServicesSaveAll;
+    procedure CloseEditor;
+    procedure UpdateActionsState;
+
+{$IFDEF DESIGNTIME}
+    procedure ItemDeleted(const ADesigner: IDesigner; Item: TPersistent); override;
+    procedure ItemsModified(const Designer: IDesigner); override;
+    procedure SelectionChanged(const ADesigner: IDesigner; const ASelection: IDesignerSelections); override;
+    procedure DesignerClosed(const ADesigner: IDesigner; AGoingDormant: Boolean); override;
+{$ENDIF}
+
+    property CompoList: TCompoManEh read FCompoList write SetCompoList;
+  end;
+
+{ TCompChildrenDesignServiceEh }
+
+  TCompChildrenDesignServiceEh = class
+    class procedure GetChildClasses(ClassList: TClassList); virtual;
+    class function CreateChild(MasterComponent: TComponent; ChildClass: TComponentClass): TComponent; virtual;
+  end;
+
+  TCompChildrenDesignServiceClassEh = class of TCompChildrenDesignServiceEh;
+
+function ShowComponentListEditor(
+{$IFDEF DESIGNTIME}
+  ADesigner: IDesigner;
+{$ENDIF}
+  ACompoList: TCompoManEh): TCompoListEditor;
+
+procedure Register;
+
+implementation

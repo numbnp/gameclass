@@ -1,0 +1,203 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                TPrintDBGridEh component               }
+{                                                       }
+{   Copyright (c) 1998-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit PrnDbgeh;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+  Messages, SysUtils, Classes, Controls, PrntsEh,
+{$IFDEF FPC}
+    DBGridsEh, LCLType, LCLIntf, EhLibLCL,
+  {$IFDEF FPC_WINDWOS}
+  Windows, Win32WSForms, Win32Int, Win32WSControls,
+  {$ELSE}
+  {$ENDIF}
+{$ELSE}
+    Windows, DBGridEh, EhLibVCL,
+{$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Text,
+  System.Runtime.InteropServices,
+{$ELSE}
+
+{$ENDIF}
+{$IFDEF EH_LIB_17} System.Contnrs, {$ENDIF}
+  Graphics, ImgList, Forms, DB, GridsEh, DBGridEhGrouping,
+  ToolCtrlsEh, StdCtrls, ComCtrls;
+
+type
+  TPrintDBGridEh = class;
+  TPrintColCellParamsEh = class;
+
+  TMeasureUnits = (MM, Inches);
+  TPrintDBGridEhOption = (pghFitGridToPageWidth, pghColored, pghRowAutoStretch,
+    pghFitingByColWidths, pghOptimalColWidths);
+  TPrintDBGridEhOptions = set of TPrintDBGridEhOption;
+
+  TPrintDBGridEhPrintDataCellEvent = procedure(Sender: TPrintDBGridEh;
+    VPrinter: TVirtualPrinter; Column: TColumnEh; const ARect: TRect;
+    var Params: TPrintColCellParamsEh; var Processed: Boolean) of object;
+
+  TPrintColCellParamsEh = class(TColCellParamsEh)
+  public
+    ScaleX: Double;
+    ScaleY: Double;
+    CalcInfoMode: Boolean;
+    Stretch: Boolean;
+    GridWidth: Integer;
+    RealRight: Integer;
+    RealLeft: Integer;
+  end;
+
+  TPageParams = class(TPersistent)
+  private
+    FBottomMargin: Currency;
+    FRightMargin: Currency;
+    FLeftMargin: Currency;
+    FTopMargin: Currency;
+
+    function IsBottomMarginStored: Boolean;
+    function IsLeftMarginStored: Boolean;
+    function IsRightMarginStored: Boolean;
+    function IsTopMarginStored: Boolean;
+
+    procedure SetBottomMargin(const Value: Currency);
+    procedure SetLeftMargin(const Value: Currency);
+    procedure SetRightMargin(const Value: Currency);
+    procedure SetTopMargin(const Value: Currency);
+
+  public
+    constructor Create;
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property BottomMargin: Currency read FBottomMargin write SetBottomMargin stored IsBottomMarginStored;
+    property LeftMargin: Currency read FLeftMargin write SetLeftMargin stored IsLeftMarginStored;
+    property RightMargin: Currency read FRightMargin write SetRightMargin stored IsRightMarginStored;
+    property TopMargin: Currency read FTopMargin write SetTopMargin stored IsTopMarginStored;
+  end;
+
+  TPageColontitleLineType = (pcltNon, pcltSingleLine, pcltDoubleLine);
+
+  TPageColontitle = class(TPersistent)
+  private
+    FCenterText: TStrings;
+    FFont: TFont;
+    FLeftText: TStrings;
+    FLineType: TPageColontitleLineType;
+    FRightText: TStrings;
+
+    procedure SetCenterText(const Value: TStrings);
+    procedure SetFont(const Value: TFont);
+    procedure SetLeftText(const Value: TStrings);
+    procedure SetLineType(const Value: TPageColontitleLineType);
+    procedure SetRightText(const Value: TStrings);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+
+  published
+    property CenterText: TStrings read FCenterText write SetCenterText;
+    property Font: TFont read FFont write SetFont;
+    property LeftText: TStrings read FLeftText write SetLeftText;
+    property LineType: TPageColontitleLineType read FLineType write SetLineType default pcltNon;
+    property RightText: TStrings read FRightText write SetRightText;
+  end;
+
+  TPrintDBGridEh = class(TComponent)
+  private
+    FAfterGridText: TStringsEh;
+    FBeforeGridText: TStringsEh;
+    FColCellParamsEh: TPrintColCellParamsEh;
+    FDBGridEh: TDBGridEh;
+    FLastRowTexts: TStrings;
+    FOptions: TPrintDBGridEhOptions;
+    FPage: TPageParams;
+    FPageFooter: TPageColontitle;
+    FPageHeader: TPageColontitle;
+    FPrintFontName: String;
+    FSubstitutesNames: TStrings;
+    FSubstitutesValues: TStrings;
+    FTitle: TStrings;
+    FUnits: TMeasureUnits;
+    FVarColCellParamsEh: TColCellParamsEh;
+
+    FOnAfterPrint: TNotifyEvent;
+    FOnBeforePrint: TNotifyEvent;
+    FOnPrinterSetupDialog: TNotifyEvent;
+    FOnPrintDataCell: TPrintDBGridEhPrintDataCellEvent;
+
+    function GetAfterGridText: TStringsEh;
+    function GetBeforeGridText: TStringsEh;
+
+    procedure ReadAfterGridText(Stream: TStream);
+    procedure ReadBeforeGridText(Stream: TStream);
+    procedure SetAfterGridText(const Value: TStringsEh);
+    procedure SetBeforeGridText(const Value: TStringsEh);
+    procedure SetDBGridEh(const Value: TDBGridEh);
+    procedure SetOptions(const Value: TPrintDBGridEhOptions);
+    procedure SetPage(const Value: TPageParams);
+    procedure SetPageFooter(const Value: TPageColontitle);
+    procedure SetPageHeader(const Value: TPageColontitle);
+    procedure SetPrintFontName(const Value: String);
+    procedure SetTitle(const Value: TStrings);
+    procedure SetUnits(const Value: TMeasureUnits);
+    procedure WriteAfterGridText(Stream: TStream);
+    procedure WriteBeforeGridText(Stream: TStream);
+
+  protected
+    function DrawGraphicCell(Canvas: TCanvas; Column: TColumnEh; ARect: TRect; Background: TColor; CalcRect: Boolean; var Params: TPrintColCellParamsEh): Integer;
+
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure PrinterSetupDialogPreview(Sender: TObject);
+    procedure ChangeBoxOrientation(Canvas: TCanvas; Box: TRect; RightToLeftOrientation: Boolean);
+    procedure DrawTreeArea(Canvas: TCanvas; ARect: TRect; var Params: TPrintColCellParamsEh);
+    procedure DrawClipped(imList: TCustomImageList; VPrinter: TVirtualPrinter; ACanvas: TCanvas; ARect: TRect; Index: Integer; Align: TAlignment; CalcInfoMode: Boolean; ScaleX: Double; ScaleY: Double; GridWidth: Integer; RealRight: Integer; RealLeft: Integer);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function PrinterSetupDialog: Boolean;
+
+    procedure Preview;
+    procedure Print;
+    procedure PrintTo(VPrinter: TVirtualPrinter);
+    procedure SetSubstitutes(ASubstitutes: array of const);
+
+    function DefaultPrintDataCell(VPrinter: TVirtualPrinter; Column: TColumnEh; ARect: TRect; CalcRect: Boolean; var Params: TPrintColCellParamsEh): Integer; virtual;
+
+  published
+    property AfterGridText: TStringsEh read GetAfterGridText write SetAfterGridText stored False;
+    property BeforeGridText: TStringsEh read GetBeforeGridText write SetBeforeGridText stored False;
+    property DBGridEh: TDBGridEh read FDBGridEh write SetDBGridEh;
+    property Options: TPrintDBGridEhOptions read FOptions write SetOptions;
+    property Page: TPageParams read FPage write SetPage;
+    property PageFooter: TPageColontitle read FPageFooter write SetPageFooter;
+    property PageHeader: TPageColontitle read FPageHeader write SetPageHeader;
+    property PrintFontName: String read FPrintFontName write SetPrintFontName;
+    property Title: TStrings read FTitle write SetTitle;
+    property Units: TMeasureUnits read FUnits write SetUnits;
+
+    property OnAfterPrint: TNotifyEvent read FOnAfterPrint write FOnAfterPrint;
+    property OnBeforePrint: TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
+    property OnPrinterSetupDialog: TNotifyEvent read FOnPrinterSetupDialog write FOnPrinterSetupDialog;
+    property OnPrintDataCell: TPrintDBGridEhPrintDataCellEvent read FOnPrintDataCell write FOnPrintDataCell;
+  end;
+
+
+implementation

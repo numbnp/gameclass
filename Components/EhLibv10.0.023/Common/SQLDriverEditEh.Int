@@ -1,0 +1,679 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{                  TSQLDataEditWin form                 }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit SQLDriverEditEh;
+
+{$I EHLIB.INC}
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  Dialogs, ComCtrls, StdCtrls, Grids, DBGridEh, ExtCtrls, Buttons, Mask,
+  DBCtrlsEh, DataDriverEh, DB, MemTableEh, MemTableDataEh, SQLEditFrameEh,
+{$IFDEF CIL}
+  EhLibVCLNET,
+{$ELSE}
+  EhLibVCL,
+{$ENDIF}
+{$IFDEF DESIGNTIME}
+  DesignIntf, ToolsAPI,
+{$ENDIF}
+  Variants, Contnrs, Menus, ImgList, StdActns, ActnList, ToolWin, GridsEh,
+  DBGridEhGrouping, DBGridEhToolCtrls, ToolCtrlsEh, DBAxisGridsEh;
+
+type
+
+  TSQLTreeNode = class;
+  TCustomDBService = class;
+  TDesignDataBaseEh = class;
+  TCustomDBServiceClass = class of TCustomDBService;
+  TDataDriverEditInteractorEh = class;
+  TDataDriverEditInteractorEhClass = class of TDataDriverEditInteractorEh;
+
+{ TSQLDataEditWin }
+
+  TSQLDataEditWin = class(TForm)
+    GridPanel: TPanel;
+    DBGridEh1: TDBGridEh;
+    Panel2: TPanel;
+    StatusBar1: TStatusBar;
+    Button1: TButton;
+    Button2: TButton;
+    Splitter1: TSplitter;
+    Splitter3: TSplitter;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    DBNameEdit: TDBEditEh;
+    sbRefreshTree: TSpeedButton;
+    MemTableEh1: TMemTableEh;
+    DataSource1: TDataSource;
+    mtParams: TMemTableEh;
+    dsParams: TDataSource;
+    mtParamsParName: TStringField;
+    mtParamsParType: TStringField;
+    mtParamsParValue: TStringField;
+    gridTreeDetail: TDBGridEh;
+    mtTreeDetail: TMemTableEh;
+    dsTreeDetail: TDataSource;
+    Splitter4: TSplitter;
+    Panel3: TPanel;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    Splitter2: TSplitter;
+    PanelParams: TPanel;
+    gridParams: TDBGridEh;
+    Panel5: TPanel;
+    Memo1: TMemo;
+    Panel8: TPanel;
+    bExecute: TButton;
+    Panel9: TPanel;
+    SpeedButton2: TSpeedButton;
+    TabSheet2: TTabSheet;
+    FrameInsertSQL: TSQLEditFrame;
+    TabSheet3: TTabSheet;
+    FrameUpdateSQL: TSQLEditFrame;
+    TabSheet4: TTabSheet;
+    FrameDeleteSQL: TSQLEditFrame;
+    bBuildUpdates: TButton;
+    Image1: TImage;
+    Panel4: TPanel;
+    sbRefresh: TSpeedButton;
+    PopupMenu1: TPopupMenu;
+    Ggg1: TMenuItem;
+    gridDBTree: TDBGridEh;
+    dsDBTree: TDataSource;
+    mtDBTree: TMemTableEh;
+    mtDBTreeName: TStringField;
+    mtDBTreeChieldCount: TIntegerField;
+    mtDBTreeDescription: TStringField;
+    mtDBTreeId: TAutoIncField;
+    mtDBTreeRefParent: TIntegerField;
+    bCheck: TButton;
+    bQueryPlan: TButton;
+    spCut: TSpeedButton;
+    sbCopy: TSpeedButton;
+    spPaste: TSpeedButton;
+    sbSelectAll: TSpeedButton;
+    ActionList1: TActionList;
+    EditCut1: TEditCut;
+    EditCopy1: TEditCopy;
+    EditPaste1: TEditPaste;
+    EditSelectAll1: TEditSelectAll;
+    ImageList1: TImageList;
+    ImageList2: TImageList;
+    mtDBTreeImageIndex: TIntegerField;
+    TabSheet5: TTabSheet;
+    FrameGetRecSQL: TSQLEditFrame;
+    tsSpecParams: TTabSheet;
+    Panel11: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    MemoUpdateFields: TMemo;
+    MemoKeyFields: TMemo;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    dbeUpdateTable: TDBEditEh;
+    Label3: TLabel;
+    Bevel3: TBevel;
+    GroupBox1: TGroupBox;
+    cbDinaDeleteSQL: TCheckBox;
+    cbDinaInsertSQL: TCheckBox;
+    cbDinaUpdateSQL: TCheckBox;
+    Panel12: TPanel;
+    mSpecParams: TMemo;
+    Panel10: TPanel;
+    Label4: TLabel;
+    Bevel4: TBevel;
+    bLoadSpecString: TButton;
+    Bevel5: TBevel;
+    mtDBTreeRefData: TRefObjectField;
+    mtParamsParVarValue: TVariantField;
+    Panel13: TPanel;
+    Panel14: TPanel;
+    Panel15: TPanel;
+    Label5: TLabel;
+    Bevel6: TBevel;
+    mMacros: TMemo;
+    Panel16: TPanel;
+    labFilterMacroName: TLabel;
+    eFilterMacroName: TEdit;
+    labSortOrderMacroName: TLabel;
+    eSortOrderMacroName: TEdit;
+    sbRefreshMacros: TSpeedButton;
+    procedure sbRefreshTreeClick(Sender: TObject);
+    procedure bExecuteClick(Sender: TObject);
+    procedure sbHideShowClick(Sender: TObject);
+    procedure Splitter2CanResize(Sender: TObject; var NewSize: Integer;
+      var Accept: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure bBuildUpdatesClick(Sender: TObject);
+    procedure MemTableEh1AfterOpen(DataSet: TDataSet);
+    procedure FormShow(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure Memo1Exit(Sender: TObject);
+    procedure Memo1Enter(Sender: TObject);
+    procedure sbRefreshClick(Sender: TObject);
+    procedure DBEditEh1EditButtons0Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure DBEditEh1EditButtons1Click(Sender: TObject;
+      var Handled: Boolean);
+    procedure Memo1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure Memo1DragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure Ggg1Click(Sender: TObject);
+    procedure dsDBTreeDataChange(Sender: TObject; Field: TField);
+    procedure gridDBTreeMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure gridDBTreeStartDrag(Sender: TObject;
+      var DragObject: TDragObject);
+    procedure bQueryPlanClick(Sender: TObject);
+    procedure gridDBTreeColumns0GetCellParams(Sender: TObject;
+      EditMode: Boolean; Params: TColCellParamsEh);
+    procedure bLoadSpecStringClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure gridParamsColumns0UpdateData(Sender: TObject; var Text: string;
+      var Value: Variant; var UseText, Handled: Boolean);
+    procedure gridParamsColumns2UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure mMacrosExit(Sender: TObject);
+    procedure mMacrosEnter(Sender: TObject);
+    procedure sbRefreshMacrosClick(Sender: TObject);
+  private
+    FCharHeight: Integer;
+    FSQLCanvas: TControlCanvas;
+    FDesignDriver: TCustomSQLDataDriverEh;
+    FDataDriver: TCustomSQLDataDriverEh;
+    FDesignDataBase: TDesignDataBaseEh;
+    FDDEditInteractor: TDataDriverEditInteractorEhClass;
+    procedure SetDesignDataBase(const Value: TDesignDataBaseEh);
+    procedure DrawCaretPosIndicator;
+    procedure SetObjectTreeParams;
+    procedure ResetObjectTreeParams;
+    function ExecuteCommand(DataDriver: TCustomSQLDataDriverEh;
+      Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer;
+    procedure DesignDatabaseChanged();
+    procedure SetDesignDriver(const Value: TCustomSQLDataDriverEh);
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+  public
+    Panel3Width: Integer;
+    DragSQLTreeNode: TSQLTreeNode;
+    mtDBTreeLoading: Boolean;
+    destructor Destroy; override;
+    procedure SaveLayout;
+    procedure LoadLayout;
+    procedure AssignControlsDataToDesignDriver;
+    procedure AssignDesignDriverToControls;
+    procedure mtDBTreeExpanding(Sender: TObject; RecordNumber: Integer; var AllowExpansion: Boolean);
+    procedure gridTreeDetailColumns0GetCellParams(Sender: TObject; EditMode: Boolean; Params: TColCellParamsEh);
+    procedure ReassignDesignDataBaseEh(DDB: TDesignDataBaseEh);
+    procedure CheckRequestDesignDataBaseEh;
+    procedure UpdateControlsState;
+    property DataDriver: TCustomSQLDataDriverEh read FDataDriver write FDataDriver;
+    property DesignDriver: TCustomSQLDataDriverEh read FDesignDriver write SetDesignDriver;
+    property DesignDataBase: TDesignDataBaseEh read FDesignDataBase write SetDesignDataBase;
+    property DDEditInteractor: TDataDriverEditInteractorEhClass read FDDEditInteractor write FDDEditInteractor;
+  end;
+
+  TParamsArr = array of Variant;
+
+{ TDataDriverEditInteractorEh }
+
+  TDataDriverEditInteractorEh = class(TPersistent)
+    class function CanBuildQueryPlan(DesignDataBase: TDesignDataBaseEh): Boolean; virtual;
+    class function CanCheckSQLText(DesignDataBase: TDesignDataBaseEh): Boolean; virtual;
+    class procedure AssignEditDataToCommant(SQLText: String; mtParams: TMemTableEh; Command: TCustomSQLCommandEh); virtual;
+    class procedure AssignCommantToEditData(Command: TCustomSQLCommandEh; SQLText: String; mtParams: TMemTableEh); virtual;
+    class procedure RefreshParams(Command: TCustomSQLCommandEh; SQLEditWin: TSQLDataEditWin); virtual;
+    class procedure DesignDataBaseReassigned(SQLEditWin: TSQLDataEditWin); virtual;
+  end;
+
+{ TDesignDataBaseEh }
+
+  TDesignDataBaseEh = class(TComponent, IDesignDataBaseEh)
+  private
+    FDesignConnectionName: String;
+    FIsPublicDataBase: Boolean;
+  protected
+    FTreeDataSet: TMemTableEh;
+    FConProvider: TComponent;
+    procedure RemoveFromDesignDataBaseList;
+    function GetConnected: Boolean; virtual;
+    procedure SetConnected(const Value: Boolean); virtual;
+
+  public
+    constructor Create(IsPublicDataBase: Boolean; AConProvider: TComponent); reintroduce; virtual;
+    destructor Destroy; override;
+
+    function BuildObjectTree(List: TObjectList): Boolean; virtual;
+    function BuildUpdates(DataDriver: TCustomSQLDataDriverEh): Boolean; virtual;
+    function CanBuildQueryPlan: Boolean; virtual;
+    function CanCheckSQLText: Boolean; virtual;
+    function CreateDesignCopy(RTDataDriver: TCustomSQLDataDriverEh): TCustomSQLDataDriverEh; virtual;
+    function CreateReader(SQL: String; FParams: TParamsArr): TDataSet; virtual;
+    function DesignDataBaseConnetionEqual(DataDriver: TCustomSQLDataDriverEh): Boolean; virtual;
+    function Execute(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; overload; virtual;
+    function Execute(SQLText: String; CommandType: TSQLCommandTypeEh; VarParams: Variant; var Cursor: TDataSet): Integer; overload; virtual;
+    function GetEngineName: String; virtual;
+    function GetServerTypeName: String; virtual;
+    function GetFieldList(const TableName: string; DataSet: TDataSet): Boolean; virtual;
+    function GetSpecParamsList: String; virtual;
+    function SupportCustomSQLDataDriver: Boolean; virtual; abstract;
+    function GetCustomDBService: TCustomDBService; virtual;
+    function GetIncrementObjectsList: TStrings; virtual;
+    function GetObjectTreeDataSet: TDataSet; virtual;
+    function CreateTreeDataSet: TMemTableEh; virtual;
+    function IsPublicDataBase: Boolean; virtual;
+    function Description: String; virtual;
+    function CanBuildTreeDataSet(var StrReasonOfInable: String): Boolean; virtual;
+    function CanFormSpecParamsList(var StrReasonOfInable: String): Boolean; virtual;
+
+    procedure mtDBTreeExpanding(Sender: TObject; RecordNumber: Integer; var AllowExpansion: Boolean);
+    procedure BuildQueryPlan(PlanTable: TMemTableEh; Command: TCustomSQLCommandEh); virtual;
+    procedure EditDatabaseParams; virtual;
+    procedure ResetDesignInfo; virtual;
+    procedure AssignFromDesignDataDriver(DesignDataDriver, RuntimeDataDriver: TCustomSQLDataDriverEh); virtual;
+    procedure AssignToDesignDataDriver(DesignDataDriver, RuntimeDataDriver: TCustomSQLDataDriverEh); virtual;
+    procedure SetServerTypeAsServerSpecOperationsClass(const Value: TServerSpecOperationsEhClass); virtual;
+
+    property Connected: Boolean read GetConnected write SetConnected;
+    property DesignConnectionName: String read FDesignConnectionName write FDesignConnectionName;
+  end;
+
+  TDesignDataBaseClassEh = class of TDesignDataBaseEh;
+
+{ Engines unils }
+
+  TAccessEngineEh = class(TObject)
+    function AccessEngineName: String; virtual; abstract;
+    function CreateDesignDataBase(DataDriver: TCustomSQLDataDriverEh;
+      DBServiceClass: TCustomDBServiceClass; DataBaseName: String): TDesignDataBaseEh;
+        virtual; abstract;
+  end;
+
+  TSQLTreeNodeTemplate = class;
+
+  TColumnAtribute = record
+    FieldName: String;
+    Title: String;
+    Width: Integer;
+  end;
+
+  TFieldAtribute = record
+    FieldName: String;
+    FieldType: TMTDataFieldEh;
+    Size: Integer;
+  end;
+
+  TGetTextEvent = function(Sender: TObject): String of object;
+
+  TServicePopupParam = record
+    Text: String;
+    OnSelect: TNotifyEvent;
+    OnGetMenuText: TGetTextEvent;
+    OnGetDataText: TGetTextEvent;
+  end;
+
+  TServicePopupParams = array of TServicePopupParam;
+
+  TColumnAttributes = array of TColumnAtribute;
+
+  TFieldAtributesEh = array of TFieldAtribute;
+
+  TSQLTreeNode = class(TObject)
+  private
+    FOnDragDrop: TDragDropEvent;
+    function GetSQLTreeNode: TSQLTreeNode;
+  protected
+  public
+    FFullName: String;
+    FImageIndex: Integer;
+    FMemRec: TMemoryRecordEh;
+    FName: String;
+    FNodes: TObjectListEh;
+    FNodesLoaded: Boolean;
+    FNodesSelect: String;
+    FNodesTemplate: TSQLTreeNodeTemplate;
+    FObjId: String;
+    FParent: TSQLTreeNode;
+    FTable: TMemTableEh;
+    FTableFields: String;
+    FTableFilter: String;
+    FTypeId: String;
+    FParentRecordToTableMode: Boolean;
+    PopupParams: TServicePopupParams;
+    constructor Create;
+    destructor Destroy; override;
+    procedure AddChild(Node: TSQLTreeNode);
+    function GetTable: TMemTableEh;
+    property OnDragDrop: TDragDropEvent read FOnDragDrop write FOnDragDrop;
+  end;
+
+  TSQLTreeNodeTemplate = class(TObject)
+  private
+    FName: String;
+    FMasterTemplateName: String;
+    FNodesMemTableName: String;
+    FParams: TParamsArr;
+    FNodeManager: TCustomDBService;
+    FObjIdFieldName: String;
+    FInTreeTextFieldName: String;
+    FNodesFilter: String;
+    FNodesSQLClassName: String;
+    FColumnAttributes: TColumnAttributes;
+    FOnNodeDragDrop: TDragDropEvent;
+    FNodeDropMenuParams: TServicePopupParams;
+    FTableNodeDropMenuParams: TServicePopupParams;
+    FHasNodes: Boolean;
+    FSelectedIndex: Integer;
+    FAdditionalLoadSQL: String;
+    FColumnAttributesStr: String;
+    FAdditionalFielsInfo: String;
+    procedure SetColumnAttributes(const Value: String);
+
+  public
+    constructor Create(ANodeManager: TCustomDBService; AName: String);
+    destructor Destroy; override;
+
+    function CreateNode: TSQLTreeNode; virtual;
+    function DropMenuNodeText(Sender: TObject): String;
+    function DropMenuNlCommaNodeText(Sender: TObject): String;
+    function DropMenuSelectAstFromName(Sender: TObject): String;
+    function DropMenuSelectAllFieldsFromName(Sender: TObject): String;
+    function DropDataSelectAllFieldsFromName(Sender: TObject): String;
+
+    function ShowPopup(Source: TObject; Coord: TPoint; Params: TServicePopupParams): Integer;
+    procedure TableEditorDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure OnPopupClick(Sender: TObject);
+
+    property OnNodeDragDrop: TDragDropEvent read FOnNodeDragDrop write FOnNodeDragDrop;
+    property NodeDropMenuParams: TServicePopupParams read FNodeDropMenuParams write FNodeDropMenuParams;
+
+    property NodesSQLClassName: String read FNodesSQLClassName write FNodesSQLClassName;
+    property MasterTemplateName: String read FMasterTemplateName write FMasterTemplateName;
+    property NodesMemTableName: String read fNodesMemTableName write FNodesMemTableName;
+    property ObjIdFieldName: String read FObjIdFieldName write FObjIdFieldName;
+    property InTreeTextFieldName: String read FInTreeTextFieldName write FInTreeTextFieldName;
+    property HasNodes: Boolean read FHasNodes write FHasNodes;
+    property NodesFilter: String read FNodesFilter write FNodesFilter;
+    property ColumnAttributesStr: String read FColumnAttributesStr write SetColumnAttributes;
+    property AdditionalLoadSQL: String read FAdditionalLoadSQL write FAdditionalLoadSQL;
+    property AdditionalFielsInfo: String read FAdditionalFielsInfo write FAdditionalFielsInfo;
+
+  end;
+
+{ TDesignUpdateParamsEh }
+
+  TDesignUpdateParamsEh = class(TPersistent)
+  private
+    FIncremenField: String;
+    FIncremenObject: String;
+    FTableName: String;
+    FKeyFields: TStrings;
+    FUpdateFields: TStrings;
+    FSelectSQL: TStrings;
+    procedure SetKeyFields(const Value: TStrings);
+    procedure SetUpdateFields(const Value: TStrings);
+    procedure SetSelectSQL(const Value: TStrings);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    property TableName: String read FTableName write FTableName;
+    property IncremenField: String read FIncremenField write FIncremenField;
+    property IncremenObject: String read FIncremenObject write FIncremenObject;
+    property KeyFields: TStrings read FKeyFields write SetKeyFields;
+    property UpdateFields: TStrings read FUpdateFields write SetUpdateFields;
+    property SelectSQL: TStrings read FSelectSQL write SetSelectSQL;
+  end;
+
+{ TDesignUpdateInfoEh }
+
+  TDesignUpdateInfoEh = class(TPersistent)
+  private
+    FTableName: String;
+    FDeleteSQL: TStrings;
+    FGetRecSQL: TStrings;
+    FUpdateSQL: TStrings;
+    FInsertSQL: TStrings;
+    FSpecParams: TStrings;
+    FUpdateFields: TStrings;
+    FKeyFields: TStrings;
+
+    procedure SetDeleteSQL(const Value: TStrings);
+    procedure SetGetRecSQL(const Value: TStrings);
+    procedure SetUpdateSQL(const Value: TStrings);
+    procedure SetInsertSQL(const Value: TStrings);
+    procedure SetSpecParams(const Value: TStrings);
+    procedure SetKeyFields(const Value: TStrings);
+    procedure SetUpdateFields(const Value: TStrings);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property TableName: String read FTableName write FTableName;
+    property DeleteSQL: TStrings read FDeleteSQL write SetDeleteSQL;
+    property InsertSQL: TStrings read FInsertSQL write SetInsertSQL;
+    property UpdateSQL: TStrings read FUpdateSQL write SetUpdateSQL;
+    property GetRecSQL: TStrings read FGetRecSQL write SetGetRecSQL;
+    property SpecParams: TStrings read FSpecParams write SetSpecParams;
+    property UpdateFields: TStrings read FUpdateFields write SetUpdateFields;
+    property KeyFields: TStrings read FKeyFields write SetKeyFields;
+  end;
+
+{ TCustomDBService }
+
+  TCustomDBService = class(TPersistent)
+  private
+    FMTList: TStringList;
+    FTempateList: TStringList;
+    FSQLRoot: TSQLTreeNode;
+    FSQLClassListNames: TStringList;
+    FSQLClassListTexts: TStringList;
+    FLoadedSQLClasses: TStringList;
+  protected
+    FDesignDB: TDesignDataBaseEh;
+    FIncrementObjectsList: TStrings;
+    SelectedIndex: Integer;
+    function CreateNode: TSQLTreeNode; virtual;
+    function CreateReader(SQL: String; FParams: TParamsArr): TDataSet; virtual;
+    function GetMemTable(TableName: String): TMemTableEh;
+    function GetTemplate(TemplateName: String): TSQLTreeNodeTemplate;
+    function LoadText(TextName: String): String;
+    function LoadMemTable(MemTable: TMemTableEh; Source: TDataSet; Mode: TLoadMode; Fetch: Boolean): Integer; virtual;
+    function SQLClassTextByName(ClassName: String): String;
+    procedure AddTemplate(Template: TSQLTreeNodeTemplate);
+    procedure AssignRecord(Source, Destinate: TDataSet); virtual;
+    procedure OnPopupClick(Sender: TObject);
+    procedure AddSQLClass(Name, SQLText: String);
+    procedure MemTableBuildStruct(MemTable: TMemTableEh; Source: TDataSet); virtual;
+    procedure GenWhereClause(DesignUpdateParams: TDesignUpdateParamsEh; SQL: TStrings); virtual;
+    procedure GenInsertSQL(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); virtual;
+    procedure GenModifySQL(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); virtual;
+    procedure GenDeleteSQL(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); virtual;
+    procedure GenGetRecSQL(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); virtual;
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); virtual;
+    destructor Destroy; override;
+
+    function CheckSqlTextFile: Boolean;
+    function CreateRootNodes: TObjectList; virtual;
+    function CreateNodes(Parent: TSQLTreeNode): TObjectList; virtual;
+    function ShowPopup(Source: TObject; Coord: TPoint; Params: TServicePopupParams): Integer; virtual;
+    function GetSpecParamsList: String; virtual;
+    function GetIncrementObjectsList: TStrings; virtual;
+    function GetUpdateSQLCommand(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh): Boolean; virtual;
+
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); virtual;
+
+    class function GetDBServiceName: String; virtual;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; virtual;
+  end;
+
+{ TInterbaseDBService }
+
+  TInterbaseDBService = class(TCustomDBService)
+  protected
+    procedure AssignRecord(Source, Destinate: TDataSet); override;
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+
+    function GetSpecParamsList: String; override;
+    function GetIncrementObjectsList: TStrings; override;
+
+    procedure GenInsertSQL(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+
+    class function GetDBServiceName: String; override;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; override;
+  end;
+
+{ TInformixDBService }
+
+  TInformixDBService = class(TCustomDBService)
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    function GetSpecParamsList: String; override;
+    procedure TableEditorDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure MemTableBuildStruct(MemTable: TMemTableEh; Source: TDataSet); override;
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+    class function GetDBServiceName: String; override;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; override;
+  end;
+
+{ TMSAccessDBService }
+
+  TMSAccessDBService = class(TCustomDBService)
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    function GetSpecParamsList: String; override;
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+    class function GetDBServiceName: String; override;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; override;
+  end;
+
+{ TOracleDBService }
+
+  TOracleDBService = class(TCustomDBService)
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    function GetSpecParamsList: String; override;
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+    class function GetDBServiceName: String; override;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; override;
+  end;
+
+{ TMSSQLDBService }
+
+  TMSSQLDBService = class(TCustomDBService)
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    function GetSpecParamsList: String; override;
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+    class function GetDBServiceName: String; override;
+    class function GetServerSpecOperationsClass: TServerSpecOperationsEhClass; override;
+  end;
+
+{ TConnectionProviderDesignSerivceEh }
+
+  TConnectionProviderDesignSerivceEh = class(TInterfacedObject, IConnectionProviderDesignServiceEh)
+  private
+    fns: TStringList;
+{$IFDEF DESIGNTIME}
+    function GetProjectFromDesigner(ides: IDesigner): WideString;
+{$ENDIF}
+  public
+    destructor Destroy; override;
+    function EditDesignData(ConnectionProvider: TConnectionProviderEh): Boolean; virtual;
+    function ResetSysVariablesValues(sl: TStringList): Boolean; virtual;
+    function GetConnectionSettingsFilePath(ConnectionProvider: TComponent): String; virtual;
+    function CreateDesignDataBase(ConnectionProvider: TComponent): TComponent; virtual;
+
+    procedure GetModuleProc(const FileName, UnitName, FormName, DesignClass: string; CoClasses: TStrings);
+  end;
+
+procedure AssignTableParToParams(mtParams: TMemTableEh; Params: TParams);
+
+{ DesignDataBase unils }
+
+procedure RegisterDesignDataBaseClass(EngineName: String; DesignDBClass: TDesignDataBaseClassEh);
+procedure UnregisterDesignDataBaseClass(EngineName: String);
+function GetDesignDataBaseClassByName(EngineName: String): TDesignDataBaseClassEh;
+function GUISelectDesignDataBaseClass: TDesignDataBaseClassEh;
+
+type
+  TSelectDBService = class(TObject)
+    DBServiceClass: TCustomDBServiceClass;
+    AccessEngine: TAccessEngineEh;
+    DBName: String;
+  end;
+
+{ Engines unils }
+
+var
+  AccessEngineList: TStringList = nil;
+
+procedure RegisterAccessEngine(EngineName: String; Engine: TAccessEngineEh);
+procedure UnregisterAccessEngine(EngineName: String);
+function GetAccessEngineByName(EngineName: String): TAccessEngineEh;
+function GUISelectAccessEngine(SelectDBService: TSelectDBService): Boolean;
+
+{ DBService unils }
+
+function GetDBServiceList: TStringList;
+procedure RegisterDBService(ServerName: String; DBService: TCustomDBServiceClass);
+procedure UnregisterDBService(ServerName: String);
+function GetDBServiceByName(ServerName: String): TCustomDBServiceClass;
+function GetDBServiceByServerSpecOperationsClass(SpecOperationsClass: TServerSpecOperationsEhClass): TCustomDBServiceClass;
+function GetServerSpecOperationsByDBServiceClass(DBServiceClass: TCustomDBServiceClass): TServerSpecOperationsEhClass;
+function GUISelectDBService(SelectDBService: TSelectDBService): Boolean;
+procedure RegisterDefaultDBService;
+
+{ DBServiceEngines unils }
+
+type
+  TDBServiceItem = class
+    AccessEngine: TAccessEngineEh;
+    DBService: TCustomDBServiceClass;
+  end;
+
+procedure RegisterDBServiceEngine(AccessEngine: TAccessEngineEh; DBService: TCustomDBServiceClass);
+procedure UnregisterDBServiceEngine(DBService: TCustomDBServiceClass);
+
+ { DesignDataBaseList }
+
+var
+  DesignDataBaseList: TObjectListEh = nil;
+
+function GetDesignDataBaseList: TObjectList;
+function GetDBServiceEngineList: TObjectList;
+
+const
+  SSelect = 'select'; { Do not localize }
+  SFrom = 'from'; { Do not localize }
+
+var
+  SQLDataEditWin: TSQLDataEditWin;
+  SqlTextPathFileName: String = 'C:\Program Files\Common Files\Borland Shared\Data\sql_text.sql';
+
+function EditSQLDataDriverEh(DataDriver: TCustomSQLDataDriverEh; Designer: IDesigner): Integer;
+
+procedure ReleaseDesignDataBaseList;
+function GetDataTypeByName(DataTypeName: String): TFieldType;
+
+procedure RegisterDataDriverEditInteractorEh(Interactor: TDataDriverEditInteractorEhClass;
+  DataDriverClass: TSQLDataDriverEhClass);
+procedure UnregisterDataDriverEditInteractorEh(Interactor: TDataDriverEditInteractorEhClass);
+function GetDriverEditInteractorForDataDriverEh(DataDriverClass: TClass): TDataDriverEditInteractorEhClass;
+
+function FieldTypeToVarType(DataType: TFieldType): Integer;
+
+implementation

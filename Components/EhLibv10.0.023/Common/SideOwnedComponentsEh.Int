@@ -1,0 +1,111 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                SideOwned components.                  }
+{         SideOwned components is Not Visible on        }
+{                 a Form at design-time                 }
+{                                                       }
+{     Copyright (c) 2013-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit SideOwnedComponentsEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Classes, Controls, DB, Dialogs,
+  Variants,
+{$IFDEF EH_LIB_17} System.Generics.Collections, Winapi.ActiveX, {$ENDIF}
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+{$IFDEF CIL}
+  System.Runtime.InteropServices,
+  EhLibVCLNET,
+{$ELSE}
+{$IFDEF FPC}
+  EhLibLCL, LCLType,
+{$ELSE}
+  EhLibVCL,
+{$ENDIF}
+{$ENDIF}
+  ToolCtrlsEh, MemTableEh, DataDriverEh;
+
+type
+
+{ TNiDataSourceEh }
+
+  TNiDataSourceEh = class(TDataSource, ISideOwnedComponentEh, ISideOwnerEh)
+  private
+    FSideParent: TComponent;
+    FSideParentName: String;
+    function GetDataSet: TDataSet;
+    procedure SetDataSet(const Value: TDataSet);
+    procedure ReadSideParent(Reader: TReader);
+    procedure WriteSideParent(Writer: TWriter);
+    function IsSideParentStored: Boolean;
+
+  protected
+    function IsSideParentableForProperty(const PropertyName: String): Boolean;
+    function CanSideOwnClass(ComponentClass: TComponentClass): Boolean;
+
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure Loaded; override;
+
+  public
+    constructor CreateWithSideParent(AOwner: TComponent; ASideParent: TComponent);
+    destructor Destroy; override;
+
+    function IsSideParentedBy(AComponent: TComponent): Boolean;
+    procedure SetSideParent(AComponent: TComponent);
+
+  published
+    property DataSet: TDataSet read GetDataSet write SetDataSet;
+    property SideParent: TComponent read FSideParent stored False;
+  end;
+
+{ TNiMemTableEh }
+
+  TNiMemTableEh = class(TMemTableEh, ISideOwnedComponentEh, ISideOwnerEh)
+  private
+    FSideParent: TComponent;
+    FSideParentName: String;
+    procedure ReadSideParent(Reader: TReader);
+    procedure WriteSideParent(Writer: TWriter);
+    function IsSideParentStored: Boolean;
+    function GetDataDriver: TDataDriverEh;
+    procedure SetDataDriver(const Value: TDataDriverEh);
+
+  protected
+    function IsSideParentableForProperty(const PropertyName: String): Boolean;
+    function CanSideOwnClass(ComponentClass: TComponentClass): Boolean;
+
+    procedure DefineProperties(Filer: TFiler); override;
+    procedure Loaded; override;
+
+  public
+    constructor CreateWithSideParent(AOwner: TComponent; ASideParent: TComponent);
+    destructor Destroy; override;
+
+    function IsSideParentedBy(AComponent: TComponent): Boolean;
+    procedure SetSideParent(AComponent: TComponent);
+
+  published
+    property DataDriver: TDataDriverEh read GetDataDriver write SetDataDriver;
+    property SideParent: TComponent read FSideParent stored False;
+  end;
+
+{ TNiDataSetDriverEh }
+
+  TNiDataSetDriverEh = class(TDataSetDriverEh)
+  public
+    constructor Create(AOwner: TComponent); override;
+  published
+    property SideParent;
+  end;
+
+const
+  SelectSideParentComponentProc: procedure(const AComp: TComponent;
+    var SideParentComp: TComponent; Description: String) = nil;
+
+implementation

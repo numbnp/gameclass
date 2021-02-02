@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\3.2.0\bin\x86_64-win64\fpc.exe" Date="1357350767"/>
+  <Params Value=" -MObjFPC -Scaghi -Cirot -O1 -g -gl -gt -l -vewnhibq -vm5094,5060,5057,5024,5023,4081,4080,4079 -FuC:\lazarus\packager\units\x86_64-win64 -FuC:\lazarus\components\lazutils\lib\x86_64-win64 -FuC:\lazarus\lcl\units\x86_64-win64 -FuC:\lazarus\lcl\units\x86_64-win64\win32 -FuC:\lazarus\components\cairocanvas\lib\x86_64-win64\win32 -FuC:\lazarus\components\lazcontrols\lib\x86_64-win64\win32 -FuC:\lazarus\components\ideintf\units\x86_64-win64\win32 -FuC:\lazarus\components\printers\lib\x86_64-win64\win32 -FuC:\lazarus\EhLib\ -FUC:\lazarus\EhLib\lib\x86_64-win64\ -dLCL -dLCLwin32 ehlib.pas"/>
+</CONFIG>

@@ -1,0 +1,780 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                CalendarPicker Component               }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DateTimeCalendarPickersEh;
+
+interface
+
+uses
+  Messages,
+  {$IFDEF EH_LIB_17} System.UITypes, System.Generics.Collections, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows, Win32Extra,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, Windows, UxTheme,
+  {$ENDIF}
+  SysUtils, Classes, Controls, Forms, StdCtrls, TypInfo,
+  DateUtils, ExtCtrls, Buttons, Dialogs, DynVarsEh,
+  Contnrs, Variants, Types, Themes, SpreadGridsEh,
+  GridsEh, ToolCtrlsEh, Graphics, DropDownFormEh;
+
+type
+  TDateTimeCalendarPickerEh  = class;
+
+  TDateTimePickCalendarButtonStyleEh = (cmpsPriorPeriodEh, cmpsNextPeriodEh);
+
+  TImageTransformStyleEh = (itsTransparentTransformEh, itsLeftToRightTransformEh,
+    itsRightToLeftTransformEh, itsZoomInTransformEh, itsZoomOutTransformEh);
+
+  TInteractiveInputMethodEh = (iimKeyboardEh, iimMouseEh);
+
+{ TImageTransformatorEh }
+
+  TImageTransformatorEh  = class(TCustomControlEh)
+  private
+    FBitmap1: TBitmap;
+    FBitmap1Transparency: Integer;
+    FBitmap2: TBitmap;
+    FBitmap2Transparency: Integer;
+    FResultBitmap: TBitmap;
+    FTransformStyle: TImageTransformStyleEh;
+    FTransformTime: Integer;
+    FZoomWinRect: TRect;
+
+    procedure DrawHorizontalTransform(Step, Leng: Integer; LeftToRight: Boolean);
+    procedure DrawTransparentTransform(Step, Leng: Integer);
+    procedure DrawZoomTransform(Step, Leng: Integer; ZoomIn: Boolean);
+  protected
+    FOutputDebugString: Boolean;
+
+    procedure Paint; override;
+    procedure OutputDebugString(s: String);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure Reset(Control1, Control2: TWinControl);
+    procedure AnimatedTransform;
+
+    property Bitmap1: TBitmap read FBitmap1;
+    property Bitmap2: TBitmap read FBitmap2;
+    property TransformTime: Integer read FTransformTime write FTransformTime;
+    property TransformStyle: TImageTransformStyleEh read FTransformStyle write FTransformStyle;
+    property ZoomWinRect: TRect read FZoomWinRect write FZoomWinRect;
+  end;
+
+{ TDateTimePickCalendarTodayInfoLabelEh }
+
+  TDateTimePickCalendarTodayInfoLabelEh = class(TSpeedButtonEh)
+  private
+    function GetPickCalendar: TDateTimeCalendarPickerEh;
+  protected
+
+    procedure Paint; override;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh); reintroduce;
+
+    property PickCalendar: TDateTimeCalendarPickerEh read GetPickCalendar;
+  end;
+
+{ TDateTimePickCalendarDateInfoLabelEh }
+
+  TDateTimePickCalendarDateInfoLabelEh = class(TSpeedButtonEh)
+  private
+    function GetPickCalendar: TDateTimeCalendarPickerEh;
+  protected
+
+    procedure Paint; override;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh); reintroduce;
+
+    property PickCalendar: TDateTimeCalendarPickerEh read GetPickCalendar;
+  end;
+
+{ TDateTimePickCalendarButtonEh }
+
+  TDateTimePickCalendarButtonEh = class(TSpeedButtonEh)
+  private
+    FStyle: TDateTimePickCalendarButtonStyleEh;
+    function GetPickCalendar: TDateTimeCalendarPickerEh;
+
+  protected
+
+    procedure Paint; override;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh); reintroduce;
+
+    property Style: TDateTimePickCalendarButtonStyleEh read FStyle write FStyle;
+    property PickCalendar: TDateTimeCalendarPickerEh read GetPickCalendar;
+  end;
+
+  TCustomCalendarViewPaintBufferEh = class(TPersistent)
+  public
+    HolidayFontColor: TColor;
+    HolidayOutsidePeriodFontColor: TColor;
+    HolidaySelectedFontColor: TColor;
+    HotTrackCellBrushColor: TColor;
+    HotTrackCellFontColor: TColor;
+    InsideHorzFrameColor: TColor;
+    InsideVertFrameColor: TColor;
+    NormalCellBrushColor: TColor;
+    NormalCellFontColor: TColor;
+    OutsidePeriodCellFontColor: TColor;
+    SelectedCellBrushColor: TColor;
+    SelectedCellFontColor: TColor;
+    TodayCellFrameColor: TColor;
+  end;
+
+{ TCustomCalendarViewEh }
+
+  TCustomCalendarViewEh = class(TCustomGridEh)
+  private
+    FDate: TDateTime;
+    FSelectNextViewOnClick: Boolean;
+    FPaintBuffer: TCustomCalendarViewPaintBufferEh;
+
+    function GetCalendar: TDateTimeCalendarPickerEh;
+    procedure SetDateTime(const Value: TDateTime);
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMSysColorChange(var Message: TMessage); message CM_SYSCOLORCHANGE;
+    {$ENDIF}
+    procedure CMStlyeChange(var Message: TMessage); message CM_STYLECHANGED;
+  protected
+    FMousePos: TPoint;
+
+    function CanHotTackCell(X, Y: Integer): Boolean; override;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function SelectNextView(MoveForward, Animated: Boolean): Boolean; virtual;
+
+    procedure Resize; override;
+    procedure CellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure Paint; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+
+    procedure ResizeCells; virtual;
+    procedure GetAutoSizeData(var NewWidth, NewHeight: Integer); virtual;
+    procedure DateChanged; virtual;
+    procedure SetPaintBuffer; virtual;
+    procedure SetCellCanvasColors(HotTrack, Selected: Boolean); virtual;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); virtual;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); virtual;
+    procedure UpdateMousePos;
+    procedure DateSelectedInLastView; virtual;
+
+    property PaintBuffer: TCustomCalendarViewPaintBufferEh read FPaintBuffer;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh); reintroduce;
+    destructor Destroy; override;
+
+    function CanFocus: Boolean; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; virtual;
+    function GetDateInfoText: String; virtual;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; virtual;
+    function ShowTodayInfo: Boolean; virtual;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; virtual;
+
+    property Calendar: TDateTimeCalendarPickerEh read GetCalendar;
+    property DateTime: TDateTime read FDate write SetDateTime;
+    property SelectNextViewOnClick: Boolean read FSelectNextViewOnClick write FSelectNextViewOnClick;
+  end;
+
+{ TDecadesCalendarViewEh }
+
+  TDecadesCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+
+    procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+
+  protected
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+{ TYearsCalendarViewEh }
+
+  TYearsCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+  protected
+
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+{ TMonthsCalendarViewEh }
+
+  TMonthsCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+
+  protected
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+  TDaysCalendarViewDayInfoItem = class(TPersistent)
+  private
+    FIsHoliday: Boolean;
+  public
+    property IsHoliday: Boolean read FIsHoliday write FIsHoliday;
+  end;
+
+{ TDaysCalendarViewEh }
+
+  TDaysCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+    FDatesInfoList: TObjectListEh;
+    FFirstWeekDayNum: Integer;
+    FStartDate: TDateTime;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMWinIniChange(var Message: TWMWinIniChange); message CM_WININICHANGE;
+    {$ENDIF}
+    procedure CMStlyeChange(var Message: TMessage); message CM_STYLECHANGED;
+
+  protected
+    function AdjustDateToStartForGrid(ADateTime: TDateTime): TDateTime;
+    function CreateDateInfoItem: TDaysCalendarViewDayInfoItem; virtual;
+
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure GetAutoSizeData(var NewWidth, NewHeight: Integer); override;
+    procedure DateChanged; override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+    procedure ResizeCells; override;
+
+    procedure DrawDayNumCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure DrawWeekDayNameCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure DrawWeekDayNumCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); virtual;
+    procedure UpdateDatesInfo;
+    procedure UpdateLocaleInfo;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+
+    property StartDate: TDateTime read FStartDate;
+  end;
+
+{ TTimeUnitCalendarViewEh }
+
+  TTimeUnitCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+
+  protected
+    function SelectNextView(MoveForward, Animated: Boolean): Boolean; override;
+
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+  end;
+
+{ THours24CalendarViewEh }
+
+  THours24CalendarViewEh = class(TTimeUnitCalendarViewEh)
+  private
+
+  protected
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function ShowTodayInfo: Boolean; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+{ THours12CalendarViewEh }
+
+  THours12CalendarViewEh = class(THours24CalendarViewEh)
+  private
+    FRow0Drawn: Boolean;
+    FRow3Drawn: Boolean;
+
+  protected
+    procedure Paint; override;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+{ TMinutesCalendarViewEh }
+
+  TMinutesCalendarViewEh = class(TTimeUnitCalendarViewEh)
+  private
+    function RoundTo5(Value: TDateTime): TDateTime;
+  protected
+
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function ShowTodayInfo: Boolean; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+{ TSecondsCalendarViewEh }
+
+  TSecondsCalendarViewEh = class(TMinutesCalendarViewEh)
+  private
+    function RoundTo5(Value: TDateTime): TDateTime;
+
+  protected
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MoveToNextHorzDateTime(MoveForward: Boolean); override;
+    procedure MoveToNextVertDateTime(MoveForward: Boolean); override;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function DateInViewRange(ADateTime: TDateTime): Boolean; override;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function TryDateFromCell(Cell: TGridCoord; var ADateTime: TDateTime): Boolean; override;
+  end;
+
+  TTimeCalendarViewPopupListKindEh = (tclcHoursEh, tclcMinutesEh, tclcSecondsEh);
+
+  TTimeCalendarViewPressedButtonTypeEh = (tcpbtHoursUpEh, tcpbtHoursDownEh,
+    tcpbtMinutesUpEh, tcpbtMinutesDownEh, tcpbtSecondsUpEh, tcpbtSecondsDownEh);
+
+  TTimeCalendarViewActiveRegionEh = (tcarHoursEh, tcarMinutesEh, tcarSecondsEh,
+    {tcarAmTmEh, } tcarOKButtonEh);
+
+  TTimeCalendarViewRegionAction = (tcraSelectPriorEh, tcraSelectNextEh, tcraClickEh);
+
+  TTimeCalendarViewActiveRegionProc = procedure(Action: TTimeCalendarViewRegionAction) of object;
+
+  TTimeCalendarViewColTypeEh = (tcvctHourEh, tcvctMinuteEh, tcvctSecondEh,
+    tcvctAmPmEh, tcvctColonEh, tcvctBlankEh);
+
+{ TTimeCalendarViewEh }
+
+  TTimeCalendarViewEh = class(TCustomCalendarViewEh)
+  private
+    FActiveRegion: TTimeCalendarViewActiveRegionEh;
+    FAmPmPos: TAmPmPosEh;
+    FColTypes: array of TTimeCalendarViewColTypeEh;
+    FHoursFormat: THoursTimeFormatEh;
+    FOkButtonCol: Integer;
+    FPopupList: TPopupListboxEh;
+    FPopupListKind: TTimeCalendarViewPopupListKindEh;
+    FPressedButtonType: TTimeCalendarViewPressedButtonTypeEh;
+    FPressedCell: TGridCoord;
+    FRegionProcList: TList;
+    FTimer: TTimer;
+    FVisibleRegions: array of TTimeCalendarViewActiveRegionEh;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    procedure CMWinIniChange(var Message: TWMWinIniChange); message CM_WININICHANGE;
+    {$ENDIF}
+    procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
+
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+
+    procedure ClosePopupList(Accept: Boolean);
+    procedure PaintRow(ARect: TRect; UpRow: Boolean);
+    procedure ResetTimer(Interval: Cardinal);
+    procedure SetActiveRegion(const Value: TTimeCalendarViewActiveRegionEh);
+    procedure StopTimer;
+
+  protected
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+
+    function DoMouseWheelEvent(Shift: TShiftState; MousePos: TPoint; DirectionUp: Boolean): Boolean; virtual;
+
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure CellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure DateChanged; override;
+    procedure DrawCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure ResizeCells; override;
+
+    procedure DropDownPopupList(ScreenPos: TPoint; StartNum, CountNum, Step: Integer);
+    procedure HoursRegionAction(Action: TTimeCalendarViewRegionAction); virtual;
+    procedure MinutesRegionAction(Action: TTimeCalendarViewRegionAction); virtual;
+    procedure OKButtonRegionAction(Action: TTimeCalendarViewRegionAction); virtual;
+    procedure PopupListMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure ResetButtonDownTimer(Cell: TGridCoord; AButtonType: TTimeCalendarViewPressedButtonTypeEh); virtual;
+    procedure SecondsRegionAction(Action: TTimeCalendarViewRegionAction); virtual;
+    procedure SelectNextRegion(MoveForward: Boolean); virtual;
+    procedure TimerEvent(Sender: TObject); virtual;
+    procedure UpdateLocaleInfo;
+
+    property ActiveRegion: TTimeCalendarViewActiveRegionEh read FActiveRegion write SetActiveRegion;
+
+  public
+    constructor Create(AOwner: TDateTimeCalendarPickerEh);
+    destructor Destroy; override;
+
+    function AmPm12: Boolean;
+    function GetDateInfoText: String; override;
+    function GetNextPeriodDate(ADateTime: TDateTime; MoveForward: Boolean): TDateTime; override;
+    function ShowTodayInfo: Boolean; override;
+
+    procedure IncrementHour(N: Integer);
+    procedure IncrementMinute(N: Integer);
+    procedure IncrementSecond(N: Integer);
+    procedure ResetGrid;
+    procedure ResetRegion;
+  end;
+
+  TDateTimePickCalendarActionEh = (dtpcaDecadesDrilledDownEh, dtpcaYearsDrilledDownEh,
+    dtpcaMonthsDrilledDownEh, dtpcaDaysDrilledDownEh, dtpcaHourSelectedFromListEh,
+    dtpcaMinuteSelectedFromListEh, dtpcaSecondSelectedFromListEh,
+    dtpcaButtonOKClickedEh);
+
+{ TDateTimePickCalendarPaintBufferEh }
+
+  TDateTimePickCalendarPaintBufferEh = class(TPersistent)
+  public
+    CalendarWeekNoFont: TFont;
+    HolidayFontColor: TColor;
+    HolidayOutsidePeriodFontColor: TColor;
+    HolidaySelectedFontColor: TColor;
+    HotTrackCellBrushColor: TColor;
+    HotTrackCellFontColor: TColor;
+    InsideHorzFrameColor: TColor;
+    InsideVertFrameColor: TColor;
+    NormalCellBrushColor: TColor;
+    NormalCellFontColor: TColor;
+    OutsidePeriod: TColor;
+    SelectedCellBrushColor: TColor;
+    SelectedCellFontColor: TColor;
+    TodayCellFrameColor: TColor;
+
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+{ TDateTimeCalendarPickerEh }
+
+  TDateTimeCalendarPickerEh  = class(TCustomControlEh)
+  private
+    FCalendarViewList: TObjectListEh;
+    FCurrentCalendarView: TCustomCalendarViewEh;
+    FDateInfo: TDateTimePickCalendarDateInfoLabelEh;
+    FDateTime: TDateTime;
+    FDaysView: TDaysCalendarViewEh;
+    FDecadesView: TDecadesCalendarViewEh;
+    FHours12View: THours12CalendarViewEh;
+    FHours24View: THours24CalendarViewEh;
+    FImageTrans: TImageTransformatorEh;
+    FInputMethod: TInteractiveInputMethodEh;
+    FInternalFontSet: Boolean;
+    FMinutesView: TMinutesCalendarViewEh;
+    FMonthsView: TMonthsCalendarViewEh;
+    FNextPeriodButton: TDateTimePickCalendarButtonEh;
+    FPaintBuffer: TDateTimePickCalendarPaintBufferEh;
+    FPriorPeriodButton: TDateTimePickCalendarButtonEh;
+    FSecondsView: TSecondsCalendarViewEh;
+    FTimeUnits: TCalendarDateTimeUnitsEh;
+    FTimeView: TTimeCalendarViewEh;
+    FTodayInfo: TDateTimePickCalendarTodayInfoLabelEh;
+    FYearsView: TYearsCalendarViewEh;
+    FOnDateTimeSelected: TNotifyEvent;
+
+    function GetTimeUnits: TCalendarDateTimeUnitsEh;
+
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CMParentFontChanged(var Message: TMessage); message CM_PARENTFONTCHANGED;
+    procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
+
+    procedure WMGetDlgCode(var Msg: TWMNoParams); message WM_GETDLGCODE;
+    procedure WMThemeChanged(var Message: TMessage); message WM_THEMECHANGED;
+
+    procedure SetDateTime(Value: TDateTime);
+    procedure SetInputMethod(const Value: TInteractiveInputMethodEh);
+    procedure SetTimeUnits(const Value: TCalendarDateTimeUnitsEh);
+
+  protected
+    FMousePos: TPoint;
+
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+
+    function CreateDaysViewDayInfoItem: TDaysCalendarViewDayInfoItem; virtual;
+    function GetMasterFont: TFont; virtual;
+
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure InternalRefreshFont;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure Paint; override;
+    procedure RefreshFont;
+    procedure ResetSize;
+    procedure Resize; override;
+
+    procedure AnimatedSetHeight(NewHeight: Integer); virtual;
+    procedure CalendarViewChanged; virtual;
+    procedure DateInfoMouseDown(Sender: TObject; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure GetAutoSizeData(var NewWidth, NewHeight: Integer); virtual;
+    procedure NextPeriodMouseDown(Sender: TObject; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); virtual;
+    procedure CalendarActionPerformed(Action: TDateTimePickCalendarActionEh); virtual;
+    procedure SetPaintBuffer; virtual;
+    procedure SelectView(NextCalendarView: TCustomCalendarViewEh; MoveForward: Boolean; Animated: Boolean); virtual;
+    procedure MoveToNextPeriod(Animated: Boolean); virtual;
+    procedure MoveToPriorPeriod(Animated: Boolean); virtual;
+    procedure UpdateMousePos;
+    procedure ResetTimeUnits; virtual;
+    procedure DateSelectedInLastView; virtual;
+    procedure UpdateDaysViewDayInfoItem(DayInfoItem: TDaysCalendarViewDayInfoItem; ADate: TDateTime); virtual;
+
+    property InputMethod: TInteractiveInputMethodEh read FInputMethod write SetInputMethod;
+    property MasterFont: TFont read GetMasterFont;
+    property PaintBuffer: TDateTimePickCalendarPaintBufferEh read FPaintBuffer;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure RecomndedSize(var RecClientWidth, RecClientHeight: Integer);
+    procedure ResetStartCalendarView;
+    procedure SetDateTimeAnimated(Value: TDateTime);
+
+    property CurrentCalendarView: TCustomCalendarViewEh read FCurrentCalendarView;
+    property DateTime: TDateTime read FDateTime write SetDateTime;
+    property TimeUnits: TCalendarDateTimeUnitsEh read GetTimeUnits write SetTimeUnits;
+
+    property OnDateTimeSelected: TNotifyEvent read FOnDateTimeSelected write FOnDateTimeSelected;
+  end;
+
+  TCalendarViewDrawStateEh = set of (cvdsSelectedEh, cvdsHotTrackEh, cvdsPressedEh,
+    cvdsNowEh, cvdsHolidayEh);
+
+{ TDateTimeCalendarPickerDrawStyleEh }
+
+  TDateTimeCalendarPickerDrawStyleEh = class
+  private
+    FHolidayBaseFontColor: TColor;
+    FHotTrackCellBrushColor: TColor;
+    FHotTrackCellBrushColor1: TColor;
+    FHotTrackCellBrushColor2: TColor;
+
+    procedure SetHolidayBaseFontColor(const Value: TColor);
+
+  protected
+    function GetHolidayBaseFontColor: TColor; virtual;
+    function GetHolidayFontColor: TColor; virtual;
+    function GetHolidayOutsidePeriodFontColor: TColor; virtual;
+    function GetHolidaySelectedFontColor: TColor; virtual;
+    function GetHotTrackCellBrushColor: TColor; virtual;
+    function GetHotTrackCellFontColor: TColor; virtual;
+    function GetInsideHorzFrameColor: TColor; virtual;
+    function GetInsideVertFrameColor: TColor; virtual;
+    function GetNormalCellBrushColor: TColor; virtual;
+    function GetNormalCellFontColor: TColor; virtual;
+    function GetOutsidePeriodCellFontColor: TColor; virtual;
+    function GetSelectedCellBrushColor: TColor; virtual;
+    function GetSelectedCellFontColor: TColor; virtual;
+    function GetTodayCellFrameColor: TColor; virtual;
+
+  public
+    constructor Create;
+
+    function CanDrawSelectionByStyle: Boolean; virtual;
+
+    procedure DrawCalendarViewCellBackgraund(CalendarView: TCustomCalendarViewEh; Canvas: TCanvas; ARect: TRect; State: TCalendarViewDrawStateEh); virtual;
+    procedure SetCalendarFontData(Calendar: TDateTimeCalendarPickerEh; MasterFont: TFont; CalendarFont: TFont); virtual;
+    procedure SetCalendarWeekNoFontData(Calendar: TDateTimeCalendarPickerEh; CalendarFont: TFont; CalendarWeekNoFont: TFont); virtual;
+
+    property HolidayBaseFontColor: TColor read GetHolidayBaseFontColor write SetHolidayBaseFontColor;
+    property HolidayFontColor: TColor read GetHolidayFontColor;
+    property HolidayOutsidePeriodFontColor: TColor read GetHolidayOutsidePeriodFontColor;
+    property HolidaySelectedFontColor: TColor read GetHolidaySelectedFontColor;
+    property HotTrackCellBrushColor: TColor read GetHotTrackCellBrushColor;
+    property HotTrackCellFontColor: TColor read GetHotTrackCellFontColor;
+    property InsideHorzFrameColor: TColor read GetInsideHorzFrameColor;
+    property InsideVertFrameColor: TColor read GetInsideVertFrameColor;
+    property NormalCellBrushColor: TColor read GetNormalCellBrushColor;
+    property NormalCellFontColor: TColor read GetNormalCellFontColor;
+    property OutsidePeriodCellFontColor: TColor read GetOutsidePeriodCellFontColor;
+    property SelectedCellBrushColor: TColor read GetSelectedCellBrushColor;
+    property SelectedCellFontColor: TColor read GetSelectedCellFontColor;
+    property TodayCellFrameColor: TColor read GetTodayCellFrameColor;
+  end;
+
+{ TPopupDateTimeCalendarPickerEh }
+
+  TPopupDateTimeCalendarPickerEh = class(TDateTimeCalendarPickerEh, IPopupDateTimePickerEh)
+  private
+    FCloseCallback: TCloseWinCallbackProcEh;
+
+    procedure WMSetFocus(var Msg: TWMSetFocus); message WM_SETFOCUS;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMMouseActivate(var Message: TWMMouseActivate); message WM_MOUSEACTIVATE;
+    {$ENDIF}
+
+  protected
+    FOwnerFont: TFont;
+
+    function WantKeyDown(Key: Word; Shift: TShiftState): Boolean;
+    function WantFocus: Boolean;
+
+    procedure HidePicker;
+    procedure ShowPicker(DateTime: TDateTime; Pos: TPoint; CloseCallback: TCloseWinCallbackProcEh);
+    procedure SetFontOptions(OwnerFont: TFont; FontAutoSelect: Boolean);
+
+  protected
+    function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
+    function GetMasterFont: TFont; override;
+    function GetDateTime: TDateTime;
+
+    procedure CalendarActionPerformed(Action: TDateTimePickCalendarActionEh); override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DateSelectedInLastView; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure UpdateSize;
+
+    procedure PostCloseUp(Accept: Boolean);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    function CanFocus: Boolean; override;
+
+    property Color;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+  end;
+
+{ TPopupDateTimeCalendarFormEh }
+
+  TPopupDateTimeCalendarFormEh = class(TCustomDropDownFormEh, IPopupDateTimePickerEh)
+  private
+    FCloseCallback: TCloseWinCallbackProcEh;
+
+    function GetDateTime: TDateTime;
+    function GetTimeUnits: TCalendarDateTimeUnitsEh;
+    procedure SetDateTime(const Value: TDateTime);
+    procedure SetTimeUnits(const Value: TCalendarDateTimeUnitsEh);
+    procedure DropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+  protected
+    Calendar: TDateTimeCalendarPickerEh;
+
+    function WantKeyDown(Key: Word; Shift: TShiftState): Boolean;
+    function WantFocus: Boolean;
+
+    procedure CreateWnd; override;
+    procedure InitializeNewForm; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+
+    procedure DateTimeSelected(Sender: TObject);
+    procedure HidePicker;
+    procedure SetFontOptions(Font: TFont; FontAutoSelect: Boolean);
+    procedure ShowPicker(DateTime: TDateTime; Pos: TPoint; CloseCallback: TCloseWinCallbackProcEh);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    procedure UpdateSize; override;
+
+    property DateTime: TDateTime read GetDateTime write SetDateTime;
+    property TimeUnits: TCalendarDateTimeUnitsEh read GetTimeUnits write SetTimeUnits;
+  end;
+
+function DateTimeCalendarPickerDrawStyleEh: TDateTimeCalendarPickerDrawStyleEh;
+function SetDateTimeCalendarPickerDrawStyleEh(DrawStyle: TDateTimeCalendarPickerDrawStyleEh): TDateTimeCalendarPickerDrawStyleEh;
+
+var
+  ImageTransformatorDebugInfoEh: TStrings;
+
+implementation

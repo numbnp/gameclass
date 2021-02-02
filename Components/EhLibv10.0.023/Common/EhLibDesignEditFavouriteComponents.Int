@@ -1,0 +1,51 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{          Design window for SelectComponentList        }
+{                                                       }
+{   Copyright (c) 2013-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit EhLibDesignEditFavouriteComponents;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+{$IFDEF DESIGNTIME}
+  DesignIntf, ToolsAPI,
+  ComponentDesigner,
+{$ENDIF}
+  ToolCtrlsEh, Dialogs, ExtCtrls, Buttons, StdCtrls, CheckLst;
+
+type
+  TSelectComponentListFormEh = class(TForm)
+    Label2: TLabel;
+    bOk: TButton;
+    bCancel: TButton;
+    Bevel1: TBevel;
+    clbComponentList: TCheckListBox;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    FFavouriteSl: TStringList;
+    FAllSl: TStringList;
+
+    procedure Initialize;
+    function Edit: Boolean;
+  end;
+
+var
+  SelectComponentListFormEh: TSelectComponentListFormEh;
+
+function SelectFavouriteComponentList(slFavourite, slAll: TStringList): Boolean;
+
+function GetFavouriteComponentList(AClass: TClass; slFavourite: TStringList; DividePackages: Boolean): Boolean;
+function SetFavouriteComponentList(AClass: TClass; slFavourite: TStringList): Boolean;
+
+implementation

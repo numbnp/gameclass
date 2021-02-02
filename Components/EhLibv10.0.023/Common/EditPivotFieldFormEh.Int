@@ -1,0 +1,59 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{            PivotField Sum function Edit Form          }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit EditPivotFieldFormEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  {$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+  MaskEdit, EhLibLCL,
+  {$ELSE}
+  Mask, Windows,
+  {$ENDIF}
+  Messages, Dialogs, StdCtrls,
+  ToolCtrlsEh, LanguageResManEh, DBCtrlsEh, PivotGridsEh;
+
+type
+  TfEditPivotField = class(TForm)
+    lFieldName: TLabel;
+    fAggrFunc: TLabel;
+    ListBox1: TListBox;
+    bOk: TButton;
+    bCancel: TButton;
+    lDisplayFormat: TLabel;
+    cbDisplayFormat: TDBComboBoxEh;
+    procedure FormCreate(Sender: TObject);
+  private
+    FSumFunction: TPivotValueTypeEh;
+    FVisibleAggregateFunction: TPivotValueTypesEh;
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+    procedure SetSumFunction(const Value: TPivotValueTypeEh);
+    procedure SetVisibleAggregateFunction(const Value: TPivotValueTypesEh);
+  protected
+    procedure ResourceLanguageChanged; virtual;
+  public
+    procedure UpdateSumFunctionSelection;
+
+    property VisibleAggregateFunction: TPivotValueTypesEh read FVisibleAggregateFunction write SetVisibleAggregateFunction;
+    property SumFunction: TPivotValueTypeEh read FSumFunction write SetSumFunction;
+  end;
+
+var
+  fEditPivotField: TfEditPivotField;
+
+function EditPivotField(PivotFieldValueInfo: TPivotFieldValueInfoEh;
+  VisibleAggregateFunction: TPivotValueTypesEh): Boolean;
+
+implementation

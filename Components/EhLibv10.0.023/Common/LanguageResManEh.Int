@@ -1,0 +1,117 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                  Language Resources                   }
+{                                                       }
+{     Copyright (c) 2016-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit LanguageResManEh;
+
+interface
+
+{$WARN SYMBOL_PLATFORM OFF}
+{$I EhLib.Inc}
+
+uses
+  Messages, Variants, Graphics, Types,
+{$IFDEF FPC}
+  {$IFDEF FPC_CROSSP}
+    LCLIntf, LCLType,
+  {$ELSE}
+    Windows,
+  {$ENDIF}
+  EhLibLCL,
+{$ELSE}
+  EhLibVCL, Windows,
+{$ENDIF}
+  ToolCtrlsEh, SysUtils, Classes,
+  Controls, Forms, Dialogs, StdCtrls, Contnrs;
+
+type
+  TLanguageResourcePlacementEh = (lrpExternalEh, lrpEmbeddedEh);
+
+  TAutoselectResourceLanguageEh = procedure(Sender: TObject; var LanguageAbbr: String) of object;
+
+  ILanguageResourceLoadNotificationConsumer = interface
+    ['{D0726CDE-269E-4E3C-8295-1FB9BDCE327A}']
+    procedure ResourceLanguageChanged();
+  end;
+
+  TResObjectEh = class(TObject)
+    RefResObject: TComponent;
+    ResourceName: String;
+    ExtResourceFileName: String;
+    DefaultResourceLanguage: String;
+  end;
+
+{ TLanguageResourceManagerEh }
+
+  TLanguageResourceManagerEh = class(TPersistent)
+  private
+    FLanguageList: TStringList;
+    FLocObjects: TObjectListEh;
+    FChangeNotifyConsumers: TObjectListEh;
+    FActiveLanguageAbbr: String;
+    FOnAutoselectLanguage: TAutoselectResourceLanguageEh;
+    FResourceFolderPath: String;
+    FResourcePlacement: TLanguageResourcePlacementEh;
+    procedure SetActiveLanguageAbbr(const Value: String);
+    function GetResObject(Index: Integer): TResObjectEh;
+    function GetResObjectCount: Integer;
+    function CheckLangExtIsCorrect(LangExt: String): Boolean;
+
+  protected
+    procedure ActiveLanguageChanged; virtual;
+    procedure LoadListOfExternalLanguages(ALanguageList: TStringList; BaseFileName: String);
+    procedure LoadListOfEmbeddedLanguages(ALanguageList: TStringList; BaseFileName: String);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function AutoselectLanguage(LCID: Integer): String; overload;
+    function AutoselectLanguage: String; overload;
+    function GetNativeLanguageName(LanguageAbbr: String): String;
+    function GetSuffixForLocale(LCID: TLocaleID): String;
+    function IndexOfLanguage(LangID: String): Integer;
+
+    procedure ReadComponentResource(Component: TComponent; ResourceName: String);
+    procedure ReadComponentEmbeddedResource(Component: TComponent);
+    procedure ReadComponentExternalResource(Component: TComponent; ResourceName: String);
+    procedure ReadComponentFromStream(Component: TComponent; Streat: TStream);
+
+    procedure ReadObjectResource(ObjectRes: TResObjectEh);
+    procedure AddLocalizableObject(Component: TComponent; ResourceName: String; ExtResourceFileName: String; DefaultResourceLanguage: String);
+    procedure DeleteLocalizableObject(Component: TComponent);
+    procedure LoadListOfAvailableLanguages(BaseFileName: String);
+    procedure AddChangeNotifyConsumer(Component: TComponent; DefaultResourceLanguage: String);
+    procedure DeleteChangeNotifyConsumer(Component: TComponent);
+    procedure NotifyConsumerChange(Component: TObject);
+    procedure NotifyAllConsumersChange;
+
+    property LanguageList: TStringList read FLanguageList;
+    property ResObject[Index: Integer]: TResObjectEh read GetResObject;
+    property ResObjectCount: Integer read GetResObjectCount;
+    property ActiveLanguageAbbr: String read FActiveLanguageAbbr write SetActiveLanguageAbbr;
+    property ResourceFolderPath: String read FResourceFolderPath write FResourceFolderPath;
+    property ResourcePlacement: TLanguageResourcePlacementEh read FResourcePlacement write FResourcePlacement default lrpExternalEh;
+
+    property OnAutoselectLanguage: TAutoselectResourceLanguageEh read FOnAutoselectLanguage write FOnAutoselectLanguage;
+  end;
+
+function LanguageResourceManagerEh: TLanguageResourceManagerEh;
+
+var
+{$IFDEF EH_LIB_12}
+  LanguageResourcesFolder: String = PathDelim+'Res';
+{$ELSE}
+  {$IFDEF FPC}
+    LanguageResourcesFolder: String = PathDelim+'Res';
+  {$ELSE}
+    LanguageResourcesFolder: String = PathDelim+'Res.Ansi';
+  {$ENDIF}
+{$ENDIF}
+
+implementation

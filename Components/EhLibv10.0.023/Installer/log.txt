@@ -1,0 +1,450 @@
+
+------01.02.2021 1:18:43------
+
+Installation log
+
+------31.01.2021 23:37:01------
+
+Installation log
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\Common\*.* C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\RADSpecific\RADStudioXE10_4\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\DEMOS C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\DataDrivers C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\DataService C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\HLP C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\LangResources C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\*.* C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\RADSpecific\RADStudioXE10_4\Win32\Release\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\RADSpecific\Bpl\RADStudioXE10_4 C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\LangResources\Res\*.* C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib 
+:Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.30 seconds, 2778416 bytes code, 5492 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLib270.dpk
+72 lines, 0.41 seconds, 305836 bytes code, 1048 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.19 seconds, 35700 bytes code, 224 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibADODataDrivers270.dpk
+47 lines, 0.31 seconds, 45784 bytes code, 236 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.23 seconds, 19988 bytes code, 216 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibDBXDataDrivers270.dpk
+1368 lines, 0.27 seconds, 25400 bytes code, 228 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp;$(BDS)\include;c:\GoSed\src\gameclass
+\Components\FastMM;c:\GoSed\src\gameclass\Components\jcl\jcl\lib\d27\win32;c:\GoSed\src\gameclass\Components\jcl\jcl\source\include;c:\GoSed\src
+\gameclass\Components\jvcl\jvcl\lib\D27\win32;c:\GoSed\src\gameclass\Components\jvcl\jvcl\common;c:\GoSed\src\gameclass\Components\jvcl\jvcl
+\Resources;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win32\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;
+$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;c:\GoSed\src\gameclass\Components\FastMM;c:\GoSed\src\gameclass\Components\jcl\jcl\source\common;c:\GoSed\src
+\gameclass\Components\jcl\jcl\source\windows;c:\GoSed\src\gameclass\Components\jcl\jcl\source\vcl;c:\GoSed\src\gameclass\Components\jvcl\jvcl
+\common;c:\GoSed\src\gameclass\Components\jvcl\jvcl\run;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in 
+RegValueName: OK
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\RADSpecific\RADStudioXE10_4\Win64\Release\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\RADSpecific\Bpl\RADStudioXE10_4\Win64 C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLibv10.0.023\LangResources\Res\*.* C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib 
+:Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.86 seconds, 4114764 bytes code, 258744 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.28 seconds, 62028 bytes code, 3916 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.27 seconds, 38732 bytes code, 1880 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp\$(Platform);$(BDS)\include;c:\GoSed\src
+\gameclass\Components\jcl\jcl\lib\d27\win64;c:\GoSed\src\gameclass\Components\jcl\jcl\source\include;c:\GoSed\src\gameclass\Components\jvcl\jvcl\lib
+\D27\win64;c:\GoSed\src\gameclass\Components\jvcl\jvcl\common;c:\GoSed\src\gameclass\Components\jvcl\jvcl\Resources;C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win64\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;$(TP)\runtime
+\vcl;$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;c:\GoSed\src\gameclass\Components\jcl\jcl\source\common;c:\GoSed\src\gameclass\Components\jcl\jcl\source\windows;c:
+\GoSed\src\gameclass\Components\jcl\jcl\source\vcl;c:\GoSed\src\gameclass\Components\jvcl\jvcl\common;c:\GoSed\src\gameclass\Components\jvcl\jvcl
+\run;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in RegValueName: OK
+Path: "C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\sql_text.sql" added to Registry "\SOFTWARE\Embarcadero\BDS\21.0\EhLib"
+Installation completed.
+
+------31.01.2021 21:08:18------
+
+Installation log
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\Common\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DEMOS C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataDrivers C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataService C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\HLP C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources C:\Program Files (x86)\Embarcadero
+\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\Win32\Release\*.* C:
+\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_4 C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.27 seconds, 2778416 bytes code, 5492 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLib270.dpk
+72 lines, 0.52 seconds, 305836 bytes code, 1048 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.23 seconds, 35700 bytes code, 224 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibADODataDrivers270.dpk
+47 lines, 0.33 seconds, 45784 bytes code, 236 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.27 seconds, 19988 bytes code, 216 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibDBXDataDrivers270.dpk
+1368 lines, 0.36 seconds, 25400 bytes code, 228 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp;$(BDS)\include;c:\GoSed\src\gameclass
+\Components\FastMM\;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win32\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;
+$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;c:\GoSed\src\gameclass\Components\FastMM\;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in 
+RegValueName: OK
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\Win64\Release\*.* C:
+\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_4\Win64 C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.97 seconds, 4114764 bytes code, 258744 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.33 seconds, 62028 bytes code, 3916 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.55 seconds, 38732 bytes code, 1880 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp\$(Platform);$(BDS)\include;C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win64\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;$(TP)\runtime
+\vcl;$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in RegValueName: OK
+Path: "C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\sql_text.sql" added to Registry "\SOFTWARE\Embarcadero\BDS\21.0\EhLib"
+Installation completed.
+
+------31.01.2021 16:10:40------
+
+Installation log
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\Common\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DEMOS C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataDrivers C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataService C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\HLP C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources C:\Program Files (x86)\Embarcadero
+\Studio\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\*.* C:\Program Files (x86)\Embarcadero\Studio
+\21.0\Components\EhLib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\Win32\Release\*.* C:
+\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_4 C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.25 seconds, 2778416 bytes code, 5492 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLib270.dpk
+72 lines, 0.47 seconds, 305836 bytes code, 1048 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.23 seconds, 35700 bytes code, 224 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibADODataDrivers270.dpk
+47 lines, 0.31 seconds, 45784 bytes code, 236 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.27 seconds, 19988 bytes code, 216 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win DclEhLibDBXDataDrivers270.dpk
+1368 lines, 0.36 seconds, 25400 bytes code, 228 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win32\Release :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp;$(BDS)\include;C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win32\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;
+$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in RegValueName: OK
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_4\Win64\Release\*.* C:
+\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_4\Win64 C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib270.dpk
+1294 lines, 2.89 seconds, 4114764 bytes code, 258744 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibADODataDrivers270.dpk
+800 lines, 0.45 seconds, 62028 bytes code, 3916 bytes data.
+
+C:\Program Files (x86)\Embarcadero\Studio\21.0\Bin\dcc64.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLibDBXDataDrivers270.dpk
+1697 lines, 0.38 seconds, 38732 bytes code, 1880 bytes data.
+
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpl to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcp to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.bpi to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.lib to C:\Users\Public\Documents\Embarcadero\Studio\21.0\Dcp\Win64 :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dcu to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.dfm to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.res to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.Inc to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Copy C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\*.hpp to C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib
+\Lib\Win64\Release\ :Ok
+Reg: Path - "$(BDSLIB)\$(Platform)\release;$(BDSUSERDIR)\Imports;$(BDS)\Imports;$(BDSCOMMONDIR)\Dcp\$(Platform);$(BDS)\include;C:\Program Files 
+(x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\Win64\Release" added in RegValueName: OK
+Reg: Path - "$(BDS)\OCX\Servers;$(BDS)\SOURCE\VCL;$(BDS)\SOURCE\VCL\AppAnalytics;$(BDS)\source\rtl\common;$(BDS)\SOURCE\RTL\SYS;
+$(BDS)\source\rtl\win;$(BDS)\source\ToolsAPI;$(BDS)\SOURCE\IBX;$(BDS)\source\Internet;$(BDS)\SOURCE\PROPERTY EDITORS;$(BDS)\source\soap;
+$(BDS)\SOURCE\XML;$(BDS)\source\Indy10\Core;$(BDS)\source\Indy10\System;$(BDS)\source\Indy10\Protocols;$(BDS)\source\fmx;$(BDS)\source
+\databinding\components;$(BDS)\source\databinding\engine;$(BDS)\source\databinding\graph;$(BDS)\source\data;$(BDS)\source\data\ado;$(BDS)\source
+\data\bde;$(BDS)\source\data\cloud;$(BDS)\source\data\datasnap;$(BDS)\source\data\dbx;$(BDS)\source\data\dsnap;$(BDS)\source\data\Test;
+$(BDS)\source\data\vclctrls;$(BDS)\source\data\datasnap\connectors;$(BDS)\source\data\datasnap\proxygen;$(BDS)\source\DataExplorer;$(BDS)\source
+\DUnit\Contrib\DUnitWizard\Source\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\Common\dunit;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\Common;$(BDS)\source\DUnit\Contrib\DUnitWizard\Source\DelphiExperts\DUnitProject;$(BDS)\source\DUnit\Contrib\DUnitWizard
+\Source\DelphiExperts\DUnitProject\dunit;$(BDS)\source\DUnit\src;$(BDS)\source\DUnit\tests;$(BDS)\source\Experts;$(BDS)\source\indy\abstraction;
+$(BDS)\source\indy\implementation;$(BDS)\source\indyimpl;$(BDS)\source\LiveTile;$(BDS)\source\Property Editors\Indy10;$(BDS)\source\soap
+\wsdlimporter;$(BDS)\source\Visualizers;$(BDS)\source\xtab;$(BDS)\source\DUnit\Contrib\XMLReporting;$(BDS)\source\DUnit\Contrib\XPGen;$(TP)\runtime
+\vcl;$(BDS)\source\data\rest;$(BDS)\source\data\firedac;$(BDS)\source\tethering;$(BDS)\source\DUnitX;$(BDS)\source\data\ems;$(BDS)\source\rtl\net;
+$(BDS)\source\FlatBox2D;C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib" added in RegValueName: OK
+Path: "C:\Program Files (x86)\Embarcadero\Studio\21.0\Components\EhLib\Lib\sql_text.sql" added to Registry "\SOFTWARE\Embarcadero\BDS\21.0\EhLib"
+Installation completed.
+
+------31.01.2021 15:07:07------
+
+Installation log
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\Common\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DEMOS  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataDrivers  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataService  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\HLP  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\*.*  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\Win32\Release\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_3 \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* \Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\20.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib260.dpk
+Fatal: F1026 File not found: 'EhLib260.dpk'
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\Common\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DEMOS  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataDrivers  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataService  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\HLP  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\*.*  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\Win32\Release\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_3 \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* \Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\20.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib260.dpk
+Fatal: F1026 File not found: 'EhLib260.dpk'
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\Common\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DEMOS  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataDrivers  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\DataService  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\HLP  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\*.*  :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\RADStudioXE10_3\Win32\Release\*.* \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\RADSpecific\Bpl\RADStudioXE10_3 \Lib :Ok
+Copy C:\GoSed\src\gameclass\Components\EhLib.VCL 10.0 Build 10.0.023 for Delphi 10.3 - 10.4\LangResources\Res\*.* \Lib :Ok
+
+C:\Program Files (x86)\Embarcadero\Studio\20.0\Bin\dcc32.exe -$Y- -$L- -$D- -B -JPHNE -JL -
+NSData.Win;Bde;Vcl;Vcl.Imaging;Data;Winapi;System;System.Win;Datasnap;Xml;Xml.Win EhLib260.dpk
+Fatal: F1026 File not found: 'EhLib260.dpk'
+
+------30.09.2020 14:08:44------
+
+Installation log

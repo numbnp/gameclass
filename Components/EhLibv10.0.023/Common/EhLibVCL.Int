@@ -1,0 +1,861 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{            Specific routines for VCL.Win32            }
+{                                                       }
+{    Copyright (c) 2004-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit EhLibVCL;
+
+interface
+
+uses
+  Forms, SysUtils, Classes, DB, TypInfo, Controls, Messages,
+  {$IFDEF EH_LIB_17} System.Generics.Defaults, System.Generics.Collections, {$ENDIF}
+  {$IFDEF FPC}
+    {$IFDEF FPC_LINUX}
+      Gtk2Int, Gtk2Def, Gdk2,
+    {$ENDIF}
+    {$IFDEF FPC_WINDWOS}
+      Windows, Win32WSForms, WSLCLClasses, Win32Int, Win32WSStdCtrls,
+      Win32WSControls, Win32Proc, UxTheme,
+    {$ENDIF}
+    {$IFDEF FPC_MACOS}
+      MacOSAll, CocoaAll,
+    {$ENDIF}
+    LCLIntf, LCLType, WSStdCtrls, StdCtrls, LCLProc, LazUTF8, LMessages,
+    XMLWrite, XMLRead, xmlutils, DOM,
+  {$ELSE}
+    RTLConsts, Windows, StdCtrls, UxTheme,
+  {$ENDIF}
+  Graphics, Themes, Variants, Contnrs, StrUtils, Math, Types;
+
+{$I EhlibVerInfo.Inc}
+{$I EhLibEditionInfo.Inc}
+
+type
+{$IFDEF EH_LIB_9}
+  IntPtr = Integer;
+{$ELSE}
+  IntPtr = NativeInt;
+{$ENDIF}
+
+{$IFDEF TBookMarkAsTBytes}
+  TUniBookmarkEh = TBookmark;
+{$ELSE}
+
+  {$IFDEF EH_LIB_11}
+  {$ELSE}
+  TBytes = array of Byte;
+  {$ENDIF}
+
+  {$WARNINGS OFF}
+  TUniBookmarkEh = TBookmarkStr;
+  {$WARNINGS ON}
+{$ENDIF}
+
+{$IFNDEF EH_LIB_12}
+  TRecordBuffer = PChar;
+{$ENDIF}
+
+{$IFNDEF EH_LIB_17}
+  TValueBuffer = Pointer;
+{$ENDIF}
+
+  TPointArrayEh = array of TPoint;
+  TDWORDArrayEh = array of DWORD;
+  TVariantDynArray = array of Variant;
+  TRectDynArray = array of TRect;
+{$IFDEF EH_LIB_9}
+{$ELSE}
+  TStringDynArray  = array of String;
+{$ENDIF}
+
+{$IFDEF EH_LIB_16}
+  TDataEventInfoTypeEh = NativeInt;
+{$ELSE}
+  {$IFDEF FPC}
+  TDataEventInfoTypeEh = Ptrint;
+  {$ELSE}
+  TDataEventInfoTypeEh = Integer;
+  {$ENDIF}
+{$ENDIF}
+
+{$IFNDEF EH_LIB_16}
+  {$IFDEF WINDOWS}
+  TLocaleID = LCID;
+  {$ELSE}
+  TLocaleID = LongWord;
+  {$ENDIF}
+{$ENDIF}
+
+type
+
+{$IFDEF NEXTGEN}
+
+  TFieldListEh = class(TList<TField>);
+
+  TObjectListEh = class(TObjectList)
+  public
+    constructor Create; overload;
+    constructor Create(AOwnsObjects: Boolean); overload;
+
+    procedure Sort(Compare: TListSortCompare);
+  end;
+
+{$ELSE}
+
+  TFieldListEh = class(TList);
+
+  TObjectListEh = class(TObjectList)
+  public
+    constructor Create; overload;
+    constructor Create(AOwnsObjects: Boolean); overload;
+
+    procedure Sort(Compare: TListSortCompare);
+  end;
+
+{$ENDIF}
+
+const
+{$IFDEF TBookMarkAsTBytes}
+  NilBookmarkEh = nil;
+{$ELSE}
+  NilBookmarkEh = '';
+{$ENDIF}
+
+  LAYOUT_RTL_EH = $00000001;
+
+{$IFDEF FPC_CROSSP}
+  {$IFDEF WINDOWS}
+  
+  MA_NOACTIVATE = 3;
+  {$ELSE}
+  
+  WM_CLEAR = LM_CLEAR;
+  WM_RBUTTONDBLCLK = LM_RBUTTONDBLCLK;
+  WM_MBUTTONDBLCLK = LM_MBUTTONDBLCLK;
+  WM_RBUTTONDOWN = LM_RBUTTONDOWN;
+  WM_MBUTTONDOWN = LM_MBUTTONDOWN;
+  WM_LBUTTONUP = LM_LBUTTONUP;
+  WM_RBUTTONUP = LM_RBUTTONUP;
+  WM_MBUTTONUP = LM_MBUTTONUP;
+  
+  WM_CONTEXTMENU = LM_CONTEXTMENU;
+
+  WM_NCMOUSEMOVE = LM_NCMOUSEMOVE; 
+  WM_NCCALCSIZE = LM_NCCALCSIZE; 
+  WM_WINDOWPOSCHANGING = LM_WINDOWPOSCHANGING; 
+  WM_MOUSEACTIVATE = 33; 
+  MA_NOACTIVATE = 3; 
+  WM_SETTINGCHANGE = 26; 
+  {$ENDIF}
+  WM_THEMECHANGED = CM_BASE + 81;  
+  
+{$ELSE}
+ 
+ 
+{$ENDIF}
+
+{$IFDEF FPC_CROSSP}
+  {$IFDEF FPC_WINDWOS}
+type
+  TWMChar = TLMChar;
+  TWMRButtonDblClk = TLMRButtonDblClk;
+  TWMMButtonDblClk = TLMMButtonDblClk;
+  TWMRButtonDown = TLMRButtonDown;
+  TWMMButtonDown = TLMMButtonDown;
+  TWMRButtonUp = TLMRButtonUp;
+  TWMMButtonUp = TLMMButtonUp;
+  TWMLButtonDblClk = TLMLButtonDblClk;
+  TWMLButtonDown = TLMLButtonDown;
+  TWMLButtonUp = TLMLButtonUp;
+  TWMMouseMove = TLMMouseMove;
+  TWMKeyDown    = TWMKey;
+  PWindowPos = Windows.PWindowPos;
+  {$ELSE}
+type
+  TWMRButtonDblClk = TLMRButtonDblClk;
+  TWMMButtonDblClk = TLMMButtonDblClk;
+  TWMRButtonDown = TLMRButtonDown;
+  TWMMButtonDown = TLMMButtonDown;
+  TWMRButtonUp = TLMRButtonUp;
+  TWMMButtonUp = TLMMButtonUp;
+  TWMNCCalcSize = TLMNCCalcSize;
+  TWMWindowPosChanging = TLMWindowPosChanging;
+  
+  {$ENDIF}
+{$ELSE}
+{$ENDIF}
+
+{$IFDEF FPC}
+const
+  STextTrue: String = 'True';
+  STextFalse: String = 'False';
+  FilerSignature: array[1..4] of Char = 'TPF0';
+
+type
+  __TObject = class(TObject);
+  __Int = PtrInt;
+  IXMLNode = interface;
+
+  TStreamOriginalFormat = (sofUnknown, sofBinary, sofText);
+
+  TDropDownAlign = (daLeft, daRight, daCenter);
+
+  TSearchType = (stWholeWord, stMatchCase);
+  TSearchTypes = set of TSearchType;
+
+{ TWinControlEh }
+
+  TWinControlEh = class(TWinControl)
+  protected
+    procedure RecreateWndHandle;
+  end;
+
+{ TCustomControlEh }
+
+  TCustomControlEh = class(TCustomControl)
+  private
+    FScaleFactor: Single;
+  protected
+    procedure RecreateWndHandle;
+
+    procedure ChangeScale(M, D: Integer); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+
+    function GetSystemMetrics(nIndex: Integer): Integer;
+    function ScaleValue(const Value: Integer): Integer;
+    property ScaleFactor: Single read FScaleFactor;
+
+  end;
+
+  TXMLDocOption = (doNodeAutoCreate, doNodeAutoIndent, doAttrNull,
+    doAutoPrefix, doNamespaceDecl, doAutoSave);
+  TXMLDocOptions = set of TXMLDocOption;
+
+  IRefObject = interface
+    ['{D1E0064F-497C-4BC6-A72B-690394EB64FB}']
+    function GetObject: TObject;
+  end;
+
+  IXMLNodeList = interface
+    ['{395950C1-7E5D-11D4-83DA-00C04F60B2DD}']
+    function GetCount: Integer;
+    function Add(const Node: IXMLNode): Integer;
+    function FindNode(NodeName: String): IXMLNode;
+    function Delete(const Name: String): Integer;
+    procedure Insert(Index: Integer; const Node: IXMLNode);
+    function GetNode(const IndexOrName: OleVariant): IXMLNode;
+  { Property Accessors }
+    property Count: Integer read GetCount;
+    property Nodes[const IndexOrName: OleVariant]: IXMLNode read GetNode; default;
+  end;
+
+  IXMLNode = interface
+    ['{395950C0-7E5D-11D4-83DA-00C04F60B2DD}']
+    function GetAttribute(const AttrName: String): OleVariant;
+    procedure SetAttribute(const AttrName: String; const Value: OleVariant);
+    function GetChildNodes: IXMLNodeList;
+    function GetText: String;
+    procedure SetText(const Value: String);
+    function AddChild(const TagName: String; Index: Integer = -1): IXMLNode; overload;
+    function AddChild(const TagName, NamespaceURI: String; GenPrefix: Boolean = False; Index: Integer = -1): IXMLNode; overload;
+    function GetParentNode: IXMLNode;
+    function  GetNodeName: String;
+    function  GetNodeValue: String;
+    procedure SetNodeValue(const AValue: String);
+  { Properties }
+    property Attributes[const AttrName: String]: OleVariant read GetAttribute write SetAttribute;
+    property ChildNodes: IXMLNodeList read GetChildNodes;
+    property Text: String read GetText write SetText;
+    property NodeName: String read GetNodeName;
+    property NodeValue: String read GetNodeValue write SetNodeValue;
+  end;
+
+  IXMLDocument = interface(IInterface)
+    ['{395950C3-7E5D-11D4-83DA-00C04F60B2DD}']
+    function GetOptions: TXMLDocOptions;
+    procedure SetOptions(const Value: TXMLDocOptions);
+    function GetEncoding: String;
+    procedure SetEncoding(const Value: String);
+    function GetStandAlone: String;
+    procedure SetStandAlone(const Value: String);
+    procedure SaveToFile(const AFileName: String);
+    procedure SaveToStream(const Stream: TStream);
+    function AddChild(const TagName: String): IXMLNode; overload;
+    function AddChild(const TagName, NamespaceURI: String): IXMLNode; overload;
+    function CreateElement(const TagOrData, NamespaceURI: String): IXMLNode;
+    function GetDocumentElement: IXMLNode;
+    function GetChildNodes: IXMLNodeList;
+
+    { Properties }
+    property ChildNodes: IXMLNodeList read GetChildNodes;
+    property Options: TXMLDocOptions read GetOptions write SetOptions;
+    property Encoding: String read GetEncoding write SetEncoding;
+    property StandAlone: String read GetStandAlone write SetStandAlone;
+    property DocumentElement: IXMLNode read GetDocumentElement;
+  end;
+
+{ TXMLNodeListEh }
+
+  TXMLNodeListEh = class(TInterfacedObject, IXMLNodeList)
+  private
+    FDOMElement: TDOMElement;
+
+    function GetCount: Integer;
+    function Add(const Node: IXMLNode): Integer;
+    function FindNode(NodeName: String): IXMLNode;
+    function Delete(const Name: String): Integer;
+    procedure Insert(Index: Integer; const Node: IXMLNode);
+    function GetNode(const IndexOrName: OleVariant): IXMLNode;
+
+  public
+    constructor Create(ADOMElement: TDOMElement);
+    destructor Destroy; override;
+
+  end;
+
+{ TXMLNodeEh }
+
+  TXMLNodeEh = class(TInterfacedObject, IXMLNode, IRefObject)
+  private
+    FDOMElement: TDOMElement;
+
+    function AddChild(const TagName: String; Index: Integer = -1): IXMLNode;  overload;
+    function AddChild(const TagName, NamespaceURI: String; GenPrefix: Boolean = False; Index: Integer = -1): IXMLNode;  overload;
+    function GetParentNode: IXMLNode;
+    function GetAttribute(const AttrName: String): OleVariant;
+    function GetChildNodes: IXMLNodeList;
+    function GetText: String;
+    function  GetNodeName: String;
+    function  GetNodeValue: String;
+    procedure SetNodeValue(const AValue: String);
+
+    procedure SetAttribute(const AttrName: String; const Value: OleVariant);
+    procedure SetText(const Value: String);
+
+    function GetObject: TObject;
+
+  public
+    constructor Create(ADOMElement: TDOMElement);
+    destructor Destroy; override;
+
+  end;
+
+{ TXMLDocumentEh }
+
+  TXMLDocumentEh = class(TInterfacedObject, IXMLDocument)
+  private
+    FXMLDoc: TXMLDocument;
+
+    function GetOptions: TXMLDocOptions;
+    function GetEncoding: String;
+    function GetStandAlone: String;
+    function GetChildNodes: IXMLNodeList;
+    function AddChild(const TagName: String): IXMLNode; overload;
+    function AddChild(const TagName, NamespaceURI: String): IXMLNode; overload;
+    function CreateElement(const TagOrData, NamespaceURI: String): IXMLNode;
+    function GetDocumentElement: IXMLNode;
+
+    procedure SetOptions(const Value: TXMLDocOptions);
+    procedure SetEncoding(const Value: String);
+    procedure SetStandAlone(const Value: String);
+    procedure SaveToFile(const AFileName: String);
+    procedure SaveToStream(const Stream: TStream);
+
+  public
+    constructor Create; overload;
+    constructor Create(AXMLDoc: TXMLDocument); overload;
+    destructor Destroy; override;
+  end;
+
+function NewXMLDocument(Version: DOMString = '1.0'): IXMLDocument;
+
+function DrawTextBiDiModeFlags(Control: TControl; Flags: Longint): Longint;
+procedure PerformEraseBackground(Control: TControl; DC: HDC);
+
+function WindowsScrollWindowEx(hWnd: HWND; dx, dy: Integer;
+  var prcScroll,  prcClip: TRect;
+  hrgnUpdate: HRGN; {prcUpdate: TRect; }flags: UINT): Boolean;
+
+function DBUseRightToLeftAlignment(AControl: TControl; AField: TField): Boolean;
+function OkToChangeFieldAlignment(AField: TField; Alignment: TAlignment): Boolean;
+
+function VarTypeToDataType(VarType: Integer): TFieldType;
+function TestStreamFormat(Stream: TStream): TStreamOriginalFormat;
+function GetFieldProperty(DataSet: TDataSet; Control: TComponent; const FieldName: string): TField;
+
+{$ELSE} //FPC
+type
+
+{$IFDEF EH_LIB_12} //RAD Studio 2009
+{$ELSE}
+{ TBitmapEh32bit }
+
+  TBitmapEh32bit = class(TBitmap)
+  public
+    procedure Draw(ACanvas: TCanvas; const Rect: TRect); override;
+  end;
+{$ENDIF}
+
+{$IFDEF NEXTGEN}
+{$ELSE}
+ __TObject = class(TObject);
+ __Int = Integer;
+{$ENDIF}
+
+{$IFNDEF EH_LIB_12}
+  Int32 = Integer;
+{$ENDIF}
+
+{ TWinControlEh }
+
+  TWinControlEh = class(TWinControl)
+  private
+  protected
+  {$IFDEF FPC}
+    function Ctl3D;
+  {$ELSE}
+  {$ENDIF}
+    procedure RecreateWndHandle;
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
+
+{ TCustomControlEh }
+
+  TCustomControlEh = class(TCustomControl)
+  protected
+  {$IFDEF EH_LIB_26} //10.3
+  {$ELSE}
+    FScaleFactor: Single;
+  {$ENDIF}
+
+    procedure RecreateWndHandle;
+    procedure ChangeScale(M, D: Integer {$IFDEF EH_LIB_24}; isDpiChange: Boolean {$ENDIF}); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+
+  {$IFDEF EH_LIB_26} //10.3
+  {$ELSE}
+    function GetSystemMetrics(nIndex: Integer): Integer;
+    property ScaleFactor: Single read FScaleFactor;
+  {$ENDIF}
+
+  {$IFDEF EH_LIB_27} //10.4
+  {$ELSE}
+    function ScaleValue(const Value: Integer): Integer;
+  {$ENDIF}
+  end;
+
+function WindowsScrollWindowEx(hWnd: HWND; dx, dy: Integer;
+  var prcScroll,  prcClip: TRect;
+  hrgnUpdate: HRGN; flags: UINT): Boolean;
+
+{$ENDIF} //ELSE FPC
+
+function CharInSetEh(C: Char; const CharSet: TSysCharSet): Boolean;
+function VarToAnsiStr(const V: Variant): AnsiString;
+function IsLeadCharEh(C: Char): Boolean;
+
+procedure FillDWord(var Dest; Count, Value: Integer);
+
+function DataSetCompareBookmarks(DataSet: TDataSet; Bookmark1, Bookmark2: TUniBookmarkEh): Integer;
+function DataSetBookmarkValid(DataSet: TDataSet; Bookmark: TUniBookmarkEh): Boolean;
+
+function GetMasterDataSet(FDataSet: TDataSet; APropInfo: PPropInfo): TDataSet;
+
+type
+  TTextWrapStyleEh = (twsNoWrapEh, twsWordWrapEh, twsSingleLineEh);
+
+  TDrawTextOptionsEh = record
+    Alignment: TAlignment; 
+    Layout: TTextLayout;   
+    WrapStyle: TTextWrapStyleEh;
+    Opaque: Boolean;
+    RightToLeft: Boolean;
+    EndEllipsis: Boolean;
+  end;
+
+function DrawTextEh(hDC: HDC; const Text: String; nCount: Integer;
+  var lpRect: TRect; uFormat: UINT): Integer; overload;
+
+procedure DrawTextEh(Canvas: TCanvas; Text: String; ARect: TRect; ClipRect: TRect;
+  Options: TDrawTextOptionsEh); overload;
+procedure DrawTextEh(Canvas: TCanvas; Text: String; ARect: TRect; ClipRect: TRect;
+  Alignment: TAlignment; Layout: TTextLayout; WrapStyle: TTextWrapStyleEh); overload;
+procedure DrawTextEh(Canvas: TCanvas; Text: String; ARect: TRect;
+  Alignment: TAlignment; Layout: TTextLayout; WrapStyle: TTextWrapStyleEh); overload;
+procedure DrawTextEh(Canvas: TCanvas; Text: String; ARect: TRect); overload;
+
+function GetTextExtentPointEh(Canvas: TCanvas; Text: String; out StringSize: TSize): TIntegerDynArray; overload;
+//{$IFDEF FPC_WINDWOS}
+//function GetTextExtentPointEh(Canvas: TCanvas; Text: WideString; out StringSize: TSize): TIntegerDynArray; overload;
+//{$ELSE}
+//{$ENDIF}
+
+function StrLength(s: String): Integer; overload;
+//function StrLength(s: WideString): Integer; overload;
+function StringNextCharPos(S: String; APos: Integer): Integer;
+
+function EditorGetCaretPosEh(Control: TWinControl): Integer;
+function GetMessageTimeEh: Longint;
+function RGBToColorEh(R, G, B: Byte): TColor;
+
+procedure SetWindowDropShadowStyle(Control: TWinControl; var Params: TCreateParams; SetState: Boolean);
+procedure SetWindowDropDownNoactivateStyle(Control: TWinControl; var Params: TCreateParams; SetState: Boolean);
+function GetAdjustedClientRect(Control: TWinControl): TRect;
+function GetDesktopWindowEh: HWnd;
+
+{$IFDEF FPC_CROSSP}
+function GetNearestColor(hDC: HDC; Color: TColor): TColor;
+{$ENDIF}
+
+{$IFDEF WINDOWS}
+function WindowsDrawTextEx(DC: HDC; const lpchText: String;
+  var p4: TRect;  dwDTFormat: UINT; DTParams: TDrawTextParams): Integer; overload;
+function WindowsDrawTextEx(DC: HDC; const lpchText: String;
+  var p4: TRect;  dwDTFormat: UINT): Integer; overload;
+
+function WindowsExtTextOut(DC: HDC; X, Y: Integer; Options: Longint;
+  var Rect: TRect; const Str: String; Count: Longint{; Dx: PInteger}): BOOL;
+
+function WindowsGetOutlineTextMetrics(DC: HDC; p2: UINT; var OTMetricStructs: TOutlineTextMetric): UINT;
+{$ELSE}
+{$ENDIF}
+
+function MiddleDotChar: Char;
+
+function SendStructMessage(hWnd: HWND; Msg: UINT; wParam: WPARAM; var lParam): LRESULT;
+function SendTextMessage(hWnd: HWND; Msg: UINT; wParam: WPARAM; const lParam: string): LRESULT;
+function SendGetTextMessage(hWnd: HWND; Msg: UINT; wParam: WPARAM; var lParam: string; BufferSize: Integer): LRESULT;
+
+function SystemParametersInfoEh(uiAction, uiParam: UINT; var pvParam; fWinIni: UINT): BOOL;
+function WindowsInvalidateRect(hWnd: HWND; var Rect: TRect; bErase: BOOL): BOOL;
+function WindowsValidateRect(hWnd: HWND; var Rect: TRect): BOOL;
+function WindowsScrollWindow(hWnd: HWND; dx, dy: Integer; var prcScroll, prcClip: TRect): BOOL;
+procedure WinServiceSetFocus(hWnd: HWND);
+function  WinServiceIsChild(hWndParent, hWnd: HWND): Boolean;
+
+function WindowsLPtoDP(DC: HDC; var ARect: TRect): BOOL;
+function WindowsCreatePolygonRgn(Points: array of TPoint; Count, FillMode: Integer): HRGN;
+function GetFontSize(Font: TFont; Canvas: TCanvas = nil): Integer;
+function GetFontHeight(Font: TFont): Integer;
+function GetFontTextHeight(Canvas: TCanvas; Font: TFont; IncludeExternalLeading: Boolean = True): Integer;
+procedure GetTextMetricsEh(Canvas: TCanvas; out tm: TTextMetric);
+procedure PolyPolyLineEh(Canvas: TCanvas; const PointsList: TPointArrayEh; const StrokeList: TDWORDArrayEh; VCount: Integer);
+
+function IsObjectAndIntegerRefSame(AObject: TObject; IntRef: Integer): Boolean;
+function IntPtrToObject(AIntPtr: Integer): TObject;
+function ObjectToIntPtr(AObject: TObject): Integer;
+function IntPtrToString(AIntPtr: Integer): String;
+
+procedure VarToMessage(var VarMessage; var Message: TMessage);
+function MessageToTMessage(var Message): TMessage;
+function MessageToTWMMouse(var Message): TWMMouse;
+function MessageToTWMKey(var Message): TWMKey;
+function UnwrapMessageEh(var Message): TMessage;
+procedure PostQuitMessageEh(nExitCode: Integer);
+
+function SmallPointToInteger(SmallPoint: TSmallPoint): Integer;
+function LongintToSmallPoint(Value: Longint): TSmallPoint;
+
+procedure MessageSendGetSel(hWnd: HWND; var SelStart, SelEnd: Integer);
+procedure EditControlSetSel(Control: TCustomEdit; SelStart, SelEnd: Integer);
+
+function NlsUpperCase(const S: String): String;
+function NlsLowerCase(const S: String): String;
+function NlsCompareStr(const S1, S2: String): Integer;
+function NlsCompareText(const S1, S2: String): Integer;
+
+{$IFNDEF EH_LIB_9}
+function ReplaceStr(const AText, AFromText, AToText: string): string;
+{$ENDIF}
+
+{$IFDEF NEXTGEN}
+{$ELSE}
+function WideStringCompare(const ws1, ws2: WideString; CharCount: Integer = 0; CaseInsensitive: Boolean = False): Integer;
+function AnsiStringCompare(const s1, s2: String; CharCount: Integer = 0; CaseInsensitive: Boolean = False): Integer;
+{$ENDIF}
+
+procedure BitmapLoadFromResourceName(Bmp: TBitmap; Instance: THandle; const ResName: String);
+function LoadBitmapEh(hInstance: HINST; lpBitmapID: Integer): HBITMAP;
+
+type
+  TPropListArray = array of PPropInfo;
+
+function GetPropListAsArray(ATypeInfo: PTypeInfo; TypeKinds: TTypeKinds): TPropListArray;
+
+function HexToBinEh(Text: Pointer; out Buffer: TBytes; Count: Integer): Integer; overload;
+function HexToBinEh(Text: String; out Buffer: TBytes; Count: Integer): Integer; overload;
+
+procedure BinToHexEh(Buffer: TBytes; out Text: String; Count: Integer);
+
+procedure StreamWriteBytes(Stream: TStream; Buffer: TBytes);
+procedure StreamReadBytes(Stream: TStream; var Buffer: TBytes; Count: Integer);
+
+{$IFNDEF EH_LIB_12}
+function BytesOf(S: String): TBytes; overload;
+{$ENDIF}
+
+{$IFNDEF EH_LIB_17}
+function BytesOf(const Val: Pointer; const Len: integer): TBytes; overload;
+{$ENDIF}
+
+function PropInfo_getPropType(APropInfo: PPropInfo): PTypeInfo;
+function PropInfo_getName(APropInfo: PPropInfo): String;
+function PropType_getKind(APropType: PTypeInfo): TTypeKind;
+
+procedure VarArrayRedimEh(var A : Variant; HighBound: Integer);
+
+function GetUltimateOwner(APersistent: TPersistent): TPersistent;
+
+function EmptyRect: TRect;
+function IsRectEmptyEh(const Rect: TRect): Boolean;
+
+function VariantToRefObject(VarValue: Variant): TObject;
+function RefObjectToVariant(ARefObject: TObject): Variant;
+procedure DataVarCastAsObject(var Dest: Variant; const Source: Variant);
+function VarTypeName(varValue: Variant): String;
+
+type
+
+{ TFilerAccess }
+
+  TFilerAccess = class(TInterfacedObject) 
+  private
+    FPersistent: TPersistent;
+  public
+    constructor Create(APersistent: TPersistent);
+    procedure DefineProperties(AFiler: TFiler);
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);
+    function GetChildOwner: TComponent;
+    function GetChildParent: TComponent;
+    procedure SetAncestor(Value: Boolean);
+    procedure SetChildOrder(Child: TComponent; Order: Integer);
+    procedure Updated;
+    procedure Updating;
+  end;
+
+{ TMemoryStreamEh }
+
+  TMemoryStreamEh = class(TMemoryStream)
+  private
+    FHalfMemoryDelta: Integer;
+  protected
+    {$IFDEF FPC}
+    function Realloc(var NewCapacity: PtrInt): Pointer; override;
+    {$ELSE}
+    function Realloc(var NewCapacity: System.Longint): Pointer; override;
+    {$ENDIF}
+  public
+    constructor Create;
+    property HalfMemoryDelta: Integer read FHalfMemoryDelta write FHalfMemoryDelta;
+  end;
+
+function ExplicitLongwordToLongInt(v: Longword): LongInt;
+function WStrCopy(Dest: PWideChar; const Source: PWideChar): PWideChar;
+
+function SafeGetMouseCursorPos: TPoint;
+
+procedure VarSetNull(var V: Variant); {$IFDEF EH_LIB_8} inline;{$ENDIF}
+function VarIsNullEh(const V: Variant): Boolean; {$IFDEF EH_LIB_8} inline;{$ENDIF}
+
+{$IFNDEF EH_LIB_14}
+function PointToLParam(P: TPoint): LPARAM;
+{$ENDIF}
+
+function StringToLParam(s: String): LPARAM;
+
+{$IFNDEF EH_LIB_16} //Delphi XE2
+
+type
+
+  TElementSize = (esMinimum, esActual, esStretch);
+
+{ TCustomStyleServicesProxyEh }
+
+  TCustomStyleServicesProxyEh = class(TObject)
+  public
+    function GetSystemColor(Color: TColor): TColor;
+    {$IFDEF FPC}
+    {$ELSE}
+    function GetElementSize(DC: HDC; Details: TThemedElementDetails; ElementSize: TElementSize; out Size: TSize): Boolean;
+    {$ENDIF}
+  end;
+
+function StyleServices: TCustomStyleServicesProxyEh;
+
+{$ENDIF}
+
+{$IFNDEF EH_LIB_17} //Delphi XE3
+
+type
+
+{ TFormatSettingsProxyEh }
+
+  TFormatSettingsProxyEh = class(TObject)
+  private
+    function GetDecimalSeparator: Char;
+    function GetDateSeparator: Char;
+    function GetTimeSeparator: Char;
+    function GetThousandSeparator: Char;
+    function GetShortDateFormat: String;
+    function GetLongDateFormat: String;
+    function GetLongTimeFormat: String;
+    function GetCurrencyDecimals: Byte;
+    function GetShortMonthNames(Index: Integer) : String;
+    function GetLongMonthNames(Index: Integer) : String;
+    function GetShortDayNames(Index: Integer) : String;
+    function GetLongDayNames(Index: Integer) : String;
+    function GetTwoDigitYearCenturyWindow: Word;
+    function GetShortTimeFormat: String;
+    function GetTimeAMString: String;
+    function GetTimePMString: String;
+
+    procedure SetCurrencyDecimals(Value: Byte);
+    procedure SetDateSeparator(Value: Char);
+    procedure SetDecimalSeparator(Value: Char);
+    procedure SetLongDateFormat(Value: String);
+    procedure SetLongDayNames(Index: Integer; Value: String);
+    procedure SetLongMonthNames(Index: Integer; Value: String);
+    procedure SetLongTimeFormat(Value: String);
+    procedure SetShortDateFormat(Value: String);
+    procedure SetShortDayNames(Index: Integer; Value: String);
+    procedure SetShortMonthNames(Index: Integer; Value: String);
+    procedure SetShortTimeFormat(const Value: String);
+    procedure SetThousandSeparator(Value: Char);
+    procedure SetTimeAMString(const Value: String);
+    procedure SetTimePMString(const Value: String);
+    procedure SetTimeSeparator(Value: Char);
+    procedure SetTwoDigitYearCenturyWindow(Value: Word);
+  public
+    property DecimalSeparator: Char read GetDecimalSeparator write SetDecimalSeparator;
+    property DateSeparator: Char read GetDateSeparator write SetDateSeparator;
+    property TimeSeparator: Char read GetTimeSeparator write SetTimeSeparator;
+    property CurrencyDecimals: Byte read GetCurrencyDecimals write SetCurrencyDecimals;
+    property ThousandSeparator: Char read GetThousandSeparator write SetThousandSeparator;
+    property ShortDateFormat: String read GetShortDateFormat write SetShortDateFormat;
+    property ShortTimeFormat: String read GetShortTimeFormat write SetShortTimeFormat;
+    property LongDateFormat: String read GetLongDateFormat write SetLongDateFormat;
+    property LongTimeFormat: String read GetLongTimeFormat write SetLongTimeFormat;
+
+    property ShortMonthNames[Value: Integer] : String read GetShortMonthNames write SetShortMonthNames;
+    property LongMonthNames[Value: Integer] : String read GetLongMonthNames write SetLongMonthNames;
+    property ShortDayNames[Value: Integer] : String read GetShortDayNames write SetShortDayNames;
+    property LongDayNames[Value: Integer] : String read GetLongDayNames write SetLongDayNames;
+    property TimeAMString: String read GetTimeAMString write SetTimeAMString;
+    property TimePMString: String read GetTimePMString write SetTimePMString;
+
+    property TwoDigitYearCenturyWindow: Word read GetTwoDigitYearCenturyWindow write SetTwoDigitYearCenturyWindow;
+  end;
+
+function FormatSettings: TFormatSettingsProxyEh;
+
+{$ENDIF}
+
+function FirstDayOfWeekEh(): Integer; 
+
+{$IFNDEF EH_LIB_12}
+
+type
+
+{ TEncoding }
+
+  TEncoding = class
+  public
+    class function ANSI: TEncoding;
+    class function Default: TEncoding;
+
+    function GetBytes(const S: string): TBytes;
+    function GetPreamble: TBytes; virtual;
+  end;
+
+ { TStreamWriter }
+
+  TStreamWriter = class(TObject)
+  private
+    FStream: TStream;
+  public
+    constructor Create(Stream: TStream; Encoding: TEncoding);
+    destructor Destroy; override;
+    procedure Write(Value: Boolean); overload;
+    procedure Write(Value: Char); overload;
+    procedure Write(const Value: string); overload;
+  end;
+
+{ TStreamReader }
+
+  TStreamReader = class(TObject)
+  private
+    FStream: TStream;
+    function GetEndOfStream: Boolean;
+  public
+    constructor Create(Stream: TStream; Encoding: TEncoding; DetectBOM: Boolean = False);
+    destructor Destroy; override;
+    function Peek: Integer;
+    function Read: Integer;
+    property EndOfStream: Boolean read GetEndOfStream;
+  end;
+
+{ TStringBuilder }
+
+  TStringBuilder = class
+  private
+    FStringStream: TStringStream;
+    function GetLength: Integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function Append(const Value: string): TStringBuilder;
+    {$IFDEF FPC}
+    function ToString: string; reintroduce;
+    {$ELSE}
+    function ToString: string;
+    {$ENDIF}
+    procedure Clear;
+
+    property Length: Integer read GetLength;
+  end;
+
+{$ENDIF}
+
+function SetLayoutEh(hdc: HDC; dwLayout: DWORD): DWORD;
+
+procedure KillMessage(Wnd: HWnd; Msg: Integer);
+function SmallPointToPointEh(const P: TSmallPoint): TPoint;
+function GetTickCountEh: Int64;
+
+{$IFNDEF EH_LIB_12}
+function RectWidth(const Rect: TRect): Integer;
+function RectHeight(const Rect: TRect): Integer;
+{$ENDIF}
+
+{$IFNDEF EH_LIB_13}
+function CenteredRect(const SourceRect: TRect; const ACenteredRect: TRect): TRect;
+{$ENDIF}
+
+function ChangeRect(const Rect: TRect; ChangeLeft, ChangeTop, ChangeRight, ChangeBottom: Integer): TRect;
+procedure MoveRect(var Rect: TRect; Left, Top: Integer); overload;
+procedure MoveRect(var Rect: TRect; Pos: TPoint); overload;
+function RightToLeftReflectPoint(const BaseRect: TRect; const APoint: TPoint): TPoint;
+function RightToLeftReflectRect(const BaseRect: TRect; const ARect: TRect): TRect;
+
+function LoadCursorEh(hInstance: HINST; lpCursorName: PChar): HCURSOR;
+function LoadRegisterCursorEh(CursorName: String): TCursor;
+
+procedure OutputDebugStringEh(str: String);
+procedure FreeObjectEh(obj: TObject);
+procedure DoNothing();
+function SysStrToFloat(const S: string): Extended;
+function SysFloatToStr(const Val: Extended): string;
+function GetCanvasScaleForStandardDpi(Canvas: TCanvas): Double;
+
+implementation

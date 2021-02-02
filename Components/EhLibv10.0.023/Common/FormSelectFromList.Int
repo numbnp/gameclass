@@ -1,0 +1,51 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{               TfSelectFromList form                   }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit FormSelectFromList;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Variants,
+  {$IFDEF FPC}
+   EhLibLCL,
+  {$ELSE}
+   EhLibVCL,
+  {$ENDIF}
+  Dialogs, StdCtrls, Buttons, ExtCtrls, DBCtrlsEh, Mask, Contnrs, SQLDriverEditEh;
+
+type
+  TfSelectFromList = class(TForm)
+    Bevel1: TBevel;
+    bbOk: TBitBtn;
+    bbCancel: TBitBtn;
+    cbEngine: TDBComboBoxEh;
+    cbDBService: TDBComboBoxEh;
+    eDataBaseName: TDBEditEh;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure ListBox1DblClick(Sender: TObject);
+    procedure cbEngineChange(Sender: TObject);
+  private
+    FDBServiceEngineList: TObjectList;
+    procedure SetDBServiceEngineList(const Value: TObjectList);
+    { Private declarations }
+  public
+    procedure UpdateComboboxes;
+    property DBServiceEngineList: TObjectList read FDBServiceEngineList write SetDBServiceEngineList;
+  end;
+
+var
+  fSelectFromList: TfSelectFromList;
+
+function SelectFromList(Items: TStrings): Integer;
+
+implementation

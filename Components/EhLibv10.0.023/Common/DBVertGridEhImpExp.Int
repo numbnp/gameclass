@@ -1,0 +1,43 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{             DBGridEh import/export routines           }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit DBVertGridEhImpExp;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, GridsEh, Controls, Variants,
+{$IFDEF EH_LIB_16} System.Zip, {$ENDIF}
+{$IFDEF FPC}
+  XMLRead, DOM, EhLibXmlConsts,
+{$ELSE}
+  xmldom, XMLIntf, XMLDoc, EhLibXmlConsts,
+{$ENDIF}
+
+{$IFDEF EH_LIB_17} System.UITypes, System.Contnrs, {$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Runtime.InteropServices, System.Reflection,
+{$ELSE}
+  {$IFDEF FPC}
+    EhLibLCL, LCLType,
+  {$ELSE}
+    EhLibVCL, Messages, SqlTimSt,
+  {$ENDIF}
+{$ENDIF}
+  XlsMemFilesEh,
+  DBVertGridsEh,
+  Db, Clipbrd, StdCtrls;
+
+  procedure ExportDBVertGridEhToXlsx(DBVertGridEh: TCustomDBVertGridEh;
+    const FileName: String);
+
+implementation

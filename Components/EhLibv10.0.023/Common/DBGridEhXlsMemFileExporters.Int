@@ -1,0 +1,290 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{             DBGridEh import/export routines           }
+{                                                       }
+{   Copyright (c) 2000-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBGridEhXlsMemFileExporters;
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, Controls, Variants,
+  Contnrs, Db, Clipbrd, StdCtrls,
+
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+
+{$IFDEF FPC}
+  EhLibLCL, LCLType, LCLIntf, DBGridsEh,
+  {$IFDEF FPC_CROSSP}
+  {$ELSE}
+     Windows,
+  {$ENDIF}
+{$ELSE}
+  EhLibVCL, Messages, SqlTimSt, DBGridEh, Windows,
+{$ENDIF}
+  GridsEh, DBAxisGridsEh, XlsMemFilesEh, DBGridEhGrouping, MemTableEh;
+
+type
+
+{ TDBGridEhXlsMemFileExportOptions }
+
+  TDBGridEhXlsMemFileExportOptions = class(TPersistent)
+  private
+    FIsExportFreezeZones: Boolean;
+    FExportColumns: TColumnsEhList;
+    FIsExportFontFormat: Boolean;
+    FIsExportFillColor: Boolean;
+    FIsExportDataGrouping: Boolean;
+    FIsCreateAutoFilter: Boolean;
+    FIsExportTitle: Boolean;
+    FIsExportCellFormat: Boolean;
+    FIsFooterSumsAsFormula: Boolean;
+    FIsExportDisplayFormat: Boolean;
+    FIsExportSelecting: Boolean;
+    FIsExportFooter: Boolean;
+    FGridFooterText: String;
+    FGridHeaderFont: TFont;
+    FGridHeaderFontStored: Boolean;
+    FGridFooterFont: TFont;
+    FGridHeaderText: String;
+    FGridFooterFontStored: Boolean;
+    FSheetName: String;
+    procedure SetExportColumns(const Value: TColumnsEhList);
+    procedure SetGridFooterFont(const Value: TFont);
+    procedure SetGridHeaderFont(const Value: TFont);
+    procedure FontChanged(Sender: TObject);
+
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property IsExportSelecting: Boolean read FIsExportSelecting write FIsExportSelecting default True;
+    property ExportColumns: TColumnsEhList read FExportColumns write SetExportColumns;
+    property IsExportTitle: Boolean read FIsExportTitle write FIsExportTitle default True;
+    property IsExportFooter: Boolean read FIsExportFooter write FIsExportFooter default True;
+    property IsExportFontFormat: Boolean read FIsExportFontFormat write FIsExportFontFormat default True;
+    property IsExportFillColor: Boolean read FIsExportFillColor write FIsExportFillColor default True;
+    property IsExportCellFormat: Boolean read FIsExportCellFormat write FIsExportCellFormat default True;
+    property IsExportDisplayFormat: Boolean read FIsExportDisplayFormat write FIsExportDisplayFormat default True;
+    property IsCreateAutoFilter: Boolean read FIsCreateAutoFilter write FIsCreateAutoFilter default True;
+    property IsExportFreezeZones: Boolean read FIsExportFreezeZones write FIsExportFreezeZones default True;
+    property IsFooterSumsAsFormula: Boolean read FIsFooterSumsAsFormula write FIsFooterSumsAsFormula default True;
+    property IsExportDataGrouping: Boolean read FIsExportDataGrouping write FIsExportDataGrouping default True;
+
+    property GridHeaderText: String read FGridHeaderText write FGridHeaderText;
+    property GridHeaderFont: TFont read FGridHeaderFont write SetGridHeaderFont;
+    property GridHeaderFontStored: Boolean read FGridHeaderFontStored write FGridHeaderFontStored;
+
+    property GridFooterText: String read FGridFooterText write FGridFooterText;
+    property GridFooterFont: TFont read FGridFooterFont write SetGridFooterFont;
+    property GridFooterFontStored: Boolean read FGridFooterFontStored write FGridFooterFontStored;
+
+    property SheetName: String read FSheetName write FSheetName;
+  end;
+
+{ TDBGridEhXlsMemFileExportCellParams }
+
+  TDBGridEhXlsMemFileExportCellParams = class(TPersistent)
+  private
+    FFillColor: TColor;
+    FFontIsBold: Boolean;
+    FFontSize: Integer;
+    FNumberFormat: String;
+    FHorzAlign: TXlsFileCellHorzAlign;
+    FFontIsUnderline: Boolean;
+    FWrapText: Boolean;
+    FFontName: String;
+    FValue: Variant;
+    FFontIsItalic: Boolean;
+    FFontColor: TColor;
+    FVertAlign: TXlsFileCellVertAlign;
+    FFormula: String;
+  public
+    procedure Clear;
+
+    property Value: Variant read FValue write FValue;
+    property Formula: String read FFormula write FFormula;
+    property HorzAlign: TXlsFileCellHorzAlign read FHorzAlign write FHorzAlign;
+    property VertAlign: TXlsFileCellVertAlign read FVertAlign write FVertAlign;
+    property WrapText: Boolean read FWrapText write FWrapText;
+    property NumberFormat: String read FNumberFormat write FNumberFormat;
+    property FillColor: TColor read FFillColor write FFillColor;
+    property FontName: String read FFontName write FFontName;
+    property FontColor: TColor read FFontColor write FFontColor;
+    property FontSize: Integer read FFontSize write FFontSize;
+    property FontIsBold: Boolean read FFontIsBold write FFontIsBold;
+    property FontIsItalic: Boolean read FFontIsItalic write FFontIsItalic;
+    property FontIsUnderline: Boolean read FFontIsUnderline write FFontIsUnderline;
+  end;
+
+{ TDBGridEhXlsMemFileExportDataCellParams }
+
+  TDBGridEhXlsMemFileExportInDataCellParamsEh = class(TPersistent)
+  private
+    FColumn: TColumnEh;
+    FGridCellParams: TColCellParamsEh;
+    FXlsColIndex: Integer;
+  public
+    property XlsColIndex: Integer read FXlsColIndex;
+    property Column: TColumnEh read FColumn;
+    property GridCellParams: TColCellParamsEh read FGridCellParams;
+  end;
+
+{ TDBGridEhXlsMemFileExportFooterCellParams }
+
+  TDBGridEhXlsMemFileExportFooterCellParams = class(TPersistent)
+  private
+    FColumn: TColumnEh;
+    FXlsColIndex: Integer;
+    FFooterRowInex: Integer;
+    FFooter: TColumnFooterEh;
+  public
+    property XlsColIndex: Integer read FXlsColIndex;
+    property Column: TColumnEh read FColumn;
+    property FooterRowInex: Integer read FFooterRowInex;
+    property Footer: TColumnFooterEh read FFooter;
+  end;
+
+{ TDBGridEhXlsMemFileExportTitleCellParams }
+
+  TDBGridEhXlsMemFileExportTitleCellParams = class(TPersistent)
+  private
+    FColumn: TColumnEh;
+    FXlsColIndex: Integer;
+    FTitleRowIndex: Integer;
+    FMultiTitleNode: TDBGridMultiTitleExportNodeEh;
+  public
+    property XlsColIndex: Integer read FXlsColIndex;
+    property Column: TColumnEh read FColumn;
+    property TitleRowIndex: Integer read FTitleRowIndex;
+    property MultiTitleNode: TDBGridMultiTitleExportNodeEh read FMultiTitleNode;
+  end;
+
+{ TDBGridEhToXlsMemFileExporter }
+
+  TDBGridEhToXlsMemFileExporter = class
+  private
+    FFromRow: Integer;
+    FFromCol: Integer;
+    FFinishRow: Integer;
+    FFinishCol: Integer;
+    FXlsFile: TXlsMemFileEh;
+    FWorksheet: TXlsWorksheetEh;
+    FGrid: TCustomDBGridEh;
+    FColCellParamsEh: TColCellParamsEh;
+
+    FExpCols: TColumnsEhList;
+
+    FExportOptions: TDBGridEhXlsMemFileExportOptions;
+
+    FGroupRowParams: TGroupRowParamsEh;
+    FGroupFooterParams: TGroupFooterParamsEh;
+    FInDataCellParams: TDBGridEhXlsMemFileExportInDataCellParamsEh;
+    FInFooterCellParams: TDBGridEhXlsMemFileExportFooterCellParams;
+    FInTitleCellParams: TDBGridEhXlsMemFileExportTitleCellParams;
+    FOutCellParams: TDBGridEhXlsMemFileExportCellParams;
+
+    function GetWorksheet: TXlsWorksheetEh;
+    function GetXlsFile: TXlsMemFileEh;
+    procedure SetWorksheet(const Value: TXlsWorksheetEh);
+    procedure SetXlsFile(const Value: TXlsMemFileEh);
+    procedure SetExportOptions(const Value: TDBGridEhXlsMemFileExportOptions);
+
+  protected
+    FooterValues: TFooterValues;
+    NextExportRowIndex: Integer;
+    GridHeaderTextRowCount: Integer;
+    TitleRowCount: Integer;
+    DataRowCount: Integer;
+    FooterRowCount: Integer;
+    ViewRowIndex: Integer;
+    FlatGroupingList: TObjectList;
+    InstantReadCurDataNode: TGroupDataTreeNodeEh;
+
+    function GetDefaultWorksheet: TXlsWorksheetEh; virtual;
+    function GetDefaultFromCol: Integer; virtual;
+    function GetDefaultFromRow: Integer; virtual;
+    function GetGridCellValue(Column: TColumnEh; AColCellParamsEh: TColCellParamsEh): Variant; virtual;
+    function GetFooterValue(FooterRowIndex, ColIndex: Integer): Variant; virtual;
+    function VCLDisplayFormatToXlsNumFormat(const VCLDisplayFormat: String): String; virtual;
+    function DataEof: Boolean; virtual;
+    function IsUseGroupingList: Boolean; virtual;
+
+
+    procedure InstantReadRecordEnter(DataRowIndex: Integer);
+    procedure InstantReadRecordLeave;
+    procedure InitDataEnumeration; virtual;
+    procedure FillDataGroupRowParams(AGroupNode: TGroupDataTreeNodeEh; AGroupRowParams: TGroupRowParamsEh); virtual;
+    procedure FillDataGroupFooterCellParams(AGroupNode: TGroupDataTreeNodeEh; AColumn: TColumnEh; AFooterColumnItem: TGridDataGroupFooterColumnItemEh; AGroupFooterParams: TGroupFooterParamsEh); virtual;
+    procedure FillDataCellParams(InCellParams: TDBGridEhXlsMemFileExportInDataCellParamsEh; OutCellParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure FillFooterCellParams(InCellParams: TDBGridEhXlsMemFileExportFooterCellParams; OutCellParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure FillTitleCellParams(InCellParams: TDBGridEhXlsMemFileExportTitleCellParams; OutCellParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure ReleaseDataEnumeration; virtual;
+    procedure SetFreezeTitleRows; virtual;
+    procedure WriteGroupCaptionRow; virtual;
+    procedure WriteGroupFooterRow; virtual;
+    procedure WriteGroupFooterCell(ColIndex: Integer; Column: TColumnEh); virtual;
+    procedure WriteColumns; virtual;
+    procedure WriteSheetAttributes; virtual;
+    procedure WriteGridHeader; virtual;
+    procedure WriteGridFooter; virtual;
+    procedure WritePrefix; virtual;
+    procedure WriteSuffix; virtual;
+    procedure WriteRecord; virtual;
+    procedure WriteTitle; virtual;
+    procedure WriteTitleCell(ColIndex: Integer; Column: TColumnEh; MultiTitleNode: TDBGridMultiTitleExportNodeEh); virtual;
+    procedure WriteDataCellFormat(XlsCellsRange: IXlsFileCellsRangeEh; InCellParams: TDBGridEhXlsMemFileExportInDataCellParamsEh; CellFormatParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure WriteDataCell(ColIndex: Integer; Column: TColumnEh; AColCellParamsEh: TColCellParamsEh); virtual;
+    procedure WriteTitleCellFormat(XlsCellsRange: IXlsFileCellsRangeEh; InCellParams: TDBGridEhXlsMemFileExportTitleCellParams; CellFormatParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure WriteFooter; virtual;
+    procedure WriteFooterRow(FooterNo: Integer); virtual;
+    procedure WriteFooterCell(FooterCellParams: TDBGridEhXlsMemFileExportFooterCellParams); virtual;
+    procedure WriteFooterCellFormat(XlsCellsRange: IXlsFileCellsRangeEh; InCellParams: TDBGridEhXlsMemFileExportFooterCellParams; CellFormatParams: TDBGridEhXlsMemFileExportCellParams); virtual;
+    procedure WriteDataLines; virtual;
+    procedure WriteFooterLines; virtual;
+    procedure WriteAutoFilter; virtual;
+    procedure WriteRowGrouping; virtual;
+
+    procedure DataFirst; virtual;
+    procedure GotoNextRow; virtual;
+    procedure DoExport; virtual;
+    procedure CalcFooterValues; virtual;
+
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+
+    procedure ExportGrid; virtual;
+
+    property Grid: TCustomDBGridEh read FGrid write FGrid;
+    property ExpCols: TColumnsEhList read FExpCols;
+
+    property ExportOptions: TDBGridEhXlsMemFileExportOptions read FExportOptions write SetExportOptions;
+    property XlsFile: TXlsMemFileEh read GetXlsFile write SetXlsFile;
+    property Worksheet: TXlsWorksheetEh read GetWorksheet write SetWorksheet;
+    property FromCol: Integer read FFromCol write FFromCol;
+    property FromRow: Integer read FFromRow write FFromRow;
+
+    property FinishCol: Integer read FFinishCol;
+    property FinishRow: Integer read FFinishRow;
+  end;
+
+  TDBGridEhToXlsMemFileExporterClass = class of TDBGridEhToXlsMemFileExporter;
+
+procedure ExportDBGridEhToXlsMemFile(DBGridEh: TCustomDBGridEh; XlsFile: TXlsMemFileEh); overload;
+
+procedure ExportDBGridEhToXlsMemFile(DBGridEh: TCustomDBGridEh; XlsFile: TXlsMemFileEh;
+  ExportOptions: TDBGridEhXlsMemFileExportOptions); overload;
+
+procedure ExportDBGridEhToXlsMemFile(DBGridEh: TCustomDBGridEh; XlsFile: TXlsMemFileEh;
+  ExportOptions: TDBGridEhXlsMemFileExportOptions; ExporterClass: TDBGridEhToXlsMemFileExporterClass); overload;
+
+implementation

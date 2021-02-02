@@ -1,0 +1,82 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{              Design window for TDBGridEh              }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+
+unit DefaultItemsCollectionEditorsEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils,
+{$IFDEF CIL}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DesignEditors,
+  Borland.Vcl.Design.ColnEdit,
+  Variants, Types,
+  EhLibVCLNET,
+{$ELSE}
+
+  {$IFDEF FPC}
+  EhLibLCL,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  Windows, Messages,
+  ColnEdit, DesignMenus,
+  Variants, DesignEditors, DesignIntf,
+  EhLibVCL, PSAPI, ToolsAPI,
+  ImgList, Menus, ActnList, ExtCtrls, ComCtrls,
+  ToolWin,
+  {$ENDIF}
+
+{$ENDIF}
+  Graphics, Controls, Forms, ToolCtrlsEh,
+  Classes, TypInfo;
+
+{$IFDEF FPC}
+{$ELSE}
+
+type
+
+  TDefaultItemsCollectionEditorEh = class(TCollectionEditor)
+    N1: TMenuItem;
+    AddAllFields1: TMenuItem;
+    RestoreDefaults1: TMenuItem;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    AddAllFieldsCmd: TAction;
+    RestoreDefaultsCmd: TAction;
+    procedure AddAllFieldsCmdExecute(Sender: TObject);
+    procedure RestoreDefaultsCmdExecute(Sender: TObject);
+    procedure AddAllFieldsCmdUpdate(Sender: TObject);
+    procedure RestoreDefaultsCmdUpdate(Sender: TObject);
+  private
+  protected
+    function CanAdd(Index: Integer): Boolean; override;
+  public
+  end;
+
+{ TDefaultItemsCollectionProperty }
+
+  TDefaultItemsCollectionProperty = class(TCollectionProperty)
+  public
+    function GetEditorClass: TCollectionEditorClass; override;
+  end;
+
+{$ENDIF}
+
+{$IFDEF FPC}
+{$ELSE}
+var
+  DefaultItemsCollectionEditor: TDefaultItemsCollectionEditorEh;
+{$ENDIF}
+
+implementation

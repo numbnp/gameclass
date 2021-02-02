@@ -1,0 +1,79 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{                  TSettingsKeeper class                }
+{                                                       }
+{    Copyright (c) 2017-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit SettingsKeepersEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Vcl.Graphics,
+{$IFDEF EH_LIB_17} System.UITypes, System.Generics.Collections, System.Generics.Defaults, {$ENDIF}
+{$IFDEF EH_LIB_20} System.JSON, {$ENDIF} 
+  System.Variants;
+
+{$IFDEF EH_LIB_20} 
+type
+  TSettingsKeeperDicEh = class(TDictionary<String, TObject>)
+  protected
+    procedure KeyNotify(const Key: String; Action: TCollectionNotification); override;
+    procedure ValueNotify(const Value: TObject; Action: TCollectionNotification); override;
+  end;
+
+{ TSettingsKeeperEh }
+
+  TSettingsKeeperEh = class(TObject)
+  private
+    FDic: TSettingsKeeperDicEh;
+  public
+    function ToArray: TArray<TPair<String, TObject>>;
+    function TryGetValue(const Key: String; out Value: TObject): Boolean;
+    function TryGetIntegerValue(const Key: String; out Value: Integer): Boolean;
+    function TryGetStringValue(const Key: String; out Value: String): Boolean;
+    function TryGetSubsettingsValue(const Key: String; out Value: TSettingsKeeperEh): Boolean;
+
+    procedure Add(const Key: String; const Value: String); overload;
+    procedure Add(const Key: String; const Value: Integer); overload;
+    procedure Add(const Key: String; const Value: TSettingsKeeperEh); overload;
+
+    constructor Create();
+    destructor Destroy(); override;
+  end;
+
+{ TJSONSettingsWriterEh }
+
+  TJSONSettingsWriterEh = class(TObject)
+    function GetAsJSON(Keeper: TSettingsKeeperEh):String;
+  end;
+
+{ TJSONSettingsReaderEh }
+
+  TJSONSettingsReaderEh = class(TObject)
+    procedure FillByJSON(Keeper: TSettingsKeeperEh; JSon: String);
+  end;
+
+{ TSettingsKeeperCollectionByIndexComparer }
+
+  TSettingsKeeperEhCollectionByIndexComparer = class(TCustomComparer<TPair<String,TObject>>)
+  private
+  public
+    class function Ordinal: TSettingsKeeperEhCollectionByIndexComparer;
+    function Compare(const Left, Right: TPair<String,TObject>): Integer; override;
+    function Equals(const Left, Right: TPair<String,TObject>): Boolean; override;
+    function GetHashCode(const Value: TPair<String,TObject>): Integer; override;
+  end;
+
+  function SettingsKeeperToJSONString(Keeper: TSettingsKeeperEh): String;
+  procedure JSONStringToSettingsKeeper(Keeper: TSettingsKeeperEh; JSon: String);
+
+{$ENDIF}
+
+implementation

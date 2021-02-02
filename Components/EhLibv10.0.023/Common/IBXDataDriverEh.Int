@@ -1,0 +1,205 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{              TIBXDataDriverEh component               }
+{                                                       }
+{     Copyright (c) 2003-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit IBXDataDriverEh;
+
+{$I EHLIB.INC}
+
+interface
+
+uses Windows, SysUtils, Classes, Controls, DB,
+  Variants, Contnrs,
+{$IFDEF EH_LIB_20}
+  IBX.IBCustomDataSet, IBX.IBDatabase, IBX.IBQuery, IBX.IBTable, IBX.IBStoredProc,
+{$ELSE}
+  IBCustomDataSet, IBDatabase, IBQuery, IBTable, IBStoredProc,
+{$ENDIF}
+  ToolCtrlsEh, DBCommon, MemTableDataEh, DataDriverEh;
+
+type
+
+  TIBXDataDriverEh = class;
+  TIBXConnectionProviderEh = class;
+
+{ TIBXCommandEh }
+
+  TIBXCommandEh = class(TBaseSQLCommandEh)
+  private
+    function GetDataDriver: TIBXDataDriverEh;
+  public
+    function Execute(var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    property DataDriver: TIBXDataDriverEh read GetDataDriver;
+  published
+    property Params;
+    property ParamCheck;
+    property CommandText;
+    property CommandType;
+  end;
+
+{ TIBXDataDriverEh }
+
+  TIBXDataDriverEh = class(TBaseSQLDataDriverEh)
+  private
+    FConnectionProvider: TIBXConnectionProviderEh;
+    FDatabase: TIBDatabase;
+    FIbsSpecOperations: TInterbaseSpecOperationsEh;
+    procedure SetConnectionProvider(const Value: TIBXConnectionProviderEh);
+    procedure SetDatabase(const Value: TIBDatabase);
+
+  protected
+    function CreateCommand: TCustomSQLCommandEh; override;
+    procedure SetAutoIncFields(Fields: TFields; DataStruct: TMTDataStructEh); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function CreateDesignCopy: TCustomSQLDataDriverEh; override;
+    function GetConnectionProvider: IConnectionProviderEh; override;
+    function HaveDataConnection(): Boolean; override;
+    function InternalGetServerSpecOperations: TServerSpecOperationsEh; override;
+
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    procedure DoServerSpecOperations(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); virtual;
+
+  published
+    property ConnectionProvider: TIBXConnectionProviderEh read FConnectionProvider write SetConnectionProvider;
+    property Database: TIBDatabase read FDatabase write SetDatabase;
+    property MacroVars;
+    property SelectCommand;
+    property SelectSQL;
+    property UpdateCommand;
+    property UpdateSQL;
+    property InsertCommand;
+    property InsertSQL;
+    property DeleteCommand;
+    property DeleteSQL;
+    property GetrecCommand;
+    property GetrecSQL;
+    property DynaSQLParams;
+    property ProviderDataSet;
+    property KeyFields;
+    property SpecParams;
+
+    property OnExecuteCommand;
+    property OnBuildDataStruct;
+    property OnGetBackUpdatedValues;
+    property OnProduceDataReader;
+    property OnAssignFieldValue;
+    property OnReadRecord;
+    property OnRefreshRecord;
+    property OnUpdateRecord;
+    property OnAssignCommandParam;
+    property OnUpdateError;
+  end;
+
+{ TIBXInlineConnectionEh }
+
+  TIBXInlineConnectionEh = class(TCustomInlineConnectionEh)
+  private
+    FConnectionProvider: TIBXConnectionProviderEh;
+    FDatabase: TIBDatabase;
+    FDefTransaction: TIBTransaction;
+    FUseAtRunTime: Boolean;
+
+    function GetDatabaseName: TIBFileName;
+    function GetDBParams: TStrings;
+    function GetSQLDialect: Integer;
+    function GetUseAtRunTime: Boolean;
+
+    procedure SetDatabaseName(const Value: TIBFileName);
+    procedure SetDBParams(const Value: TStrings);
+    procedure SetSQLDialect(const Value: Integer);
+    procedure SetUseAtRunTime(const Value: Boolean);
+
+  protected
+    function GetConnected: Boolean; override;
+    procedure SetDesignConnected(const Value: Boolean); override;
+    procedure BeforeInlineConnection(Sender: TObject);
+    procedure AfterInlineConnection(Sender: TObject);
+
+  public
+    constructor Create(AConnectionProvider: TIBXConnectionProviderEh);
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property ConnectionProvider: TIBXConnectionProviderEh read FConnectionProvider;
+    property DataBase: TIBDatabase read FDataBase;
+
+  published
+    property Connected;
+
+    property DatabaseName: TIBFileName read GetDatabaseName write SetDatabaseName;
+    property Params: TStrings read GetDBParams write SetDBParams;
+    property SQLDialect: Integer read GetSQLDialect write SetSQLDialect default 3;
+
+    property UseAtDesignTime;
+    property UseAtRunTime: Boolean read GetUseAtRunTime write SetUseAtRunTime default False;
+
+  end;
+
+{ TIBXConnectionProviderEh }
+
+  TIBXConnectionProviderEh = class(TConnectionProviderEh)
+  private
+    FDatabase: TIBDatabase;
+    FInlineConnection: TIBXInlineConnectionEh;
+    FInlineConnectionBeforeConnect: TNotifyEvent;
+    FInlineConnectionAfterConnect: TNotifyEvent;
+    procedure SetDatabase(const Value: TIBDatabase);
+    procedure SetInlineConnection(const Value: TIBXInlineConnectionEh);
+
+  protected
+    FDesignDataBase: TComponent;
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    function GetServerType: String; override;
+    procedure SetServerType(const Value: String); override;
+
+  public
+    {DesignTime stuff}
+    function GetDesignDataBase: TComponent; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DefaultExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; override;
+    function UseDesignDatabase: Boolean;
+    function CurrentTimeDatabase: TIBDatabase;
+
+  published
+    property Database: TIBDatabase read FDatabase write SetDatabase;
+    property InlineConnection: TIBXInlineConnectionEh read FInlineConnection write SetInlineConnection;
+    property ServerType read GetServerType write SetServerType stored False;
+
+    property OnExecuteCommand;
+    property OnGetBackUpdatedValues;
+    property OnGetServerSpecOperations;
+    property OnUpdateRecord;
+
+    property InlineConnectionBeforeConnect: TNotifyEvent read FInlineConnectionBeforeConnect write FInlineConnectionBeforeConnect;
+    property InlineConnectionAfterConnect: TNotifyEvent read FInlineConnectionAfterConnect write FInlineConnectionAfterConnect;
+  end;
+
+function DefaultExecuteIBXCommandEh(SQLDataDriver: TCustomSQLDataDriverEh;
+    Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean;
+    var Processed: Boolean; ADatabase: TIBDatabase): Integer;
+
+procedure DefaultUpdateIBXRecordEh(SQLDataDriver: TCustomSQLDataDriverEh;
+  MemTableData: TMemTableDataEh; MemRec: TMemoryRecordEh;
+  var Processed: Boolean; ADatabase: TIBDatabase);
+
+var
+  IBXConnectionProviderDesignService: IConnectionProviderDesignServiceEh;
+
+implementation

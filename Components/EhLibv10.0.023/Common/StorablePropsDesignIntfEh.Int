@@ -1,0 +1,123 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                  Storable properties                  }
+{                                                       }
+{   Copyright (c) 2012-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+
+{$I EhLib.Inc}
+
+unit StorablePropsDesignIntfEh;
+
+interface
+
+uses Classes, TypInfo,
+{$IFDEF CIL} Borland.Vcl.Design.DesignIntf,
+             Borland.Vcl.Design.DesignEditors,
+             Borland.Vcl.Design.VCLEditors, Variants,
+             EhLibVCLNET,
+{$ELSE}
+             EhLibVCL,
+{$ENDIF}
+  DesignIntf, DesignEditors, VCLEditors, Variants,
+  DBGridEh, GridEhEd, DBSumLst, PrViewEh, ComCtrls, SysUtils,
+  PropStorageEh, PropStorageEditEh, Windows, GridsEh,
+  DBCtrlsEh, PrnDbgEh, DBLookupEh, DB, ToolCtrlsEh, Controls,
+  DBGridEhGrouping, Dialogs, Graphics, DBVertGridsEh;
+
+type
+
+{ TStoreablePropsComponentProperty }
+
+  TStoreablePropsComponentProperty = class(TComponentProperty)
+  public
+    function GetValue: string; override;
+  end;
+
+  TGetSetStringValueEh = procedure(var Val: String) of object;
+
+  TGetBooleanValueEh = function(): Boolean of object;
+  TSetBooleanValueEh = procedure(const Val: Boolean) of object;
+
+{ TDefaultStateSubPropertyEh }
+
+  TDefaultStateSubPropertyEh = class(TNestedProperty
+ {$IFDEF EH_LIB_14}
+    ,ICustomPropertyDrawing ,ICustomPropertyDrawing80, ICustomPropertyMessage
+ {$ELSE}
+ {$ENDIF}
+    )
+  private
+    FGetDefValueProc: TGetBooleanValueEh;
+    FSetDefValueProc: TSetBooleanValueEh;
+    FStoredProperyName: String;
+  protected
+    constructor Create(Parent: TPropertyEditor; GetDefValueProc: TGetBooleanValueEh; SetDefValueProc: TSetBooleanValueEh); reintroduce; overload;
+    constructor Create(Parent: TPropertyEditor; StoredProperyName: String); reintroduce; overload;
+    function GetIsDefault: Boolean; override;
+  public
+    function AllEqual: Boolean; override;
+    function GetAttributes: TPropertyAttributes; override;
+    function GetName: string; override;
+    function GetValue: string; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+    procedure SetValue(const Value: string); override;
+
+  protected
+    function CBRect(const ItemRect: TRect) : TRect;
+  public
+    procedure PropDrawName(ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+    procedure PropDrawValue(ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+    function PropDrawNameRect(const ARect: TRect): TRect;
+    function PropDrawValueRect(const ARect: TRect): TRect;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; InNameRect: Boolean; const ItemRect: TRect; var Handled: Boolean);
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer; InNameRect: Boolean; const ItemRect: TRect; var Handled: Boolean);
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer; InNameRect: Boolean; const ItemRect: TRect; var Handled: Boolean);
+ {$IFDEF EH_LIB_14}
+    procedure HintShow(var HintInfo: THintInfo; InNameRect: Boolean; const ItemRect: TRect; var Handled: Boolean);
+ {$ELSE}
+ {$ENDIF}
+   end;
+
+{ TStoreableColorProperty }
+
+   TStoreableColorProperty = class(TColorProperty)
+   public
+     function GetAttributes: TPropertyAttributes; override;
+     procedure GetProperties(Proc: TGetPropProc); override;
+   end;
+
+{ TStoreableColorProperty }
+
+   TStoreableStringProperty = class(TStringProperty)
+   public
+     function GetAttributes: TPropertyAttributes; override;
+     procedure GetProperties(Proc: TGetPropProc); override;
+   end;
+
+{ TStoreableEnumProperty }
+
+   TStoreableEnumProperty = class(TEnumProperty)
+   public
+     function GetAttributes: TPropertyAttributes; override;
+     procedure GetProperties(Proc: TGetPropProc); override;
+   end;
+
+{ TStoreableBoolProperty }
+
+ {$IFDEF EH_LIB_14}
+   TStoreableBoolProperty = class(TBooleanProperty)
+ {$ELSE}
+   TStoreableBoolProperty = class(TEnumProperty)
+ {$ENDIF}
+   public
+     function GetAttributes: TPropertyAttributes; override;
+     procedure GetProperties(Proc: TGetPropProc); override;
+   end;
+
+procedure Register;
+
+implementation

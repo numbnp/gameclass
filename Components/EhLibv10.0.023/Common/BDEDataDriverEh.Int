@@ -1,0 +1,220 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{               TBDEDataDriverEh component              }
+{                                                       }
+{     Copyright (c) 2003-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit BDEDataDriverEh {$IFDEF CIL} platform{$ENDIF};
+
+{$I EHLIB.INC}
+
+interface
+
+{ TODO :
+  if (ResDataSet is TDBDataSet) and (TDBDataSet(ResDataSet).Database <> nil) then
+    Check(DbiGetProp(hDBIObj(TDBDataSet(ResDataSet).Database.Handle), drvNATIVESQLCA, @sqlca, SizeOf(tsqlca), res));
+does't work }
+
+uses Windows, SysUtils, Classes, Controls, DB,
+  Variants,  Contnrs,
+  ToolCtrlsEh, DBCommon, MemTableDataEh, DataDriverEh, DBTables;
+type
+
+  TBDEDataDriverEh = class;
+  TBDEConnectionProviderEh = class;
+
+{ TBDECommandEh }
+
+  TBDECommandEh = class(TBaseSQLCommandEh)
+  private
+    function GetDataDriver: TBDEDataDriverEh;
+  public
+    function Execute(var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    property DataDriver: TBDEDataDriverEh read GetDataDriver;
+  published
+    property Params;
+    property ParamCheck;
+    property CommandText;
+    property CommandType;
+  end;
+
+{ TBDEDataDriverEh }
+
+  TBDEDataDriverEh = class(TBaseSQLDataDriverEh)
+  private
+    FConnectionProvider: TBDEConnectionProviderEh;
+    FDatabaseName: string;
+    FServerSpecOperations: TServerSpecOperationsEh;
+    FSessionName: string;
+
+    function GetDBSession: TSession;
+
+    procedure SetConnectionProvider(const Value: TBDEConnectionProviderEh);
+    procedure SetDatabaseName(const Value: string);
+    procedure SetSessionName(const Value: string);
+
+  protected
+    function CreateCommand: TCustomSQLCommandEh; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure SetAutoIncFields(Fields: TFields; DataStruct: TMTDataStructEh); override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function InternalGetServerSpecOperations: TServerSpecOperationsEh; override;
+    function CreateDesignCopy: TCustomSQLDataDriverEh; override;
+    function GetConnectionProvider: IConnectionProviderEh; override;
+    function HaveDataConnection(): Boolean; override;
+
+    procedure DefaultGetUpdatedServerValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    procedure DoServerSpecOperations(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); virtual;
+
+    property DBSession: TSession read GetDBSession;
+    property SessionName: string read FSessionName write SetSessionName;
+  published
+    property ConnectionProvider: TBDEConnectionProviderEh read FConnectionProvider write SetConnectionProvider;
+    property DatabaseName: string read FDatabaseName write SetDatabaseName;
+    property MacroVars;
+    property SelectCommand;
+    property SelectSQL;
+    property UpdateCommand;
+    property UpdateSQL;
+    property InsertCommand;
+    property InsertSQL;
+    property DeleteCommand;
+    property DeleteSQL;
+    property GetrecCommand;
+    property GetrecSQL;
+    property DynaSQLParams;
+    property ProviderDataSet;
+    property KeyFields;
+    property SpecParams;
+
+    property OnExecuteCommand;
+    property OnBuildDataStruct;
+    property OnGetBackUpdatedValues;
+    property OnProduceDataReader;
+    property OnAssignFieldValue;
+    property OnReadRecord;
+    property OnRefreshRecord;
+    property OnUpdateRecord;
+    property OnAssignCommandParam;
+    property OnUpdateError;
+  end;
+
+{ TBDEInlineConnectionEh }
+
+  TBDEInlineConnectionEh = class(TCustomInlineConnectionEh)
+  private
+    FConnectionProvider: TBDEConnectionProviderEh;
+    FDatabase: TDatabase;
+    FUseAtRunTime: Boolean;
+
+    function GetAliasName: string;
+    function GetDatabaseName: string;
+    function GetDriverName: string;
+    function GetParams: TStrings;
+    function GetReadOnly: Boolean;
+    function GetUseAtRunTime: Boolean;
+
+    procedure SetAliasName(const Value: string);
+    procedure SetDatabaseName(const Value: string);
+    procedure SetDriverName(const Value: string);
+    procedure SetParams(const Value: TStrings);
+    procedure SetReadOnly(const Value: Boolean);
+    procedure SetUseAtRunTime(const Value: Boolean);
+  protected
+
+    function GetConnected: Boolean; override;
+
+    procedure BeforeInlineConnection(Sender: TObject);
+    procedure AfterInlineConnection(Sender: TObject);
+    procedure SetDesignConnected(const Value: Boolean); override;
+
+  public
+    constructor Create(AConnectionProvider: TBDEConnectionProviderEh);
+    destructor Destroy; override;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property ConnectionProvider: TBDEConnectionProviderEh read FConnectionProvider;
+    property DataBase: TDataBase read FDataBase;
+  published
+    property Connected;
+
+    property AliasName: string read GetAliasName write SetAliasName;
+    property DatabaseName: string read GetDatabaseName write SetDatabaseName;
+    property DriverName: string read GetDriverName write SetDriverName;
+    property Params: TStrings read GetParams write SetParams;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
+
+    property UseAtDesignTime;
+    property UseAtRunTime: Boolean read GetUseAtRunTime write SetUseAtRunTime default False;
+
+  end;
+
+{ TBDEConnectionProviderEh }
+
+  TBDEConnectionProviderEh = class(TConnectionProviderEh)
+  private
+    FDatabase: TDatabase;
+    FInlineConnection: TBDEInlineConnectionEh;
+    FServerType: String;
+    FInlineConnectionBeforeConnect: TNotifyEvent;
+    FInlineConnectionAfterConnect: TNotifyEvent;
+
+    procedure SetDatabase(const Value: TDatabase);
+    procedure SetInlineConnection(const Value: TBDEInlineConnectionEh);
+
+  protected
+    FDesignDataBase: TComponent;
+    FDynaServerSpecOperations: TServerSpecOperationsEh;
+
+    function GetServerType: String; override;
+    function IsServerTypeStored: Boolean;
+
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure SetServerType(const Value: String); override;
+
+  public
+    {DesignTime stuff}
+    function GetDesignDataBase: TComponent; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function GetServerTypeNameByDatabaseType: String;
+    function DefaultExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; override;
+    function GetServerSpecOperations: TServerSpecOperationsEh; override;
+    function GetDynaServerSpecOperations: TServerSpecOperationsEh;
+    function UseDesignDatabase: Boolean;
+    function CurrentTimeDatabase: TDatabase;
+
+  published
+    property Database: TDatabase read FDatabase write SetDatabase;
+    property InlineConnection: TBDEInlineConnectionEh read FInlineConnection write SetInlineConnection;
+    property ServerType stored IsServerTypeStored;
+
+    property OnExecuteCommand;
+    property OnGetBackUpdatedValues;
+    property OnGetServerSpecOperations;
+    property OnUpdateRecord;
+
+    property InlineConnectionBeforeConnect: TNotifyEvent read FInlineConnectionBeforeConnect write FInlineConnectionBeforeConnect;
+    property InlineConnectionAfterConnect: TNotifyEvent read FInlineConnectionAfterConnect write FInlineConnectionAfterConnect;
+  end;
+
+function DefaultExecuteBDECommandEh(SQLDataDriver: TCustomSQLDataDriverEh;
+    Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean;
+    var Processed: Boolean; ADatabaseName: String): Integer;
+
+var
+  BDEConnectionProviderDesignService: IConnectionProviderDesignServiceEh;
+
+implementation

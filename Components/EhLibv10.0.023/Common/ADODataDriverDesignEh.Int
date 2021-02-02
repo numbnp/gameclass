@@ -1,0 +1,128 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{                 TADODesignDataBaseEh                  }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit ADODataDriverDesignEh;
+
+{$I EHLIB.INC}
+
+interface
+
+{$IFDEF CIL}
+
+{$R ADODataDriverEh.TADODataDriverEh.bmp}
+
+{$ENDIF}
+
+uses Windows, SysUtils, Classes, Controls, DB, Variants, Contnrs,
+  EhLibVCL,
+  ToolCtrlsEh, DBCommon, MemTableDataEh, DataDriverEh, ADODB, Dialogs,
+  SQLDriverEditEh, ADODataDriverEh, ComCtrls, MemTableEh, Forms,
+  UpdateSQLEditEh;
+
+type
+
+{ TADODesignDataBaseEh }
+
+  TADODesignDataBaseEh = class(TDesignDataBaseEh)
+  private
+    FTablesMT: TMemTableEh;
+    FColumnsMT: TMemTableEh;
+    FConnection: TADOConnection;
+    FTreeNodeMan: TCustomDBService;
+    FDBServiceClass: TCustomDBServiceClass;
+    FSpecParamsServiceClass: TCustomDBServiceClass;
+    FApplicationConnection: TADOConnection;
+    procedure SetApplicationConnection(const Value: TADOConnection);
+
+  protected
+    function GetConnected: Boolean; override;
+    procedure SetConnected(const Value: Boolean); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+  public
+    constructor Create(IsPublicDataBase: Boolean; AConProvider: TComponent); override;
+    destructor Destroy; override;
+
+    function BuildObjectTree(List: TObjectList): Boolean; override;
+    function BuildOracleObjectTree(TreeView: TTreeView): Boolean;
+    function BuildUpdates(DataDriver: TCustomSQLDataDriverEh): Boolean; override;
+    function CanBuildTreeDataSet(var StrReasonOfInable: String): Boolean; override;
+    function CanFormSpecParamsList(var StrReasonOfInable: String): Boolean; override;
+    function CreateDesignCopy(RTDataDriver: TCustomSQLDataDriverEh): TCustomSQLDataDriverEh; override;
+    function CreateReader(SQL: String; FParams: TParamsArr): TDataSet; override;
+    function Description: String; override;
+    function DesignDataBaseConnetionEqual(DataDriver: TCustomSQLDataDriverEh): Boolean; override;
+    function Execute(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    function GetConnection: TADOConnection;
+    function GetConProvider: TADOConnectionProviderEh;
+    function GetCustomDBService: TCustomDBService; override;
+    function GetEngineName: String; override;
+    function GetFieldList(const TableName: string; DataSet: TDataSet): Boolean; override;
+    function GetIADOConProvider: IADOConnectionProviderEh;
+    function GetSpecParamsList: String; override;
+    function ServerTypeName: String;
+    function SupportCustomSQLDataDriver: Boolean; override;
+
+    procedure EditDatabaseParams; override;
+    procedure SetServerTypeAsServerSpecOperationsClass(const Value: TServerSpecOperationsEhClass); override;
+
+    property DBServiceClass: TCustomDBServiceClass read FDBServiceClass;
+    property ApplicationConnection: TADOConnection read FApplicationConnection write SetApplicationConnection;
+  end;
+
+{ TADOAccessEngineEh }
+
+  TADOAccessEngineEh = class(TAccessEngineEh)
+    function AccessEngineName: String; override;
+    function CreateDesignDataBase(DataDriver: TCustomSQLDataDriverEh; DBServiceClass: TCustomDBServiceClass; DataBaseName: String): TDesignDataBaseEh; override;
+  end;
+
+{ TADODesignDataBaseEh }
+
+  TADOUniService = class(TCustomDBService)
+  private
+    FDesignDB: TDesignDataBaseEh;
+    FSpecPraramsService: TCustomDBService;
+    FNoAskForSpecPraramsService: Boolean;
+  protected
+    function CreateReader(SQL: String; FParams: TParamsArr): TDataSet; override;
+  public
+    constructor Create(ADesignDB: TDesignDataBaseEh); override;
+    destructor Destroy; override;
+
+    class function GetDBServiceName: String; override;
+    function GetSpecParamsList: String; override;
+    function ShowPopup(Source: TObject; Coord: TPoint; Params: TServicePopupParams): Integer; override;
+
+    procedure GenGetSpecParams(DesignUpdateParams: TDesignUpdateParamsEh; DesignUpdateInfo: TDesignUpdateInfoEh); override;
+  end;
+
+{ TADODataDriverEditInteractorEh }
+
+  TADODataDriverEditInteractorEh = class(TDataDriverEditInteractorEh)
+    class procedure AssignEditDataToCommant(SQLText: String; mtParams: TMemTableEh; Command: TCustomSQLCommandEh); override;
+    class procedure AssignCommantToEditData(Command: TCustomSQLCommandEh; SQLText: String; mtParams: TMemTableEh); override;
+    class procedure RefreshParams(Command: TCustomSQLCommandEh; SQLEditWin:TSQLDataEditWin); override;
+    class procedure DesignDataBaseReassigned(SQLEditWin: TSQLDataEditWin); override;
+  end;
+
+{ TADOConnectionProviderDesignSerivceEh }
+
+  TADOConnectionProviderDesignSerivceEh = class(TConnectionProviderDesignSerivceEh)
+    function EditDesignData(ConnectionProvider: TConnectionProviderEh): Boolean; override;
+    function CreateDesignDataBase(ConnectionProvider: TComponent): TComponent; override;
+  end;
+
+procedure UnregisterADOAccessEngines;
+procedure RegisterADOAccessEngines;
+
+procedure Register;
+
+implementation

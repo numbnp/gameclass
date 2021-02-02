@@ -1,0 +1,122 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{          Design Time module for DropDown Forms        }
+{                                                       }
+{    Copyright (c) 1913-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit EhLibDesignForms;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ToolCtrlsEh, DynVarsEh, DropDownFormEh,
+  DesignIntf, DesignEditors, ToolsAPI;
+
+type
+
+  TCustomDropDownFormEhWizard = class(TNotifierObject, IOTAWizard,
+    IOTAFormWizard, IOTARepositoryWizard, IOTANotifier,
+{$IFDEF EH_LIB_10}IOTARepositoryWizard80, {$ENDIF}
+    IOTACreator, IOTAModuleCreator)
+  private
+    FUnitIdent: String;
+    FClassName: String;
+    FFileName: String;
+    FProj: IOTAProject;
+  public
+    { IOTAWizard }
+    function GetIDString: string;
+    function GetName: string;
+    function GetState: TWizardState;
+    procedure Execute;
+
+{$IFDEF EH_LIB_10}
+    { IOTARepositoryWizard80 }
+    function GetGalleryCategory: IOTAGalleryCategory;
+    function GetPersonality: string;
+    function GetDesigner: string;
+{$ENDIF}
+
+    { IOTAFormWizard }
+    function GetAuthor: string;
+    function GetComment: string;
+    function GetPage: string;
+    function GetGlyph: Cardinal;
+
+    { IOTACreator }
+    function GetCreatorType: string;
+    function GetExisting: Boolean;
+    function GetFileSystem: string;
+    function GetOwner: IOTAModule;
+    function GetUnnamed: Boolean;
+
+    { IOTAModuleCreator }
+    function GetAncestorName: string;
+    function GetImplFileName: string;
+    function GetIntfFileName: string;
+    function GetFormName: string;
+    function GetMainForm: Boolean;
+    function GetShowForm: Boolean;
+    function GetShowSource: Boolean;
+    function NewFormFile(const FormIdent, AncestorIdent: string): IOTAFile;
+    function NewImplSource(const ModuleIdent, FormIdent, AncestorIdent: string): IOTAFile;
+    function NewIntfSource(const ModuleIdent, FormIdent, AncestorIdent: string): IOTAFile;
+    procedure FormCreated(const FormEditor: IOTAFormEditor);
+
+  end;
+
+{ TCustomDropDownFormEhEditor }
+
+  TCustomDropDownFormEhEditor = class(TSelectionEditor)
+  public
+    procedure RequiresUnits(Proc: TGetStrProc); override;
+  end;
+
+{ TUnitFile }
+
+  TUnitFile = class(TInterfacedObject, IOTAFile)
+  private
+    FModuleName: string;
+    FFormName: string;
+    FAncestorName: string;
+  protected
+    function GetSource: string;
+    function GetAge: TDateTime;
+  public
+    constructor Create(const ModuleName, FormName, AncestorName: string);
+  end;
+
+{ TFormFile }
+
+  TFormFile = class(TInterfacedObject, IOTAFile)
+  private
+    FModuleName: string;
+    FFormName: string;
+    FAncestorName: string;
+  protected
+    function GetSource: string;
+    function GetAge: TDateTime;
+  public
+    constructor Create(const ModuleName, FormName, AncestorName: string);
+  end;
+
+{ TProjectFormClassNames }
+
+type
+  TProjectFormClassNames = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+procedure Register;
+
+implementation

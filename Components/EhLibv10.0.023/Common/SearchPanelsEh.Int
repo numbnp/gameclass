@@ -1,0 +1,236 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{            SearchPanel for Grids and lists            }
+{                                                       }
+{   Copyright (c) 2016-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit SearchPanelsEh;
+
+interface
+
+uses
+  {$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+  EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows, UxTheme,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, SqlTimSt, Windows, UxTheme,
+  {$ENDIF}
+  Messages, Forms, SysUtils, Classes, Controls,
+  Variants, Types, Themes,
+  DBCtrlsEh, ToolCtrlsEh,
+  Graphics, DBCtrls, ExtCtrls, Db, Buttons, ImgList, Menus;
+
+type
+  TSearchPanelRes = class(TDataModule)
+    IMList10: TImageList;
+    IMList10D: TImageList;
+    IMList12_D: TImageList;
+    IMList12: TImageList;
+    IMList10Bmp: TImageList;
+    IMList10DBmp: TImageList;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    function GetIMList10: TImageList;
+    function GetIMList10Disabled: TImageList;
+  end;
+
+  TSearchPanelControlEh = class;
+
+  TDBGridEhNavigatorFindBtn = (gnfbSearchInfoBoxEh, gnfbCancelSearchFilterEh, gnfbFindNextEh, gnfbFindPrevEh, gnfbOptionsEh);
+  TDBGridEhNavigatorFindBtns = set of TDBGridEhNavigatorFindBtn;
+
+  TSearchPanelLocationEh = (splGridTopEh, splHorzScrollBarExtraPanelEh, splExternal, splCellInplaceEh);
+
+{ TNavFindButtonEh }
+
+  TNavFindButtonEh = class(TCustomSpeedButtonEh)
+  private
+    FIndex: TDBGridEhNavigatorFindBtn;
+    FOnPostMouseDown: TMouseEvent;
+  protected
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure Paint; override;
+
+    procedure DrawInfoText;
+  public
+    property Index: TDBGridEhNavigatorFindBtn read FIndex write FIndex;
+    property OnPostMouseDown: TMouseEvent read FOnPostMouseDown write FOnPostMouseDown;
+  end;
+
+  { TDBGridSearchPanelTextEditEh }
+
+  TSearchPanelTextEditEh = class(TDBComboBoxEh)
+  private
+    
+    FInternalChanging: Boolean;
+    FIsEmptyState: Boolean;
+    FMiniHeight: Boolean;
+    FOnUpdateModified: TNotifyEvent;
+    FTextAppliedAsFilter: Boolean;
+    FMRUEditButton: TEditButtonEh;
+
+    function GetSearchPanelControl: TSearchPanelControlEh;
+
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+
+    procedure SetIsEmptyState(const Value: Boolean);
+
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
+    {$ENDIF}
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure SetTextAppliedAsFilter(const Value: Boolean);
+
+  protected
+    function CalcAutoHeight: Integer;
+    function GetBorderColor: TColor; virtual;
+
+    procedure CalcEditRect(var ARect: TRect); override;
+    procedure Change; override;
+    procedure CheckAddTextToList;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure DoEnter; override;
+    procedure DoExit; override;
+    procedure DoChangeAction; virtual;
+    procedure DrawNonClientBorder; virtual;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure SpecInternalSetText(const AText: String);
+    procedure UpdateModified;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); override;
+
+    procedure WndProc(var Message: TMessage); override;
+
+    procedure MRUListActiveChanged(Sender: TObject); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure ApplySearchFilter;
+    procedure ClearSearchFilter;
+    procedure CancelSearchEditorMode;
+    procedure CancelFilter;
+    procedure CheckAddTextToMRUList; virtual;
+
+    
+    property IsEmptyState: Boolean read FIsEmptyState write SetIsEmptyState;
+    property SearchPanelControl: TSearchPanelControlEh read GetSearchPanelControl;
+    property MiniHeight: Boolean read FMiniHeight write FMiniHeight;
+    property OnUpdateModified: TNotifyEvent read FOnUpdateModified write FOnUpdateModified;
+    property TextAppliedAsFilter: Boolean read FTextAppliedAsFilter write SetTextAppliedAsFilter;
+  end;
+
+{ TSearchPanelControlEh }
+
+  TSearchPanelControlEh = class(TCustomControl)
+  private
+    ButtonWidth: Integer;
+    FFindEditor: TSearchPanelTextEditEh;
+    FLocation: TSearchPanelLocationEh;
+    MinBtnSize: TPoint;
+    FTestMenuItem: TMenuItemEh;
+
+    procedure SetLocation(const Value: TSearchPanelLocationEh);
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
+    {$ENDIF}
+    procedure WMSize(var Message: TWMSize);  message WM_SIZE;
+    function GetFindButtons(FindBtn: TDBGridEhNavigatorFindBtn): TNavFindButtonEh;
+
+  protected
+    FFindButtons: array[TDBGridEhNavigatorFindBtn] of TNavFindButtonEh;
+
+    function CalcSearchInfoBoxWidth: Integer; virtual;
+    function CancelSearchFilterEnable: Boolean; virtual;
+    function CreateSearchPanelTextEdit: TSearchPanelTextEditEh; virtual;
+    function GetMasterControlSearchEditMode: Boolean; virtual;
+    function GetSearchInfoBoxText: String; virtual;
+    function IsOptionsButtonVisible: Boolean; virtual;
+    function MasterControlFilterEnabled: Boolean; virtual;
+
+    procedure AcquireMasterControlFocus; virtual;
+    procedure BtnMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure BuildOptionsPopupMenu(var PopupMenu: TPopupMenu); virtual;
+    procedure ClickHandler(Sender: TObject); virtual;
+    procedure CreateWnd; override;
+    procedure DrawNonClientBorder; virtual;
+    procedure FindBtnClick(Index: TDBGridEhNavigatorFindBtn); virtual;
+    procedure FindEditorKeyDown(var Key: Word; Shift: TShiftState); virtual;
+    procedure FindEditorKeyPress(var Key: Char); virtual;
+    procedure FindEditorKeyUp(var Key: Word; Shift: TShiftState); virtual;
+    procedure FindEditorUpdateModified(Sender: TObject);
+    procedure FindEditorUserChanged; virtual;
+    procedure FindNext;
+    procedure FindPrev;
+    procedure MasterControlApplySearchFilter; virtual;
+    procedure MasterControlCancelSearchEditorMode; virtual;
+    procedure MasterControlFindNext; virtual;
+    procedure MasterControlFindPrev; virtual;
+    procedure MasterControlProcessFindEditorKeyDown(var Key: Word; Shift: TShiftState); virtual;
+    procedure MasterControlProcessFindEditorKeyPress(var Key: Char); virtual;
+    procedure MasterControlProcessFindEditorKeyUp(var Key: Word; Shift: TShiftState); virtual;
+    procedure MasterControlRestartFind; virtual;
+    procedure OptionsButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
+    procedure Paint; override;
+    procedure Resize; override;
+    procedure RestartFind;
+    procedure SetGetMasterControlSearchEditMode(Value: Boolean); virtual;
+    procedure SetSize(var W: Integer; var H: Integer);
+
+  public
+
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function CalcAutoHeight: Integer;
+    function CalcAutoWidthForHeight(ANewHeight: Integer): Integer;
+    function CanPerformSearchActionInMasterControl: Boolean; virtual;
+    function GetSearchingText: String;
+    function GetFindEditorBorderColor: TColor; virtual;
+    function GetBorderColor: TColor; virtual;
+    function IsSearchingState: Boolean;
+    function FilterOnTyping: Boolean; virtual;
+    function FilterEnabled: Boolean; virtual;
+
+    procedure CancelSearchEditorMode; virtual;
+    procedure ClearSearchFilter; virtual;
+    procedure ApplySearchFilter; virtual;
+    procedure GetPaintColors(var FromColor, ToColor, HighlightColor: TColor); virtual;
+
+    procedure InitItems;
+    procedure ResetVisibleControls;
+    procedure RealignControls; virtual;
+    procedure UpdateLanguageVars; virtual;
+
+    property FindButtons[FindBtn: TDBGridEhNavigatorFindBtn]: TNavFindButtonEh read GetFindButtons;
+    property FindEditor: TSearchPanelTextEditEh read FFindEditor;
+    property Location: TSearchPanelLocationEh read FLocation write SetLocation default splGridTopEh;
+    property MasterControlSearchEditMode: Boolean read GetMasterControlSearchEditMode write SetGetMasterControlSearchEditMode;
+  end;
+
+var
+  SearchPanelRes: TSearchPanelRes;
+
+implementation

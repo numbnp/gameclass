@@ -1,0 +1,64 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{              TPrintPivotGridEh component              }
+{                                                       }
+{   Copyright (c) 2015-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit PrintPivotGridsEh;
+
+interface
+
+{$I EhLib.Inc}
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls,
+  EhLibVCL, Types,
+{$IFDEF EH_LIB_17} System.Contnrs, {$ENDIF}
+  StdCtrls, ImgList, Forms, DB, Variants,
+  PivotGridsEh, PrintUtilsEh, PrntsEh, PrViewEh, GridsEh, ToolCtrlsEh;
+
+type
+
+{ TPivotGridPrintServiceEh }
+
+  TPivotGridPrintServiceEh = class(TCustomPivotGridPrintServiceEh)
+  private
+
+  protected
+    function CheckDrawLine(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var Color: TColor; var Width: Integer): Boolean; override;
+    function GetControlCanvas: TCanvas; override;
+
+    procedure PrintCellData(ACol, ARow: Integer; ARect: TRect); override;
+    procedure SetColRowSize; override;
+
+    procedure DrawFieldNameCell(ACol, ARow: Integer; ARect: TRect; PivotCel: TPivotCellEh); virtual;
+    procedure DrawDataCell(ACol, ARow: Integer; ARect: TRect; PivotCel: TPivotCellEh); virtual;
+    procedure DrawAxisValueCell(ACol, ARow: Integer; ARect: TRect; PivotCel: TPivotCellEh); virtual;
+    procedure DrawAxisValueCellData(ACol, ARow: Integer; ARect: TRect; PivotCel: TPivotCellEh; ShowGroupingSign, ShowValue: Boolean); virtual;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure PrintTo(VPrinter: TVirtualPrinter); override;
+
+  published
+
+    property Scale;
+    property FitToPagesWide;
+    property FitToPagesTall;
+    property ScalingMode;
+    property Orientation;
+    property ColorSchema;
+    property PageFooter;
+    property PageHeader;
+    property PageMargins;
+    property TextBeforeContent;
+    property TextAfterContent;
+
+  end;
+
+implementation

@@ -1,0 +1,40 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{   Export DBVertGridEh into XML Spreadsheet Format     }
+{                                                       }
+{    Copyright (c) 2014-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit DBVertGridEhXMLSpreadsheetExp;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, GridsEh, Controls,
+  Variants,
+{$IFDEF EH_LIB_17} System.UITypes, System.Contnrs, {$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Runtime.InteropServices, System.Reflection,
+{$ELSE}
+  {$IFDEF FPC}
+    EhLibLCL, LCLType,
+    {$IFDEF FPC_CROSSP}
+      LCLIntf,
+    {$ELSE}
+      Windows, Win32Extra,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, Messages, SqlTimSt,
+  {$ENDIF}
+{$ENDIF}
+    DBAxisGridsEh, DBVertGridsEh, Db, XMLSpreadsheetFormatEh;
+
+procedure DBVertGridEh_ExportToStreamAsXMLSpreadsheet(DBVertGridEh: TCustomDBVertGridEh;
+  Stream: TStream; Options: TExportAsXMLSpShOptionsEh; ForWholeGrid: Boolean);
+
+implementation

@@ -1,0 +1,1006 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                 TMemTableEh component                 }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit MemTableEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses SysUtils, Classes, Controls, Forms, DB, Dialogs, Types,
+  Variants, Contnrs,
+{$IFDEF EH_LIB_17} System.Generics.Collections, Winapi.ActiveX, {$ENDIF}
+{$IFDEF CIL}
+  System.Runtime.InteropServices,
+  EhLibVCLNET,
+{$ELSE}
+
+{$IFDEF FPC}
+  EhLibLCL, LCLType, LMessages,
+{$ELSE}
+  EhLibVCL, DBCommon, Windows,
+{$ENDIF}
+
+{$ENDIF}
+  ToolCtrlsEh, MemTableDataEh, DataDriverEh, MemTreeEh,
+  Messages;
+
+type
+
+  TCustomMemTableEh = class;
+  TMemTableFiltersEh = class;
+
+  TLoadMode = (lmCopy, lmAppend, lmCopyStructureOnly);
+
+  TMemTableLoadOptionEh = (tloUseCachedUpdatesEh, tloDisregardFilterEh,
+    tloOpenOnLoad);
+  TMemTableLoadOptionsEh = set of TMemTableLoadOptionEh;
+
+  TDfmStreamFormatEh = (dfmBinaryEh, dfmTextEh);
+
+  TFieldTypesEh = set of TFieldType;
+
+{ TMasterDataLinkEh }
+
+  TMasterDataLinkEh = class(TDetailDataLink)
+  private
+    FDataSet: TDataSet;
+    FFieldNames: string;
+    FFields: TFieldListEh;
+    FOnMasterChange: TNotifyEvent;
+    FOnMasterDisable: TNotifyEvent;
+    procedure SetFieldNames(const Value: string);
+  protected
+    function GetDetailDataSet: TDataSet; override;
+    procedure ActiveChanged; override;
+    procedure CheckBrowseMode; override;
+    procedure LayoutChanged; override;
+    procedure RecordChanged(Field: TField); override;
+  public
+    constructor Create(DataSet: TDataSet);
+    destructor Destroy; override;
+    property FieldNames: string read FFieldNames write SetFieldNames;
+    property Fields: TFieldListEh read FFields;
+    property OnMasterChange: TNotifyEvent read FOnMasterChange write FOnMasterChange;
+    property OnMasterDisable: TNotifyEvent read FOnMasterDisable write FOnMasterDisable;
+  end;
+
+{ TMemTableTreeListEh }
+
+  TMemTableTreeListEh = class(TPersistent)
+  private
+    FMemTable: TCustomMemTableEh;
+    FLoadingActive: Boolean;
+    function GetActive: Boolean;
+    function GetDefaultNodeExpanded: Boolean;
+    function GetDefaultNodeHasChildren: Boolean;
+    function GetFilterNodeIfParentVisible: Boolean;
+    function GetFullBuildCheck: Boolean;
+    function GetKeyFieldName: String;
+    function GetRefParentFieldName: String;
+    procedure SetActive(const Value: Boolean);
+    procedure SetDefaultNodeExpanded(const Value: Boolean);
+    procedure SetDefaultNodeHasChildren(const Value: Boolean);
+    procedure SetFilterNodeIfParentVisible(const Value: Boolean);
+    procedure SetFullBuildCheck(const Value: Boolean);
+    procedure SetKeyFieldName(const Value: String);
+    procedure SetRefParentFieldName(const Value: String);
+  public
+    constructor Create(AMemTable: TCustomMemTableEh);
+    function Locate(const KeyFields: string; const KeyValues: Variant; Options: TLocateOptions): Boolean; virtual;
+    procedure FullCollapse; virtual;
+    procedure FullExpand; virtual;
+  published
+    property Active: Boolean read GetActive write SetActive default False;
+    property KeyFieldName: String read GetKeyFieldName write SetKeyFieldName;
+    property RefParentFieldName: String read GetRefParentFieldName write SetRefParentFieldName;
+    property DefaultNodeExpanded: Boolean read GetDefaultNodeExpanded write SetDefaultNodeExpanded default False;
+    property DefaultNodeHasChildren: Boolean read GetDefaultNodeHasChildren write SetDefaultNodeHasChildren default False;
+    property FullBuildCheck: Boolean read GetFullBuildCheck write SetFullBuildCheck default True;
+    property FilterNodeIfParentVisible: Boolean read GetFilterNodeIfParentVisible write SetFilterNodeIfParentVisible default True;
+  end;
+
+  { TMTStringFieldEh }
+
+  TMTStringFieldEh = class(TStringField, ICalcFieldEh)
+  public
+    function CanModifyWithoutEditMode: Boolean;
+    procedure Clear; override;
+  end;
+
+{ TCustomMemTableEh }
+
+  TMasterDetailSideEh = (mdsOnSelfEh, mdsOnProviderEh, mdsOnSelfAfterProviderEh);
+
+  TMTUpdateActionEh = (uaFailEh, uaAbortEh, uaSkipEh, uaRetryEh, uaApplyEh, uaAppliedEh);
+
+  TMTUpdateRecordEventEh = procedure(DeltaDataSet: TDataSet; UpdateKind: TUpdateKind;
+    var UpdateAction: TMTUpdateActionEh) of object;
+
+  TMTFetchRecordEventEh = procedure(PacketDataSet: TDataSet; var ProviderEOF,
+    Applied: Boolean) of object;
+
+  TMTRefreshRecordEventEh = procedure(PacketDataSet: TDataSet; var Applied: Boolean)
+    of object;
+
+  TMTTreeNodeExpandingEventEh = procedure(Sender: TObject; RecNo: Integer;
+    var AllowExpansion: Boolean) of object;
+
+  TRecordsViewTreeNodeExpandingEventEh = procedure (Sender: TObject; Node: TMemRecViewEh;
+    var AllowExpansion: Boolean) of object;
+
+  TRecordsViewTreeNodeExpandedEventEh = procedure (Sender: TObject; Node: TMemRecViewEh) of object;
+
+  TRecordsViewCheckMoveNodeEventEh = function (Sender: TObject;
+    SourceNode, AppointedParent: TMemRecViewEh; AppointedIndex: Integer): Boolean of object;
+
+  TMemTableChangeFieldValueEventEh = procedure (MemTable: TCustomMemTableEh;
+    Field: TField; var Value: Variant) of object;
+
+  TGetOrderVarValueProcEh = procedure (var VarValue: Variant;
+    Index: Integer)  of object;
+
+  TFBRecBufValues = array of Variant;
+
+  TBookmarkDataEh = record
+    {$IFDEF NEXTGEN} [Unsafe] {$ENDIF} MemRec: TMemoryRecordEh;
+    RecViewIndex: Integer;
+    InSortedListIndex: Integer;
+  end;
+  PBookmarkDataEh = ^TBookmarkDataEh;
+
+{ TMTRecBuf }
+
+  TMTRecBuf = class(TObject)
+  private
+  public
+    InUse: Boolean;
+    BookmarkData: TBookmarkDataEh;
+    BookmarkFlag: TBookmarkFlag;
+    RecordStatus: Integer;
+    RecordNumber: Integer;
+    NewTreeNodeExpanded: Boolean;
+    NewTreeNodeHasChildren: Boolean;
+    RecView: TMemRecViewEh;
+    MemRec: TMemoryRecordEh;
+    Values: TFBRecBufValues;
+    UseMemRec: Boolean;
+    NeedUpdateCalcFields: Boolean;
+    function GetValue(Field: TField): Variant;
+    function GetOldValue(Field: TField): Variant;
+    function ReadValueCount: Integer;
+    procedure SetValue(Field: TField; v: Variant);
+    procedure SetLength(Len: Integer);
+    procedure Clear;
+    destructor Destroy; override;
+    property Value[Field: TField]: Variant read GetValue write SetValue;
+    property OldValue[Field: TField]: Variant read GetOldValue;
+
+    property ValueCount: Integer read ReadValueCount;
+  end;
+
+{ TSortedVarItemEh }
+
+  TSortedVarItemEh = class (TObject)
+  protected
+    Value:Variant;
+  public
+    constructor Create(NewValue:variant);
+  end;
+
+{ TSortedVarlistEh }
+
+  TSortedVarlistEh = class(TObjectListEh)
+  protected
+    function  VarInList(Value: Variant):boolean;
+    function  FindValueIndex(Value: Variant; var Index: Integer):boolean;
+  public
+    function Add(AObject: TSortedVarItemEh): Integer;
+    procedure Insert(Index: Integer; AObject: TSortedVarItemEh);
+  end;
+
+{ TMemTableFilterItemEh }
+
+  TMemTableFilterItemEh = class(TCollectionItem)
+  private
+    FFilterExpr: TDataSetExprParserEh;
+    FActive: Boolean;
+    FFilter: String;
+    FOnFilterRecord: TFilterRecordEvent;
+    procedure SetActive(Value: Boolean);
+    procedure SetFilter(const Value: String);
+    procedure SetOnFilterRecord(Value: TFilterRecordEvent);
+  public
+    constructor Create(Collection: TCollection); overload; override;
+    destructor Destroy; override;
+    function MemTableFilters: TMemTableFiltersEh;
+    function Filtered: Boolean;
+    function IsCurRecordInFilter(Rec: TMemoryRecordEh): Boolean;
+    procedure RecreateFilterExpr;
+    procedure FilterProcChanged;
+    property Active: Boolean read FActive write SetActive;
+    property Filter: String read FFilter write SetFilter;
+    property OnFilterRecord: TFilterRecordEvent read FOnFilterRecord write SetOnFilterRecord;
+  end;
+
+  TMemTableFilterItemEhClass = class of TMemTableFilterItemEh;
+
+{ TMemTableFiltersEh }
+
+  TMemTableFiltersEh = class(TCollection)
+  private
+    FOnChanged: TNotifyEvent;
+    FActiveFilterItems: TObjectListEh;
+    function GetFilterItem(Index: Integer): TMemTableFilterItemEh;
+    procedure SetFilterItem(Index: Integer; Value: TMemTableFilterItemEh);
+    function GetActiveFilterCount: Integer;
+    function GetActiveFilterItem(Index: Integer): TMemTableFilterItemEh;
+  protected
+    FMemTable: TCustomMemTableEh;
+    function GetOwner: TPersistent; override;
+    procedure Update(Item: TCollectionItem); override;
+  public
+    constructor Create(AMemTable: TCustomMemTableEh; FilterItemClass: TMemTableFilterItemEhClass);
+    destructor Destroy; override;
+    procedure RecreateFilterExpr;
+    function HasTextActiveFilter: Boolean;
+    function HasEventActiveFilter: Boolean;
+    function Add: TMemTableFilterItemEh;
+    function IndexOfFilter(FilterItem: TMemTableFilterItemEh): Integer;
+    function IsCurRecordInFilter(Rec: TMemoryRecordEh): Boolean;
+    property Items[Index: Integer]: TMemTableFilterItemEh read GetFilterItem write SetFilterItem; default;
+    property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
+    property MemTable: TCustomMemTableEh read FMemTable;
+    property ActiveFilterCount: Integer read GetActiveFilterCount;
+    property ActiveFilterItem[Index: Integer]: TMemTableFilterItemEh read GetActiveFilterItem;
+  end;
+
+{ TCustomMemTableEh }
+
+  TMemTableOptionEh = (mtoPersistentStructEh, mtoTextFieldsCaseInsensitive);
+  TMemTableOptionsEh = set of TMemTableOptionEh;
+
+  TCustomMemTableEh = class(TDataSet, IMemTableEh, IUnknown)
+  private
+    FStateInsert: Boolean;
+    FStateInsertRowNum: Integer;
+    FEventReceivers: TObjectListEh;
+    FRecordCache: TObjectList;
+    FActive: Boolean;
+    FAutoInc: Longint;
+    FCalcFieldIndexes: array of Integer;
+    FDataDriver: TDataDriverEh;
+    FDataSetReader: TDataSet;
+    FDetailFieldList: TFieldListEh;
+    FDetailFields: String;
+    FDetailMode: Boolean;
+    FFetchAllOnOpen: Boolean;
+    FFilterExpr: TDataSetExprParserEh;
+{$IFDEF EH_LIB_17}
+{$IFDEF NEXTGEN}
+   FInstantBuffers: TList<TRecBuf>;
+{$ELSE}
+   FInstantBuffers: TList<TRecordBuffer>;
+{$ENDIF}
+{$ELSE}
+    FInstantBuffers: TObjectListEh;
+{$ENDIF}
+    FInstantReadCurRowNum: Integer;
+    FMasterDetailSide: TMasterDetailSideEh;
+    FMasterValues: Variant;
+    FOnTreeNodeExpanding: TMTTreeNodeExpandingEventEh;
+    FOnRecordsViewTreeNodeExpanding: TRecordsViewTreeNodeExpandingEventEh;
+    FOnRecordsViewTreeNodeExpanded: TRecordsViewTreeNodeExpandedEventEh;
+    FOnRecordsViewTreeNodeCollapsed: TRecordsViewTreeNodeExpandedEventEh;
+    FOnRecordsViewCheckMoveNode: TRecordsViewCheckMoveNodeEventEh;
+    FParams: TParams;
+    FReadOnly: Boolean;
+    FRecBufSize: Integer;
+    FRecordPos: Integer;
+    FRecordsView: TRecordsViewEh;
+    FTreeList: TMemTableTreeListEh;
+    FIndexDefs: TIndexDefs;
+    FStoreDefs: Boolean;
+    FDetailRecList: TObjectListEh;
+    FDetailRecListActive: Boolean;
+    FInternMemTableData: TMemTableDataEh;
+    FExternalMemData: TCustomMemTableEh;
+    FRecordsViewUpdating: Integer;
+    FRecordsViewUpdated: Boolean;
+    FMasterValList: TSortedVarlistEh;
+    FSortOrder: String;
+    FOnGetFieldValue: TMemTableChangeFieldValueEventEh;
+    FOnSetFieldValue: TMemTableChangeFieldValueEventEh;
+    FMTViewDataEventInactiveCount: Integer;
+    FInactiveEventRowNum: Integer;
+    FInactiveEvent: TMTViewEventTypeEh;
+    FInactiveEventOldRowNum: Integer;
+    FOldControlsDisabled: Boolean;
+    FOldActive: Boolean;
+    FOptions: TMemTableOptionsEh;
+    FExtraFilters: TMemTableFiltersEh;
+{$IFDEF CIL}
+    FCalcBuffer: TRecordBuffer;
+{$ELSE}
+{$IFDEF EH_LIB_12}
+    FCalcBuffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF};
+{$ELSE}
+    FCalcBuffer: PChar;
+{$ENDIF}
+{$ENDIF}
+    procedure BeginRecordsViewUpdate;
+    procedure EndRecordsViewUpdate(AutoResync: Boolean);
+    function GetAggregatesActive: Boolean;
+    function GetAutoIncrement: TAutoIncrementEh;
+    function GetCachedUpdates: Boolean;
+    function GetDataFieldsCount: Integer;
+    function GetInstantReadCurRowNum: Integer;
+    function GetMasterFields: String;
+    function GetMasterSource: TDataSource;
+    function GetTreeNode: TMemRecViewEh;
+    function GetTreeNodeChildCount: Integer;
+    function GetTreeNodeHasChildren: Boolean;
+    function GetTreeNodeHasVisibleChildren: Boolean;
+    function GetUpdateError: TUpdateErrorEh;
+    function GetIndexDefs: TIndexDefs;
+{$IFDEF CIL}
+    function GetInstantBuffer: TRecordBuffer;
+{$ELSE}
+{$IFDEF EH_LIB_12}
+    function GetInstantBuffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF};
+{$ELSE}
+    function GetInstantBuffer: PChar;
+{$ENDIF}
+{$ENDIF}
+    function IsRecordInFilter(Rec: TMemoryRecordEh; Node: TMemRecViewEh): Boolean;
+    procedure AncestorNotFound(Reader: TReader; const ComponentName: string; ComponentClass: TPersistentClass; var Component: TComponent);
+    procedure ClearRecords;
+    procedure CreateComponent(Reader: TReader; ComponentClass: TComponentClass; var Component: TComponent);
+    procedure InitBufferPointers(GetProps: Boolean);
+    procedure RefreshParams;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure SetAggregatesActive(const Value: Boolean);
+    {$ENDIF}
+    procedure SetAutoIncrement(const Value: TAutoIncrementEh);
+    procedure SetCachedUpdates(const Value: Boolean);
+    procedure SetDataDriver(const Value: TDataDriverEh);
+    procedure SetDetailFields(const Value: String);
+    procedure SetExternalMemData(Value: TCustomMemTableEh);
+    procedure SetMasterDetailSide(const Value: TMasterDetailSideEh);
+    procedure SetMasterFields(const Value: String);
+    procedure SetMasterSource(const Value: TDataSource);
+    procedure SetParams(const Value: TParams);
+    procedure SetParamsFromCursor;
+    procedure SetTreeNodeExpanded(const Value: Boolean);
+    procedure SetTreeNodeHasVisibleChildren(const Value: Boolean);
+    procedure SetIndexDefs(Value: TIndexDefs);
+    procedure SortData(ParamSort: TObject);
+    function GetSortOrder: String;
+    procedure SetSortOrder(const Value: String);
+    function GetStatusFilter: TUpdateStatusSet;
+    procedure SetStatusFilter(const Value: TUpdateStatusSet);
+    procedure SetReadOnly(const Value: Boolean);
+    procedure SetOptions(const Value: TMemTableOptionsEh);
+    procedure SetExtraFilters(const Value: TMemTableFiltersEh);
+    procedure WinProg(var Message: TMessage);
+
+  protected
+    { IProviderSupport }
+    function PSGetIndexDefs(IndexTypes: TIndexOptions): TIndexDefs; override;
+    function PSGetKeyFields: string; override;
+    { IMemTableEh }
+    function GetLikeWildcardForOneCharacter: String;
+    function GetLikeWildcardForSeveralCharacters: String;
+
+    procedure FilterAbort;
+
+  protected
+    FInstantReadMode: Boolean;
+    FMasterDataLink: TMasterDataLinkEh;
+    FAutoIncrementFieldName: String;
+    FInLoaded: Boolean;
+    FWinControl: TWinControl;
+    FWndMethod: TWndMethod;
+    FGetOrderVarValueProc: TGetOrderVarValueProcEh;
+    FSortingValues: TVariantArrayEh;
+
+    function GetActiveRecBuf(var RecBuf: TMTRecBuf; IsForWrite: Boolean = False): Boolean; virtual;
+    function GetTreeNodeHasChields: Boolean;
+    function GetTreeNodeLevel: Integer;
+    function GetRecObject: TObject;
+    function GetPrevVisibleTreeNodeLevel: Integer;
+    function GetNextVisibleTreeNodeLevel: Integer;
+    function IsInOperatorSupported: Boolean;
+    function MemTableIsTreeList: Boolean;
+    function ParentHasNextSibling(ParenLevel: Integer): Boolean;
+    function ParentHasPriorSibling(ParenLevel: Integer): Boolean;
+    function IMemTableGetTreeNodeExpanded(RowNum: Integer): Boolean;
+    function GetTreeNodeExpanded(RowNum: Integer): Boolean; overload;
+    function GetTreeNodeExpanded: Boolean; overload;
+    function GetTreeNodeExpandedProp: Boolean;
+    function IMemTableSetTreeNodeExpanded(RowNum: Integer; Value: Boolean): Integer;
+    function IMemTableEh.SetTreeNodeExpanded = IMemTableSetTreeNodeExpanded;
+    function GetFieldValueList(const AFieldName: String): IMemTableDataFieldValueListEh;
+    function ApplyExtraFilter(const FilterStr: String; FilterProc: TFilterRecordEvent): TObject;
+    function RevokeExtraFilter(FilterObject: TObject): Boolean;
+    function ResetExtraFilter(FilterObject: TObject; const FilterStr: String; FilterProc: TFilterRecordEvent): Boolean;
+
+    procedure FixBookmarkDataCache({$IFDEF CIL}const{$ENDIF} Bookmark: TBookmark);
+    procedure RecreateFilterExpr;
+    procedure DestroyFilterExpr;
+{$IFDEF CIL}
+    procedure CalculateFields(Buffer: TRecordBuffer); override;
+{$ELSE}
+
+  {$IFDEF EH_LIB_12}
+    {$IFDEF EH_LIB_17}
+    procedure CalculateFields(Buffer:{$IFDEF NEXTGEN}NativeInt{$ELSE}PByte{$ENDIF}); override;
+    {$ELSE}
+    procedure CalculateFields(Buffer: TRecordBuffer); override;
+    {$ENDIF}
+    procedure RefreshInternalCalcFields(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}); override;
+  {$ELSE}
+    procedure CalculateFields(Buffer: PChar); override;
+    procedure RefreshInternalCalcFields(Buffer: PChar); override;
+  {$ENDIF}
+{$ENDIF}
+
+{$IFDEF EH_LIB_12}
+  {$IFDEF NEXTGEN}
+    function AllocRecBuf: TRecBuf; override;
+    procedure FreeRecBuf(var Buffer: TRecBuf); override;
+  {$ELSE}
+    function AllocRecordBuffer: TRecordBuffer; override;
+    procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
+  {$ENDIF}
+{$ELSE}
+    function AllocRecordBuffer: {$IFDEF CIL}TRecordBuffer{$ELSE}PChar{$ENDIF}; override;
+{$ENDIF}
+    function CompareRecords(Rec1, Rec2: TMemoryRecordEh; ParamSort: TObject): Integer; virtual;
+    function CompareTreeNodes(Rec1, Rec2: TBaseTreeNodeEh; ParamSort: TObject): Integer; virtual;
+    function CreateDeltaDataSet: TCustomMemTableEh;
+    function DoFetchRecords(Count: Integer): Integer;
+    function FieldValueToVarValue(FieldBuffer: {$IFDEF CIL}TObject{$ELSE}Pointer{$ENDIF}; Field: TField): Variant;
+    function GetBlobData(Field: TField; Buffer: TMTRecBuf): TMemBlobData;
+{$IFDEF CIL}
+    function BufferToIndex(Buf: TRecordBuffer): Integer;
+    function BufferToRecBuf(Buf: TRecordBuffer): TMTRecBuf;
+    function IndexToBuffer(I: Integer):TRecordBuffer;
+    function GetBookmarkFlag(Buffer: TRecordBuffer): TBookmarkFlag; override;
+    function GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode; DoCheck: Boolean): TGetResult; override;
+    procedure ClearCalcFields(Buffer: TRecordBuffer); override;
+    procedure CopyBuffer(FromBuf, ToBuf: TRecordBuffer);
+{$ELSE}
+  {$IFDEF EH_LIB_12}
+
+    function BufferToIndex(Buf: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}): Integer;
+    function BufferToRecBuf(Buf: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}): TMTRecBuf;
+    function IndexToBuffer(I: Integer): {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF};
+    function GetBookmarkFlag(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}): TBookmarkFlag; override;
+    function GetRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; GetMode: TGetMode; DoCheck: Boolean): TGetResult; override;
+
+    {$IFDEF EH_LIB_17}
+    procedure ClearCalcFields(Buffer: {$IFDEF NEXTGEN}NativeInt{$ELSE}PByte{$ENDIF}); override;
+    {$ELSE}
+    procedure ClearCalcFields(Buffer: TRecordBuffer); override;
+    {$ENDIF}
+    procedure CopyBuffer(FromBuf, ToBuf: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF});
+  {$ELSE}
+    function BufferToIndex(Buf: PChar): Integer;
+    function BufferToRecBuf(Buf: PChar): TMTRecBuf;
+    function IndexToBuffer(I: Integer): PChar;
+    function GetBookmarkFlag(Buffer: PChar): TBookmarkFlag; override;
+    function GetRecord(Buffer: PChar; GetMode: TGetMode; DoCheck: Boolean): TGetResult; override;
+    procedure ClearCalcFields(Buffer: PChar); override;
+    procedure CopyBuffer(FromBuf, ToBuf: PChar);
+  {$ENDIF}
+{$ENDIF}
+{$IFDEF FPC}
+{$ELSE}
+    function GetAggregateValue(Field: TField): Variant; override;
+    procedure DefChanged(Sender: TObject); override;
+    procedure ResetAggField(Field: TField); override;
+{$ENDIF}
+    function GetDataSource: TDataSource; override;
+{$IFDEF NEXTGEN}
+{$ELSE}
+    function GetBookmarkStr: TBookmarkStr; override;
+{$ENDIF}
+    function GetCanModify: Boolean; override;
+    function GetFieldClass(FieldType: TFieldType): TFieldClass; override;
+    function GetRecNo: Integer; override;
+    function GetRecordCount: Integer; override;
+    function GetRecordSize: Word; override;
+    function GetRec: TMemoryRecordEh;
+    function GetRecView: TMemRecViewEh;
+    function IndexOfBookmark(Bookmark: TBookmark): Integer;
+    function IsCursorOpen: Boolean; override;
+    function InternalApplyUpdates(AMemTableData: TMemTableDataEh; MaxErrors: Integer): Integer; virtual;
+    function ParseOrderByStr(const OrderByStr: String): TObject;
+    function SetToRec(Rec: TObject): Boolean;
+    function CreateMemTableData: TMemTableDataEh; virtual;
+
+    procedure BindFields(Binding: Boolean); {$IFDEF EH_LIB_12} override; {$ENDIF}
+    procedure BindCalFields;
+    procedure CloseBlob(Field: TField); override;
+    procedure CreateFields; override;
+    procedure CreateIndexesFromDefs; virtual;
+{$IFDEF CIL}
+    procedure DefChanged(Sender: TObject); override;
+    procedure FetchRecord(DataSet: TDataSet);
+    procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
+    procedure GetBookmarkData(Buffer: TRecordBuffer; var Bookmark: TBookmark); override;
+    procedure InitRecord(Buffer: TRecordBuffer); override;
+    procedure InternalAddRecord(Buffer: TRecordBuffer; Append: Boolean); override;
+    procedure InternalGotoBookmark(const Bookmark: TBookmark); override;
+    procedure InternalInitRecord(Buffer: TRecordBuffer); override;
+    procedure InternalSetToRecord(Buffer: TRecordBuffer); override;
+    procedure RecordToBuffer(MemRec: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Buffer: TRecordBuffer; RecIndex: Integer);
+    procedure SetBookmarkData(Buffer: TRecordBuffer; const Bookmark: TBookmark); override;
+    procedure SetBookmarkFlag(Buffer: TRecordBuffer; Value: TBookmarkFlag); override;
+    procedure SetFieldData(Field: TField; Buffer: TValueBuffer); override;
+    procedure SetFieldData(Field: TField; Buffer: TValueBuffer; NativeFormat: Boolean); override;
+    procedure SetMemoryRecordData(Buffer: TRecordBuffer; Rec: TMemoryRecordEh); virtual;
+    procedure SetRecViewLookupBuffer(Buffer: TRecordBuffer; RecView: TMemRecViewEh);
+    procedure VarValueToFieldValue(VarValue: Variant; FieldBuffer: TObject; Field: TField);
+{$ELSE}
+  {$IFDEF EH_LIB_12}
+    {$IFDEF EH_LIB_17}
+    procedure GetBookmarkData(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Data: TBookmark); override;
+    {$ELSE}
+    procedure GetBookmarkData(Buffer: TRecordBuffer; Data: Pointer); override;
+    {$ENDIF}
+    procedure InitRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}); override;
+    {$IFDEF EH_LIB_17}
+    procedure InternalGotoBookmark(Bookmark: TBookmark); override;
+    {$ELSE}
+    procedure InternalGotoBookmark(Bookmark: Pointer); override;
+    {$ENDIF}
+    procedure InternalInitRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}); override;
+    procedure InternalSetToRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}); override;
+    procedure RecordToBuffer(MemRec: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; RecIndex: Integer);
+    {$IFDEF EH_LIB_17}
+    procedure SetBookmarkData(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Data: TBookmark); override;
+    {$ELSE}
+    procedure SetBookmarkData(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Data: Pointer); override;
+    {$ENDIF}
+    procedure SetBookmarkFlag(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Value: TBookmarkFlag); override;
+    procedure SetMemoryRecordData(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Rec: TMemoryRecordEh); virtual;
+    procedure SetRecViewLookupBuffer(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; RecView: TMemRecViewEh);
+ {$ELSE} 
+    procedure FreeRecordBuffer(var Buffer: PChar); override;
+    procedure GetBookmarkData(Buffer: PChar; Data: Pointer); override;
+    procedure InitRecord(Buffer: PChar); override;
+    {$IFDEF FPC}
+    procedure InternalGotoBookmark(Bookmark: Pointer); override;
+    {$ELSE}
+    procedure InternalGotoBookmark(Bookmark: TBookmark); override;
+    {$ENDIF}
+    procedure InternalInitRecord(Buffer: PChar); override;
+    procedure InternalSetToRecord(Buffer: PChar); override;
+    procedure RecordToBuffer(MemRec: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Buffer: PChar; RecIndex: Integer);
+    procedure SetBookmarkData(Buffer: PChar; Data: Pointer); override;
+    procedure SetBookmarkFlag(Buffer: PChar; Value: TBookmarkFlag); override;
+    procedure SetMemoryRecordData(Buffer: PChar; Rec: TMemoryRecordEh); virtual;
+    procedure SetRecViewLookupBuffer(Buffer: PChar; RecView: TMemRecViewEh);
+  {$ENDIF} 
+    procedure DataEvent(Event: TDataEvent; Info: TDataEventInfoTypeEh); override;
+    procedure FetchRecord(DataSet: TDataSet);
+  {$IFDEF EH_LIB_17}
+    procedure InternalAddRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}; Append: Boolean); override;
+    procedure SetFieldData(Field: TField; Buffer: TValueBuffer); override;
+    procedure SetFieldData(Field: TField; Buffer: TValueBuffer; NativeFormat: Boolean); override;
+    {$IFNDEF NEXTGEN}
+    procedure SetFieldData(Field: TField; Buffer: Pointer); overload; override; deprecated 'Use overloaded method instead';
+    procedure SetFieldData(Field: TField; Buffer: Pointer; NativeFormat: Boolean); overload; override; deprecated 'Use overloaded method instead';
+    {$ENDIF !NEXTGEN}
+  {$ELSE}
+    procedure InternalAddRecord(Buffer: Pointer; Append: Boolean); override;
+    {$IFDEF FPC}
+  public
+    procedure SetFieldData(Field: TField; Buffer: Pointer); override;
+    procedure SetFieldData(Field: TField; Buffer: Pointer; NativeFormat: Boolean); override;
+  protected
+    {$ELSE}
+    procedure SetFieldData(Field: TField; Buffer: Pointer); override;
+    procedure SetFieldData(Field: TField; Buffer: Pointer; NativeFormat: Boolean); override;
+    {$ENDIF}
+
+  {$ENDIF} 
+    procedure VarValueToFieldValue(VarValue: Variant; FieldBuffer: Pointer; Field: TField);
+{$ENDIF} 
+    procedure DoOnNewRecord; override;
+    procedure DoOrderBy(const OrderByStr: String); virtual;
+    procedure ReadState(Reader: TReader); override;
+    procedure SetExtraStructParams;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+
+    function FindRecord(Restart, GoForward: Boolean): Boolean; override;
+    function ViewRecordIndexToViewRowNum(ViewRecordIndex: Integer): Integer;
+    function GetPrefilteredList: TObjectList;
+    function TreeViewNodeExpanding(Sender: TBaseTreeNodeEh): Boolean;
+
+    procedure BookmarkToBookmarkData(Bookmark: TBookmark; var BookmarkData: TBookmarkDataEh);
+    procedure CalcInternalFieldProg(MemRec: TMemoryRecordEh; var FieldValues: TVariantArrayEh);
+    procedure InitFieldDefs; override;
+    procedure InitFieldDefsFromFields;
+    procedure InternalCancel; override;
+    procedure InternalClose; override;
+    procedure InternalDelete; override;
+    procedure InternalEdit; override;
+    procedure InternalFirst; override;
+    procedure InternalGotoBookmarkData(var BookmarkData: TBookmarkDataEh);
+    procedure InternalHandleException; override;
+    procedure InternalInitFieldDefs; override;
+    procedure InternalInsert; override;
+    procedure InternalLast; override;
+    procedure InternalOpen; override;
+    procedure InternalPost; override;
+    procedure InternalRefresh; override;
+    procedure InternalRefreshFilter; virtual;
+    procedure Loaded; override;
+    procedure MasterChange(Sender: TObject);
+    procedure MTApplyUpdates(AMemTableData: TMemTableDataEh);
+    procedure MTCalcLookupBuffer(Item: TMemoryRecordEh; RecView: TMemRecViewEh);
+    procedure MTStructChanged(AMemTableData: TMemTableDataEh);
+    procedure MTViewDataEvent(RowNum: Integer; Event: TMTViewEventTypeEh; OldRowNum: Integer); virtual;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure OpenCursor(InfoQuery: Boolean); override;
+    procedure RegisterEventReceiver(AComponent: TComponent);
+    procedure SetActive(Value: Boolean); override;
+    procedure SetBlobData(Field: TField; Buffer: TMTRecBuf; Value: TMemBlobData);
+    procedure SetFiltered(Value: Boolean); override;
+    procedure SetOnFilterRecord(const Value: TFilterRecordEvent); override;
+    procedure SetRecNo(Value: Integer); override;
+    procedure TreeViewNodeExpanded(Sender: TBaseTreeNodeEh);
+    procedure UnregisterEventReceiver(AComponent: TComponent);
+    procedure UpdateDesigner;
+    procedure UpdateDetailMode(AutoRefresh: Boolean);
+    procedure UpdateIndexDefs; override;
+    procedure UpdateSortOrder; virtual;
+    procedure ViewDataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification);
+    procedure ViewRecordMovedEvent(MemRec: TMemoryRecordEh; OldIndex, NewIndex: Integer);
+    {$IFDEF FPC}
+    {$ELSE}
+    property AggregatesActive: Boolean read GetAggregatesActive write SetAggregatesActive default False;
+    {$ENDIF}
+    property DataFieldsCount: Integer read GetDataFieldsCount;
+{$IFDEF CIL}
+    property InstantBuffer: TRecordBuffer read GetInstantBuffer;
+{$ELSE}
+ {$IFDEF EH_LIB_12}
+    property InstantBuffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF} read GetInstantBuffer;
+    property CalcBuffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF} read FCalcBuffer;
+ {$ELSE}
+    property InstantBuffer: PChar read GetInstantBuffer;
+    property CalcBuffer: PChar read FCalcBuffer;
+ {$ENDIF}
+{$ENDIF}
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ApplyUpdates(MaxErrors: Integer): Integer; virtual;
+    function BookmarkToRec(Bookmark: TUniBookmarkEh): TMemoryRecordEh;
+    function RecToBookmark(Rec: TMemoryRecordEh): TUniBookmarkEh;
+
+    function BookmarkValid({$IFDEF CIL}const{$ENDIF} Bookmark: TBookmark): Boolean; override;
+
+    {$IFDEF NEXTGEN}
+    {$ELSE}
+    function BookmarkStrValid({$IFDEF CIL}const{$ENDIF} Bookmark: TBookmarkStr): Boolean;
+    function BookmarkStrToRecNo(Bookmark: TBookmarkStr): Integer;
+    {$ENDIF}
+
+    function BookmarkToRecNo(Bookmark: TBookmark): Integer;
+    function UniBookmarkToRecNo(Bookmark: TUniBookmarkEh): Integer;
+
+    function UniBookmarkValid(Bookmark: TUniBookmarkEh): Boolean;
+    function BookmarkInVisibleView({$IFDEF CIL}const{$ENDIF} Bookmark: TUniBookmarkEh): Boolean;
+{$IFDEF EH_LIB_12}
+{$ELSE}
+{$ENDIF}
+    function CompareBookmarks({$IFDEF CIL}const{$ENDIF} Bookmark1, Bookmark2: TBookmark): Integer; override;
+{$IFDEF EH_LIB_12}
+    function GetCurrentRecord(Buffer: {$IFDEF NEXTGEN}TRecBuf{$ELSE}TRecordBuffer{$ENDIF}): Boolean; override;
+{$ELSE}
+    function GetCurrentRecord(Buffer: {$IFDEF CIL}TRecordBuffer{$ELSE}PChar{$ENDIF}): Boolean; override;
+{$ENDIF}
+    function GetBookmark: TBookmark; override;
+{$IFDEF EH_LIB_17}
+ {$IFDEF EH_LIB_18}
+    function GetFieldData(Field: TField; var Buffer: TValueBuffer): Boolean; override;
+    function GetFieldData(FieldNo: Integer; var Buffer: TValueBuffer): Boolean; override;
+    function GetFieldData(Field: TField; var Buffer: TValueBuffer; NativeFormat: Boolean): Boolean; override;
+ {$ELSE}
+    function GetFieldData(Field: TField; Buffer: TValueBuffer): Boolean; override;
+    function GetFieldData(FieldNo: Integer; Buffer: TValueBuffer): Boolean; override;
+    function GetFieldData(Field: TField; Buffer: TValueBuffer; NativeFormat: Boolean): Boolean; override;
+ {$ENDIF}
+    procedure VarValueToValueBuffer(Field: TField; var Value: Variant; Buffer: TValueBuffer; NativeFormat: Boolean);
+{$ENDIF}
+
+    {$IFDEF NEXTGEN}
+    {$ELSE}
+    function GetFieldData(Field: TField; Buffer: {$IFDEF CIL}TRecordBuffer{$ELSE}Pointer{$ENDIF}): Boolean; override;
+    function GetFieldData(Field: TField; Buffer: {$IFDEF CIL}TRecordBuffer{$ELSE}Pointer{$ENDIF}; NativeFormat: Boolean): Boolean; override;
+    procedure VarValueToPointerBuffer(Field: TField; var Value: Variant; Buffer: {$IFDEF CIL}TRecordBuffer{$ELSE}Pointer{$ENDIF}; NativeFormat: Boolean);
+    {$ENDIF}
+
+    {$IFDEF FPC}
+    {$ELSE}
+    {$ENDIF}
+
+    function GetFieldDataAsObject(Field: TField; var Value: TObject): Boolean; virtual;
+    function GetFieldValue(Field: TField; var Value: Variant): Boolean; virtual;
+    function GetFieldDisplayText(Field: TField): String; virtual;
+{$IFDEF CIL}
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+{$ENDIF}
+    function GotoRec(Rec: TMemoryRecordEh): Boolean;
+    function CreateBlobStream(Field: TField; Mode: TBlobStreamMode): TStream; override;
+    function DefaultLoadFromDataSet(Source: TDataSet; RecordCount: Integer; Mode: TLoadMode; UseCachedUpdates: Boolean): Integer;
+    function FetchRecords(Count: Integer): Integer;
+    function FindRec(const KeyFields: string; const KeyValues: Variant; Options: TLocateOptions; StartRecIndex: Integer = 0; TryUseIndex: Boolean = True): Integer;
+    function InstantReadIndexOfBookmark(Bookmark: TUniBookmarkEh): Integer;
+    function InstantReadRowCount: Integer;
+    function InstantReadViewRow: Integer;
+    function IsSequenced: Boolean; override;
+    function HasCachedChanges: Boolean;
+    function LoadFromDataSet(Source: TDataSet; RecordCount: Integer; Mode: TLoadMode; UseCachedUpdates: Boolean): Integer;
+    function LoadFromMemTableEh(Source: TCustomMemTableEh; RecordCount: Integer; Mode: TLoadMode; LoadOptions: TMemTableLoadOptionsEh): Integer;
+    function Locate(const KeyFields: string; const KeyValues: Variant; Options: TLocateOptions): Boolean; override;
+    function Lookup(const KeyFields: string; const KeyValues: Variant; const ResultFields: string): Variant; override;
+    function LookupAll(const KeyFields: string; const KeyValues: Variant; const ResultFields: string; Options: TLocateOptions): Variant;
+    function SaveToDataSet(Dest: TDataSet; RecordCount: Integer): Integer;
+    function UpdateStatus: TUpdateStatus; override;
+    function MoveRecord(FromIndex, ToIndex: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean;
+    function MoveRecords(BookmarkList: TBMListEh; ToRecNo: Longint; TreeLevel: Integer; CheckOnly: Boolean): Boolean;
+    function CalcLookupValue(AField: TField):Variant;
+    procedure CancelUpdates;
+    procedure CheckFieldDataVarValue(Field: TField; var VarValue: Variant);
+    procedure CopyStructure(Source: TDataSet);
+    procedure CreateDataSet;
+    procedure DriverStructChanged;
+    procedure DestroyTable;
+    procedure EmptyTable;
+    procedure FetchParams;
+    procedure GetAggregatedValuesForRange(FromBM, ToBM: TUniBookmarkEh; const FieldName: String; var ResultArr: TAggrResultArr; AggrFuncs: TAggrFunctionsEh);
+    procedure InstantReadEnter(RowNum: Integer); overload;
+    procedure InstantReadEnter(RecView: TMemRecViewEh; RowNum: Integer); overload;
+    procedure InstantReadEnter(MemRec: TMemoryRecordEh; RowNum: Integer); overload;
+    procedure InstantReadLeave;
+    procedure MergeChangeLog;
+    procedure MTDisableControls;
+    procedure MTEnableControls(ForceUpdateState: Boolean);
+    procedure RefreshRecord;
+    procedure Resync(Mode: TResyncMode); override;
+    procedure RevertRecord;
+    procedure SetFieldDataAsObject(Field: TField; Value: TObject); virtual;
+    procedure SetFilterText(const Value: string); override;
+    procedure SortByFields(const SortByStr: string);
+    procedure SortWithExternalProc(OrderValueProc: TGetOrderVarValueProcEh; DescDirections: TExternalSortDataArrEh);
+
+    procedure SaveToFile(const FileName: string = ''; Format: TDfmStreamFormatEh = dfmTextEh);
+    procedure LoadFromFile(const FileName: string = '');
+    procedure SaveToStream(Stream: TStream; Format: TDfmStreamFormatEh = dfmTextEh);
+    procedure LoadFromStream(Stream: TStream);
+
+    property AutoIncrement: TAutoIncrementEh read GetAutoIncrement write SetAutoIncrement;
+    property CachedUpdates: Boolean read GetCachedUpdates write SetCachedUpdates default False;
+    property DataDriver: TDataDriverEh read FDataDriver write SetDataDriver;
+    property DetailFields: String read FDetailFields write SetDetailFields;
+    property ExtraFilters: TMemTableFiltersEh read FExtraFilters write SetExtraFilters;
+    property ExternalMemData: TCustomMemTableEh read FExternalMemData write SetExternalMemData;
+    property FetchAllOnOpen: Boolean read FFetchAllOnOpen write FFetchAllOnOpen default False;
+    property FieldDefs stored FStoreDefs;
+    property IndexDefs: TIndexDefs read GetIndexDefs write SetIndexDefs stored FStoreDefs;
+    property InstantReadCurRow: Integer read GetInstantReadCurRowNum;
+    property MasterDetailSide: TMasterDetailSideEh read FMasterDetailSide write SetMasterDetailSide default mdsOnSelfEh;
+    property MasterFields: String read GetMasterFields write SetMasterFields;
+    property MasterSource: TDataSource read GetMasterSource write SetMasterSource;
+    property Options: TMemTableOptionsEh read FOptions write SetOptions default [];
+    property Params: TParams read FParams write SetParams;
+    property ReadOnly: Boolean read FReadOnly write SetReadOnly default False;
+    property Rec: TMemoryRecordEh read GetRec;
+    property RecView: TMemRecViewEh read GetRecView;
+    property RecordsView: TRecordsViewEh read FRecordsView;
+    property SortOrder: String read GetSortOrder write SetSortOrder;
+    property StatusFilter: TUpdateStatusSet read GetStatusFilter write SetStatusFilter default [usUnmodified, usModified, usInserted];
+    property StoreDefs: Boolean read FStoreDefs write FStoreDefs default False;
+    property TreeList: TMemTableTreeListEh read FTreeList write FTreeList;
+    property TreeNode: TMemRecViewEh read GetTreeNode;
+    property TreeNodeChildCount: Integer read GetTreeNodeChildCount;
+    property TreeNodeExpanded: Boolean read GetTreeNodeExpandedProp write SetTreeNodeExpanded;
+    property TreeNodeHasChildren: Boolean read GetTreeNodeHasChildren{ write SetTreeNodeHasChildren};
+    property TreeNodeHasVisibleChildren: Boolean read GetTreeNodeHasVisibleChildren write SetTreeNodeHasVisibleChildren;
+    property TreeNodeLevel: Integer read GetTreeNodeLevel;
+    property UpdateError: TUpdateErrorEh read GetUpdateError;
+
+    property OnTreeNodeExpanding: TMTTreeNodeExpandingEventEh read FOnTreeNodeExpanding write FOnTreeNodeExpanding;
+    property OnRecordsViewTreeNodeExpanding: TRecordsViewTreeNodeExpandingEventEh read FOnRecordsViewTreeNodeExpanding write FOnRecordsViewTreeNodeExpanding;
+    property OnRecordsViewTreeNodeExpanded: TRecordsViewTreeNodeExpandedEventEh read FOnRecordsViewTreeNodeExpanded write FOnRecordsViewTreeNodeExpanded;
+    property OnRecordsViewTreeNodeCollapsed: TRecordsViewTreeNodeExpandedEventEh read FOnRecordsViewTreeNodeCollapsed write FOnRecordsViewTreeNodeCollapsed;
+    property OnRecordsViewCheckMoveNode: TRecordsViewCheckMoveNodeEventEh read FOnRecordsViewCheckMoveNode write FOnRecordsViewCheckMoveNode;
+    property OnGetFieldValue: TMemTableChangeFieldValueEventEh read FOnGetFieldValue write FOnGetFieldValue;
+    property OnSetFieldValue: TMemTableChangeFieldValueEventEh read FOnSetFieldValue write FOnSetFieldValue;
+  end;
+
+{ TMemBlobStreamEh }
+
+  TMemBlobStreamEh = class(TMemoryStream)
+  private
+    FField: TBlobField;
+    FDataSet: TCustomMemTableEh;
+    FBuffer: TMTRecBuf;
+    FFieldNo: Integer;
+    FModified: Boolean;
+    FData: Variant;
+    FFieldData: Variant;
+  protected
+    procedure ReadBlobData;
+{$IFDEF CIL}
+    function Realloc(var NewCapacity: Longint): TBytes; override;
+{$ELSE}
+  {$IFDEF FPC}
+    function Realloc(var NewCapacity: PtrInt): Pointer; override;
+  {$ELSE}
+    function Realloc(var NewCapacity: System.Longint): Pointer; override;
+  {$ENDIF}
+{$ENDIF}
+  public
+    constructor Create(Field: TBlobField; Mode: TBlobStreamMode);
+    destructor Destroy; override;
+{$IFDEF CIL}
+    function Write(const Buffer: array of Byte; Offset, Count: Longint): Longint; override;
+{$ELSE}
+    function Write(const Buffer; Count: System.Longint): System.Longint; override;
+{$ENDIF}
+    procedure Truncate;
+  end;
+
+{ TMemTableEh }
+
+  TMemTableEh = class(TCustomMemTableEh)
+  published
+    property Active;
+    {$IFDEF FPC}
+    {$ELSE}
+    property AggregatesActive;
+    {$ENDIF}
+    property AutoCalcFields;
+    property AutoIncrement;
+    property CachedUpdates;
+    property DetailFields;
+    property ExternalMemData;
+    property FieldDefs;
+    property Filter;
+    property Filtered;
+    property FetchAllOnOpen;
+    property IndexDefs;
+    property MasterDetailSide;
+    property MasterFields;
+    property MasterSource;
+    property Params;
+    property DataDriver;
+    property Options;
+    property ReadOnly;
+    property SortOrder;
+    property StoreDefs;
+    property TreeList;
+
+    property BeforeOpen;
+    property AfterOpen;
+    property BeforeClose;
+    property AfterClose;
+    property BeforeInsert;
+    property AfterInsert;
+    property BeforeEdit;
+    property AfterEdit;
+    property BeforePost;
+    property AfterPost;
+    property BeforeCancel;
+    property AfterCancel;
+    property BeforeDelete;
+    property AfterDelete;
+    property BeforeScroll;
+    property AfterScroll;
+    property BeforeRefresh;
+    property AfterRefresh;
+    property OnCalcFields;
+    property OnDeleteError;
+    property OnEditError;
+    property OnFilterRecord;
+    property OnNewRecord;
+    property OnPostError;
+    property OnGetFieldValue;
+    property OnSetFieldValue;
+    property OnRecordsViewTreeNodeExpanding;
+    property OnRecordsViewTreeNodeExpanded;
+    property OnRecordsViewTreeNodeCollapsed;
+  end;
+
+{ TMemTableDataFieldValueListEh }
+
+  TMemTableDataFieldValueListEh = class(TInterfacedObject, IMemTableDataFieldValueListEh)
+  private
+    FDataObsoleted: Boolean;
+    FDataSet: TDataSet;
+    FFieldName: String;
+    FFilter: String;
+    FFilterExpr: TDataSetExprParserEh;
+    FNotificator: TRecordsListNotificatorEh;
+    FValues: TStringList;
+    FVarValues: TVariantArrayEh;
+
+    function GetDataObject: TComponent;
+    function GetValues: TStrings;
+
+    procedure SetDataObject(const Value: TComponent);
+    procedure SetFieldName(const Value: String);
+
+  protected
+    procedure MTDataEvent(MemRec: TMemoryRecordEh; Index: Integer; Action: TRecordsListNotification);
+    procedure RecordListChanged; virtual;
+    procedure RefreshValues;
+    procedure RefreshVarValues;
+
+  public
+    constructor Create(ADataSet: TDataSet);
+    destructor Destroy; override;
+    procedure SetFilter(const Filter: String);
+    property FieldName: String read FFieldName write SetFieldName;
+    property DataObject: TComponent read GetDataObject write SetDataObject;
+    property Values: TStrings read GetValues;
+  end;
+
+{ TRefObjectField }
+
+  TRefObjectField = class(TField)
+  protected
+    class procedure CheckTypeSize(Value: Integer); override;
+    function GetAsVariant: Variant; override;
+    function GetValue: TObject;
+    procedure SetValue(const Value: TObject);
+    procedure SetVarValue(const Value: Variant); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    property Value: TObject read GetValue write SetValue;
+  end;
+
+{ TMTOrderByList }
+
+  TMTOrderByList = class(TOrderByList)
+  end;
+
+  procedure AssignRecord(Source, Destinate: TDataSet);
+
+var
+  ftSupportedAsStrEh: TFieldTypesEh = [ftUnknown, ftString, ftSmallint, ftInteger, ftWord, ftBoolean, ftFloat,
+    ftCurrency, ftDate, ftTime, ftDateTime, ftAutoInc, ftBCD, ftBytes,
+    ftVarBytes, ftADT, ftFixedChar, ftWideString,
+    ftInterface, ftIDispatch,
+    ftLargeint,
+    ftGuid, ftTimeStamp, ftFMTBCD
+{$IFDEF EH_LIB_10}
+    ,ftFixedWideChar, ftWideMemo, ftOraTimeStamp, ftOraInterval
+{$ENDIF}
+{$IFDEF EH_LIB_12}
+    ,ftLongWord, ftShortint, ftByte, TFieldType.ftExtended
+{$ENDIF}
+    ] +
+    [
+    ftMemo, ftFmtMemo
+    ,ftOraClob
+    {$IFDEF EH_LIB_10}, ftWideMemo {$ENDIF}
+    {$IFDEF EH_LIB_13}, ftTimeStampOffset, ftSingle {$ENDIF}
+    ];
+
+implementation

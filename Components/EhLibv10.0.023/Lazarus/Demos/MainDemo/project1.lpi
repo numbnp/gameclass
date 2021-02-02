@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="10"/>
+    <PathDelim Value="\"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="project1"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <BuildModes Count="3">
+      <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="project1"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="FclSrc"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="project1"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="FclSrc"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item3>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="4">
+      <Item1>
+        <PackageName Value="SQLDBLaz"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="EhLib"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
+    </RequiredPackages>
+    <Units Count="26">
+      <Unit0>
+        <Filename Value="project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="Unit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="FormAbout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="FrameMainGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frMainGrid"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="FrameMasterDetail.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frMasterDetail"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="FrameDropDownForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frFrameDropDownForms"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="FrameVertGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frVertGrid"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="FrameRowDetailPanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frRowDetailPanel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="FrameFishFact.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frFishFact"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="FrameEditControls.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frEditControls"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="FrameTreeView.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frTreeView"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="FrameBackgroundImages.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frBackgroundImages"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="FrameLiveRestructure.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frLiveRestructure"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="FrameWorkingWithHugeData.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frWorkingWithHugeData"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="FrameMemTableSaveLoad.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frMemTableSaveLoad"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="FrameImportExport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frImportExport"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="FrameSearchPanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frSearchPanel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="FrameMailBox.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frMailBox"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="FrameDataGrouping.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frDataGrouping"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="FrameRowAsPanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frRowAsPanel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="MemoEditUnit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DropDownMemoEdit"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="FrameCellDataIsLink.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frCellDataIsLink"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="FramePivotGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="FramePlanner.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frPlanner"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="FrameDataSetTextExporter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="FrameDataSetTextImporter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit25>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="project1"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+      </Checks>
+    </CodeGeneration>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerMessages>
+        <IgnoredMessages idx5024="True" idx5023="True"/>
+      </CompilerMessages>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

@@ -1,0 +1,133 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{           FilterDropDownFormsEh component             }
+{                                                       }
+{     Copyright (c) 2014-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBGridFilterDropDownFormsEh;
+
+interface
+
+uses
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  {$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, DBGridsEh, LMessages, LCLType,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBGridEh, Windows, UxTheme,
+  {$ENDIF}
+  DropDownFormEh, Dialogs, DynVarsEh, ToolCtrlsEh, DBCtrlsEh, GridsEh,
+  StdCtrls, ExtCtrls, Themes, Types,
+  DBGridEhGrouping,
+  StrUtils, Buttons, FilterDropDownFormsEh;
+
+type
+  TDDFormFilterPopupListboxItemEh = class;
+
+{ TDBGridMenuButtonEh }
+
+  TDBGridMenuButtonEh = class(TMenuButtonEh)
+    procedure Paint; override;
+    procedure DrawSortMarker(ARect: TRect); virtual;
+  public
+    FSortState: TSortMarkerEh;
+  end;
+
+  TDBGridFilterDropDownForm = class(TFilterDropDownForm)
+    procedure CustomDropDownFormEhCreate(Sender: TObject);
+  private
+    FClearColumnFilterButton: TDBGridMenuButtonEh;
+    FClearFilterButton: TDBGridMenuButtonEh;
+    FColumn: TColumnEh;
+    FCustomFilterButton: TDBGridMenuButtonEh;
+    FLineMenuButton1: TDBGridMenuButtonEh;
+    FLineMenuButton2: TDBGridMenuButtonEh;
+    FLineMenuButton3: TDBGridMenuButtonEh;
+    FLineMenuButton4: TDBGridMenuButtonEh;
+    FSortButton1: TDBGridMenuButtonEh;
+    FSortButton2: TDBGridMenuButtonEh;
+
+    procedure MenuButtonClick(Sender: TObject); virtual;
+
+  protected
+    {$IFDEF FPC}
+    {$ELSE}
+    function CanResize(var NewWidth, NewHeight: Integer): Boolean; override;
+    {$ENDIF}
+  public
+    procedure RealignControls; override;
+
+    property Column: TColumnEh read FColumn write FColumn;
+
+    property SortButton1: TDBGridMenuButtonEh read FSortButton1;
+    property SortButton2: TDBGridMenuButtonEh read FSortButton2;
+    property LineMenuButton1: TDBGridMenuButtonEh read FLineMenuButton1;
+
+    property ClearFilterButton: TDBGridMenuButtonEh read FClearFilterButton;
+    property CustomFilterButton: TDBGridMenuButtonEh read FCustomFilterButton;
+    property LineMenuButton2: TDBGridMenuButtonEh read FLineMenuButton2;
+    property LineMenuButton3: TDBGridMenuButtonEh read FLineMenuButton3;
+    property LineMenuButton4: TDBGridMenuButtonEh read FLineMenuButton4;
+  end;
+
+{ TDDFormFilterPopupListboxItemEh }
+
+  TDDFormFilterPopupListboxItemEh = class(TCustomListboxItemEh)
+  protected
+    function GetColumn(Listbox: TCustomListboxEh): TColumnEh;
+    function GetGroupLevel(Listbox: TCustomListboxEh): TGridDataGroupLevelEh;
+    function FilterForm(Listbox: TCustomListboxEh): TFilterDropDownForm;
+  end;
+
+{ TDDFormListboxItemEhSort }
+
+  TDDFormListboxItemEhSort = class(TDDFormFilterPopupListboxItemEh)
+  protected
+    FSortState: TSortMarkerEh;
+  public
+    constructor Create(ASortState: TSortMarkerEh);
+
+    function IsDataItem: Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+{ TDDFormListboxItemEhSpec }
+
+  TPopupListboxItemEhSpecType = (ptFilterSpecItemClearFilter,
+    ptFilterSpecItemClearColumnFilter, ptFilterSpecItemDialog, ptFilterApply);
+
+  TDDFormListboxItemEhSpec = class(TDDFormFilterPopupListboxItemEh)
+  protected
+    FType: TPopupListboxItemEhSpecType;
+  public
+    constructor Create(AType: TPopupListboxItemEhSpecType);
+
+    function IsDataItem: Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+var
+  DBGridFilterDropDownForm: TDBGridFilterDropDownForm;
+
+  ListboxItemEhSortAsc: TDDFormListboxItemEhSort;
+  ListboxItemEhSortDes: TDDFormListboxItemEhSort;
+
+  ListboxItemEhClearFilter: TDDFormListboxItemEhSpec;
+  ListboxItemEhClearColumnFilter: TDDFormListboxItemEhSpec;
+  ListboxItemEhDialog: TDDFormListboxItemEhSpec;
+  ListboxItemEhApplyFilter: TDDFormListboxItemEhSpec;
+
+  DBGridFilterDropDownFormProc: function : TDBGridFilterDropDownForm = nil;
+
+function GetDefaultDBGridFilterDropDownForm: TDBGridFilterDropDownForm;
+
+implementation

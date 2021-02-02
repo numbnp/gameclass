@@ -1,0 +1,1631 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                      PivotGridsEh                     }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PivotGridsEh;
+
+interface
+
+uses
+{$IFDEF EH_LIB_17} System.Generics.Collections, {$ENDIF}
+  SysUtils, Controls, Forms, StdCtrls, Dialogs,
+  Contnrs, Variants, Types, Themes, Messages,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, DBGridsEh, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows, Win32Extra,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBGridEh, PrintUtilsEh, Windows, UxTheme, CommCtrl,
+  {$ENDIF}
+  Classes, MemTableEh, MemTableDataEh, MemTreeEh, TypInfo, DateUtils,
+  GridsEh, GridToolCtrlsEh, DBCtrlsEh, ToolCtrlsEh,
+  DBAxisGridsEh, DBUtilsEh, FilterDropDownFormsEh,
+{$IFDEF MSWINDOWS}
+  Registry,
+{$ELSE}
+{$ENDIF}
+  DBCtrls, Db, Menus, Graphics, IniFiles, ImgList, StdActns,
+{$IFDEF MSWINDOWS}
+  ComObj,
+{$ELSE}
+{$ENDIF}
+  ActnList, ExtCtrls, DynVarsEh, ToolWin, Comctrls;
+
+type
+  TCustomPivotGridEh = class;
+  TPivotFieldsEh = class;
+  TPivotFieldEh = class;
+  TValueFieldsCollectionEh = class;
+  TPivotDataSourceEh = class;
+  TPivotGridScrollBarPanelControl = class;
+  TPivotAxisTreeNodeEh = class;
+  TPivotProgressIndicatorPanelEh = class;
+  TPivotAxisGroupingTreeEh = class;
+  TPivotKeyValueStatesEh = class;
+
+  TFieldDateTimeSliceLevelEh = (dtslNonEh, dtslYearEh, dtslQuarterEh, dtslMonthEh, dtslWeekEh,
+    dtslDayEh, dtslHourEh, dtslMinEh, dtslSecEh, dtslMSecEh);
+
+
+  TDateTimeSliceLevelsEh = set of TFieldDateTimeSliceLevelEh;
+
+  TPivotValueTypeEh = (svtSumEh, svtCountEh, svtAvgEh,
+    svtMaxEh, svtMinEh, svtCountDistinctEh, svtProductEh,
+    svtStDevEh, svtStDevpEh, svtVarEh, svtVarpEh, svtCustomEh);
+
+  TPivotValueTypesEh = set of TPivotValueTypeEh;
+
+  TPivotCelTypeEh = (sctEmptyEh, sctFieldNameForRowEh, sctFieldNameForColEh,
+    sctAxisValueEh, sctDataEh, sctHorzAggregateData, sctVertAggregateData,
+    sctValuesColCaptionEh);
+
+  TPivotFieldFetchValueEventEh = procedure(DataSource: TPivotDataSourceEh;
+    PivotField: TPivotFieldEh; var Value: Variant; var Processed: Boolean) of object;
+
+  IPivotDataSourceNotificationEh = interface
+    ['{79ED2D2A-D1EC-4095-80CC-12F6D4D31BC7}']
+    function PivotDataChangeProgress(Sender: TObject; ElapsedTime: LongWord; Percent: Integer): Boolean;
+
+    procedure PivotFieldsChanged(Sender: TObject);
+    procedure PivotStructureChanged(Sender: TObject);
+    procedure PivotDataChanged(Sender: TObject);
+
+    procedure PivotDataStartChanging(Sender: TObject);
+    procedure PivotDataChangingCanceled(Sender: TObject);
+    procedure PivotDataFinishChanging(Sender: TObject);
+  end;
+
+{ TPivotKeyValueStateEh }
+
+  TPivotKeyValueStateEh = class(TCollectionItem)
+  private
+    FExpanded: Boolean;
+    FVisible: Boolean;
+    FKeyValue: Variant;
+    procedure SetExpanded(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+    function GetList: TPivotKeyValueStatesEh;
+  public
+    constructor Create(Collection: TCollection); override;
+    constructor CreateApart(const KeyValue: Variant);
+    destructor Destroy; override;
+
+    property List: TPivotKeyValueStatesEh read GetList;
+
+    property KeyValue: Variant read FKeyValue;
+    property Expanded: Boolean read FExpanded write SetExpanded;
+    property Visible: Boolean read FVisible write SetVisible;
+  end;
+
+  TPivotKeyValueStateEhClass = class of TPivotKeyValueStateEh;
+
+{ TPivotKeyValueStatesEh }
+
+  TPivotKeyValueStatesEh = class(TCollection)
+  private
+    FPivotField: TPivotFieldEh;
+    FHaveHiddenKeys: Boolean;
+    function GetItem(Index: Integer): TPivotKeyValueStateEh;
+    function GetPivotField: TPivotFieldEh;
+    function GetItemByKeyValue(const KeyValue: Variant): TPivotKeyValueStateEh;
+
+  protected
+    function BinarySearch(const KeyValue: Variant): Integer;
+
+    procedure SortData;
+    procedure UpdateData(AMemTableEh: TMemTableEh);
+    procedure UpdateHaveHiddenKeysProp;
+
+  public
+    constructor Create(APivotField: TPivotFieldEh; AClass: TPivotKeyValueStateEhClass);
+
+    function Add: TPivotKeyValueStateEh; overload;
+    function Add(const KeyValue: Variant): TPivotKeyValueStateEh; overload;
+
+    function HaveHiddenKeys: Boolean;
+
+    procedure UpdateStateFromSortedList(AList: TObjectList);
+
+    property Items[Index: Integer]: TPivotKeyValueStateEh read GetItem; default;
+    property ItemByKeyValue[const KeyValue: Variant]: TPivotKeyValueStateEh read GetItemByKeyValue;
+    property PivotField: TPivotFieldEh read GetPivotField;
+  end;
+
+{ TPivotGridAggregateFunctionCalculatorEh }
+
+  TPivotGridAggregateFunctionCalculatorEh = class(TPersistent)
+  public
+    Value: Variant;
+    SrvVars: TVariantDynArray;
+    SrvObj: TObject;
+
+    constructor Create; virtual;
+    destructor Destroy; override;
+
+    procedure ResetAggrHolder; virtual;
+    procedure AggrValue(const AValue: Variant); virtual;
+
+    class function DisplayName: String;
+
+    function FinalizeAggregation: Variant; virtual;
+  end;
+
+  TPivotGridAggregateFunctionCalculatorEhClass = class of TPivotGridAggregateFunctionCalculatorEh;
+
+{ TPivotGridSumFunctionCalculatorEh }
+
+  TPivotGridSumFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridCountFunctionCalculatorEh }
+
+  TPivotGridCountFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridAverageFunctionCalculatorEh }
+
+  TPivotGridAverageFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    function FinalizeAggregation: Variant; override;
+
+    procedure ResetAggrHolder; override;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridMaxFunctionCalculatorEh }
+
+  TPivotGridMaxFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridMinFunctionCalculatorEh }
+
+  TPivotGridMinFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridCountDistinctFunctionCalculatorEh }
+
+  TPivotGridCountDistinctFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    function FinalizeAggregation: Variant; override;
+
+    procedure ResetAggrHolder; override;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridProductFunctionCalculatorEh }
+
+  TPivotGridProductFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  public
+    class function DisplayName: String;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridStDevFunctionCalculatorEh }
+
+  TPivotGridStDevFunctionCalculatorEh = class(TPivotGridAggregateFunctionCalculatorEh)
+  protected
+    Deduction: Integer;
+    DoSqrt: Boolean;
+  public
+    constructor Create; override;
+
+    class function DisplayName: String;
+    function FinalizeAggregation: Variant; override;
+
+    procedure ResetAggrHolder; override;
+    procedure AggrValue(const AValue: Variant); override;
+  end;
+
+{ TPivotGridStDevpFunctionCalculatorEh }
+
+  TPivotGridStDevpFunctionCalculatorEh = class(TPivotGridStDevFunctionCalculatorEh)
+  public
+    constructor Create; override;
+    class function DisplayName: String;
+  end;
+
+{ TPivotGridVarFunctionCalculatorEh }
+
+  TPivotGridVarFunctionCalculatorEh = class(TPivotGridStDevFunctionCalculatorEh)
+  public
+    constructor Create; override;
+    class function DisplayName: String;
+  end;
+
+{ TPivotGridVarpFunctionCalculatorEh }
+
+  TPivotGridVarpFunctionCalculatorEh = class(TPivotGridStDevFunctionCalculatorEh)
+  public
+    constructor Create; override;
+    class function DisplayName: String;
+  end;
+
+  TPivotRectCellEh = record
+    Rect: TRect;
+    PivotArrayCol: Integer;
+    PivotArrayRow: Integer;
+  end;
+
+  TPivotRectCellDynArrayEh = array of TPivotRectCellEh;
+
+{ TPivotCellEh }
+
+  TPivotCellEh = class(TPersistent)
+  private
+    FCelType: TPivotCelTypeEh;
+  public
+    ArrayValue: TVariantDynArray;
+    ColsTreeNode: TPivotAxisTreeNodeEh;
+    ColVisible: Boolean;
+    DrawDownLine: Boolean;
+    DrawFilterButton: Boolean;
+    DrawRightLine: Boolean;
+    Expanded: Boolean;
+    HorzAggrLevelCol: Integer;
+    HorzAggrLevelRow: Integer;
+    MasterCol: Integer;
+    MasterRow: Integer;
+    PivotField: TPivotFieldEh;
+    RowsTreeNode: TPivotAxisTreeNodeEh;
+    RowVisible: Boolean;
+    ShowGroupingSign: Boolean;
+    ShowValue: Boolean;
+    Value: Variant;
+    VertAggrLevelCol: Integer;
+    VertAggrLevelRow: Integer;
+    VisColsGroupFlatNodePos: Integer;
+    VisRowsGroupFlatNodePos: Integer;
+
+    procedure Clear;
+  published
+    property CelType: TPivotCelTypeEh read FCelType write FCelType;
+  end;
+
+  TPivotArrayItem = record
+    PivotValue: Variant;
+    AggrValue: Variant;
+  end;
+
+  TPivotGridArray = array of array of TPivotCellEh;
+
+  TPivotArray = array of TPivotArrayItem;
+
+{ TPivotFieldDataTypeDefEh }
+
+  TPivotFieldDataTypeDefEh = class(TPersistent)
+  private
+    FPrecision: Integer;
+    FDataType: TFieldType;
+    FSize: Integer;
+    procedure SetDataType(const Value: TFieldType);
+    procedure SetPrecision(const Value: Integer);
+    procedure SetSize(const Value: Integer);
+  published
+    property DataType: TFieldType read FDataType write SetDataType default ftUnknown;
+    property Precision: Integer read FPrecision write SetPrecision default 0;
+    property Size: Integer read FSize write SetSize default 0;
+  end;
+
+{ TPivotFieldEh }
+
+  TPivotFieldEh = class(TCollectionItem)
+  private
+    FDisplayFormat: String;
+    FDisplayName: String;
+    FExpression: TSTFilterExpressionEh;
+    FExpressionStr: String;
+    FFieldName: String;
+    FFieldValueList: IMemTableDataFieldValueListEh;
+    FOnFetchValue: TPivotFieldFetchValueEventEh;
+    FSliceLevel: TFieldDateTimeSliceLevelEh;
+    FSortOrder: TSortOrderEh;
+    FSourceFieldName: String;
+    FSumFunction: TPivotValueTypeEh;
+    FSumFunctionStored: Boolean;
+    FTypeDef: TPivotFieldDataTypeDefEh;
+    FDisplayWidth: Integer;
+    FKeyValueStates: TPivotKeyValueStatesEh;
+
+    function GetExpression: TSTFilterExpressionEh;
+    function GetPivotFields: TPivotFieldsEh;
+    function IsDisplayNameStored: Boolean;
+
+    procedure SetDisplayFormat(const Value: String);
+    procedure SetDisplayName(const Value: String); reintroduce;
+    procedure SetExpression(const Value: TSTFilterExpressionEh);
+    procedure SetFieldName(const Value: String);
+    procedure SetSortOrder(const Value: TSortOrderEh);
+    procedure SetSumFunction(const Value: TPivotValueTypeEh);
+    procedure SetTypeDef(const Value: TPivotFieldDataTypeDefEh);
+    function GetKeyValueStates: TPivotKeyValueStatesEh;
+    function IsSumFunctionStored: Boolean;
+    procedure SetSumFunctionStored(const Value: Boolean);
+    function GetSumFunction: TPivotValueTypeEh;
+
+  protected
+    FListValuesCheckingState: TBooleanDynArray;
+    FPopupListboxDownIndex: Integer;
+
+    function ParseExpression(const Exp: String): String;
+    function GetDisplayName: string; override;
+    function DefaultSumFunction: TPivotValueTypeEh; virtual;
+
+    procedure InternalSetExpressionStr(const Value: String); virtual;
+    procedure ClearExpression;
+    procedure DisplayDefinitionChanged; virtual;
+
+    property FieldValueList: IMemTableDataFieldValueListEh read FFieldValueList write FFieldValueList;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function GetValueForSource(SourceDataSet: TDataSet; Field: TField): Variant;
+    function ProposedSumFunction: TPivotValueTypeEh;
+    function ValueAsDispayText(const Value: Variant): String;
+    function StringToDataValue(const StringValue: String): Variant;
+    function SysStringToDataValue(const StringValue: String): Variant;
+    function GetDataFieldType: TFieldType;
+    function GetFilterExpressionAsStr: String;
+
+    procedure FillFilterValues(Items: TStrings);
+    procedure SetNextSortOrder;
+    procedure UpdateFilterFromValuesCheckingState(ss: TStrings; CheckStates: TBooleanDynArray);
+    procedure UpdateValuesCheckingStateFromFilter(ss: TStrings; CheckStates: TBooleanDynArray);
+    procedure UpdateKeyValueStates;
+    procedure UpdateKeyValueStatesFromFilterCheckedState(AStrList: TStrings; CheckStates: TBooleanDynArray);
+
+    property Expression: TSTFilterExpressionEh read GetExpression write SetExpression;
+    property PivotFields: TPivotFieldsEh read GetPivotFields;
+    property SortOrder: TSortOrderEh read FSortOrder write SetSortOrder;
+    property KeyValueStates: TPivotKeyValueStatesEh read GetKeyValueStates;
+
+
+  published
+    property DisplayFormat: String read FDisplayFormat write SetDisplayFormat;
+    property DisplayName: String read GetDisplayName write SetDisplayName stored IsDisplayNameStored;
+    property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth default 0;
+    property FieldName: String read FFieldName write SetFieldName;
+    property SliceLevel: TFieldDateTimeSliceLevelEh read FSliceLevel write FSliceLevel default dtslNonEh;
+    property SourceFieldName: String read FSourceFieldName write FSourceFieldName;
+    property SumFunction: TPivotValueTypeEh read GetSumFunction write SetSumFunction  stored IsSumFunctionStored;
+    property SumFunctionStored: Boolean read IsSumFunctionStored write SetSumFunctionStored default False;
+    property TypeDef: TPivotFieldDataTypeDefEh read FTypeDef write SetTypeDef;
+
+    property OnFetchValue: TPivotFieldFetchValueEventEh read FOnFetchValue write FOnFetchValue;
+  end;
+
+  TPivotFieldEhClass = class of TPivotFieldEh;
+
+{ TPivotFieldsEh }
+
+  TPivotFieldsEh = class(TCollection)
+  private
+    FPDSource: TPivotDataSourceEh;
+    function GetPivotField(Index: Integer): TPivotFieldEh;
+    procedure SetPivotField(Index: Integer; Value: TPivotFieldEh);
+
+  protected
+    function GetOwner: TPersistent; override;
+    procedure Notify(Item: TCollectionItem; Action: TCollectionNotification); override;
+    procedure Update(Item: TCollectionItem); override;
+    procedure DisplayDefinitionChanged;
+
+  public
+    constructor Create(APDSource: TPivotDataSourceEh; AClass: TPivotFieldEhClass);
+
+    function Add: TPivotFieldEh;
+    function FindFieldByName(const PivotFieldName: String): TPivotFieldEh;
+    function IndexOf(APivotField: TPivotFieldEh): Integer;
+    procedure AddAllPivotFields(DeleteExistend: Boolean);
+    procedure Assign(Source: TPersistent); override;
+    procedure RebuildPivotFields;
+
+    property PDSource: TPivotDataSourceEh read FPDSource;
+    property Items[Index: Integer]: TPivotFieldEh read GetPivotField write SetPivotField; default;
+  end;
+
+{ TPivotFieldValueInfoEh }
+
+  TPivotFieldValueInfoEh = class(TCollectionItem)
+  private
+    FDisplayFormat: String;
+    FPivotField: TPivotFieldEh;
+    FPivotFieldName: String;
+    FSumFunction: TPivotValueTypeEh;
+
+    function GetCollection: TValueFieldsCollectionEh;
+    procedure SetDisplayFormat(const Value: String);
+    procedure SetPivotField(const Value: TPivotFieldEh);
+    procedure SetPivotFieldName(const Value: String);
+    procedure SetSumFunction(const Value: TPivotValueTypeEh);
+
+  protected
+    function UpdatePivotFieldFromPivotFieldName: TPivotFieldEh;
+
+  public
+    constructor Create(Collection: TCollection); override;
+    destructor Destroy; override;
+
+    function DisplayDescription: String;
+
+    procedure Assign(Source: TPersistent); override;
+
+    property Collection: TValueFieldsCollectionEh read GetCollection;
+    property DisplayFormat: String read FDisplayFormat write SetDisplayFormat;
+    property PivotField: TPivotFieldEh read FPivotField write SetPivotField;
+    property PivotFieldName: String read FPivotFieldName write SetPivotFieldName;
+    property SumFunction: TPivotValueTypeEh read FSumFunction write SetSumFunction;
+  end;
+
+  TPivotFieldValueInfoEhClass = class of TPivotFieldValueInfoEh;
+
+{ TValuePivotFieldsCollectionEh }
+
+  TCollectionChangeEventEh = procedure(Sender: TCollection;
+    Item: TCollectionItem; Action: TCollectionNotification) of object;
+
+  TValueFieldsCollectionEh = class(TCollection)
+  private
+    FOnChangeNotification: TCollectionChangeEventEh;
+
+    function GetPivotFieldValueInfo(Index: Integer): TPivotFieldValueInfoEh;
+    procedure SetPivotFieldValueInfo(Index: Integer; Value: TPivotFieldValueInfoEh);
+  protected
+    FPivotDataSource: TPivotDataSourceEh;
+
+    procedure Notify(Item: TCollectionItem; Action: TCollectionNotification); override;
+    procedure Update(Item: TCollectionItem); override;
+  public
+    constructor Create(AClass: TPivotFieldValueInfoEhClass);
+
+    function Add: TPivotFieldValueInfoEh;
+    function AddForPivotField(APivotField: TPivotFieldEh; Position: Integer): TPivotFieldValueInfoEh;
+    function IndexOf(PivotFieldValueInfo: TPivotFieldValueInfoEh): Integer;
+    function IndexByPivotFieldName(const PivotFieldName: String): Integer;
+    function DataLines: Integer;
+
+    procedure Move(CurIndex, NewIndex: Integer);
+    procedure UpdatePivotFieldsFromPivotFieldNames;
+
+    property Items[Index: Integer]: TPivotFieldValueInfoEh read GetPivotFieldValueInfo write SetPivotFieldValueInfo; default;
+    property PivotDataSource: TPivotDataSourceEh read FPivotDataSource;
+
+    property OnChangeNotification: TCollectionChangeEventEh read FOnChangeNotification write FOnChangeNotification;
+  end;
+
+{ TPivotMemTableEh }
+
+  TPivotMemTableEh = class(TMemTableEh)
+  private
+    FOnCallBackProgress: TNotifyEvent;
+  protected
+    function CreateMemTableData: TMemTableDataEh; override;
+  public
+    procedure MTCallBackProgress(Sender: TObject);
+    property OnCallBackProgress: TNotifyEvent read FOnCallBackProgress write FOnCallBackProgress;
+  end;
+
+{ TPivotMemTableDataEh }
+
+  TPivotMemTableDataEh = class(TMemTableDataEh)
+  private
+    FCallBackProgress: TNotifyEvent;
+  protected
+    function CreateRecordsList: TRecordsListEh; override;
+    procedure CallBackProgress;
+  public
+    property OnCallBackProgress: TNotifyEvent read FCallBackProgress write FCallBackProgress;
+  end;
+
+  {TPivotRecordsListEh}
+
+  TPivotRecordsListEh = class(TRecordsListEh)
+  public
+    procedure QuickSort(L, R: Integer; Compare: TCompareRecords; ParamSort: TObject); override;
+    procedure CallBackProgress;
+  end;
+
+{ TPivotDataSourceEh }
+
+  TLogTimeMetricEventEh = procedure(Sender: TObject; MetricName: String; Duration: LongWord) of object;
+
+  TPivotDataSourceEh = class(TComponent)
+  private
+    FDataSet: TDataSet;
+    FDefaultDateTimeSliceLevels: TDateTimeSliceLevelsEh;
+    FInternalDefinitionUpdating: Boolean;
+    FNotificationConsumers: TInterfaceList;
+    FOnLogTimeMetric: TLogTimeMetricEventEh;
+    FPivotFields: TPivotFieldsEh;
+    FUpdateCount: Integer;
+
+    procedure CreateSourceTableStruct;
+    procedure FillSourceTable;
+    procedure SetColumnFields(const Value: TStringList);
+    procedure SetPivotFields(const Value: TPivotFieldsEh);
+    procedure SetRowFields(const Value: TStringList);
+    procedure SetValueFieldsInfo(const Value: TValueFieldsCollectionEh);
+    procedure UpdateColRowValueFields;
+    procedure UpdatePivotFieldFilters;
+
+  protected
+    BaseColsTable: TMemTableEh;
+    BaseTable: TMemTableEh;
+    ColsFieldNames: String;
+    ColsTable: TMemTableEh;
+    FActualColFlds: TStringList;
+    FActualRowFlds: TStringList;
+    FActualValueFields: TValueFieldsCollectionEh;
+    FBuildDataProgressTicks: LongWord;
+    FCheckCancelRequestTime: LongWord;
+    FColumnFields: TStringList;
+    FPercent: Integer;
+    FRowFields: TStringList;
+    FSourceTable: TMemTableEh;
+    FullBaseTable: TMemTableEh;
+    FValueFieldsInfo: TValueFieldsCollectionEh;
+    OldBaseColsTable: TMemTableEh;
+    ResultAggrTable: TMemTableEh;
+    RowsFieldNames: String;
+    RowsTable: TMemTableEh;
+    TransResultAggrTable: TMemTableEh;
+
+    function GetSortFieldsFromList(FieldList: TStringList): String;
+    function PivotDataChangeProgress(ElapsedTime: LongWord; Percent: Integer): Boolean;
+
+    procedure AggregateBasePivotData;
+    procedure BindColsRecsToBaseColsRecs;
+    procedure BuildGridData;
+    procedure BuildGridDataForBaseTable;
+    procedure CallBackProgress(Sender: TObject);
+    procedure CopyBaseColsTable(AOldBaseColsTable: TMemTableEh);
+    procedure CreateAndFillBaseTable;
+    procedure CreateBaseTableStruct;
+    procedure FillBaseColsTableDataState(AOldColsTable: TMemTableEh);
+    procedure FillBasePivotData;
+    procedure FillColsTableData(AColsTable, ABaseTable: TMemTableEh; DataFieldCount: Integer);
+    procedure FillInverseGaussMatrixForLevel(ColsLevel: Integer);
+    procedure FillRowsTableData(ARowsTable: TMemTableEh; DataFieldCount: Integer);
+    procedure LogTimeMetric(const MetricName: String; Duration: LongWord);
+    procedure MakeBaseColsTable;
+    procedure MakeBaseColsTableStruct(ABaseColsTable: TMemTableEh);
+    procedure MakeColsRowsTables;
+    procedure MakeColsTable;
+    procedure MakeColsTableStruct(AColsTable: TMemTableEh);
+    procedure MakeInverseGaussMatrix;
+    procedure MakeResultAggrTable;
+    procedure MakeRowsTable;
+    procedure MakeRowsTableStruct(ARowsTable: TMemTableEh);
+    procedure UpdateKeyValueStates;
+
+    procedure ClearSourceData; virtual;
+    procedure PivotDataChanged; virtual;
+    procedure PivotDataStartChanging; virtual;
+    procedure PivotDataFinishChanging; virtual;
+    procedure PivotDataChangingCanceled; virtual;
+
+    procedure PivotDataSourceChanged; virtual;
+    procedure PivotFieldsChanged; virtual;
+    procedure PivotFieldsDisplayChanged; virtual;
+    procedure PivotStructureChanged(Sender: TObject);
+    procedure SetDataFilter; virtual;
+    procedure SetBaseTableFilter;
+    procedure ValueFieldsInfoChangeEvent(Sender: TCollection; Item: TCollectionItem; Action: TCollectionNotification);
+
+    property ActualColFlds: TStringList read FActualColFlds;
+    property ActualRowFlds: TStringList read FActualRowFlds;
+    property ActualValueFields: TValueFieldsCollectionEh read FActualValueFields;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function DataIsEmpty: Boolean;
+    function StructureIsConsistent: Boolean;
+
+    procedure RegisterChanges(Value: IPivotDataSourceNotificationEh);
+    procedure UnRegisterChanges(Value: IPivotDataSourceNotificationEh);
+    property SourceTable: TMemTableEh read FSourceTable;
+
+    procedure BuildPivotData;
+    procedure CreateAndFillSourceTable;
+    procedure LoadAndBuildPivotData;
+    procedure PivotDataStructBeginUpdate;
+    procedure PivotDataStructEndUpdate;
+
+  published
+    property DataSet: TDataSet read FDataSet write FDataSet;
+    property PivotFields: TPivotFieldsEh read FPivotFields write SetPivotFields;
+    property DefaultDateTimeSliceLevels: TDateTimeSliceLevelsEh read  FDefaultDateTimeSliceLevels write FDefaultDateTimeSliceLevels default [dtslYearEh, dtslMonthEh, dtslDayEh];
+
+    property ColumnFields: TStringList read FColumnFields write SetColumnFields;
+    property RowFields: TStringList read FRowFields write SetRowFields;
+    property ValueFieldDefs: TValueFieldsCollectionEh read FValueFieldsInfo write SetValueFieldsInfo;
+
+    property OnLogTimeMetric: TLogTimeMetricEventEh read FOnLogTimeMetric write FOnLogTimeMetric;
+  end;
+
+{ TPivotAxisTreeNodeEh }
+
+  TPivotTreeNodeIterativeEvent = procedure (Sender: TPivotAxisTreeNodeEh; Param: TObject) of object;
+  TPivotAxisDirectionEh = (padVerticalEh, padHorizontalEh);
+
+  TPivotAxisTreeNodeEh = class(TBaseTreeNodeEh)
+  private
+    FAxisPos: Integer;
+    FKeyValue: TVariantDynArray;
+    FPivotKeyValueState: TPivotKeyValueStateEh;
+    FRefBaseAxisTableRec: TMemoryRecordEh;
+
+    function GetItem(const Index: Integer): TPivotAxisTreeNodeEh;
+    function GetOwner: TPivotAxisGroupingTreeEh; reintroduce;
+    function GetParent: TPivotAxisTreeNodeEh;
+  public
+    constructor Create; override;
+
+    property AxisPos: Integer read FAxisPos;
+    property Expanded;
+    property Items[const Index: Integer]: TPivotAxisTreeNodeEh read GetItem; default;
+    property KeyValue: TVariantDynArray read FKeyValue write FKeyValue;
+    property Level;
+    property Owner: TPivotAxisGroupingTreeEh read GetOwner;
+    property Parent: TPivotAxisTreeNodeEh read GetParent;
+    property PivotKeyValueState: TPivotKeyValueStateEh read FPivotKeyValueState;
+    property RefBaseAxisTableRec: TMemoryRecordEh read FRefBaseAxisTableRec;
+    property Text;
+  end;
+
+{ TPivotAxisGroupingTreeEh }
+
+  TPivotAxisGroupingTreeEh = class(TTreeListEh)
+  private
+    FAxisDir: TPivotAxisDirectionEh;
+    FCurIncAxisNum: Integer;
+    FExpandedStateIterativeLevel: Integer;
+    FFlatList: TObjectListEh;
+    FGetExpandedCountsResult: Integer;
+    FGrid: TCustomPivotGridEh;
+    FRowNums: TIntegerDynArray;
+    FSortOrder: TSortOrderEh;
+    FUpdateCount: Integer;
+
+    function CompareAxisValues(AxisPos1, AxisPos2, OppositeAxisPos: Integer): TVariantRelationship;
+    function ComparePivotAxisPoses(Node1, Node2: TBaseTreeNodeEh; ParamSort: TObject): Integer;
+    function GetActualAxisFlds: TStrings;
+    function GetAxisAggrBeforeData: Boolean;
+    function GetAxisTable: TMemTableEh;
+    function GetFlatList(Index: Integer): TPivotAxisTreeNodeEh;
+    function GetFlatListCount: Integer;
+    function GetRoot: TPivotAxisTreeNodeEh;
+
+    procedure SetExpandedState(Sender: TPivotAxisTreeNodeEh; Param: TObject);
+    procedure SetVisArrayGridNum(Sender: TPivotAxisTreeNodeEh; Param: TObject);
+
+  protected
+    procedure CheckExpanded(Sender: TBaseTreeNodeEh; Param: TObject);
+    procedure ExpandedChanged(Node: TBaseTreeNodeEh); override;
+    procedure FlatListAddItem(Sender: TBaseTreeNodeEh; Param: TObject);
+    procedure SetExpandedStateFromPivotKeyValue(Sender: TBaseTreeNodeEh; Param: TObject);
+    procedure UpdateExpandedState;
+
+  public
+    constructor Create(AGrid: TCustomPivotGridEh; ItemClass: TTreeNodeClassEh; AAxisDir: TPivotAxisDirectionEh);
+    destructor Destroy; override;
+
+    function GetExpandedCounts(ALevel: Integer): Integer;
+    function Updating: Boolean; reintroduce;
+
+    procedure BeginUpdate;
+    procedure BuildFlatList;
+    procedure BuildTree;
+    procedure EndUpdate;
+    procedure ForAllNode(AProg: TTreeNodeIterativeEvent; Param: TObject; RowAggrBeforeData: Boolean; ConsideCollapsed: Boolean);
+    procedure SetGridArrayAxisNums;
+    procedure SetLevelExpanded(ALevel: Integer; IsExpanded: Boolean);
+    procedure SetNextColNum(Sender: TPivotAxisTreeNodeEh; Param: TObject);
+    procedure SetNextRowNum(Sender: TPivotAxisTreeNodeEh; Param: TObject);
+    procedure SetVisArrayGridNums;
+    procedure SortData(Level, PivotGridAxisLine: Integer; ASortOrder: TSortOrderEh); reintroduce; virtual;
+    procedure WriteTree(sl: TStrings; AxisAggrBeforeData: Boolean);
+    procedure WriteTreeLine(Sender: TBaseTreeNodeEh; Param: TObject);
+
+    property ActualAxisFlds: TStrings read GetActualAxisFlds;
+    property AxisAggrBeforeData: Boolean read GetAxisAggrBeforeData;
+    property AxisDir: TPivotAxisDirectionEh read FAxisDir;
+    property AxisTable: TMemTableEh read GetAxisTable;
+    property FlatList[Index: Integer]: TPivotAxisTreeNodeEh read GetFlatList;
+    property FlatListCount: Integer read GetFlatListCount;
+    property Grid: TCustomPivotGridEh read FGrid;
+    property Root: TPivotAxisTreeNodeEh read GetRoot;
+  end;
+
+  TPivotCellSignTypeEh = (pcstNonEh, pcstRectangleEh, pcstCircleEh);
+
+{ TPivotCellDrawParamsEh }
+
+  TPivotCellDrawParamsEh = class(TPersistent)
+  private
+    FAreaCol: Longint;
+    FAreaRow: Longint;
+    FCol: Longint;
+    FColsAxisPos: TVariantDynArray;
+    FColsGroupLevel: Integer;
+    FDisplayValue: String;
+    FDrawState: TGridDrawState;
+    FFillColor: TColor;
+    FFont: TFont;
+    FRow: Longint;
+    FRowsAxisPos: TVariantDynArray;
+    FRowsGroupLevel: Integer;
+    FSignFillColor: TColor;
+    FSignFrameColor: TColor;
+    FSignType: TPivotCellSignTypeEh;
+    FValue: Variant;
+
+    procedure SetFont(const Value: TFont);
+
+  public
+    procedure InitFont(const Value: TFont);
+
+    property AreaCol: Longint read FAreaCol;
+    property AreaRow: Longint read FAreaRow;
+    property Col: Longint read FCol;
+    property ColsAxisPos: TVariantDynArray read FColsAxisPos;
+    property ColsGroupLevel: Integer read FColsGroupLevel;
+    property DrawState: TGridDrawState read FDrawState;
+    property Row: Longint read FRow;
+    property RowsAxisPos: TVariantDynArray read FRowsAxisPos;
+    property RowsGroupLevel: Integer read FRowsGroupLevel;
+    property Value: Variant read FValue;
+
+    property DisplayValue: String read FDisplayValue write FDisplayValue;
+    property FillColor: TColor read FFillColor write FFillColor;
+    property Font: TFont read FFont write SetFont;
+    property SignFillColor: TColor read FSignFillColor write FSignFillColor;
+    property SignFrameColor: TColor read FSignFrameColor write FSignFrameColor;
+    property SignType: TPivotCellSignTypeEh read FSignType write FSignType;
+  end;
+
+{ TPivotDataCellEditorParamsEh }
+
+  TPivotDataCellEditorParamsEh = class(TPersistent)
+  private
+    FAreaCol: Longint;
+    FAreaRow: Longint;
+    FCanModify: Boolean;
+    FCol: Longint;
+    FColsAxisPos: TVariantDynArray;
+    FColsGroupLevel: Integer;
+    FEditValue: String;
+    FFillColor: TColor;
+    FFont: TFont;
+    FRow: Longint;
+    FRowsAxisPos: TVariantDynArray;
+    FRowsGroupLevel: Integer;
+    FValue: Variant;
+
+  public
+    property AreaCol: Longint read FAreaCol;
+    property AreaRow: Longint read FAreaRow;
+    property Col: Longint read FCol;
+    property ColsAxisPos: TVariantDynArray read FColsAxisPos;
+    property ColsGroupLevel: Integer read FColsGroupLevel;
+    property Row: Longint read FRow;
+    property RowsAxisPos: TVariantDynArray read FRowsAxisPos;
+    property RowsGroupLevel: Integer read FRowsGroupLevel;
+    property Value: Variant read FValue;
+
+    property CanModify: Boolean read FCanModify write FCanModify;
+    property EditValue: String read FEditValue write FEditValue;
+    property FillColor: TColor read FFillColor write FFillColor;
+    property Font: TFont read FFont write FFont;
+  end;
+
+{ TPivotDataCellEditorSetValueParamsEh }
+
+  TPivotDataCellEditorSetValueParamsEh = class(TPersistent)
+  private
+    FAreaCol: Longint;
+    FAreaRow: Longint;
+    FCol: Longint;
+    FColsAxisPos: TVariantDynArray;
+    FColsGroupLevel: Integer;
+    FEditValue: String;
+    FRow: Longint;
+    FRowsAxisPos: TVariantDynArray;
+    FRowsGroupLevel: Integer;
+    FUpdateInternalTables: Boolean;
+    FValuesAxisPos: Integer;
+
+  public
+    property AreaCol: Longint read FAreaCol;
+    property AreaRow: Longint read FAreaRow;
+    property Col: Longint read FCol;
+    property ColsAxisPos: TVariantDynArray read FColsAxisPos;
+    property ColsGroupLevel: Integer read FColsGroupLevel;
+    property Row: Longint read FRow;
+    property RowsAxisPos: TVariantDynArray read FRowsAxisPos;
+    property RowsGroupLevel: Integer read FRowsGroupLevel;
+    property ValuesAxisPos: Integer read FValuesAxisPos;
+
+    property EditValue: String read FEditValue;
+    property UpdateInternalTables: Boolean read FUpdateInternalTables write FUpdateInternalTables;
+  end;
+
+
+{ TPivotGridCellParamsEh }
+
+  TPivotGridCellParamsEh = class(TPersistent)
+  private
+    FAxisAggregateFont: TFont;
+    FAxisColor: TColor;
+    FAxisFont: TFont;
+    FDataAggregateColor: TColor;
+    FDataAggregateFont: TFont;
+    FDataColor: TColor;
+    FDataFont: TFont;
+    FFieldNameColor: TColor;
+    FFieldNameFont: TFont;
+    FGrid: TCustomPivotGridEh;
+    FParentAxisAggregateFont: Boolean;
+    FParentAxisFont: Boolean;
+    FParentDataAggregateFont: Boolean;
+    FParentDataFont: Boolean;
+    FParentFieldNameFont: Boolean;
+
+    function IsAxisAggregateFontStored: Boolean;
+    function IsAxisFontStored: Boolean;
+    function IsDataAggregateFontStored: Boolean;
+    function IsDataFontStored: Boolean;
+    function IsFieldNameFontStored: Boolean;
+
+    procedure SetDataAggregateColor(const Value: TColor);
+    procedure SetDataAggregateFont(const Value: TFont);
+    procedure SetDataColor(const Value: TColor);
+    procedure SetDataFont(const Value: TFont);
+    procedure SetFieldNameColor(const Value: TColor);
+    procedure SetFieldNameFont(const Value: TFont);
+    procedure SetAxisColor(const Value: TColor);
+    procedure SetAxisFont(const Value: TFont);
+    procedure SetParentDataAggregateFont(const Value: Boolean);
+    procedure SetParentDataFont(const Value: Boolean);
+    procedure SetParentFieldNameFont(const Value: Boolean);
+    procedure SetParentAxisFont(const Value: Boolean);
+
+    procedure RefreshDefaultDataAggregateFont;
+    procedure RefreshDefaultDataFont;
+    procedure RefreshDefaultFieldNameFont;
+    procedure RefreshDefaultAxisFont;
+    procedure RefreshDefaultAxisAggregateFont;
+    procedure AssignDefaultFontTo(const AFont: TFont);
+    procedure FontChanged(Sender: TObject);
+    procedure SetAxisAggregateFont(const Value: TFont);
+    procedure SetParentAxisAggregateFont(const Value: Boolean);
+
+  public
+    constructor Create(AGrid: TCustomPivotGridEh);
+    destructor Destroy; override;
+
+    function DefaultFont: TFont; virtual;
+    function ActualDataColor: TColor; virtual;
+    function ActualDataAggregateColor: TColor; virtual;
+    function ActualAxisColor: TColor; virtual;
+    function ActualFieldNameColor: TColor; virtual;
+    property Grid: TCustomPivotGridEh read FGrid;
+
+  published
+    property AxisAggregateFont: TFont read FAxisAggregateFont write SetAxisAggregateFont stored IsAxisAggregateFontStored;
+    property AxisColor: TColor read FAxisColor write SetAxisColor default clDefault;
+    property AxisFont: TFont read FAxisFont write SetAxisFont stored IsAxisFontStored;
+    property DataAggregateColor: TColor read FDataAggregateColor write SetDataAggregateColor default clDefault;
+    property DataAggregateFont: TFont read FDataAggregateFont write SetDataAggregateFont stored IsDataAggregateFontStored;
+    property DataColor: TColor read FDataColor write SetDataColor default clDefault;
+    property DataFont: TFont read FDataFont write SetDataFont stored IsDataFontStored;
+    property FieldNameColor: TColor read FFieldNameColor write SetFieldNameColor default clDefault;
+    property FieldNameFont: TFont read FFieldNameFont write SetFieldNameFont stored IsFieldNameFontStored;
+
+    property ParentAxisAggregateFont: Boolean read FParentAxisAggregateFont write SetParentAxisAggregateFont default True;
+    property ParentAxisFont: Boolean read FParentAxisFont write SetParentAxisFont default True;
+    property ParentDataAggregateFont: Boolean read FParentDataAggregateFont write SetParentDataAggregateFont default True;
+    property ParentDataFont: Boolean read FParentDataFont write SetParentDataFont default True;
+    property ParentFieldNameFont: Boolean read FParentFieldNameFont write SetParentFieldNameFont default True;
+  end;
+
+
+{ TPivotGridLineParamsEh }
+
+  TPivotGridLineParamsEh = class(TGridLineColorsEh)
+  published
+    property DarkColor;
+    property BrightColor;
+  end;
+
+{$IFDEF FPC}
+{$ELSE}
+
+{ TCustomPivotGridPrintServiceEh }
+
+  TCustomPivotGridPrintServiceEh = class(TBaseGridPrintServiceEh)
+  private
+    FGrid: TCustomPivotGridEh;
+    procedure SetGrid(const Value: TCustomPivotGridEh);
+  public
+    property Grid: TCustomPivotGridEh read FGrid write SetGrid;
+  published
+    property Scale;
+    property FitToPagesWide;
+    property FitToPagesTall;
+    property ScalingMode;
+    property Orientation;
+    property ColorSchema;
+    property PageFooter;
+    property PageHeader;
+    property PageMargins;
+    property TextBeforeContent;
+    property TextAfterContent;
+
+    property OnBeforePrint;
+    property OnBeforePrintPage;
+    property OnBeforePrintPageContent;
+    property OnPrintDataBeforeGrid;
+    property OnCalcLayoutDataBeforeGrid;
+
+    property OnAfterPrint;
+    property OnAfterPrintPage;
+    property OnAfterPrintPageContent;
+    property OnPrintDataAfterGrid;
+    property OnCalcLayoutDataAfterGrid;
+
+    property OnPrinterSetupDialog;
+  end;
+
+{$ENDIF}
+
+{ TCustomPivotGridEh }
+
+  TPivotGridOptionEh = (pgoRowSizingEh, pgoColSizingEh, pgoEditingEh, pgoWantTabEh,
+    pgoFieldDraggingEh, pgoGrandTotalColumnEh, pgoGrandTotalRowEh,
+    pgoDataSortingEh, pgoDataFiltersEh);
+  TPivotGridOptionsEh = set of TPivotGridOptionEh;
+
+  TSpicGridStateEh = (dgsNormal, dgsFilterButtonDown);
+  TDropToPosTypeEh = (dtptFieldColsEh, dtptFieldRowsEh);
+  TCellAreaEh = (caUnspecifiedEh, caDropDownButtonEh, caSortMarkerEh, caCellBorderEh, caTreeExpandSignEh);
+
+  TCurrentCellMovedEvent = procedure(Grid: TCustomPivotGridEh; OldCurrent: TGridCoord) of object;
+  TGetPivotDataCellDrawParamsEventEh = procedure(Grid: TCustomPivotGridEh;
+    ACol, ARow: Integer; var Params: TPivotCellDrawParamsEh;
+    var Processed: Boolean) of object;
+  TGetDataCellEditorParamsEventEh = procedure(Grid: TCustomPivotGridEh;
+    ACol, ARow: Integer; Params: TPivotDataCellEditorParamsEh) of object;
+  TSetDataCellEditorValueEventEh = procedure(Grid: TCustomPivotGridEh;
+    ACol, ARow: Integer; Params: TPivotDataCellEditorSetValueParamsEh) of object;
+
+  TCustomPivotGridEh = class(TCustomGridEh, IPivotDataSourceNotificationEh)
+  private
+    FColsAxisTree: TPivotAxisGroupingTreeEh;
+    FDefaultDateTimeSliceLevels: TDateTimeSliceLevelsEh;
+    FDragStarted: Boolean;
+    FDrawCellParams: TPivotCellDrawParamsEh;
+    FFinishLoadingStatusRenderDuration: Integer;
+    FGridCellParams: TPivotGridCellParamsEh;
+    FLoadingModeBitmap: TBitmap;
+    FLoadingModeCallCount : Integer;
+    FOnCurrentCellMoved: TCurrentCellMovedEvent;
+    FOnDrawDataCell: TGetPivotDataCellDrawParamsEventEh;
+    FOnGetDataCellEditorParams: TGetDataCellEditorParamsEventEh;
+    FOnGridDefinitionChanged: TNotifyEvent;
+    FOnGridLayoutChanged: TNotifyEvent;
+    FOnSetDataCellEditorValue: TSetDataCellEditorValueEventEh;
+    FOptions: TPivotGridOptionsEh;
+    FPivotDataSource: TPivotDataSourceEh;
+    FProgressPanel: TPivotProgressIndicatorPanelEh;
+    FRowAggrBeforeData: Boolean;
+    FRowHeight: Integer;
+    FRowLines: Integer;
+    FRowsAxisTree: TPivotAxisGroupingTreeEh;
+    FShowDataBuildingProgress: Boolean;
+    FShowHint: Boolean;
+    FShowingLoadingMode: Boolean;
+    FShowToolTips: Boolean;
+    FStartLoadingStatusRenderDuration: Integer;
+    {$IFDEF FPC}
+    {$ELSE}
+    FPrintService: TCustomPivotGridPrintServiceEh;
+    {$ENDIF}
+
+    function CalcDefaultRowHeight: Integer;
+    function GetActualColFlds: TStringList;
+    function GetActualRowFlds: TStringList;
+    function GetActualValueFields: TValueFieldsCollectionEh;
+    function GetDefaultColWidth: Integer;
+    function GetGridCellParams: TPivotGridCellParamsEh;
+    function GetGridLineParams: TPivotGridLineParamsEh;
+    function GetOptions: TPivotGridOptionsEh;
+    function GetPivotRowSortedGridArray(ACol, ARow: Integer): TPivotCellEh;
+    function GetSourcePivotFields: TPivotFieldsEh;
+    function GetValueForInheritedOptions: TGridOptionsEh;
+    function GetVisPivotGridArray(ACol, ARow: Integer): TPivotCellEh;
+    function IsShowHintStored: Boolean;
+
+    procedure AdjustContraData;
+    procedure DrawAxisValueCellData(ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh; ShowGroupingSign, ShowValue: Boolean; const DisplayValue: String);
+    procedure DrawSortMarker(var ARect: TRect; AState: TGridDrawState; SortOrder: TSortOrderEh);
+    procedure GetTopGroupRowCells(var Cells: TPivotRectCellDynArrayEh);
+    procedure PaintLoadingMode(RenderDuration: Integer);
+    procedure PivotDataSourceChanged;
+    procedure SetDefaultColWidth(const Value: Integer);
+    procedure SetGridCellParams(const Value: TPivotGridCellParamsEh);
+    procedure SetGridLineParams(const Value: TPivotGridLineParamsEh);
+    procedure SetOptions(const Value: TPivotGridOptionsEh);
+    procedure SetPivotDataSource(const Value: TPivotDataSourceEh);
+    procedure SetRowHeight(const Value: Integer);
+    procedure SetRowLines(const Value: Integer);
+    procedure SetShowHint(const Value: Boolean);
+    procedure SetShowToolTips(const Value: Boolean);
+    procedure StartDrag;
+    procedure UnpaintLoadingMode(RenderDuration: Integer);
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CancelMode;
+    {$ENDIF}
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+    procedure CMHintsShowPause(var Message: TCMHintShowPause); message CM_HINTSHOWPAUSE;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    procedure WMHScroll(var Message: TWMHScroll); message WM_HSCROLL;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KillFocus;
+    procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure WMVScroll(var Message: TWMVScroll); message WM_VSCROLL;
+
+  protected
+    FDataBuildingProgressDelay: Integer;
+    FDataSortColNum: Integer;
+    FDataSortSortOrder: TSortOrderEh;
+    FDragCell: TPivotCellEh;
+    FDragPos: Integer;
+    FDrawenCellArr: array of TGridCoord;
+    FDropToCell: TPivotCellEh;
+    FDropToPos: Integer;
+    FDummyPivotField: TPivotFieldEh;
+    FEditText: Variant;
+    FEditUserTextModified: Boolean;
+    FFullVisPivotColCount: Integer;
+    FHotTrackEditButton: Integer;
+    FInternalCellSizeSetting: Boolean;
+    FInTitleFilterListboxVisible: Boolean;
+    FInTitleFilterPivotField: TPivotFieldEh;
+    FMouseDownPos: TPoint;
+    FPivotArrayDataColCount: Integer;
+    FPivotArrayDataRowCount: Integer;
+    FRowsCaptionExpandedState: TBooleanDynArray;
+    FShowGrandTotalCols, FShowGrandTotalRows: Boolean;
+    FSpicGridState: TSpicGridStateEh;
+    FStartDataCol, FStartDataRow: Integer;
+    FTrackingStateRect: TRect;
+    FValsCapDeltaRow: Integer; 
+    FVisPivotColCount: Integer;
+    FVisPivotColCountAffix: Integer;
+    FVisPivotGridArray: TPivotGridArray;
+    FVisPivotRowCount: Integer;
+    PivotGridArray: TPivotGridArray;
+
+    function CanEditModify: Boolean; override;
+    function CanHotTackCell(X, Y: Integer): Boolean; override;
+    function CreateEditor: TInplaceEdit; override;
+    function CreateGridLineColors: TGridLineColorsEh; override;
+    function CreateHorzScrollBarPanelControl: TGridScrollBarPanelControlEh; override;
+    function CreateScrollBar(AKind: TScrollBarKind): TGridScrollBarEh; override;
+    function FixedColsSizingAllowed: Boolean; override;
+    function FullRedrawOnScroll: Boolean; override;
+    function GetEditText(ACol, ARow: Longint): string; override;
+    function IsSmoothHorzScroll: Boolean; override;
+    function IsSmoothVertScroll: Boolean; override;
+    function NeedBufferedPaint: Boolean; override;
+    function WMCheckCanSendDoubleClicks(var MouseEvent: TWMMouse): Boolean; override;
+
+    function CanMouseTrackMode: Boolean;
+    function CheckCellAreaDrawn(ACol, ARow: Integer): Boolean; virtual;
+    function CheckTopGroupRowMouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer): Boolean; virtual;
+    function CreateGridCellParams: TPivotGridCellParamsEh; virtual;
+    function DragDropHitTestInfo(X, Y: Integer; var LinePos: TPoint; var LineSize: Integer; var DropToPos: Integer; var FDragToField: TPivotCellEh): Boolean;
+    function GetCellHitArea(PivotCel: TPivotCellEh; const ACellRect: TRect; CellMousePos: TPoint): TCellAreaEh;
+    function GetInTitleFilterForm: TFilterDropDownForm; virtual;
+    function GetMouseHitCellState(Cell: TGridCoord; MousePos: TPoint; CellRect: TRect; var StateRect: TRect): TSpicGridStateEh;
+    function GrandTotalColVisible: Boolean;
+    function GrandTotalRowVisible: Boolean;
+    function GridTextIsVisible: Boolean;
+
+    procedure CelLenChanged(Axis: TGridAxisDataEh; Index, OldLen: Integer); override;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure CellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure ChangeScale(M, D: Integer {$IFDEF EH_LIB_24}; isDpiChange: Boolean {$ENDIF}); override;
+    procedure CheckDrawCellBorder(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var IsDraw: Boolean; var BorderColor: TColor; var IsExtent: Boolean); override;
+    procedure CreateWnd; override;
+    procedure CurrentCellMoved(OldCurrent: TGridCoord); override;
+    procedure DoEndDrag(Target: TObject; X, Y: Integer); override;
+    procedure DoStartDrag(var DragObject: TDragObject); override;
+    procedure DragOver(Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean); override;
+    procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
+    procedure HideEditor; override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure Paint; override;
+    procedure Resize; override;
+    procedure SelectionChanged(const OldSel: TGridRect); override;
+    procedure SetEditText(ACol, ARow: Longint; const Value: string); override;
+    procedure ShowEditor; override;
+    procedure UpdateText(EditorChanged: Boolean); override;
+
+    procedure AddNodeToList(Sender: TBaseTreeNodeEh; Param: TObject);
+    procedure BindAxisTreeToBaseAxisRecs(AxisTree: TPivotAxisGroupingTreeEh; BaseAxisTable: TMemTableEh; ActualAxisFldsCount: Integer);
+    procedure BindAxisTreeToPivotKeyValueStates(AxisTree: TPivotAxisGroupingTreeEh; Node: TPivotAxisTreeNodeEh; AxisFlds: TStringList);
+    procedure BindNodesListToPivotKeyValueState(NodesList: TObjectList; KeyValueStates: TPivotKeyValueStatesEh; Level: Integer);
+    procedure BuildGridArrayColsMeasures;
+    procedure BuildGridArrayRowsMeasures;
+    procedure BuildGridArrayValuesMeasures;
+    procedure CancelEditor;
+    procedure ColExpandedChanged(Node: TPivotAxisTreeNodeEh);
+    procedure DoCopyAction; virtual;
+    procedure DrawAxisValueCell(ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure DrawCellSign(ACol, ARow: Integer; var ARect: TRect; FDrawCellParams: TPivotCellDrawParamsEh);
+    procedure DrawDataCell(ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure DrawFieldNameCell(ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure DrawFilterButton(var ARect: TRect; AState: TGridDrawState; FilterHaveValues: Boolean); virtual;
+    procedure DrawTopGroupRowValues; virtual;
+    procedure FillAxisValueCellParams(ADrawCellParams: TPivotCellDrawParamsEh; ACol, ARow: Integer; const ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure FillDataCellEditorParams(ACellEditorParams: TPivotDataCellEditorParamsEh; ACol, ARow: Integer);
+    procedure FillDataCellEditorSetValueParams(ACellEditorParams: TPivotDataCellEditorSetValueParamsEh; ACol, ARow: Integer);
+    procedure FillDataCellParams(ADrawCellParams: TPivotCellDrawParamsEh; ACol, ARow: Integer; const ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure FillDrawCellParams(ADrawCellParams: TPivotCellDrawParamsEh; ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure FillFieldNameCellParams(ADrawCellParams: TPivotCellDrawParamsEh; ACol, ARow: Integer; const ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure FilterFormCloseUp(Accept: Boolean); virtual;
+    procedure FilterFormDropDown(Cell: TGridCoord; const CellRect, ButtonRect: TRect);
+    procedure GetFilterButtonRect(const ACellRect: TRect; var AButtonRect, AGrossRect: TRect; ARightToLeftAlignment: Boolean);
+    procedure GetVisPivotGridArrayPosByAxisCell(PivotCel: TPivotCellEh; var VisCellCoord: TPoint);
+    procedure GetVisPivotGridArrayPosByAxisTreeNode(RowsTreeNode: TPivotAxisTreeNodeEh; var VisCellCoord: TPoint);
+    procedure GridCellParamsChanged; virtual;
+    procedure GridLayoutChanged; virtual;
+    procedure HideProgressPanel;
+    procedure InternalSetColWidth(ACol, AWidth: Integer);
+    procedure InternalSetRowHeight(ARow, AHeight: Integer);
+    procedure InTitleFilterDropDownFormCallbackProc(DropDownForm: TCustomForm; Accept: Boolean; DynParams: TDynVarsEh; SysParams: TDropDownFormSysParams);
+    procedure InTitleFilterListKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure InTitleFilterListKeyPress(Sender: TObject; var Key: Char);
+    procedure InTitleFilterListMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MergeRectForCell(ACol, ARow: Integer; var ARect: TRect; AState: TGridDrawState; PivotCel: TPivotCellEh); virtual;
+    procedure PaintEmptyDataInfo; virtual;
+    procedure PaintInplaceButton(Canvas: TCanvas; ButtonStyle: TEditButtonStyleEh; Rect, ClipRect: TRect; DownButton: Integer; Active, Flat, Enabled: Boolean; ParentColor: TColor; Bitmap: TBitmap; TransparencyPercent: Byte; imList: TCustomImageList; ImageIndex: Integer);
+    procedure PivotDataSourceChange(Sender: TObject);
+    procedure PostEditText(var IsRebuildData: Boolean); virtual;
+    procedure RowExpandedChanged(Node: TPivotAxisTreeNodeEh); virtual;
+    procedure SetAxisColExpandedState(PivotCel: TPivotCellEh; Expanded: Boolean);
+    procedure SetAxisRowExpandedState(PivotCel: TPivotCellEh; Expanded: Boolean); virtual;
+    procedure SetCellDrawn(ACol, ARow: Integer); virtual;
+    procedure SetColRowAxisPosForDataCell(ADataCol, ADataRow: Integer; var AColsAxisPos: TVariantDynArray; var ARowsAxisPos: TVariantDynArray);
+    procedure SetColsCaptionsExpandedState;
+    procedure SetPivotGridArrayVars;
+    procedure SetRowsCaptionsExpandedState;
+    procedure SetRowsColsCaptionsExpandedState;
+    procedure ShowProgressPanel(ElapsedTime: LongWord; Percent: Integer);
+    procedure UpdateInternalTablesForEditorValue(ACellEditorParams: TPivotDataCellEditorSetValueParamsEh);
+
+    property PivotRowSortedGridArray[ACol, ARow: Integer]: TPivotCellEh read GetPivotRowSortedGridArray;
+
+  protected
+    { IPivotDataSourceNotificationEh }
+    function PivotDataChangeProgress(Sender: TObject; ElapsedTime: LongWord; Percent: Integer): Boolean;
+
+    procedure PivotFieldsChanged(Sender: TObject);
+    procedure PivotStructureChanged(Sender: TObject);
+    procedure PivotDataChanged(Sender: TObject);
+    procedure PivotDataStartChanging(Sender: TObject);
+    procedure PivotDataFinishChanging(Sender: TObject);
+    procedure PivotDataChangingCanceled(Sender: TObject);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ActualColFldsCount: Integer;
+    function ActualRowFldsCount: Integer;
+    function DataSourceIsEmpty: Boolean; virtual;
+    function GetCellContentRect(ACol, ARow: Integer; ACellRect: TRect; PivotCel: TPivotCellEh): TRect; virtual;
+    function GrandTotalColCount: Integer;
+    function GrandTotalRowCount: Integer;
+    function GridIsEmpty: Boolean;
+
+    procedure AggregateGridForColumns;
+    procedure AggregateGridForColumnsLevel(ColsLevel: Integer);
+    procedure DragDrop(Source: TObject; X, Y: Integer); override;
+    procedure EmptyGridData;
+    procedure FillGridDataForActualRowFlds;
+    procedure FinishDragFrom(Source: TObject); virtual;
+    procedure FinishLoadingStatus(RenderDuration: Integer = -1);
+    procedure GetValueFieldsInfoFromCommaText(const ACommaText: String);
+    procedure MakeColSortingTree;
+    procedure MakePivotGridArray;
+    procedure MakeRowSortingTree;
+    procedure MakeVisPivotGridArray;
+    procedure MoveAggrRowBeforeData;
+    procedure RebuildGrid;
+    procedure ResortColSortingTree;
+    procedure ResortRowSortingTree;
+    procedure SetColLevelExpanded(AColLevel: Integer; IsExpanded: Boolean; const KeyValues: TVariantDynArray);
+    procedure SetGridSizes(GridSizeChanged: Boolean);
+    procedure SetPivotGridArraySize(AColCount, ARowCount: Integer);
+    procedure SetRowHeightsColumnWidths;
+    procedure SetRowLevelExpanded(ARowLevel: Integer; IsExpanded: Boolean; const KeyValues: TVariantDynArray);
+    procedure StartLoadingStatus(RenderDuration: Integer = -1);
+    procedure VisPivotPosToSrcArrayPos(AVisCol, AVisRow: Integer; var ASrcCol, ASrcRow: Integer);
+
+    property ActualColFlds: TStringList read GetActualColFlds;
+    property ActualRowFlds: TStringList read GetActualRowFlds;
+    property ActualValueFields: TValueFieldsCollectionEh read GetActualValueFields;
+    property Col;
+    property ColsAxisTree: TPivotAxisGroupingTreeEh read FColsAxisTree;
+    property DataBuildingProgressDelay: Integer read FDataBuildingProgressDelay write FDataBuildingProgressDelay default 1000;
+    property DefaultColWidth: Integer read GetDefaultColWidth write SetDefaultColWidth default 80;
+    property DefaultDateTimeSliceLevels: TDateTimeSliceLevelsEh read  FDefaultDateTimeSliceLevels write FDefaultDateTimeSliceLevels default [dtslYearEh, dtslMonthEh, dtslDayEh];
+    property GridCellParams: TPivotGridCellParamsEh read GetGridCellParams write SetGridCellParams;
+    property GridLineParams: TPivotGridLineParamsEh read GetGridLineParams write SetGridLineParams;
+    property Options: TPivotGridOptionsEh read GetOptions write SetOptions default [pgoColSizingEh, pgoEditingEh, pgoWantTabEh, pgoFieldDraggingEh, pgoGrandTotalColumnEh, pgoGrandTotalRowEh, pgoDataSortingEh, pgoDataFiltersEh];
+    property PivotDataSource: TPivotDataSourceEh read FPivotDataSource write SetPivotDataSource;
+    property PivotFields: TPivotFieldsEh read GetSourcePivotFields;
+    property Row;
+    property RowAggrBeforeData: Boolean read FRowAggrBeforeData write FRowAggrBeforeData;
+    property RowHeight: Integer read FRowHeight write SetRowHeight default 0;
+    property RowLines: Integer read FRowLines write SetRowLines default 0;
+    property RowsAxisTree: TPivotAxisGroupingTreeEh read FRowsAxisTree;
+    property ShowDataBuildingProgress: Boolean read FShowDataBuildingProgress write FShowDataBuildingProgress default True;
+    property ShowHint: Boolean read FShowHint write SetShowHint stored IsShowHintStored;
+    property ShowToolTips: Boolean read FShowToolTips write SetShowToolTips;
+    property VisPivotGridArray[ACol, ARow: Integer]: TPivotCellEh read GetVisPivotGridArray;
+    {$IFDEF FPC}
+    {$ELSE}
+    property PrintService: TCustomPivotGridPrintServiceEh read FPrintService;
+    {$ENDIF}
+
+    property OnCellMouseClick;
+    property OnCellMouseDown;
+    property OnCurrentCellMoved: TCurrentCellMovedEvent read FOnCurrentCellMoved write FOnCurrentCellMoved;
+    property OnDrawDataCell: TGetPivotDataCellDrawParamsEventEh read FOnDrawDataCell write FOnDrawDataCell;
+    property OnGetDataCellEditorParams: TGetDataCellEditorParamsEventEh read FOnGetDataCellEditorParams write FOnGetDataCellEditorParams;
+    property OnGridDefinitionChanged: TNotifyEvent read FOnGridDefinitionChanged write FOnGridDefinitionChanged;
+    property OnGridLayoutChanged: TNotifyEvent read FOnGridLayoutChanged write FOnGridLayoutChanged;
+    property OnSetDataCellEditorValue: TSetDataCellEditorValueEventEh read FOnSetDataCellEditorValue write FOnSetDataCellEditorValue;
+  end;
+
+{ TPivotGridEh }
+
+  TPivotGridEh = class(TCustomPivotGridEh)
+  public
+    property Canvas;
+    property Col;
+    property Row;
+    property RowCount;
+    property ColCount;
+    property ColWidths;
+    property RowHeights;
+
+  published
+    property DataBuildingProgressDelay;
+    property DefaultColWidth;
+    property GridCellParams;
+    property GridLineParams;
+    property Options;
+    property PivotDataSource;
+    property RowHeight;
+    property RowLines;
+    property ShowDataBuildingProgress;
+
+    property OnDrawDataCell;
+    property OnGetDataCellEditorParams;
+    property OnSetDataCellEditorValue;
+    property OnGridDefinitionChanged;
+    property OnGridLayoutChanged;
+    property OnCurrentCellMoved;
+
+    property Align;
+    property Anchors;
+    property BiDiMode;
+    property BorderStyle;
+    property Color;
+    property Constraints;
+    property ContraColCount;
+    {$IFDEF FPC}
+    {$ELSE}
+    property Ctl3D;
+    {$ENDIF}
+    property DragCursor;
+    property DragKind;
+    property DragMode;
+    property Enabled;
+    property FixedColor;
+    property Flat;
+    property Font;
+    property HorzScrollBar;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ImeMode;
+    property ImeName;
+    {$ENDIF}
+    property ParentBiDiMode;
+    {$IFDEF FPC}
+    {$ELSE}
+    property ParentCtl3D;
+    property PrintService;
+    {$ENDIF}
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property SelectionDrawParams;
+    property ShowHint;
+    property ShowToolTips;
+    property TabOrder;
+    property TabStop;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property VertScrollBar;
+    property Visible;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDock;
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnStartDock;
+    property OnStartDrag;
+  end;
+
+{ TPivotGridFilterPopupListboxItemEh }
+
+  TPivotGridFilterPopupListboxItemEh = class(TPopupListboxItemEh)
+  protected
+    function GetPivotField(Listbox: TCustomListboxEh): TPivotFieldEh;
+    function GetGrid(Listbox: TCustomListboxEh): TCustomPivotGridEh;
+  end;
+
+{ TPopupListboxItemEhData }
+
+  TPopupListboxItemEhData = class(TPivotGridFilterPopupListboxItemEh)
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure KeyPress(Sender: TCustomListboxEh; ItemIndex: Integer; var Key: Char; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure MouseMove(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+
+  public
+    function CloseOnExecute(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+  TPopupListboxItemEhSpecType = (ptFilterSpecSelectAll, ptFilterApply, ptFilterRowLine);
+
+{ TPopupListboxItemEhSpec }
+
+  TPopupListboxItemEhSpec = class(TPivotGridFilterPopupListboxItemEh)
+  protected
+    FType: TPopupListboxItemEhSpecType;
+
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+
+  public
+    constructor Create(AType: TPopupListboxItemEhSpecType);
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+  TPivotGridDrabObj = class(TDragControlObjectEx)
+  protected
+    function GetDragCursor(Accepted: Boolean; X, Y: Integer): TCursor; override;
+  public
+    FDragCell: TPivotCellEh;
+    FPivotField: TPivotFieldEh;
+    FPivotFieldName: String;
+    FPivotFieldValueInfo: TPivotFieldValueInfoEh;
+
+    destructor Destroy; override;
+  end;
+
+{ TPivotGridSelectionInfoPanel }
+
+  TPivotGridSelectionInfoPanel = class (TCustomControl)
+  private
+    function GetGrid: TCustomPivotGridEh;
+    function InfoWidth: Integer;
+    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+
+  protected
+    FAggrText: String;
+    procedure GridSelectionChanged;
+    procedure Paint; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function HaveData: Boolean;
+    property Grid: TCustomPivotGridEh read GetGrid;
+  end;
+
+  { TPivotGridScrollBarPanelControl }
+
+  TPivotGridScrollBarPanelControl = class(TGridScrollBarPanelControlEh)
+  private
+    FSelInfoPanel: TPivotGridSelectionInfoPanel;
+
+  protected
+    procedure Resize; override;
+    procedure CreateHandle; override;
+
+  public
+    constructor Create(AOwner: TComponent; AKind: TScrollBarKind); reintroduce;
+    destructor Destroy; override;
+    procedure GridSelectionChanged;
+  end;
+
+{ TPivotGridScrollBarEh }
+
+  TPivotGridScrollBarEh = class(TGridScrollBarEh)
+  protected
+    function CheckScrollBarMustBeShown: Boolean; override;
+  end;
+
+{ TPivotProgressBarEh }
+
+  TPivotProgressBarEh = class(TProgressBar)
+  private
+    FCanvas: TControlCanvas;
+    FBufferBitmap: TBitmap;
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  end;
+
+{ TPivotProgressIndicatorPanelEh }
+
+  TPivotProgressIndicatorPanelEh = class(TCustomPanel)
+  private
+    FControlFlipChildren: Boolean;
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+  protected
+    FLabelEsc: TLabel;
+    FLabelNote: TLabel;
+    FLabelTimePassed: TLabel;
+    FProgressBar: TPivotProgressBarEh;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  end;
+
+{ TPivotGridInplaceEditEh }
+
+  TPivotGridInplaceEditEh = class(TInplaceEdit)
+  private
+    function GetGrid: TCustomPivotGridEh;
+
+  protected
+    procedure UpdateContents; override;
+    procedure UserChange; virtual;
+
+  public
+
+    constructor Create(Owner: TComponent); override;
+    destructor Destroy; override;
+
+    property Grid: TCustomPivotGridEh read GetGrid;
+  end;
+
+  TPivotGridExportAsOLEXLSOptionEh = (pgxlsColoredEh, pgxlsDataAsEditText);
+  TPivotGridExportAsOLEXLSOptionsEh = set of TPivotGridExportAsOLEXLSOptionEh;
+
+procedure StartWait;
+procedure StopWait;
+
+{$IFDEF MSWINDOWS}
+function ExportPivotGridEhToOleExcel(Grid: TCustomPivotGridEh;
+  Options: TPivotGridExportAsOLEXLSOptionsEh
+  ): Variant;
+{$ELSE}
+{$ENDIF}
+
+function PivotAggrValueDisplayNames(ValueType: TPivotValueTypeEh): String;
+
+var
+  hcrDropToGarbageEh: HCursor = 0;
+  hcrDropToGarbageIndexEh: TCursor;
+  FlatPivotProgressIndicator: Boolean = True;
+  SliceDisplayNames: array[TFieldDateTimeSliceLevelEh] of String;
+
+const
+  SliceNames: array[TFieldDateTimeSliceLevelEh] of String =
+    ('Non', 'Year', 'Quarter', 'Month', 'Week',
+     'Day', 'Hour', 'Min', 'Sec', 'MSec');
+
+  SliceNamesDisplaFormat: array[TFieldDateTimeSliceLevelEh] of String =
+    ('', 'YYYY', 'YYYY/MM', 'YYYY/MM', 'YYYY/WW',
+     'YYYY/MM/DD', 'YYYY/MM/DD HH', 'YYYY/MM/DD HH:NN', 'YYYY/MM/DD HH:NN:SS', '');
+
+  PivotAggrValueTypes: array[TPivotValueTypeEh] of String = ('Sum',
+    'Count', 'Avarge', 'Max', 'Min', 'Count Distinct', 'Product',
+    'StDev', 'StDevp', 'Var', 'Varp', 'Custom');
+
+  StandartAggregateFunctionCalculators: array[TPivotValueTypeEh] of TPivotGridAggregateFunctionCalculatorEhClass =
+  (TPivotGridSumFunctionCalculatorEh,
+   TPivotGridCountFunctionCalculatorEh,
+   TPivotGridAverageFunctionCalculatorEh,
+   TPivotGridMaxFunctionCalculatorEh,
+   TPivotGridMinFunctionCalculatorEh,
+   TPivotGridCountDistinctFunctionCalculatorEh,
+   TPivotGridProductFunctionCalculatorEh,
+   TPivotGridStDevFunctionCalculatorEh,
+   TPivotGridStDevpFunctionCalculatorEh,
+   TPivotGridVarFunctionCalculatorEh,
+   TPivotGridVarpFunctionCalculatorEh,
+   nil);
+
+implementation

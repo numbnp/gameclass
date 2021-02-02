@@ -1,0 +1,42 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                     Tool controls                     }
+{                                                       }
+{      Copyright (c) 2020-2020 by Dmitry V. Bolshakov   }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit EhLibImageListRes;
+
+interface
+
+uses
+  SysUtils, Classes, ImgList, Controls,
+  {$IFDEF FPC}
+  EhLibLCL,
+  {$ELSE}
+  EhLibVCL, Windows,
+  {$ENDIF}
+  Graphics;
+
+type
+  TEhLibImageListDataMod = class(TDataModule)
+    imList12_12: TImageList;
+    imList12_12_Dis: TImageList;
+    imList16_16: TImageList;
+    imList16_16_Dis: TImageList;
+    imList24_24: TImageList;
+    imList24_24_Dis: TImageList;
+  private
+    { Private declarations }
+  public
+    function GetImageFromImageList(ImageList: TImageList; ImageIndex: Integer): TGraphic;
+  end;
+
+var
+  EhLibImageListDataMod: TEhLibImageListDataMod;
+
+implementation

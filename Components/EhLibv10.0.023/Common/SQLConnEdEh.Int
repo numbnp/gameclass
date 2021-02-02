@@ -1,0 +1,61 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{                  TfEditDBXConn form                   }
+{                                                       }
+{     Copyright (c) 2008-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit SQLConnEdEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, Grids, ValEdit, Mask, DBCtrlsEh,
+  DB, SqlExpr, DBConnAdmin, IniFiles
+{$IFDEF EH_LIB_9}
+, WideStrings
+{$ENDIF}
+;
+
+type
+  TfEditDBXConn = class(TForm)
+    SQLConnection1: TSQLConnection;
+    ValueListEditor1: TValueListEditor;
+    cbConnectionName: TDBComboBoxEh;
+    StaticText1: TStaticText;
+    cbDriverName: TDBComboBoxEh;
+    StaticText2: TStaticText;
+    cbLibraryName: TDBComboBoxEh;
+    StaticText3: TStaticText;
+    cbVendorLib: TDBComboBoxEh;
+    StaticText4: TStaticText;
+    bbConnect: TBitBtn;
+    bbOk: TBitBtn;
+    bbCancel: TBitBtn;
+    procedure FormCreate(Sender: TObject);
+    procedure cbConnectionNameChange(Sender: TObject);
+    procedure cbDriverNameChange(Sender: TObject);
+    procedure bbConnectClick(Sender: TObject);
+    procedure cbLibraryNameChange(Sender: TObject);
+    procedure cbVendorLibChange(Sender: TObject);
+    procedure ValueListEditor1SetEditText(Sender: TObject; ACol,
+      ARow: Integer; const Value: String);
+  private
+  public
+    ConnectionAdmin: IConnectionAdmin;
+    Regeting: Boolean;
+    procedure RegetProperties;
+    procedure AssignFromConnection(ASQLConnection1: TSQLConnection);
+    procedure AssignToConnection(ASQLConnection1: TSQLConnection);
+  end;
+
+var
+  fEditDBXConn: TfEditDBXConn;
+
+function EditSQLConnection(ASQLConnection1: TSQLConnection): Boolean;
+
+implementation

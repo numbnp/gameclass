@@ -1,0 +1,266 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{              Design window for TDBGridEh              }
+{                                                       }
+{   Copyright (c) 2002-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+
+unit GridEhEd {$IFDEF CIL} platform{$ENDIF};
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils,
+{$IFDEF CIL}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DesignEditors,
+  Borland.Vcl.Design.ColnEdit,
+  Variants, Types,
+  EhLibVCLNET,
+{$ELSE}
+
+  {$IFDEF FPC}
+  EhLibLCL, DBGridsEh,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  Windows, Messages,
+  ColnEdit, DesignMenus, DBGridEh,
+  Variants, DesignEditors, DesignIntf,
+  EhLibVCL, PSAPI, ToolsAPI,
+  ImgList, Menus, ActnList, ExtCtrls, ComCtrls,
+  DBLookupEh, ToolCtrlsEh, MemTableEh, DataDriverEh,
+  ToolWin, Contnrs,
+  {$ENDIF}
+
+{$ENDIF}
+  Graphics, Controls, Forms,
+  DBGridEhGrouping,
+  GridsEh, DBAxisGridsEh,
+  Classes, TypInfo;
+
+type
+{ TDBGridEhFieldProperty }
+
+  TDBGridEhFieldProperty = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+  {$IFDEF FPC}
+  {$ELSE}
+  TDBGridEhColumnsEditor = class(TCollectionEditor)
+    N1: TMenuItem;
+    AddAllFields1: TMenuItem;
+    RestoreDefaults1: TMenuItem;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    AddAllFieldsCmd: TAction;
+    RestoreDefaultsCmd: TAction;
+    procedure AddAllFieldsCmdExecute(Sender: TObject);
+    procedure RestoreDefaultsCmdExecute(Sender: TObject);
+    procedure AddAllFieldsCmdUpdate(Sender: TObject);
+    procedure RestoreDefaultsCmdUpdate(Sender: TObject);
+  private
+  protected
+    function CanAdd(Index: Integer): Boolean; override;
+  public
+  end;
+
+{ TDBGridEhGroupFooterItemsEditor }
+
+  TDBGridEhGroupFooterItemsEditor = class(TCollectionEditor)
+  protected
+    function CanAdd(Index: Integer): Boolean; override;
+  public
+  end;
+
+{ TDBGridEhEditor }
+
+  TDBGridEhEditor = class(TComponentEditor)
+    FMenuItem: IMenuItem;
+    DDRPropName: String;
+    FDataSetList: TStringList;
+    procedure HandleCreateDataSourceSubMenu(Sender: TObject);
+    procedure HandleAssignDataSourceSubMenu(Sender: TObject);
+    procedure CheckComponent(const Value: string);
+
+   public
+    destructor Destroy; override;
+
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    procedure PrepareItem(Index: Integer; const AItem: IMenuItem); override;
+  end;
+
+{ TDBGridEhDesignControler }
+
+  TDBGridEhDesignControler = class(TDesignControlerEh, IDesignNotification)
+  private
+    FGridList: TObjectListEh;
+    FCornerImage: TBitmap;
+  protected
+    FOldSelection: IDesignerSelections;
+   { IDesignNotification }
+    procedure ItemDeleted(const ADesigner: IDesigner; AItem: TPersistent);
+    procedure ItemInserted(const ADesigner: IDesigner; AItem: TPersistent);
+    procedure ItemsModified(const ADesigner: IDesigner);
+    procedure SelectionChanged(const ADesigner: IDesigner; const ASelection: IDesignerSelections);
+    procedure DesignerOpened(const ADesigner: IDesigner; AResurrecting: Boolean);
+    procedure DesignerClosed(const ADesigner: IDesigner; AGoingDormant: Boolean);
+    procedure CreateDesingPanel(DBGridEh: TCustomDBAxisGridEh);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function IsDesignHitTest(Control: TPersistent; X, Y: Integer; AShift: TShiftState): Boolean; override;
+    function IsObjectBelongToGrid(Grid: TCustomDBAxisGridEh; AObject: TPersistent): Boolean;
+    function ControlIsObjInspSelected(Control: TPersistent): Boolean; override;
+    function GetObjInspSelectedControl(BaseControl: TPersistent): TPersistent; override;
+    function GetSelectComponentCornerImage: TBitmap; override;
+    function GetDesignInfoItemClass: TCollectionItemClass; override;
+
+    procedure DesignMouseDown(Control: TPersistent; X, Y: Integer; AShift: TShiftState); override;
+    procedure DrawDesignSelectedBorder(Canvas: TCanvas; ARect: TRect); override;
+    procedure RegisterChangeSelectedNotification(Control: TPersistent); override;
+    procedure UnregisterChangeSelectedNotification(Control: TPersistent); override;
+    procedure KeyProperyModified(Control: TControl); override;
+    procedure SelectComponent(Component: TComponent; Instance: TPersistent); override;
+    procedure AdjustLookupParamsMenuClick(Sender: TObject);
+    procedure ShowEditButtonsCollectionWindow(Sender: TObject);
+    procedure ShowCellButtonsCollectionWindow(Sender: TObject);
+  end;
+
+  TNotAssignedPropertyEh = class(TPersistent)
+  end;
+
+{ TGridDesignPanelEh }
+
+  TGridDesignPanelEh = class(TCustomPanel)
+  private
+    Grid: TCustomDBAxisGridEh;
+    DropdownMenu: TPopupMenu;
+    FComponentList: TStringList;
+    FNotAssignedProperty: TNotAssignedPropertyEh;
+
+  protected
+    procedure Paint; override;
+    procedure CMDesignHitTest(var Msg: TCMDesignHitTest); message CM_DESIGNHITTEST;
+    procedure WndProc(var Message: TMessage); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure CheckComponent(const Value: string);
+
+  public
+    constructor CreateForGrid(AOwner: TCustomDBAxisGridEh);
+    destructor Destroy; override;
+
+    function GetDesigner: IDesigner;
+    procedure MenuClick(Sender: TObject);
+    procedure UpdateState;
+  end;
+
+  TPanelMenuItem = class(TMenuItem)
+  public
+    ComponentEditor: IComponentEditor;
+    VerbNo: Integer;
+  end;
+
+{ TAssignComponentPropertyMenuItem }
+
+  TAssignComponentPropertyMenuItem = class(TMenuItem)
+  public
+    Component: TObject;
+    DesignPanel: TGridDesignPanelEh;
+    LDesigner: IDesigner;
+    Owner: TComponent;
+    PropName: String;
+    PropValue: TObject;
+    PropValueClass: TComponentClass;
+    procedure Click; override;
+  end;
+
+{ TFavoriteComponentListMenuItem }
+
+  TFavoriteComponentListMenuItem = class(TMenuItem)
+  public
+    FClass: TComponentClass;
+    procedure Click; override;
+  end;
+
+{ TSaveComponentDesignInfoEh }
+
+  TSaveComponentDesignInfoItemEh = class(TCollectionItem)
+  private
+    FComponentName: String;
+    FLeft: Integer;
+    FTop: Integer;
+  public
+    InGrid: Boolean;
+  published
+    property Left: Integer read FLeft write FLeft;
+    property Top: Integer read FTop write FTop;
+    property ComponentName: String read FComponentName write FComponentName;
+  end;
+
+{ TDBGridEhColumnsProperty }
+
+  TDBGridEhColumnsProperty = class(TPropertyEditor {TClassProperty})
+    function GetAttributes: TPropertyAttributes; override;
+    function GetValue: string; override;
+    procedure Edit; override;
+  end;
+
+{ TDBGridEhFieldProperty }
+
+  TDBGridEhFieldAggProperty = class(TDBGridEhFieldProperty)
+  public
+    procedure GetValueList(List: TStrings); override;
+  end;
+
+{ TDBLookupComboboxEhEditor }
+
+  TDBLookupComboboxEhEditor = class(TComponentEditor)
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+  end;
+
+{ TDBGridEhGroupFooterItemsProperty }
+
+  TDBGridEhGroupFooterItemsProperty = class(TPropertyEditor {TClassProperty})
+    function GetAttributes: TPropertyAttributes; override;
+    function GetValue: string; override;
+    procedure Edit; override;
+  end;
+
+{$ENDIF}
+
+{ TDBGridEhGroupLelelColumnProperty }
+
+  TDBGridEhGroupLelelColumnProperty = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+{$IFDEF FPC}
+{$ELSE}
+var
+  DBGridEhColumnsEditor: TDBGridEhColumnsEditor;
+  ComponentsBitmap: TStringList;
+  GlobalHideConnectedComponens: Boolean;
+  GlobalHideConnectedComponensLoaded: Boolean;
+
+  function GetGlobalHideConnectedComponens: Boolean;
+{$ENDIF}
+
+implementation

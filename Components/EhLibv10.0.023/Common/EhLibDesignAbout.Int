@@ -1,0 +1,66 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{           Design Time window - About EhLib            }
+{                                                       }
+{    Copyright (c) 2013-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+unit EhLibDesignAbout;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  {$IFDEF FPC}
+    EhLibLCL, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows, Win32Extra, UxTheme, ShellAPI,
+    {$ENDIF}
+  {$ELSE}
+    XPMan, EhLibVCL, jpeg, Windows, ShellAPI,
+  {$ENDIF}
+  Dialogs, ExtCtrls, StdCtrls, Buttons;
+
+type
+  TfAbout = class(TForm)
+    Image1: TImage;
+    Memo1: TMemo;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    bbClose: TBitBtn;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Bevel3: TBevel;
+    lBuild: TLabel;
+    Shape1: TShape;
+    lSupportRef: TLabel;
+    lForumRef: TLabel;
+    lHomePage: TLabel;
+    Shape2: TShape;
+    Image2: TImage;
+    lVer: TLabel;
+    lEditionInfo: TLabel;
+    procedure bbCloseClick(Sender: TObject);
+    procedure lHomePageClick(Sender: TObject);
+    procedure lForumRefClick(Sender: TObject);
+    procedure lSupportRefClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTESt;
+  public
+    { Public declarations }
+  end;
+
+var
+  fAbout: TfAbout;
+
+procedure ShowAboutForm;
+
+implementation

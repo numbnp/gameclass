@@ -1,0 +1,92 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                                                       }
+{              TLookupLinkFields form                   }
+{                                                       }
+{      Copyright (c) 2013-2020 by Dmitry V. Bolshakov   }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit LookupLinkDesignEh;
+
+interface
+
+uses
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms,
+{$IFDEF DESIGNTIME}
+  DesignIntf, DesignEditors,
+{$ENDIF}
+  StdCtrls, ExtCtrls, DB, Buttons, DBLookupUtilsEh;
+
+type
+
+{ TLookupLinkFields }
+
+  TLookupLinkFields = class(TForm)
+    KeyFieldList: TListBox;
+    LookupKeyList: TListBox;
+    BindList: TListBox;
+    Label30: TLabel;
+    Label31: TLabel;
+    LookupDatasetList: TComboBox;
+    IndexLabel: TLabel;
+    Label2: TLabel;
+    Bevel1: TBevel;
+    AddButton: TButton;
+    DeleteButton: TButton;
+    ClearButton: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    ResultFieldLabel: TLabel;
+    ResultFieldList: TComboBox;
+    procedure FormCreate(Sender: TObject);
+    procedure BindingListClick(Sender: TObject);
+    procedure AddButtonClick(Sender: TObject);
+    procedure DeleteButtonClick(Sender: TObject);
+    procedure BindListClick(Sender: TObject);
+    procedure ClearButtonClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure HelpClick(Sender: TObject);
+    procedure LookupDatasetListChange(Sender: TObject);
+  private
+    FFullIndexName: string;
+    OrderedLookupKeyList: TStringList;
+    OrderedKeyFieldList: TStringList;
+    procedure OrderFieldList(OrderedList, List: TStrings);
+    procedure AddToBindList(const Str1, Str2: string);
+    procedure Initialize;
+    procedure LookupDatasetChanged;
+    procedure TrySameFieldInLookupKeyList;
+
+  protected
+    FComponent: TComponent;
+{$IFDEF DESIGNTIME}
+    FDesigner: IDesigner;
+{$ENDIF}
+    FDataSet: TDataSet;
+    FKeyFieldNames: String;
+    FLookupKeyFieldNames: String;
+    FLookupResultField: String;
+    FLookupDataSet: TDataSet;
+
+  public
+    property DataSet: TDataSet read FDataSet;
+    function Edit: Boolean;
+
+    procedure InitDatasetList;
+    procedure GetDataSetListRunTime(List: TStrings);
+  end;
+
+function EditLookupLink(Component: TComponent;
+{$IFDEF DESIGNTIME}
+  ADesigner: IDesigner;
+{$ENDIF}
+  ADataSet: TDataSet;
+  var KeyFieldNames, LookupKeyFieldNames, LookupResultField: String;
+  var LookupDataSet: TDataSet): Boolean;
+
+implementation

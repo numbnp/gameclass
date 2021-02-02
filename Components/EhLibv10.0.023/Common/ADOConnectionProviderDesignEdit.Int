@@ -1,0 +1,83 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{              TFormADOConnProviderEdit                 }
+{                                                       }
+{     Copyright (c) 2011-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit ADOConnectionProviderDesignEdit;
+
+{$I EHLIB.INC}
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DBGridEhGrouping, DBGridEhToolCtrls, MemTableDataEh, Db, MemTableEh,
+  StdCtrls, ExtCtrls, Mask, DBCtrlsEh, ComCtrls, GridsEh, DBGridEh,
+  ADODataDriverEh, ADODb, StrUtils, ToolCtrlsEh, DynVarsEh, EhLibVCL,
+  DBAxisGridsEh;
+
+type
+  TFormADOConnProviderEdit = class(TForm)
+    GroupBox2: TGroupBox;
+    DBGridEh2: TDBGridEh;
+    rbUseMacros: TRadioButton;
+    rbUseFile: TRadioButton;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    DBEditEh1: TDBEditEh;
+    DBEditEh2: TDBEditEh;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBGridEh1: TDBGridEh;
+    Bevel1: TBevel;
+    bEditConnection: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    dsMacros: TDataSource;
+    dsConnParams: TDataSource;
+    mtMacros: TMemTableEh;
+    mtMacrosName: TStringField;
+    mtMacrosValue: TStringField;
+    mtConnParams: TMemTableEh;
+    mtConnParamsName: TWideStringField;
+    mtConnParamsValue: TWideStringField;
+    bTestConn: TButton;
+
+    procedure bEditConnectionClick(Sender: TObject);
+    procedure DBGridEh2Columns1UpdateData(Sender: TObject; var Text: string; var Value: Variant; var UseText, Handled: Boolean);
+    procedure bTestConnClick(Sender: TObject);
+    procedure rbUseFileClick(Sender: TObject);
+    procedure rbUseMacrosClick(Sender: TObject);
+
+  private
+    FADOConnProvider: TADOConnectionProviderEh;
+    FInternalSet: Boolean;
+    FDesignConnectionString: WideString;
+
+    function GetConnectionStringFromUdlFile(FileName: WideString): WideString;
+    function GetParameter(ParName: WideString): WideString;
+
+    procedure PutConnectionStringToUdlFile(ConnStr: WideString; FileName: WideString);
+    procedure UpdateButtonsState;
+    procedure UpdateConnectionStringFromMemTableConnParams;
+
+  public
+    function CheckReplacePathToMacro(ACommStr: WideString): WideString;
+    function Edit(ADOConnProvider: TADOConnectionProviderEh): Boolean;
+
+    procedure FillData;
+    procedure InitData;
+  end;
+
+var
+  FormADOConnProviderEdit: TFormADOConnProviderEdit;
+
+function EditFormADOConnProvider(ADOConnProvider: TADOConnectionProviderEh): Boolean;
+
+implementation

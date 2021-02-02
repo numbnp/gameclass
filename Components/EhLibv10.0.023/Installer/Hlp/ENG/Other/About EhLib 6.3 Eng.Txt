@@ -1,0 +1,131 @@
+What's New in EhLib 6.3
+
+-
+Highlighting the current grid cell with Windows Themes and Delphi XE Themes.
+-
+
++ A new property - SelectionDrawParams: TGridSelectionDrawParamsEh
+  SelectionDrawParams property is added in DBGridEh and DBVertGridEh component, which allows you to customize the style of the currently selected cell
+    The property has the following sub-properties:
+
+      SelectionStyle: TGridSelectionDrawStyleEh - paint style of the currently selected cell
+      DrawFocusFrame: Boolean - Specifies whether to draw a dotted border around the currently selected cell.
+
+    TGridSelectionStyleEh type contains the following values:
+      gsdsDefaultEh The default style is determined depending on the version of the OS and included Windows schemas and Delphi schemas.
+                             If Windows schemes is on the gssListViewThemedEh is used.
+                             If the active style of Delphi XE is on the GridThemed style is used.
+      gsdsClassicEh Classic . The cell is painted by uniform clSelected color;
+      gsdsGridThemedEh The Delphi XE style is used to draw a celeced cell.
+      gsdsListViewThemedEh Windows ListView style is to draw a celeced cell.
+
+    For a global management of style use the properties of the global object GridDrawStyle of TGridDrawStyleEh type.
+
+    Use the procedure GridDefaultDrawStyleEh, SetGridDefaultDrawStyleEh,
+    declared in a module GridsEh.pas to access GridDrawStyle the object.
+
+    TGridDrawStyleEh type has the following properties:
+      SelectionStyle: TGridSelectionStyleEh - style shading display the currently selected cell
+      DrawFocusFrame: Boolean - Specifies whether to draw a dotted border around the currently selected cell.
+
+    To change the style of lighting in all grids of  project, use code like this:
+   
+File MyMainForm.Pas :///
+   unit MyMainForm;
+
+   uses ... GridsEh;
+   ....
+   initialization
+     GridDefaultDrawStyleEh.SelectionStyle: = gsdsClassicEh; // Draw selected cell by the classic style.
+   end.
+File MyMainForm.Pas: \\\
+
+-
+Setting Lookup relationships directly in the columns of the grid without using of lookup fields.
+-
+
++ A new property - Column.LookupParams: TDBLookupDataEh in columns of DBGridEh and DBVertGridEh.
+  The property allows you to setup lookup relationship in the grid columns.
+
+  The property consists of the following sub-properties :
+
+    KeyFieldNames: String - Identifies the field or fields in the dataset that must be matched in a lookup dataset when doing a lookup.
+    LookupCache: Boolean - Determines whether the values of a lookup field are cached or looked up dynamically every time the current record in the dataset changes.
+    LookupDataSet: TDataSet - Identifies the dataset used to look up field values.
+    LookupDisplayFieldName: String - Identifies the field from the lookup dataset whose value is displayed in place of KeyFields.
+    LookupKeyFieldNames: String - Identifies the field or fields in the lookup dataset to match when doing a lookup.
+
+-
+Other features of this version:
+-
+
++ New property - TBaseColumnEh.CaseInsensitiveTextSearch: Boolean default True. Defines CaseInsensitive search in a text editor for the dropdownbox items.
+  The property as added in columns of DBGridEh, DBVertGridEh and in TDBComboboxEh TDBLookupcomboboxEh controls.
+
++ LimitTextToListValues property of Boolean type. Defines to limit of values in the edit box by the list of values in the dropdownbox.
+    The property as added  in columns of DBGridEh DBVertGridEh and in TDBComboboxEh control.
+
++ In DBGridEh. At Design-Time it is allowed select DataSet from the list of Favorite DataSets DataSet is created via the Grid Design Panel.
+
++ In the Filter Drop-down lists of the DBGridEh it is allowed to selected several values quickly by pressing and dragging the pressed mouse.
+
++ In DBGridEh.
+  If gioShowRowselCheckboxesEh value is in the DBGridEh.IndicatorOptions property then it is allowed to selected several records quickly by pressing and dragging the pressed mouse.
+
++ In DBGridEh.Pas
+   A new property ColWidthsOptimizationMaxWaitingTime is added in the global class TDBGridEhCenter.
+   This property can be assigned by a maximum time, which will be used to calculate the widths of the columns when the user double click on the line that separates columns.
+   If the time of calculation of column widths is exceeded the value that was set in ColWidthsOptimizationMaxWaitingTime then
+   grid cancels a calculation of the remaining records.
+   The default value is 2000 (2 seconds).
+	
++ New property ShowImageAndText is added in the TColumnTitleEh class.
+  If ShowImageAndText = True and the title of the grid is set to display images from TitleParams.Images, then the text of the column header
+  will be displayed along with the picture. If ShowImageAndText = False, it will only display the picture without the text.
+
++ New methods GetColCellParams GetTitleParams RowDetailPanelShow and RowDetailPanelHide are added in the global class TDBGridEhCenter, 
+  This mathods are virtual methods so you can override them in new derived class TMyDBGridEhCenter 
+  and control corresponding events for all Grids of the project.
+
+
+DBVertGridsEh.pas
+
++ A new property OptionsEh of TDBVHGridOptionsEh type is added in the TDBVertGridEh component.
+    TDBVHGridOptionsEh type contains the following values:
+
+      dgvhHighlightFocusEh - Highlight the current cell when the grid has focus.
+      dgvhClearSelectionEh - Clear a selected area when a user navigates the current cell in the grid.
+
+      dgvhEnterToNextRowEh - Move the current cell to the next row in a grid when user presses an Enter key.
+      dgvhTabToNextRowEh - Move the current cell to the next row in a grid when user presses an Tab key.
+      dgvhRowsIsTabControlsEh - Rows in the grid are operated as a list of edit controls. ie :
+                                  - Does not allow to leave the current record of DataSet with keyboard keys.
+                                  - When the current cell in the grid is on the last line, the Tab key on the grid translates the input focus to the next TabStop Control of a Form (dgvhTabToNextRowEh property must be included).
+                                  - When the current cell in the grid is on the first line , then by Alt+Tab key in the Grid will put focus to the previous TabStop Control of a Form (dgvhTabToNextRowEh property must be included).
+                                    
++ TDBVertGridEh allows to select lines and rectangular region of cells with mouse or keyboard and supports ClipBoard operations.
+
++ A new property - AllowedSelections of TDBVertGridAllowedSelectionsEh. Specifies the permitted types of selections in the grid.
+  vgstRowsEh - Allows to select lines in the grid with the mouse or with the keyboard.
+  vgstRectangleEh - Allows the select square area in the grid with the mouse or with the keyboard.
+  vgstAllEh - Allows to the select all the data in the grid by a Ctrl+A key combination.
+
++ A new property - EditActions of TGridEditActionsEh type. Defines the permitted operations with the selected area.
+  geaCutEh, geaCopyEh, geaPasteEh, geaDeleteEh, geaSelectAllEh.
+
++ New Property - Selection of TDBVertGridSelectionEh type. The property contains information about the selected area in the Grid.
+
++ Added TDBVertGridEh.OnRowCategoriesNodeExpanded and TDBVertGridEh.OnRowCategoriesNodeCollapsed events.
+
+DataDriverEh.pas
+
+* Changes:
+   Parameter of TConnectionProviderEh.OnGetServerSpecOperations: TResolverGetServerSpecOperationsEh was changed published.
+     Old declaration: TResolverGetServerSpecOperationsEh = function (var Processed: Boolean): TServerSpecOperationsEh of object;
+     New declaration: TResolverGetServerSpecOperationsEh = procedure (var Processed: Boolean; var ServerSpecOperations: TServerSpecOperationsEh) of object;
+
+   Announcement via function caused an inexplicable error in compile-time in C++ Builder.
+
+DBCtrlsEh.pas
+
++ New events (OnCloseDropDownForm OnOpenDropDownForm) are added in TDBEditEh, TDBDateTimeEditEh, TDBComboBoxEh controls.

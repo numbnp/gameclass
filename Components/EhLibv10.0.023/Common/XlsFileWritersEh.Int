@@ -1,0 +1,106 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{           Classes to work w ith Xlsx Format           }
+{                                                       }
+{     Copyright (c) 2020-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit XlsFileWritersEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, GridsEh, Controls,
+  Variants, Types, Printers, FmtBcd,
+  ZipFileProviderEh, XlsMemFilesEh,
+{$IFDEF FPC}
+  XMLRead, XMLWrite, xmlutils, DOM, EhLibXmlConsts, LCLIntf,
+{$ELSE}
+  xmldom, XMLIntf, XMLDoc, EhLibXmlConsts, Windows,
+{$ENDIF}
+
+{$IFDEF EH_LIB_17} System.UITypes, System.Contnrs, {$ENDIF}
+{$IFDEF CIL}
+  EhLibVCLNET,
+  System.Runtime.InteropServices, System.Reflection,
+{$ELSE}
+  {$IFDEF FPC}
+    EhLibLCL, LCLType,
+  {$ELSE}
+    EhLibVCL, Messages, SqlTimSt,
+  {$ENDIF}
+{$ENDIF}
+  Db, Clipbrd, {ComObj, }StdCtrls;
+
+//{$IFDEF FPC}
+//{$ELSE}
+
+type
+
+ { TXlsxFileWriterEh }
+
+  TXlsxFileWriterEh = class(TPersistent)
+  private
+    FCurCol: Integer;
+    FCurRow: Integer;
+    FRowNode: IXMLNode;
+    FXMLSheets: array of IXMLDocument;
+    FXMLStyles: IXMLDocument;
+    FZipFileProvider: TCustomFileZipingProviderEh;
+    FColCount: Integer;
+    FFileName: String;
+    FXlsFile: TXlsMemFileEh;
+
+    function GetCurColNum: Integer;
+    function GetCurRowNum: Integer;
+  protected
+    function CreateSheetXml(FirstSheet: Boolean; Worksheet: TXlsWorksheetEh): IXMLDocument;
+    function GetColWidth(SheetIndex: Integer; ACol: Integer): Double; virtual;
+    function GetColumn(SheetIndex: Integer; ACol: Integer): TXlsFileColumnEh; virtual;
+    function InitTableCheckEof(SheetIndex: Integer): Boolean; virtual;
+    function InitRowCheckEof(SheetIndex: Integer; ARow: Integer): Boolean; virtual;
+    function GetColCount(SheetIndex: Integer): Integer; virtual;
+    function SysVarToStr(const Val: Variant): String;
+
+    procedure InitFileData; virtual;
+    procedure CreateXMLs; virtual;
+    procedure CreateStaticXMLs; virtual;
+    procedure CreateDynamicXMLs; virtual;
+
+    procedure WriteXMLs; virtual;
+    procedure WriteSheetXML(SheetIndex: Integer; XMLSheet: IXMLDocument); virtual;
+    procedure WriteColumnsSec(SheetIndex: Integer; Root: IXMLNode); virtual;
+    procedure WriteStylesXML; virtual;
+    procedure WriteSheetViewInfo(SheetIndex: Integer); virtual;
+    procedure WriteMergeCellsInfo(Worksheet: TXlsWorksheetEh; WorksheetDocument: IXMLDocument); virtual;
+    procedure WriteAutoFilterInfo(Worksheet: TXlsWorksheetEh; WorksheetDocument: IXMLDocument); virtual;
+
+    procedure SaveDataToFile; virtual;
+
+    procedure WriteRow(SheetIndex: Integer; ARow: Integer; var Eof: Boolean); virtual;
+    procedure WriteValue(SheetIndex: Integer; ACol, ARow: Integer); virtual;
+    function GetCell(SheetIndex: Integer; ACol, ARow: Integer): TXlsFileCellEh; virtual;
+
+  public
+    constructor Create(XlsFile: TXlsMemFileEh);
+    destructor Destroy; override;
+
+    procedure WritetToFile(const AFileName: String); virtual;
+    property CurRowNum: Integer read GetCurRowNum;
+    property CurColNum: Integer read GetCurColNum;
+  end;
+
+function ZEGetA1ByCol(ColNum: Integer; StartZero: Boolean = True): string;
+function ZEGetColByA1(const A1Str: String; StartZero: Boolean = True): Integer;
+function ZEA1RectToRect(const A1Rect: String): TRect;
+function ZEA1CellToPoint(const A1CellRef: String): TPoint;
+function XlsxNumFormatToVCLFormat(const XlsxNumFormatId, XlsxNumFormat: String): String;
+function XlsxCellTypeNameToVaType(const tn: String): TVarType;
+
+
+implementation

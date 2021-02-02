@@ -1,0 +1,94 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{           Classes to work w ith ZipingProvider        }
+{                                                       }
+{     Copyright (c) 2020-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit ZipFileProviderEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, GridsEh, Controls,
+  {$IFDEF EH_LIB_16} System.Zip, {$ENDIF}
+  {$IFDEF FPC}
+    zipper, EhLibLCL,
+  {$ELSE}
+    EhLibVCL,
+  {$ENDIF}
+  Variants, Types;
+
+type
+
+  TCustomFileZipingProviderEh = class;
+
+{ TCustomFileZipingProviderEh }
+
+  TCustomFileZipingProviderEh = class(TObject)
+  public
+    class function CreateInstance: TCustomFileZipingProviderEh; virtual;
+    function InitZipFileWriting(FileName: String): TStream; virtual; abstract;
+    function GetFileCount: Integer; virtual; abstract;
+    function GetFileName(Index: Integer): string; virtual; abstract;
+
+    procedure AddFile(Data: TStream; const FilePathAndName: string); virtual; abstract;
+    procedure FinalizeZipFile; overload; virtual; abstract;
+    procedure FinalizeZipFile(AStream: TStream); overload; virtual; abstract;
+
+    function IndexOf(const FileName: string): Integer; virtual; abstract;
+    procedure ReadFile(FileName: String); virtual; abstract;
+    procedure Read(const FileName: string; out Stream: TStream); virtual; abstract;
+
+    property FileCount: Integer read GetFileCount;
+    property FileName[Index: Integer]: string read GetFileName;
+  end;
+
+  TCustomFileZipingProviderEhClass = class of TCustomFileZipingProviderEh;
+
+{$IFDEF EH_LIB_ZIP} 
+
+{ TSystemZipFileProvider }
+
+  TSystemZipFileProviderEh = class(TCustomFileZipingProviderEh)
+  private
+    FStream: TStream;
+    FFileName: String;
+    {$IFDEF FPC}
+    FZipFile: TZipper;
+    FUnZipFile: TUnZipper;
+    {$ELSE}
+    FZipFile: TZipFile;
+    {$ENDIF}
+    FWriteStreams: TObjectListEh;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    class function CreateInstance: TCustomFileZipingProviderEh; override;
+    function InitZipFileWriting(FileName: String): TStream; override;
+    procedure AddFile(Data: TStream; const FilePathAndName: string); override;
+    procedure FinalizeZipFile; override;
+    procedure FinalizeZipFile(AStream: TStream); override;
+
+    function GetFileCount: Integer; override;
+    function GetFileName(Index: Integer): string; override;
+
+    function IndexOf(const FileName: string): Integer; override;
+    procedure ReadFile(FileName: String); override;
+    procedure Read(const FileName: string; out Stream: TStream); override;
+
+    property Stream: TStream read FStream write FStream;
+  end;
+
+{$ENDIF} 
+
+function ZipFileProviderClass: TCustomFileZipingProviderEhClass;
+function RegisterZipFileProviderClass(AZipFileProviderClass: TCustomFileZipingProviderEhClass): TCustomFileZipingProviderEhClass;
+
+implementation

@@ -1,0 +1,123 @@
+package EhLib270;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'EhLib 10.0'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  dbrtl,
+  vcldb,
+  vclimg,
+  vclx,
+  xmlrtl;
+
+contains
+  DBSumLst in 'DBSumLst.pas',
+  PrnDbgEh in 'PrnDbgEh.pas',
+  PrnDGDlg in 'PrnDGDlg.pas' {fPrnDBGridEHSetupDialog},
+  PrntsEh in 'PrntsEh.pas',
+  PrvFrmEh in 'PrvFrmEh.pas' {PreviewFormEh},
+  PrViewEh in 'PrViewEh.pas',
+  DBGridEh in 'DBGridEh.pas',
+  DBGridEhImpExp in 'DBGridEhImpExp.pas',
+  DBLookupEh in 'DBLookupEh.pas',
+  DBCtrlsEh in 'DBCtrlsEh.pas',
+  ToolCtrlsEh in 'ToolCtrlsEh.pas',
+  DBLookupGridsEh in 'DBLookupGridsEh.pas',
+  CalculatorEh in 'CalculatorEh.pas' {CalculatorEh},
+  DbUtilsEh in 'DbUtilsEh.pas',
+  PropFilerEh in 'PropFilerEh.pas',
+  PropStorageEh in 'PropStorageEh.pas',
+  DBGridEhFindDlgs in 'DBGridEhFindDlgs.pas' {DBGridEhFindDlg},
+  EhLibVCL in 'EhLibVCL.pas',
+  MemTreeEh in 'MemTreeEh.pas',
+  DataDriverEh in 'DataDriverEh.pas',
+  MemTableDataEh in 'MemTableDataEh.pas',
+  MemTableEh in 'MemTableEh.pas',
+  GridsEh in 'GridsEh.pas',
+  DBGridEhSimpleFilterDlg in 'DBGridEhSimpleFilterDlg.pas' {DBGridEhSimpleFilterDialog},
+  DBGridEhGrouping in 'DBGridEhGrouping.pas',
+  EhLibMTE in 'EhLibMTE.pas',
+  EhLibGIFImage in 'EhLibGIFImage.pas',
+  EhLibJPegImage in 'EhLibJPegImage.pas',
+  EhLibPNGImage in 'EhLibPNGImage.pas',
+  DynVarsEh in 'DynVarsEh.pas',
+  DBGridEhToolCtrls in 'DBGridEhToolCtrls.pas' {DBGridEhRes: TDataModule},
+  ObjectInspectorEh in 'ObjectInspectorEh.pas',
+  DBAxisGridsEh in 'DBAxisGridsEh.pas',
+  DBVertGridsEh in 'DBVertGridsEh.pas',
+  DropDownFormEh in 'DropDownFormEh.pas' {CustomDropDownFormEh},
+  DBLookupUtilsEh in 'DBLookupUtilsEh.pas',
+  MemoEditFormsEh in 'MemoEditFormsEh.pas' {MemoEditWinEh: TCustomDropDownFormEh},
+  PictureEditFormsEh in 'PictureEditFormsEh.pas' {PictureEditorDialog},
+  RichEditFormsEh in 'RichEditFormsEh.pas' {RichEditWinEh: TCustomDropDownFormEh},
+  SideOwnedComponentsEh in 'SideOwnedComponentsEh.pas',
+  GridToolCtrlsEh in 'GridToolCtrlsEh.pas',
+  EhLibXmlConsts in 'EhLibXmlConsts.pas',
+  FilterDropDownFormsEh in 'FilterDropDownFormsEh.pas' {FilterDropDownForm: TCustomDropDownFormEh},
+  DBGridFilterDropDownFormsEh in 'DBGridFilterDropDownFormsEh.pas' {DBGridFilterDropDownForm: TCustomDropDownFormEh},
+  EditPivotFieldFormEh in 'EditPivotFieldFormEh.pas' {fEditPivotField},
+  PivotGridsEh in 'PivotGridsEh.pas',
+  PivotGridToolsEh in 'PivotGridToolsEh.pas',
+  CompoMansEh in 'CompoMansEh.pas',
+  DataSetImpExpEh in 'DataSetImpExpEh.pas',
+  XMLSpreadsheetFormatEh in 'XMLSpreadsheetFormatEh.pas',
+  DBGridEhXMLSpreadsheetExp in 'DBGridEhXMLSpreadsheetExp.pas',
+  DBVertGridEhXMLSpreadsheetExp in 'DBVertGridEhXMLSpreadsheetExp.pas',
+  XlsFileReadersEh in 'XlsFileReadersEh.pas',
+  XlsFileWritersEh in 'XlsFileWritersEh.pas',
+  XlsMemFilesEh in 'XlsMemFilesEh.pas',
+  DBGridEhXlsMemFileExporters in 'DBGridEhXlsMemFileExporters.pas',
+  ZipFileProviderEh in 'ZipFileProviderEh.pas',
+  PlannerCalendarPickerEh in 'PlannerCalendarPickerEh.pas',
+  PlannerDataEh in 'PlannerDataEh.pas',
+  PlannerItemDialog in 'PlannerItemDialog.pas' {PlannerItemForm},
+  PlannersEh in 'PlannersEh.pas',
+  PlannerToolCtrlsEh in 'PlannerToolCtrlsEh.pas' {PlannerDataMod: TDataModule},
+  SpreadGridsEh in 'SpreadGridsEh.pas',
+  DBVertGridEhImpExp in 'DBVertGridEhImpExp.pas',
+  PrintUtilsEh in 'PrintUtilsEh.pas',
+  PrintPlannersEh in 'PrintPlannersEh.pas',
+  PrintPivotGridsEh in 'PrintPivotGridsEh.pas',
+  PrintDBVertGridsEh in 'PrintDBVertGridsEh.pas',
+  BasePrintGridPageSetupDialogEh in 'BasePrintGridPageSetupDialogEh.pas' {fSpreadGridsPrintPageSetupDialogEh},
+  SearchPanelsEh in 'SearchPanelsEh.pas' {DataModule1: TDataModule},
+  DateTimeCalendarPickersEh in 'DateTimeCalendarPickersEh.pas',
+  EhLibLangConsts in 'EhLibLangConsts.pas',
+  LanguageResManEh in 'LanguageResManEh.pas',
+  EhLibEmbeddedLangConsts in 'EhLibEmbeddedLangConsts.pas',
+  EhLibImageReses in 'EhLibImageReses.pas',
+  EhLibImageListRes in 'EhLibImageListRes.pas' {EhLibImageListDataMod: TDataModule},
+  SettingsKeepersEh in 'SettingsKeepersEh.pas',
+  EhLibImages in 'EhLibImages.pas',
+  YearPlannersEh in 'YearPlannersEh.pas';
+
+end.
+

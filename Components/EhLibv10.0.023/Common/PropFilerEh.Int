@@ -1,0 +1,169 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{          TPropWriter, TPropReader objects             }
+{    Delphi / Kylix Cross-Platform Runtime Library      }
+{                                                       }
+{   Copyright (c) 2002-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PropFilerEh;
+
+interface
+
+uses
+  Variants, Types,
+  {$IFDEF FPC}
+    EhLibLCL, LCLType, LResources,  LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+  EhLibVCL, Mask, Messages, Windows,
+  {$ENDIF}
+  Forms, Controls, Contnrs,
+  SysUtils, Classes, TypInfo;
+
+type
+  TPropWriterEh = class;
+  TPropReaderEh = class;
+
+  TWriteOwnerPropsEventEh = procedure(Writer: TPropWriterEh) of object;
+  TReadOwnerPropEventEh = procedure(Reader: TPropReaderEh; const PropName: String;
+    var Processed: Boolean) of object;
+
+ {TPropWriterEh}
+
+  TPropWriterEh = class(TWriter)
+  private
+    FCurRootsList: TObjectListEh;
+    FDefnBinPropList: TStringList;
+    FDefnPropList: TStringList;
+    FInterceptorList: TObjectListEh;
+    FLastRootsList: TObjectListEh;
+    FPropPath: String;
+    FOnWriteOwnerProps: TWriteOwnerPropsEventEh;
+    procedure BuildPropsList(AObject: TObject; sl: TStrings);
+  protected
+    procedure WriteAllProperties(Instance: TObject);
+    {$IFDEF FPC}
+    procedure WriteValue(Value: TValueType);
+    procedure WriteSignature;
+    procedure WriteStr(const Value: string);
+    {$ELSE}
+    {$ENDIF}
+  public
+    constructor Create(Stream: TStream; BufSize: Integer);
+    destructor Destroy; override;
+    procedure WritePropName(const PropName: string);
+    procedure DefineBinaryProperty(const Name: string; ReadData, WriteData: TStreamProc; HasData: Boolean); override;
+    procedure DefineObjectProperties(Instance: TObject);
+    procedure DefineProperty(const Name: string; ReadData: TReaderProc; WriteData: TWriterProc; HasData: Boolean); override;
+    procedure SaveObjectProperyValue(Instance: TObject; const APath, AFullPath: String);
+    procedure WriteCollection(Value: TCollection);
+    procedure WriteOwnerProperties(Owner: TComponent; PropList: TStrings);
+    property OnWriteOwnerProps: TWriteOwnerPropsEventEh read FOnWriteOwnerProps write FOnWriteOwnerProps;
+  end;
+
+ {TPropReaderEh}
+
+ TPropReaderEh = class(TReader)
+  private
+    FCanHandleExcepts: Boolean;
+    FCollectionList: TObjectListEh;
+    FInterceptorList: TObjectListEh;
+    FPropName: String;
+    FOnReadOwnerProp: TReadOwnerPropEventEh;
+    function ReadSet(SetType: PTypeInfo): Integer;
+    procedure SkipSetBody;
+  protected
+    function Error(const Message: string): Boolean; override;
+    procedure ReadCollection(Collection: TCollection);
+    procedure ReadProperty(AInstance: TPersistent);
+    procedure ReadPropValue(Instance: TPersistent; PropInfo: PPropInfo);
+    {$IFDEF FPC}
+    procedure ReadPrefix(var Flags: TFilerFlags; var AChildPos: Integer); virtual;
+    function ReadStr: String;
+    procedure ReadSignature;
+    {$ELSE}
+    {$ENDIF}
+
+  public
+    constructor Create(Stream: TStream; BufSize: Integer);
+    destructor Destroy; override;
+    procedure DefineBinaryProperty(const Name: string; ReadData,
+      WriteData: TStreamProc; HasData: Boolean); override;
+    procedure DefineProperty(const Name: string; ReadData: TReaderProc;
+      WriteData: TWriterProc; HasData: Boolean); override;
+    procedure ReadComponent(Component: TComponent);
+    procedure ReadOwnerProperties(Component: TComponent);
+    property OnReadOwnerProp: TReadOwnerPropEventEh read FOnReadOwnerProp write FOnReadOwnerProp;
+  end;
+
+{ TStoragePropertyInterceptor }
+
+  TStoragePropertyInterceptor = class(TPersistent)
+    FTarget: TObject;
+  public
+    constructor Create(ATarget: TObject); virtual;
+    function NeedIntercept: Boolean; virtual;
+    procedure Readed; virtual;
+    property Target: TObject read FTarget;
+  end;
+
+{ TFormStoragePropertyInterceptor }
+
+  TFormStoragePropertyInterceptor = class(TStoragePropertyInterceptor)
+  private
+    FActiveControl: TWinControl;
+    FHeight: Integer;
+    FLeft: Integer;
+    FPixelsPerInch: Integer;
+    FPosPresent: Boolean;
+    FTop: Integer;
+    FWidth: Integer;
+    FWindowState: TWindowState;
+
+    function GetHeight: Integer;
+    function GetLeft: Integer;
+    function GetPixelsPerInch: Integer;
+    function GetTop: Integer;
+    function GetWidth: Integer;
+    procedure SetLeft(const Value: Integer);
+    procedure SetTop(const Value: Integer);
+
+  public
+    constructor Create(ATarget: TObject); override;
+
+    function GetNotmalFormPlacement: TRect;
+    procedure Readed; override;
+
+  published
+    property ActiveControl: TWinControl write FActiveControl;
+    property Height: Integer read GetHeight write FHeight;
+    property Left: Integer read GetLeft write SetLeft;
+    property PixelsPerInch: Integer read GetPixelsPerInch write FPixelsPerInch;
+    property Top: Integer read GetTop write SetTop;
+    property Width: Integer read GetWidth write FWidth;
+    property WindowState: TWindowState write FWindowState;
+  end;
+
+  TReadPropertyInterceptorClass = class of TStoragePropertyInterceptor;
+
+  procedure RegisterReadPropertyInterceptor(Target: TClass; InterceptorClass: TReadPropertyInterceptorClass);
+  procedure UnregisterReadPropertyInterceptor(Target: TClass; Interceptor: TReadPropertyInterceptorClass);
+  function GetInterceptorForTarget(Target: TClass): TReadPropertyInterceptorClass;
+
+  function GetNextPointSeparatedToken(const Path: String): String;
+
+  procedure GetComponentChildListEh(ParentComp, Root: TComponent; cl: TStrings; CheckInline: Boolean);
+  function FindChildComponent(ParentComp, Root: TComponent; const AName: string; CheckInline: Boolean): TComponent;
+
+var
+  IsRaiseReadErrorEh: Boolean = False;
+
+implementation

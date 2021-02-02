@@ -1,0 +1,372 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{             TADODataDriverEh component                }
+{                                                       }
+{     Copyright (c) 2004-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit ADODataDriverEh;
+
+{$I EHLIB.INC}
+
+interface
+
+uses Windows, SysUtils, Classes, Controls, DB, Forms, Dialogs, Messages,
+  Variants, Contnrs,
+{$IFDEF EH_LIB_14} DBCommonTypes, {$ENDIF}
+  {$IFDEF FPC}
+  EhLibLCL,
+  {$ELSE}
+  EhLibVCL,
+  {$ENDIF}
+  ToolCtrlsEh, MemTableDataEh, DataDriverEh, ADODB;
+
+type
+
+  IADOConnectionProviderEh = interface(IConnectionProviderEh)
+  ['{11014AAC-0132-4C66-8B53-0204F54DB001}']
+    function GetConnection: TADOConnection;
+  end;
+
+  TADODataDriverEh = class;
+  TADOCommandEh = class;
+  TADOConnectionProviderEh = class;
+
+  TAssignParameterEhEvent = procedure (DataDriver: TADODataDriverEh;
+    Command: TADOCommandEh; MemRecord: TMemoryRecordEh;
+    DataValueVersion: TDataValueVersionEh; Parameter: TParameter) of object;
+  TADODataDriverExecuteCommandEhEvent = function (DataDriver: TADODataDriverEh;
+    Command: TADOCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer of object;
+  TADODataDriverGetBackUpdatedValuesEhEvent = procedure (DataDriver: TADODataDriverEh;
+    MemRec: TMemoryRecordEh; Command: TADOCommandEh; ResDataSet: TDataSet) of object;
+
+  TADODBCommandEh = class(TADOCommand)
+  protected
+    property ComponentRef;
+  end;
+
+{ TADOCommandEh }
+
+  TADOCommandEh = class(TCustomSQLCommandEh)
+  private
+    FOnAssignParameter: TAssignParameterEhEvent;
+    FCommand: TADODBCommandEh;
+    FParams: TParams;
+    FCommandTimeOut: Integer;
+    function GetParamCheck: Boolean;
+    function GetParameters: TParameters;
+    function GetDataDriver: TADODataDriverEh;
+    procedure SetCommandTimeOut(const Value: Integer);
+  protected
+    procedure CommandTextChanged(Sender: TObject); override;
+    procedure SetParamCheck(const Value: Boolean); virtual;
+    procedure SetParameters(const Value: TParameters); virtual;
+  public
+    constructor Create(ADataDriver: TADODataDriverEh);
+    destructor Destroy; override;
+
+    function Execute(var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    function GetParams: TParams; override;
+
+    procedure Assign(Source: TPersistent); override;
+    procedure DefaultRefreshParameter(MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Parameter: TParameter); virtual;
+    procedure RefreshParams(MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh); override;
+    procedure RebuildParams; override;
+    procedure SetParams(AParams: TParams); override;
+
+    property DataDriver: TADODataDriverEh read GetDataDriver;
+    property OnAssignParameter: TAssignParameterEhEvent read FOnAssignParameter write FOnAssignParameter;
+
+  published
+    property CommandText;
+    property CommandTimeout: Integer read FCommandTimeOut write SetCommandTimeOut default 30;
+    property CommandType;
+    property Parameters: TParameters read GetParameters write SetParameters;
+    property ParamCheck: Boolean read GetParamCheck write SetParamCheck default True;
+  end;
+
+{ TADODataDriverEh }
+
+  TADODataDriverEh = class(TCustomSQLDataDriverEh)
+  private
+    FADOConnection: TADOConnection;
+    FConnectionString: WideString;
+    FOnAssignCommandParameter: TAssignParameterEhEvent;
+    FOnGetBackUpdatedValues: TADODataDriverGetBackUpdatedValuesEhEvent;
+    FConnectionProvider: TADOConnectionProviderEh;
+
+    function GetDeleteCommand: TADOCommandEh;
+    function GetGetrecCommand: TADOCommandEh;
+    function GetInsertCommand: TADOCommandEh;
+    function GetSelectCommand: TADOCommandEh;
+    function GetUpdateCommand: TADOCommandEh;
+    function GetOnExecuteCommand: TADODataDriverExecuteCommandEhEvent;
+
+    procedure SetConnection(const Value: TADOConnection);
+    procedure SetConnectionProvider(const Value: TADOConnectionProviderEh);
+    procedure SetConnectionString(const Value: WideString);
+    procedure SetDeleteCommand(const Value: TADOCommandEh);
+    procedure SetGetrecCommand(const Value: TADOCommandEh);
+    procedure SetInsertCommand(const Value: TADOCommandEh);
+    procedure SetOnExecuteCommand(const Value: TADODataDriverExecuteCommandEhEvent);
+    procedure SetSelectCommand(const Value: TADOCommandEh);
+    procedure SetUpdateCommand(const Value: TADOCommandEh);
+
+  protected
+    function CreateCommand: TCustomSQLCommandEh; override;
+
+    procedure AssignCommandParameter(Command: TADOCommandEh; MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Parameter: TParameter); virtual;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure SetAutoIncFields(Fields: TFields; DataStruct: TMTDataStructEh); override;
+    procedure Loaded; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function CreateDesignCopy: TCustomSQLDataDriverEh; override;
+    function ExecuteCommand(Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean): Integer; override;
+    function GetConnectionProvider: IConnectionProviderEh; override;
+    function HaveDataConnection(): Boolean; override;
+    function ReadData(MemTableData: TMemTableDataEh; Count: Integer): Integer; override;
+
+    procedure AssignFromDesignDriver(DesignDataDriver: TCustomSQLDataDriverEh); override;
+    procedure DefaultAssignCommandParameter(Command: TADOCommandEh; MemRecord: TMemoryRecordEh; DataValueVersion: TDataValueVersionEh; Parameter: TParameter); virtual;
+    procedure DefaultGetUpdatedServerValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+    procedure GetBackUpdatedValues(MemRec: TMemoryRecordEh; Command: TCustomSQLCommandEh; ResDataSet: TDataSet); override;
+
+  published
+    property ADOConnection: TADOConnection read FADOConnection write SetConnection;
+    property ConnectionProvider: TADOConnectionProviderEh read FConnectionProvider write SetConnectionProvider;
+    property ConnectionString: WideString read FConnectionString write SetConnectionString;
+    property DynaSQLParams;
+    property KeyFields;
+    property MacroVars;
+    property ProviderDataSet;
+    property SpecParams;
+
+    property SelectCommand: TADOCommandEh read GetSelectCommand write SetSelectCommand;
+    property SelectSQL;
+    property UpdateCommand: TADOCommandEh read GetUpdateCommand write SetUpdateCommand;
+    property UpdateSQL;
+    property InsertCommand: TADOCommandEh read GetInsertCommand write SetInsertCommand;
+    property InsertSQL;
+    property DeleteCommand: TADOCommandEh read GetDeleteCommand write SetDeleteCommand;
+    property DeleteSQL;
+    property GetrecCommand: TADOCommandEh read GetGetrecCommand write SetGetrecCommand;
+    property GetrecSQL;
+
+    property OnAssignCommandParameter: TAssignParameterEhEvent read FOnAssignCommandParameter write FOnAssignCommandParameter;
+    property OnAssignFieldValue;
+    property OnBuildDataStruct;
+    property OnExecuteCommand: TADODataDriverExecuteCommandEhEvent read GetOnExecuteCommand write SetOnExecuteCommand;
+    property OnGetBackUpdatedValues: TADODataDriverGetBackUpdatedValuesEhEvent read FOnGetBackUpdatedValues write FOnGetBackUpdatedValues;
+    property OnProduceDataReader;
+    property OnReadRecord;
+    property OnRefreshRecord;
+    property OnUpdateError;
+    property OnUpdateRecord;
+  end;
+
+{ TADOInlineConnectionEh }
+
+  TADOInlineConnectionEh = class(TCustomInlineConnectionEh)
+  private
+    FConnectionProvider: TADOConnectionProviderEh;
+    FInlineConnection: TADOConnection;
+    FInlineConnectionString: WideString;
+    FConnectOptions: TConnectOption;
+    FUseAtRunTime: Boolean;
+    FPostponedDataSets: TObjectListEh;
+    FUseAtRunTimeStored: Boolean;
+    FUseAtDesignTimeStored: Boolean;
+    FUseAtDesignTime: Boolean;
+
+    function GetAttributes: TXactAttributes;
+    function GetCommandTimeout: Integer;
+    function GetConnectionTimeout: Integer;
+    function GetCursorLocation: TCursorLocation;
+    function GetDefaultDatabase: WideString;
+    function GetInlineConnectionString: WideString;
+    function GetIsolationLevel: TIsolationLevel;
+    function GetKeepConnection: Boolean;
+    function GetLoginPrompt: Boolean;
+    function GetMode: TConnectMode;
+    function GetProvider: WideString;
+    function GetUseAtDesignTime: Boolean;
+    function GetUseAtRunTime: Boolean;
+    function IsDefaultDatabaseStored: Boolean;
+    function IsProviderStored: Boolean;
+    function IsUseAtDesignTimeStored: Boolean;
+    function IsUseAtRunTimeStored: Boolean;
+
+    procedure SetAttributes(const Value: TXactAttributes);
+    procedure SetCommandTimeout(const Value: Integer);
+    procedure SetConnectionTimeout(const Value: Integer);
+    procedure SetConnectOptions(const Value: TConnectOption);
+    procedure SetCursorLocation(const Value: TCursorLocation);
+    procedure SetDefaultDatabase(const Value: WideString);
+    procedure SetInlineConnectionString(const Value: WideString);
+    procedure SetIsolationLevel(const Value: TIsolationLevel);
+    procedure SetKeepConnection(const Value: Boolean);
+    procedure SetLoginPrompt(const Value: Boolean);
+    procedure SetMode(const Value: TConnectMode);
+    procedure SetProvider(const Value: WideString);
+    procedure SetUseAtDesignTime(const Value: Boolean);
+    procedure SetUseAtDesignTimeStored(const Value: Boolean);
+    procedure SetUseAtRunTime(const Value: Boolean);
+    procedure SetUseAtRunTimeStored(const Value: Boolean);
+
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation);
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet);
+    procedure ActivatePostponedDataSets;
+
+  protected
+    function GetConnected: Boolean; override;
+    procedure BeforeInlineConnection(Sender: TObject);
+    procedure AfterInlineConnection(Sender: TObject);
+    procedure SetDesignConnected(const Value: Boolean); override;
+
+  public
+    constructor Create(AConnectionProvider: TADOConnectionProviderEh);
+    destructor Destroy; override;
+
+    function DefaultUseAtRunTime: Boolean;
+    function DefaultUseAtDesignTime: Boolean;
+    procedure Assign(Source: TPersistent); override;
+    property Connection: TADOConnection read FInlineConnection;
+    property ConnectionProvider: TADOConnectionProviderEh read FConnectionProvider;
+  published
+    property Connected;
+    property ConnectionString: WideString read GetInlineConnectionString write SetInlineConnectionString;
+
+    property UseAtDesignTime: Boolean read GetUseAtDesignTime write SetUseAtDesignTime stored IsUseAtDesignTimeStored;
+    property UseAtDesignTimeStored: Boolean read IsUseAtDesignTimeStored write SetUseAtDesignTimeStored stored False;
+
+    property UseAtRunTime: Boolean read GetUseAtRunTime write SetUseAtRunTime stored IsUseAtRunTimeStored;
+    property UseAtRunTimeStored: Boolean read IsUseAtRunTimeStored write SetUseAtRunTimeStored stored False;
+
+    property Attributes: TXactAttributes read GetAttributes write SetAttributes default [];
+    property CommandTimeout: Integer read GetCommandTimeout write SetCommandTimeout default 30;
+    property ConnectionTimeout: Integer read GetConnectionTimeout write SetConnectionTimeout default 15;
+    property ConnectOptions: TConnectOption read FConnectOptions write SetConnectOptions default coConnectUnspecified;
+    property CursorLocation: TCursorLocation read GetCursorLocation write SetCursorLocation default clUseClient;
+    property DefaultDatabase: WideString read GetDefaultDatabase write SetDefaultDatabase stored IsDefaultDatabaseStored;
+    property IsolationLevel: TIsolationLevel read GetIsolationLevel write SetIsolationLevel default ilCursorStability;
+    property KeepConnection: Boolean read GetKeepConnection write SetKeepConnection default True;
+    property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default False;
+    property Mode: TConnectMode read GetMode write SetMode default cmUnknown;
+    property Provider: WideString read GetProvider write SetProvider stored IsProviderStored;
+  end;
+
+{ TADOConnectionProviderEh }
+
+  TADOConnectionProviderEh = class(TConnectionProviderEh, IDatabaseSchemaInfoEh)
+  private
+    FConnection: TADOConnection;
+    FInlineConnection: TADOInlineConnectionEh;
+    FDesignDataBase: TComponent;
+    FInlineConnectionBeforeConnect: TNotifyEvent;
+    FInlineConnectionAfterConnect: TNotifyEvent;
+
+    function GetOnInlineConnectionBeginTransComplete: TBeginTransCompleteEvent;
+    function GetOnInlineConnectionCommitTransComplete: TConnectErrorEvent;
+    function GetOnInlineConnectionConnectComplete: TConnectErrorEvent;
+    function GetOnInlineConnectionDisconnect: TDisconnectEvent;
+    function GetOnInlineConnectionExecuteComplete: TExecuteCompleteEvent;
+    function GetOnInlineConnectionInfoMessage: TInfoMessageEvent;
+    function GetOnInlineConnectionRollbackTransComplete: TConnectErrorEvent;
+    function GetOnInlineConnectionWillConnect: TWillConnectEvent;
+    function GetOnInlineConnectionWillExecute: TWillExecuteEvent;
+    function GetPath: String;
+
+    procedure SetConnection(const Value: TADOConnection);
+    procedure SetInlineConnection(const Value: TADOInlineConnectionEh);
+    procedure SetOnInlineConnectionBeginTransComplete(const Value: TBeginTransCompleteEvent);
+    procedure SetOnInlineConnectionCommitTransComplete(const Value: TConnectErrorEvent);
+    procedure SetOnInlineConnectionConnectComplete(const Value: TConnectErrorEvent);
+    procedure SetOnInlineConnectionDisconnect(const Value: TDisconnectEvent);
+    procedure SetOnInlineConnectionExecuteComplete(const Value: TExecuteCompleteEvent);
+    procedure SetOnInlineConnectionInfoMessage(const Value: TInfoMessageEvent);
+    procedure SetOnInlineConnectionRollbackTransComplete(const Value: TConnectErrorEvent);
+    procedure SetOnInlineConnectionWillConnect(const Value: TWillConnectEvent);
+    procedure SetOnInlineConnectionWillExecute(const Value: TWillExecuteEvent);
+
+  protected
+    procedure Loaded; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+
+    procedure SchemaInfoGetFieldNames(const TableName: string; List: TStrings);
+    procedure IDatabaseSchemaInfoEh.GetFieldNames = SchemaInfoGetFieldNames;
+
+  protected
+    procedure AddPostponedActivationDataSet(ADataSet: TDataSet); override;
+    function GetDatabaseSchemaInfo: IDatabaseSchemaInfoEh; override;
+
+  public
+    {DesignTime stuff}
+    function GetDesignDataBase: TComponent; override;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function ConnectionIsPostponed: Boolean; override;
+    function CurrentTimeConnection: TADOConnection;
+    function DefaultExecuteCommand(SQLDataDriver: TCustomSQLDataDriverEh; Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean): Integer; override;
+    function ExecuteSQLGetRecordAsVarArray(SQLText: String; const ParamValues: array of Variant): TVariantDynArray;
+    function UnmacrosConnectionString(MacrosedString: WideString): WideString;
+    function UseInlineConnection: Boolean;
+
+    procedure GetDataReaderForSQL(const SQLText: String; AParams: TParams; var Cursor: TDataSet; var FreeOnEof: Boolean; var Processed: Boolean); override;
+
+  published
+    property Connection: TADOConnection read FConnection write SetConnection;
+    property InlineConnection: TADOInlineConnectionEh read FInlineConnection write SetInlineConnection;
+    property Path: String read GetPath;
+    property ServerType;
+
+    property OnExecuteCommand;
+    property OnGetBackUpdatedValues;
+    property OnGetServerSpecOperations;
+    property OnUpdateRecord;
+    property InlineConnectionBeforeConnect: TNotifyEvent read FInlineConnectionBeforeConnect write FInlineConnectionBeforeConnect;
+    property InlineConnectionAfterConnect: TNotifyEvent read FInlineConnectionAfterConnect write FInlineConnectionAfterConnect;
+
+    property OnInlineConnectionDisconnect: TDisconnectEvent read GetOnInlineConnectionDisconnect write SetOnInlineConnectionDisconnect;
+    property OnInlineConnectionInfoMessage: TInfoMessageEvent read GetOnInlineConnectionInfoMessage write SetOnInlineConnectionInfoMessage;
+    property OnInlineConnectionBeginTransComplete: TBeginTransCompleteEvent read GetOnInlineConnectionBeginTransComplete write SetOnInlineConnectionBeginTransComplete;
+    property OnInlineConnectionCommitTransComplete: TConnectErrorEvent read GetOnInlineConnectionCommitTransComplete write SetOnInlineConnectionCommitTransComplete;
+    property OnInlineConnectionRollbackTransComplete: TConnectErrorEvent read GetOnInlineConnectionRollbackTransComplete write SetOnInlineConnectionRollbackTransComplete;
+    property OnInlineConnectionConnectComplete: TConnectErrorEvent read GetOnInlineConnectionConnectComplete write SetOnInlineConnectionConnectComplete;
+    property OnInlineConnectionWillConnect: TWillConnectEvent read GetOnInlineConnectionWillConnect write SetOnInlineConnectionWillConnect;
+    property OnInlineConnectionExecuteComplete: TExecuteCompleteEvent read GetOnInlineConnectionExecuteComplete write SetOnInlineConnectionExecuteComplete;
+    property OnInlineConnectionWillExecute: TWillExecuteEvent read GetOnInlineConnectionWillExecute write SetOnInlineConnectionWillExecute;
+
+  end;
+
+{ TNiADODataDriverEh }
+
+  TNiADODataDriverEh = class(TADODataDriverEh)
+  public
+    constructor Create(AOwner: TComponent); override;
+  published
+    property SideParent;
+  end;
+
+function DefaultExecuteADOCommandEh(SQLDataDriver: TCustomSQLDataDriverEh;
+    Command: TCustomSQLCommandEh; var Cursor: TDataSet; var FreeOnEof: Boolean;
+    ADOConnection: TADOConnection; ADOConnectionString: WideString): Integer;
+
+type TGetADODataDriverServerSpecOperations = function (DataDriver: TADODataDriverEh): TServerSpecOperationsEh;
+
+function RegisterGetADODataDriverServerSpecOperationsPrg(Prg: TGetADODataDriverServerSpecOperations): TGetADODataDriverServerSpecOperations;
+
+var
+  ADOConnectionProviderDesignService: IConnectionProviderDesignServiceEh;
+
+implementation

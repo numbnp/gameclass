@@ -1,0 +1,165 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{           FilterDropDownFormsEh component             }
+{                                                       }
+{     Copyright (c) 2014-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit FilterDropDownFormsEh;
+
+interface
+
+uses
+  Messages,
+  {$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, DBGridsEh, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBGridEh, Windows, UxTheme,
+  {$ENDIF}
+  Themes, Types,
+  SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  DropDownFormEh, Dialogs, DynVarsEh, ToolCtrlsEh, DBCtrlsEh, GridsEh,
+  StdCtrls, ExtCtrls,
+  DBGridEhGrouping,
+  StrUtils, Buttons;
+
+type
+  TFilterDropDownForm = class;
+
+{ TMenuButtonEh }
+
+  TMenuButtonEh = class(TCustomControl)
+  private
+    FActionItem: TCustomListboxItemEh;
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    {$ENDIF} 
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+  protected
+    FMouseInControl: Boolean;
+    procedure Paint; override;
+  public
+    FCaptionMargin: Integer;
+    FDropDownForm: TFilterDropDownForm;
+
+    function IsLine: Boolean;
+    property ActionItem: TCustomListboxItemEh read FActionItem write FActionItem;
+  end;
+
+  TFilterDropDownFormListboxEh = class(TCustomListboxEh)
+  public
+    property DefaultRowHeight;
+  end;
+
+{ TFilterDropDownForm }
+
+  TFilterDropDownForm = class(TCustomDropDownFormEh)
+    Panel1: TPanel;
+    bOk: TButton;
+    bCancel: TButton;
+    procedure bOkClick(Sender: TObject);
+    procedure bCancelClick(Sender: TObject);
+    procedure CustomDropDownFormEhInitForm(Sender: TCustomDropDownFormEh; DynParams: TDynVarsEh);
+    procedure CustomDropDownFormEhCreate(Sender: TObject);
+    procedure CustomDropDownFormEhDestroy(Sender: TObject);
+    procedure CustomDropDownFormEhKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+
+  private
+    FBaseList: TStringList;
+    FEnterNotClearData: Boolean;
+    FFilterList: TFilterDropDownFormListboxEh;
+    FInFilterListBox: Boolean;
+    FInternalChanging: Boolean;
+    FListRefCheckingState: array of Integer;
+    FListValuesCheckingState: TBooleanDynArray;
+    FPopupListboxDownIndex: Integer;
+    FPopupListboxDragHoverIndex: Integer;
+    FSearchEdit: TDBEditEh;
+    FSelectAllState: TCheckBoxState;
+
+    procedure SearchEditChanged(Sender: TObject);
+    procedure RefilterList; virtual;
+    procedure UpdateFilterFromValuesCheckingState(ss: TStrings);
+    procedure UpdateSelectAllState;
+
+  protected
+    FMenuItemHeight: Integer;
+    FLeftMargin: Integer;
+
+    procedure DrawBorder(BorderRect: TRect); override;
+    procedure SearchEditButtonClick(Sender: TObject; var Handled: Boolean); virtual;
+    procedure FilterListKeyPress(Sender: TObject; var Key: Char); virtual;
+  public
+    procedure Init; virtual;
+    procedure InitDataForBaseList; virtual;
+
+    procedure RealignControls; virtual;
+
+    property SearchEdit: TDBEditEh read FSearchEdit;
+    property FilterList: TFilterDropDownFormListboxEh read FFilterList;
+
+    property BaseList: TStringList read FBaseList;
+    property ListValuesCheckingState: TBooleanDynArray read FListValuesCheckingState;
+
+  end;
+
+{ TDDFormFilterPopupListboxItemEh }
+
+  TDDFormFilterPopupListboxItemEh = class(TCustomListboxItemEh)
+  protected
+    function FilterForm(Listbox: TCustomListboxEh): TFilterDropDownForm;
+  end;
+
+{ TDDFormListboxItemEhData }
+
+  TDDFormListboxItemEhSelectAll = class(TDDFormFilterPopupListboxItemEh)
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure MouseMove(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure KeyPress(Sender: TCustomListboxEh; ItemIndex: Integer; var Key: Char; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+  public
+    function IsDataItem: Boolean; override;
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+{ TDDFormListboxItemEhData }
+
+  TDDFormListboxItemEhData = class(TDDFormFilterPopupListboxItemEh)
+  protected
+    function CanFocus(Sender: TCustomListboxEh; ItemIndex: Integer): Boolean; override;
+    function GetDisplayText(Sender: TCustomListboxEh; ItemIndex: Integer): String; override;
+
+    procedure DrawItem(Sender: TCustomListboxEh; ItemIndex: Integer; ARect: TRect; State: TGridDrawState); override;
+    procedure MouseDown(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure MouseMove(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+    procedure MouseUp(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Button: TMouseButton; Shift: TShiftState); override;
+    procedure KeyPress(Sender: TCustomListboxEh; ItemIndex: Integer; var Key: Char; Shift: TShiftState; var IsCloseListbox: Boolean); override;
+  public
+    procedure Execute(Sender: TCustomListboxEh; ItemIndex: Integer; InItemPos: TPoint; Shift: TShiftState); override;
+  end;
+
+var
+  FilterDropDownForm: TFilterDropDownForm;
+
+  ListboxItemEhData: TDDFormListboxItemEhData;
+  ListboxItemEhSelectAll: TDDFormListboxItemEhSelectAll;
+
+  GetFilterDropDownFormProc: function : TFilterDropDownForm = nil;
+
+function GetDefaultFilterDropDownForm: TFilterDropDownForm;
+
+implementation

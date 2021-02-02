@@ -1,0 +1,37 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Condition="Exists('$(BDS)\bin\CodeGear.Deployment.targets')" Project="$(BDS)\bin\CodeGear.Deployment.targets"/>
+    <ProjectExtensions>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <PropertyGroup>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
+    <ItemGroup Condition="'$(Platform)'=='Win64'"/>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice32'"/>
+    <ItemGroup Condition="'$(Platform)'=='Win32'"/>
+    <ItemGroup Condition="'$(Platform)'=='Linux64'">
+        <DeployFile Include="$(crossvcl)\Redist\libcrossvcl.so">
+            <RemoteDir>Project1\</RemoteDir>
+            <RemoteName>libcrossvcl.so</RemoteName>
+            <DeployClass/>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="Linux64\Debug\Project1" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Project1\</RemoteDir>
+            <RemoteName>Project1</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='OSX32'"/>
+    <ItemGroup Condition="'$(Platform)'=='Android'"/>
+    <ItemGroup Condition="'$(Platform)'=='iOSSimulator'"/>
+</Project>

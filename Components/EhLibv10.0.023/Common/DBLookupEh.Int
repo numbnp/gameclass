@@ -1,0 +1,418 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{             TDBLookupComboboxEh component             }
+{                                                       }
+{      Copyright (c) 2001-2020 by Dmitry V. Bolshakov   }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBLookupEh;
+
+interface
+
+uses
+  Variants, StrUtils,
+  Db, DBCtrls, Buttons, DBCtrlsEh, ToolCtrlsEh, Menus,
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf, DBGridsEh,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, DBGridEh, Windows,
+  {$ENDIF}
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Contnrs, DBLookupGridsEh, DynVarsEh, DBAxisGridsEh, DBUtilsEh;
+
+type
+
+  TCustomDBLookupComboboxEh = class;
+
+{ TLookupComboboxDropDownBoxEh }
+
+  TLookupComboboxDropDownBoxEh = class(TColumnDropDownBoxEh)
+  public
+    function GetNamePath: string; override;
+  published
+    property Align;
+    property AutoDrop;
+    property Columns;
+    property Rows;
+    property ShowTitles;
+    property Sizable;
+    property SpecRow;
+    property Width;
+    property RowHeight;
+    property RowLines;
+  end;
+
+{ TDataSourceLinkEh }
+
+  TDataSourceLinkEh = class(TFieldDataLinkEh)
+  private
+    FDataIndependentValueAsText: Boolean;
+    FDBLookupControl: TCustomDBLookupComboboxEh;
+  protected
+    procedure RecordChanged(Field: TField); override;
+    procedure LayoutChanged; override;
+  public
+    constructor Create;
+  end;
+
+{ TListSourceLinkEh }
+
+  TListSourceLinkEh = class(TDataLink)
+  private
+    FDBLookupControl: TCustomDBLookupComboboxEh;
+  protected
+    procedure ActiveChanged; override;
+    procedure DataSetChanged; override;
+    procedure LayoutChanged; override;
+  public
+    constructor Create;
+  end;
+
+{ TDBLookupComboboxEh }
+
+  TDBLookupComboboxEhStyle = (csDropDownListEh, csDropDownEh);
+
+  TCustomDBLookupComboboxEh = class(TCustomDBEditEh, ILookupGridOwner)
+  private
+    FCaseInsensitiveTextSearch: Boolean;
+    FDataFieldName: String;
+    FDataFields: TFieldsArrEh;
+    FDataFieldsUpdating: Boolean;
+    FDataList: TPopupDataGridBoxEh;
+    FDropDownBox: TLookupComboboxDropDownBoxEh;
+    FDynProps: TDynVarsEh;
+    FInrenalListDataChanging: Integer;
+    FInternalTextSetting: Boolean;
+    FKeyFieldName: String;
+    FKeyFields: TFieldsArrEh;
+    FKeyTextIndependent: Boolean;
+    FKeyValue: Variant;
+    FListActive: Boolean;
+    FListColumnMothed: Boolean;
+    FListField: TField;
+    FListFieldIndex: Integer;
+    FListFieldName: String;
+    FListFields: TObjectList;
+    FListLink: TListSourceLinkEh;
+    FListSource: TDataSource;
+    FListVisible: Boolean;
+    FLockUpdateKeyTextIndependent: Boolean;
+    FLookupMode: Boolean;
+    FLookupSource: TDataSource;
+    FMasterFieldNames: String;
+    FMasterFields: TFieldsArrEh;
+    FStyle: TDBLookupComboboxEhStyle;
+    FTextBeenChanged: Boolean;
+
+    FOnCloseUp: TCloseUpEventEh;
+    FOnDropDown: TNotifyEvent;
+    FOnDropDownBoxApplyTextFilter: TSimpleTextApplyFilterEh;
+    FOnKeyValueChanged: TNotifyEvent;
+    FOnNotInList: TNotInListEventEh;
+
+    FLastFilterPanelEvent: TFilterRecordEvent;
+    FSearchFilterText: String;
+    FSearchFilterFieldName: String;
+    FSearchFilterFields: TObjectList;
+
+    function GetDataLink: TDataSourceLinkEh;
+    function GetKeyFieldName: String;
+    function GetListSource: TDataSource;
+    function GetOnButtonClick: TButtonClickEventEh;
+    function GetOnButtonDown: TButtonDownEventEh;
+    function GetOnDropDownBoxCheckButton: TCheckTitleEhBtnEvent;
+    function GetOnDropDownBoxDrawColumnCell: TDrawColumnEhCellEvent;
+    function GetOnDropDownBoxGetCellParams: TGetCellEhParamsEvent;
+    function GetOnDropDownBoxSortMarkingChanged: TNotifyEvent;
+    function GetOnDropDownBoxTitleBtnClick: TTitleEhClickEvent;
+
+    procedure CheckNotCircular;
+    procedure CheckNotLookup;
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    {$ENDIF}
+    procedure CMMouseWheel(var Message: TMessage); message CM_MOUSEWHEEL;
+    procedure CMWantSpecialKey(var Message: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
+
+    procedure DataListKeyValueChanged(Sender: TObject);
+    procedure ListColumnMoved(Sender: TObject; FromIndex, ToIndex: Longint);
+    procedure ListMouseCloseUp(Sender: TObject; Accept: Boolean);
+    procedure SetDataFieldName(const Value: String);
+    procedure SetDropDownBox(const Value: TLookupComboboxDropDownBoxEh);
+    procedure SetDynProps(const Value: TDynVarsEh);
+    procedure SetKeyFieldName(const Value: String);
+    procedure SetKeyValue(const Value: Variant);
+    procedure SetListFieldName(const Value: String);
+    procedure SetListSource(Value: TDataSource);
+    procedure SetLookupMode(Value: Boolean);
+    procedure SetOnButtonClick(const Value: TButtonClickEventEh);
+    procedure SetOnButtonDown(const Value: TButtonDownEventEh);
+    procedure SetOnDropDownBoxCheckButton(const Value: TCheckTitleEhBtnEvent);
+    procedure SetOnDropDownBoxDrawColumnCell(const Value: TDrawColumnEhCellEvent);
+    procedure SetOnDropDownBoxGetCellParams(const Value: TGetCellEhParamsEvent);
+    procedure SetOnDropDownBoxSortMarkingChanged(const Value: TNotifyEvent);
+    procedure SetOnDropDownBoxTitleBtnClick(const Value: TTitleEhClickEvent);
+    procedure SetStyle(const Value: TDBLookupComboboxEhStyle);
+    procedure UpdateKeyTextIndependent;
+    procedure UpdateReadOnly;
+
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+    procedure EMReplacesel(var Message: TMessage); message EM_REPLACESEL;
+    {$ENDIF}
+    procedure WMClear(var Message: TWMCut); message WM_CLEAR;
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    procedure WMCut(var Message: TMessage); message WM_CUT;
+    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMPaste(var Message: TMessage); message WM_PASTE;
+    procedure WMSetCursor(var Message: TWMSetCursor); message WM_SETCURSOR;
+
+  protected
+    function ButtonEnabled: Boolean; override;
+    function CreateDataLink: TFieldDataLinkEh; override;
+    function CreateEditButton: TEditButtonEh; override;
+    function DefaultAlignment: TAlignment; override;
+    function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function GetDataField: TField; reintroduce;
+    function GetDisplayTextForPaintCopy: String; override;
+    function GetListFieldsWidth: Integer; virtual;
+    function GetVariantValue: Variant; override;
+    function IsValidChar(InputChar: Char): Boolean; override;
+
+    function CanModify(TryEdit: Boolean): Boolean; virtual;
+    function CompatibleVarValue(AFieldsArr: TFieldsArrEh; AValue: Variant): Boolean; virtual;
+    function FullListSource: TDataSource;
+    function GetDisplayText(Field: TField): String;
+    function LocateDataSourceKey(DataSource: TDataSource): Boolean; virtual;
+    function LocateStr(const Str: String; const PartialKey: Boolean): Boolean; virtual;
+    function SpecListMode: Boolean; virtual;
+    function TraceMouseMoveForPopupListbox(Sender: TObject; Shift: TShiftState; X, Y: Integer): Boolean;
+    function UsedListSource: TDataSource;
+
+    procedure ActiveChanged; override;
+    procedure Click; override;
+    procedure DataChanged; override;
+    procedure DropDownAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; var Handled: Boolean); override;
+    procedure EditButtonClickDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var Handled: Boolean); override;
+    procedure EditButtonDownDefaultAction(EditButton: TEditButtonEh; EditButtonControl: TEditButtonControlEh; TopButton: Boolean; var AutoRepeat: Boolean; var Handled: Boolean); override;
+    procedure EditButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer); override;
+    procedure HookOnChangeEvent(Sender: TObject);
+    procedure InternalSetText(const AText: String); override;
+    procedure InternalSetValue(AValue: Variant); override;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyPress(var Key: Char); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure Loaded; override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure SetFocused(Value: Boolean); override;
+
+    procedure KeyValueChanged; virtual;
+    procedure ListLinkDataChanged; virtual;
+    procedure ProcessSearchStr(const Str: String); virtual;
+    procedure SearchFilterEvent(DataSet: TDataSet; var Accept: Boolean); virtual;
+    procedure SelectKeyValue(const Value: Variant); virtual;
+    procedure SetEditText(const Value: String);
+    procedure SpecRowChanged(Sender: TObject); virtual;
+    procedure UpdateDataFields; virtual;
+    procedure UpdateListFields; virtual;
+    procedure UpdateListLinkDataSource; virtual;
+
+    property DataLink: TDataSourceLinkEh read GetDataLink;
+    property ListActive: Boolean read FListActive;
+    property ListFields: TObjectList read FListFields;
+    property ListLink: TListSourceLinkEh read FListLink;
+
+    property OnButtonClick: TButtonClickEventEh read GetOnButtonClick write SetOnButtonClick;
+    property OnButtonDown: TButtonDownEventEh read GetOnButtonDown write SetOnButtonDown;
+
+  protected
+    { ILookupGridOwner }
+    procedure SetDropDownBoxListSource(AListSource: TDataSource);
+    procedure ILookupGridOwner.SetListSource = SetDropDownBoxListSource;
+
+  protected
+    function GetLookupGrid: TCustomDBAxisGridEh;
+    function GetOptions: TDBLookupGridEhOptions;
+    function InrenalListDataChanging: Boolean; virtual;
+
+    procedure BeginInrenalListDataChanging;
+    procedure EndInrenalListDataChanging;
+    procedure SetOptions(Value: TDBLookupGridEhOptions);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function LocateKey: Boolean; virtual;
+    function UseRightToLeftAlignment: Boolean; override;
+
+    procedure Clear; override;
+    procedure ClearDataProps;
+    procedure CloseUp(Accept: Boolean); override;
+    procedure DefaultDropDownBoxApplyTextFilter(DataSet: TDataSet; const FieldName: String; Operation: TLSAutoFilterTypeEh; const FilterText: String);
+    procedure DefaultHandler(var Message); override;
+    procedure DropDown(AEditButton: TEditButtonEh = nil); virtual;
+    procedure RefilterDropDownBoxListSource(const FilterText: String);
+    procedure ResetDisplayText; virtual;
+    procedure SelectAll; virtual;
+    procedure SelectNextValue(IsPrior: Boolean);
+    procedure StartDropDownBoxListSourceFilter;
+    procedure StopDropDownBoxListSourceFilter;
+    procedure UpdateData; override;
+
+    property DataField: String read FDataFieldName write SetDataFieldName;
+    property DataList: TPopupDataGridBoxEh read FDataList;
+    property DropDownBox: TLookupComboboxDropDownBoxEh read FDropDownBox write SetDropDownBox;
+    property DynProps: TDynVarsEh read FDynProps write SetDynProps;
+    property Field: TField read GetDataField;
+    property KeyField: String read GetKeyFieldName write SetKeyFieldName;
+    property KeyValue: Variant read FKeyValue write SelectKeyValue;
+    property ListField: String read FListFieldName write SetListFieldName;
+    property ListFieldIndex: Integer read FListFieldIndex write FListFieldIndex default 0;
+    property ListSource: TDataSource read GetListSource write SetListSource;
+    property ListVisible: Boolean read FListVisible;
+    property Style: TDBLookupComboboxEhStyle read FStyle write SetStyle default csDropDownListEh;
+    property Text;
+    property CaseInsensitiveTextSearch: Boolean read FCaseInsensitiveTextSearch write FCaseInsensitiveTextSearch default True;
+
+    property OnCloseUp: TCloseUpEventEh read FOnCloseUp write FOnCloseUp;
+    property OnDropDown: TNotifyEvent read FOnDropDown write FOnDropDown;
+    property OnDropDownBoxApplyTextFilter: TSimpleTextApplyFilterEh read FOnDropDownBoxApplyTextFilter write FOnDropDownBoxApplyTextFilter;
+    property OnDropDownBoxCheckButton: TCheckTitleEhBtnEvent read GetOnDropDownBoxCheckButton write SetOnDropDownBoxCheckButton;
+    property OnDropDownBoxDrawColumnCell: TDrawColumnEhCellEvent read GetOnDropDownBoxDrawColumnCell write SetOnDropDownBoxDrawColumnCell;
+    property OnDropDownBoxGetCellParams: TGetCellEhParamsEvent read GetOnDropDownBoxGetCellParams write SetOnDropDownBoxGetCellParams;
+    property OnDropDownBoxSortMarkingChanged: TNotifyEvent read GetOnDropDownBoxSortMarkingChanged write SetOnDropDownBoxSortMarkingChanged;
+    property OnDropDownBoxTitleBtnClick: TTitleEhClickEvent read GetOnDropDownBoxTitleBtnClick write SetOnDropDownBoxTitleBtnClick;
+    property OnKeyValueChanged: TNotifyEvent read FOnKeyValueChanged write FOnKeyValueChanged;
+    property OnNotInList: TNotInListEventEh read FOnNotInList write FOnNotInList;
+
+  end;
+
+  TDBLookupComboboxEh = class(TCustomDBLookupComboboxEh)
+  published
+    property ControlLabel;
+    property ControlLabelLocation;
+
+    property Align;
+    property Alignment;
+    property AlwaysShowBorder;
+    property AutoSelect;
+    property AutoSize;
+    {$IFDEF FPC}
+    {$ELSE}
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+    property Ctl3D;
+    property ImeMode;
+    property ImeName;
+    property ParentCtl3D;
+    {$ENDIF}
+    property BorderStyle;
+    property Anchors;
+    property BiDiMode;
+    property Constraints;
+    property DragKind;
+    property DynProps;
+    property Images;
+    property ParentBiDiMode;
+    property Color;
+    property DataField;
+    property DataSource;
+    property DragCursor;
+    property DragMode;
+    property DropDownBox;
+    property EmptyDataInfo;
+    property Enabled;
+    property EditButton;
+    property EditButtons;
+    property Font;
+    property Flat;
+    property HighlightRequired;
+    property KeyField;
+    property ListField;
+    property ListFieldIndex;
+    property ListSource;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ReadOnly;
+    property ShowHint;
+    property Style;
+    property TabOrder;
+    property TabStop;
+    property CaseInsensitiveTextSearch;
+    property Tooltips;
+{$IFDEF EH_LIB_13}
+    property Touch;
+{$ENDIF}
+    property Visible;
+    property WordWrap;
+
+    property OnButtonClick;
+    property OnButtonDown;
+    property OnChange;
+    property OnClick;
+    property OnCloseDropDownForm;
+    property OnCloseUp;
+    property OnCheckDrawRequiredState;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnDropDown;
+    property OnDropDownBoxApplyTextFilter;
+    property OnDropDownBoxCheckButton;
+    property OnDropDownBoxDrawColumnCell;
+    property OnDropDownBoxGetCellParams;
+    property OnDropDownBoxSortMarkingChanged;
+    property OnDropDownBoxTitleBtnClick;
+    property OnEndDrag;
+    property OnEndDock;
+    property OnEnter;
+    property OnExit;
+{$IFDEF EH_LIB_13}
+    property OnGesture;
+{$ENDIF}
+    property OnGetImageIndex;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnKeyValueChanged;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnNotInList;
+    property OnOpenDropDownForm;
+    property OnStartDrag;
+    property OnStartDock;
+    property OnUpdateData;
+  end;
+
+implementation

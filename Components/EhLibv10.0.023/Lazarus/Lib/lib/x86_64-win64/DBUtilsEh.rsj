@@ -1,0 +1,8 @@
+{"version":1,"strings":[
+{"hash":21860,"name":"dbutilseh.snotoperatoreh","sourcebytes":[78,111,116],"value":"Not"},
+{"hash":17956,"name":"dbutilseh.sandoperatoreh","sourcebytes":[65,78,68],"value":"AND"},
+{"hash":1346,"name":"dbutilseh.soroperatoreh","sourcebytes":[79,82],"value":"OR"},
+{"hash":4294967295,"name":"dbutilseh.slikepredicateh","sourcebytes":[],"value":""},
+{"hash":1278,"name":"dbutilseh.sinpredicateh","sourcebytes":[73,110],"value":"In"},
+{"hash":351276,"name":"dbutilseh.snullconsteh","sourcebytes":[78,117,108,108],"value":"Null"}
+]}

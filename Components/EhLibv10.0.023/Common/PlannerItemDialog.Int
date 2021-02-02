@@ -1,0 +1,82 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                     TPlannerItemForm                  }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PlannerItemDialog;
+
+interface
+
+uses
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, MaskEdit,
+  {$ELSE}
+    EhLibVCL, DBConsts, RTLConsts, Mask, Windows,
+  {$ENDIF}
+  Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls,
+  DBCtrlsEh, PlannersEh, PlannerDataEh,
+  DateUtils, ToolCtrlsEh, LanguageResManEh,
+  ComCtrls, ExtCtrls;
+
+type
+  TPlannerItemForm = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Bevel1: TBevel;
+    bvlAfterResource: TBevel;
+    AllDayCheck: TCheckBox;
+    OKButton: TButton;
+    CancelButton: TButton;
+    eTitle: TDBEditEh;
+    cbStartTimeEdit: TDBComboBoxEh;
+    cbFinishTimeEdit: TDBComboBoxEh;
+    eBody: TDBMemoEh;
+    Bevel3: TBevel;
+    cbxRecource: TDBComboBoxEh;
+    bevelAfterDateTime: TBevel;
+    StartDateEdit: TDBDateTimeEditEh;
+    EndDateEdit: TDBDateTimeEditEh;
+    StartTimeEdit: TDBDateTimeEditEh;
+    FinishTimeEdit: TDBDateTimeEditEh;
+    procedure cbStartTimeEditEnter(Sender: TObject);
+    procedure cbStartTimeEditChange(Sender: TObject);
+    procedure StartDateEditEnter(Sender: TObject);
+    procedure StartDateEditChange(Sender: TObject);
+    procedure StartTimeEditChange(Sender: TObject);
+    procedure StartTimeEditEnter(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+
+  private
+    FDeltaTime: TDateTime;
+    FDeltaDate: TDateTime;
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+
+  protected
+    procedure ResourceLanguageChanged; virtual;
+
+  public
+    ChildrenRightToLeft: Boolean;
+
+    function FormStarDate: TDateTime;
+    function FormEndDate: TDateTime;
+
+    procedure InitForm(Planner: TPlannerControlEh; Item: TPlannerDataItemEh);
+  end;
+
+var
+  PlannerItemForm: TPlannerItemForm;
+
+function EditPlanItem(Planner: TPlannerControlEh; Item: TPlannerDataItemEh): Boolean;
+procedure EditNewItem(Planner: TPlannerControlEh);
+
+implementation

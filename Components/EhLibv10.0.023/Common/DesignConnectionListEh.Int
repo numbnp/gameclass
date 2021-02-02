@@ -1,0 +1,63 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                                                       }
+{            TfDesignConnectionListEh form              }
+{                                                       }
+{    Copyright (c) 2005-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DesignConnectionListEh;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Contnrs,
+  Dialogs, StdCtrls, DB, MemTableEh, ExtCtrls, DBGridEh, SQLDriverEditEh,
+{$IFDEF CIL}
+  EhLibVCLNET,
+{$ELSE}
+  EhLibVCL,
+{$ENDIF}
+  Variants,
+  GridsEh, DBGridEhGrouping, DBGridEhToolCtrls, MemTableDataEh, ToolCtrlsEh,
+  DynVarsEh, DBAxisGridsEh;
+
+type
+  TfDesignConnectionListEh = class(TForm)
+    DBGridEh1: TDBGridEh;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    MemTableEh1: TMemTableEh;
+    MemTableEh1ConnectionName: TStringField;
+    MemTableEh1Engine: TStringField;
+    MemTableEh1ServerType: TStringField;
+    MemTableEh1Connected: TBooleanField;
+    bSelect: TButton;
+    bNew: TButton;
+    bDelete: TButton;
+    bCancel: TButton;
+    bEdit: TButton;
+    MemTableEh1RefObject: TRefObjectField;
+    procedure bEditClick(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure bNewClick(Sender: TObject);
+    procedure bDeleteClick(Sender: TObject);
+    procedure bSelectClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    FDesignDataBase: TObject;
+    procedure PrepareList(DesignDataBaseList: TObjectList);
+    function CurrentDesignDataBase: TDesignDataBaseEh;
+  end;
+
+var
+  fDesignConnectionListEh: TfDesignConnectionListEh;
+
+function SelectDesignConnectionListEh(DesignDataBaseList: TObjectList): TDesignDataBaseEh;
+
+implementation

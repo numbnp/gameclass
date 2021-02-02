@@ -1,0 +1,276 @@
+object frDataGrouping: TfrDataGrouping
+  Left = 0
+  Height = 378
+  Top = 0
+  Width = 547
+  ClientHeight = 378
+  ClientWidth = 547
+  TabOrder = 0
+  DesignLeft = 576
+  DesignTop = 236
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 547
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 547
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 547
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 10
+      Height = 15
+      Top = 10
+      Width = 77
+      Caption = 'Data Grouping'
+      ParentColor = False
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 303
+    Top = 33
+    Width = 547
+    Align = alClient
+    AllowedSelections = [gstRecordBookmarks, gstRectangle, gstAll]
+    ColumnDefValues.AlwaysShowEditButton = True
+    ColumnDefValues.Title.TitleButton = True
+    ColumnDefValues.Title.ToolTips = True
+    ColumnDefValues.ToolTips = True
+    DataGrouping.Active = True
+    DataGrouping.Color = clGradientInactiveCaption
+    DataGrouping.Footers = <    
+      item
+        ColumnItems = <        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+          end        
+          item
+            ValueType = gfvSumEh
+          end>
+        Visible = True
+      end>
+    DataGrouping.FootersDefValues.ShowFunctionName = True
+    DataGrouping.FootersDefValues.RunTimeCustomizable = True
+    DataGrouping.GroupLevels = <    
+      item
+        ColumnName = 'Column_1_Company'
+      end>
+    DataGrouping.GroupPanelVisible = True
+    DataGrouping.GroupRowDefValues.RowHeight = 4
+    DataGrouping.GroupRowDefValues.RowLines = 1
+    DataGrouping.ParentColor = False
+    DataSource = DataSource1
+    DynProps = <>
+    EditActions = [geaCopyEh, geaSelectAllEh]
+    EvenRowColor = clWindow
+    Flat = True
+    FooterParams.Color = clBtnFace
+    GridLineParams.GridBoundaries = True
+    IndicatorTitle.ShowDropDownSign = True
+    IndicatorTitle.TitleButton = True
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghIncSearch, dghDialogFind, dghColumnResize, dghColumnMove, dghHotTrack, dghExtendVertLines]
+    ParentShowHint = False
+    RowDetailPanel.Height = 200
+    RowSizingAllowed = True
+    ShowHint = True
+    SortLocal = True
+    STFilter.FilterButtonDrawTime = fbdtWhenRowHotEh
+    STFilter.InstantApply = True
+    STFilter.Local = True
+    STFilter.Location = stflInTitleFilterEh
+    STFilter.Visible = True
+    TabOrder = 1
+    TitleParams.VTitleMargin = 5
+    VertScrollBar.SmoothStep = True
+    OnActiveGroupingStructChanged = DBGridEh1ActiveGroupingStructChanged
+    Columns = <    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'CustNo'
+        Footers = <>
+        Width = 42
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Company'
+        Footers = <>
+        Visible = False
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'OrderNo'
+        Footers = <>
+        Width = 41
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ShipDate'
+        Footers = <>
+        Width = 76
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ShipVIA'
+        Footers = <>
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Terms'
+        Footers = <>
+        Width = 34
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ItemsTotal'
+        Footers = <>
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PartNo'
+        Footers = <>
+        Width = 36
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Qty'
+        Footers = <>
+        Width = 33
+      end    
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Discount'
+        Footers = <>
+        Width = 43
+      end    
+      item
+        CellButtons = <>
+        DisplayFormat = ',#.##'
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'PartPrice'
+        Footers = <>
+        Width = 108
+      end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 42
+    Top = 336
+    Width = 547
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 42
+    ClientWidth = 547
+    TabOrder = 2
+    object CheckBox1: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 11
+      Width = 93
+      Caption = 'Footer in Row'
+      OnClick = CheckBox1Click
+      TabOrder = 0
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = mtTable1
+    left = 134
+    top = 374
+  end
+  object mtTable1: TMemTableEh
+    CachedUpdates = True
+    FetchAllOnOpen = True
+    Params = <>
+    DataDriver = SQLDataDriverEh1
+    left = 138
+    top = 399
+  end
+  object SQLDataDriverEh1: TSQLDataDriverEh
+    DeleteCommand.Params = <>
+    DynaSQLParams.Options = []
+    GetrecCommand.Params = <>
+    InsertCommand.Params = <>
+    SelectCommand.Params = <>
+    SelectCommand.CommandText.Strings = (
+      'SELECT '
+      ''
+      'customer.CustNo, '
+      'customer.Company, '
+      'orders.OrderNo, '
+      'orders.ShipDate, '
+      'orders.ShipVIA, '
+      'orders.Terms, '
+      'orders.ItemsTotal, '
+      'items.PartNo, '
+      'items.Qty, '
+      'items.Discount, '
+      '[items.PartNo]*[parts.Cost] AS PartPrice'
+      ''
+      'FROM parts INNER JOIN '
+      '   ((customer INNER JOIN orders ON customer.CustNo = orders.CustNo) '
+      '           INNER JOIN items ON orders.OrderNo = items.OrderNo) ON parts.PartNo = items.PartNo;'
+    )
+    UpdateCommand.Params = <>
+    ConnectionProvider = Form1.SQLDBConnectionProviderEh1
+    MacroVars.Macros = <>
+    SpecParams.Strings = (
+      'table=table_CustomerOrdersItems'
+    )
+    left = 152
+    top = 424
+  end
+end

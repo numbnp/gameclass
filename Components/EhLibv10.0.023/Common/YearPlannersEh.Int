@@ -1,0 +1,224 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                     Planner Component                 }
+{                                                       }
+{   Copyright (c) 2020-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit YearPlannersEh;
+
+interface
+
+uses
+  SysUtils, Messages, Controls, Forms, StdCtrls, TypInfo,
+  DateUtils, ExtCtrls, Buttons, Dialogs, ImgList, GraphUtil,
+  Contnrs, Variants, Types, Themes, Menus,
+{$IFDEF EH_LIB_17}
+  System.Generics.Collections,
+  System.Generics.Defaults,
+  System.UITypes,
+{$ENDIF}
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, PrintUtilsEh, Windows, UxTheme,
+  {$ENDIF}
+  Classes, PlannerDataEh, SpreadGridsEh, PlannersEh,
+  GridsEh, ToolCtrlsEh, Graphics;
+
+type
+  TPlannerHorzYearViewEh = class;
+
+{ TMonthBarAreaEh }
+
+  TMonthBarAreaEh = class(THoursVertBarAreaEh)
+  private
+  protected
+    function DefaultSize: Integer; override;
+    procedure AssignFontDefaultProps; override;
+  published
+  end;
+
+{ TYearViewDataBarAreaEh }
+
+  TYearViewDataBarAreaEh = class(TPlannerViewDrawElementEh)
+  private
+    FMinCellHeight: Integer;
+    FMinCellWidth: Integer;
+    procedure SetMinCellHeight(const Value: Integer);
+    procedure SetMinCellWidth(const Value: Integer);
+  protected
+    procedure AssignFontDefaultProps; override;
+
+  public
+    constructor Create(APlannerView: TCustomPlannerViewEh);
+    destructor Destroy; override;
+
+    function DefaultMinCellHeight: Integer; virtual;
+    function DefaultMinCellWidth: Integer; virtual;
+
+    function ActualMinCellHeight: Integer;
+    function ActualMinCellWidth: Integer;
+
+  published
+    property Color;
+    property Font;
+    property FontStored;
+
+    property MinCellHeight: Integer read FMinCellHeight write SetMinCellHeight default 0;
+    property MinCellWidth: Integer read FMinCellWidth write SetMinCellWidth default 0;
+  end;
+
+{ THorzYearViewTimeSpanParamsEh }
+
+  TPlannerControlTimeSpanParamsEh = class(TPersistent)
+  private
+    FPlannerView: TPlannerHorzYearViewEh;
+    FMinHeight: Integer;
+    procedure SetMinHeight(const Value: Integer);
+  protected
+  public
+    constructor Create(APlannerView: TPlannerHorzYearViewEh);
+    destructor Destroy; override;
+
+    property PlannerView: TPlannerHorzYearViewEh read FPlannerView;
+
+  published
+    property MinHeight: Integer read FMinHeight write SetMinHeight default 0;
+  end;
+
+{ TPlannerHorzYearViewEh }
+
+  TPlannerHorzYearViewEh = class(TCustomPlannerViewEh)
+  private
+    FSortedSpans: TObjectListEh;
+    FMonthColArea: TMonthBarAreaEh;
+    FDataBarArea: TYearViewDataBarAreaEh;
+    FTimeSpanParams: TPlannerControlTimeSpanParamsEh;
+
+    function GetDataBarsArea: TYearViewDataBarAreaEh;
+    function GetDayNameArea: TDayNameVertAreaEh;
+    function GetSortedSpan(Index: Integer): TTimeSpanDisplayItemEh;
+
+    procedure SetDataBarsArea(const Value: TYearViewDataBarAreaEh);
+    procedure SetDayNameArea(const Value: TDayNameVertAreaEh);
+    procedure SetMonthColArea(const Value: TMonthBarAreaEh);
+
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure SetTimeSpanParams(const Value: TPlannerControlTimeSpanParamsEh);
+
+  protected
+    FDataRowsFor1Res: Integer;
+    FDataDayNumAreaHeight: Integer;
+    FDefaultLineHeight: Integer;
+    FMovingDaysShift: Integer;
+    FShowMonthNoCaption: Boolean;
+    FMonthColIndex: Integer;
+
+    function AdjustDate(const Value: TDateTime): TDateTime; override;
+    function CellToDateTime(ACol, ARow: Integer): TDateTime; override;
+    function CreateDayNameArea: TDayNameAreaEh; override;
+    function CreateHoursBarArea: THoursBarAreaEh; override;
+    function CreateResourceCaptionArea: TResourceCaptionAreaEh; override;
+    function DefaultHoursBarSize: Integer; override;
+    function DrawMonthDayWithWeekDayName: Boolean; override;
+    function GetCoveragePeriodType: TPlannerCoveragePeriodTypeEh; override;
+    function GetDataCellTimeLength: TDateTime; override;
+    function GetResourceAtCell(ACol, ARow: Integer): TPlannerResourceEh; override;
+    function GetResourceViewAtCell(ACol, ARow: Integer): Integer; override;
+    function IsDayNameAreaNeedVisible: Boolean; override;
+    function NewItemParams(var StartTime, EndTime: TDateTime; var Resource: TPlannerResourceEh): Boolean; override;
+
+    function CalcShowKeekNoCaption(RowHeight: Integer): Boolean; virtual;
+    function IsInterResourceCell(ACol, ARow: Integer): Boolean; virtual;
+    function TimeToGridLineRolPos(ADateTime: TDateTime): Integer; virtual;
+    function WeekNoColWidth: Integer; virtual;
+
+    procedure BuildGridData; override;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure CheckDrawCellBorder(ACol, ARow: Integer; BorderType: TGridCellBorderTypeEh; var IsDraw: Boolean; var BorderColor: TColor; var IsExtent: Boolean); override;
+    procedure ClearSpanItems; override;
+    procedure GetCellType(ACol, ARow: Integer; var CellType: TPlannerViewCellTypeEh; var ALocalCol, ALocalRow: Integer); override;
+    procedure GetViewPeriod(var AStartDate, AEndDate: TDateTime); override;
+    procedure GetWeekDayNamesParams(ACol, ARow, ALocalCol, ALocalRow: Integer; var WeekDayNum: Integer; var WeekDayName: String); override;
+    procedure GridLayoutChanged; override;
+    procedure InitSpanItem(ASpanItem: TTimeSpanDisplayItemEh); override;
+    procedure InitSpanItemMoving(SpanItem: TTimeSpanDisplayItemEh; MousePos: TPoint); override;
+    procedure ReadPlanItem(APlanItem: TPlannerDataItemEh); override;
+    procedure Resize; override;
+    procedure SetDisplayPosesSpanItems; override;
+    procedure SetGroupPosesSpanItems(Resource: TPlannerResourceEh); override;
+    procedure SortPlanItems; override;
+    procedure UpdateDummySpanItemSize(MousePos: TPoint); override;
+
+    procedure BuildYearGridMode; virtual;
+    procedure CalcPosByPeriod(AStartTime, AEndTime: TDateTime; var AStartGridPos, AStopGridPos: Integer); virtual;
+    procedure DrawMonthViewDataCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; DrawArgs: TPlannerViewCellDrawArgsEh); virtual;
+    procedure ReadDivByMonthPlanItem(StartDate, BoundDate: TDateTime; APlanItem: TPlannerDataItemEh);
+    procedure SetDisplayPosesSpanItemsForResource(AResource: TPlannerResourceEh; Index: Integer); virtual;
+    procedure SetResOffsets; virtual;
+    procedure TimeSpanParamsChagned; virtual;
+    procedure WeekNoCellClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); virtual;
+
+    property SortedSpan[Index: Integer]: TTimeSpanDisplayItemEh read GetSortedSpan;
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function AppendPeriod(ATime: TDateTime; Periods: Integer): TDateTime; override;
+    function CellIsDateRelevant(ACol, ARow: Integer): Boolean; virtual;
+    procedure GetRelevantColsForRow(ADataRow: Integer; out AStartDataCol, AColCount: Integer);
+    function GetPeriodCaption: String; override;
+    function NextDate: TDateTime; override;
+    function PriorDate: TDateTime; override;
+    function GetDefaultMonthBarWidth: Integer; virtual;
+
+    procedure DrawDataCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure DrawDayNamesCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure DrawWeekNoCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure DrawMonthNameCell(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer;DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure GetDataCellDrawParams(ACol, ARow: Integer; ARect: TRect; var State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure GetMonthNameCellDrawParams(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+    procedure GetResourceCaptionCellDrawParams(ACol, ARow: Integer; ARect: TRect; State: TGridDrawState; ALocalCol, ALocalRow: Integer; DrawArgs: TPlannerViewCellDrawArgsEh); override;
+
+  published
+    property DataBarsArea: TYearViewDataBarAreaEh read GetDataBarsArea write SetDataBarsArea;
+    property DayNameArea: TDayNameVertAreaEh read GetDayNameArea write SetDayNameArea;
+    property TimeSpanParams: TPlannerControlTimeSpanParamsEh read FTimeSpanParams write SetTimeSpanParams;
+    property PopupMenu;
+    property ResourceCaptionArea;
+    property MonthColArea: TMonthBarAreaEh read FMonthColArea write SetMonthColArea;
+
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDrawCell;
+    property OnReadPlannerDataItem;
+    property OnSelectionChanged;
+    property OnSpanItemHintShow;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF EH_LIB_10}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+{$IFDEF FPC}
+    property OnMouseEnter;
+    property OnMouseLeave;
+{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+  end;
+
+implementation

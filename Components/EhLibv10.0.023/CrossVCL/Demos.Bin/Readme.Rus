@@ -1,0 +1,43 @@
+Данная папка содержит исполняемые приложения 
+демонстрирующие возможности библиотеки EhLib 
+для написания графических GUI приложений под операйионные системы
+Linux и OS X с помощью средств разарботки Embarcadero RAD Studio Delphi и 
+библиотеки CrossVCL.
+
+Описание содержимого папок
+-----
+Папка "OS X 10.12.2" содержит исполняемые бинарные файлы для OS X.
+Для запуска приложени:
+ - Распакуйте архив и скопируйте папку Project1.app
+на компьютер с операционной системой Apple OS X.
+  - Запустите приложение Project1.app на исполнение.
+
+-----
+Папка "Ubuntu 16.04" содержит исполняемые бинарные файлы для 
+операционной сисетмы Ubuntu 16 и RedHat Enterprise.
+
+Для запуска приложени:
+ - Распакуйте архив и скопируйте папку UbuntuDemo в
+на компьютер с операционной системой Ubuntu 16 или RedHat Enterprise.
+  - Запустите приложение UbuntuDemo\Project1\Project1 
+
+
+-----
+Возможность написания графических приложений под 
+Linux и OS X доступна начиная с EhLib верси 9.2
+
+-----
+Дополнительные ссылки и комментарии:
+
+- RAD Studio Delphi XE10.2 or higher.
+  https://www.embarcadero.com/products/rad-studio
+  OR
+  https://www.embarcadero.com/products/delphi
+
+- CrossVCL library
+  https://www.crossvcl.com/ 
+
+- EhLib library 
+  http://www.ehlib.com/
+
+

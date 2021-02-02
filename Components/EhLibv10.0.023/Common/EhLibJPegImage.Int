@@ -1,0 +1,34 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{        Classes for detection Images stream format     }
+{                                                       }
+{   Copyright (c) 2011-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+unit EhLibJPegImage;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics, Controls, Forms,
+{$IFDEF FPC}
+{$ELSE}
+  JPeg,
+{$ENDIF}
+  Dialogs, ExtCtrls, Buttons, ToolCtrlsEh;
+
+
+type
+
+{ TJPEGGraphicProviderEh }
+
+  TJPEGGraphicProviderEh = class(TGraphicProviderEh)
+    class function GetImageClassForStream(Start: Pointer): TGraphicClass; override;
+  end;
+
+implementation

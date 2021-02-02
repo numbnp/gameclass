@@ -1,0 +1,50 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                    MemoEdit Dialog                    }
+{                                                       }
+{     Copyright (c) 2013-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit MemoEditFormsEh;
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics, Controls, Forms, Types,
+  DropDownFormEh, Dialogs, Buttons, ExtCtrls, StdCtrls, DynVarsEh, ToolCtrlsEh;
+
+type
+  TMemoEditWinEh = class(TCustomDropDownFormEh)
+    Memo1: TMemo;
+    Panel1: TPanel;
+    sbOk: TSpeedButton;
+    sbCancel: TSpeedButton;
+    Bevel1: TBevel;
+    procedure sbOkClick(Sender: TObject);
+    procedure sbCancelClick(Sender: TObject);
+    procedure CustomDropDownFormEhReturnParams(Sender: TCustomDropDownFormEh;
+      DynParams: TDynVarsEh);
+    procedure CustomDropDownFormEhInitForm(Sender: TCustomDropDownFormEh;
+      DynParams: TDynVarsEh);
+    procedure CustomDropDownFormEhCreate(Sender: TObject);
+  private
+    FPassParams: TDropDownPassParamsEh;
+  public
+    class function GetGlobalRef: TCustomDropDownFormEh; override;
+  end;
+
+function DefaultShowMemoEditDialogEh(var Text: String; var FormPos: TRect; ReadOnly: Boolean): Boolean;
+
+type
+  TShowMemoEditDialogEhProg = function(var Text: String; var FormPos: TRect; ReadOnly: Boolean): Boolean;
+
+var
+  MemoEditWinEh: TMemoEditWinEh;
+
+  ShowMemoEditDialogEhProg: TShowMemoEditDialogEhProg;
+
+  DefaultMemoEditDropDownFormClassEh: TCustomDropDownFormEh;
+
+implementation

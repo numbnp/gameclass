@@ -1,0 +1,803 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{           Classes to work w ith Xlsx Format           }
+{                                                       }
+{     Copyright (c) 2020-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit XlsMemFilesEh;
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics, Types, Printers,
+  {$IFDEF FPC}
+    EhLibLCL,
+  {$ELSE}
+    EhLibVCL,
+  {$ENDIF}
+  Contnrs, Controls, Forms, Dialogs;
+
+type
+  TXlsWorkbookEh = class;
+  TXlsWorksheetEh = class;
+  TXlsFileColumnEh = class;
+  TXlsFileColumnsEh = class;
+  TXlsFileRowEh = class;
+  TXlsFileRowsEh = class;
+  TXlsFileCellEh = class;
+  TXlsFileWorksheetDimensionEh = class;
+  TXlsFileStylesEh = class;
+  TXlsFileCellsRangeEh = class;
+  TXlsFileCellsRangeLinesEh = class;
+  TXlsFileWorksheetCellsRectEh = class;
+  TXlsFileWorksheetPrintParamsEh = class;
+  TXlsFileWorksheetPrintPageMarginsEh = class;
+  IXlsFileCellsRangeEh = interface;
+
+  TXlsFileCellLineStyleEh = (clsNoneEh, clsThinEh, clsMediumEh, clsThickEh, clsDoubleEh,
+    clsDashDotEh, clsDashDotDotEh, clsDashedEh, clsDottedEh, clsHairEh,
+    clsMediumDashDotEh, clsMediumDashDotDotEh, clsMediumDashedEh, clsSlantDashDotEh);
+  TXlsFileCellHorzAlign = (chaUnassignedEh, chaLeftEh, chaRightEh, chaCenterEh);
+  TXlsFileCellVertAlign = (cvaUnassignedEh, cvaTopEh, cvaBottomEh, cvaCenterEh);
+  TXlsFileCharsFlowDirectionEh = (chfdHorizontalEh, chfdVerticalEh);
+
+  TXlsFilePrintScalingModeEh = (fpsmAdjustToScaleEh, fpsmFitToPagesEh);
+
+{ TXlsFileEh }
+
+  TXlsMemFileEh = class(TObject)
+  private
+    FWorkbook: TXlsWorkbookEh;
+    function GetWorkbook: TXlsWorkbookEh;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+    procedure SaveToFile(FileName: String);
+    procedure LoadFromFile(FileName: String);
+
+    property Workbook: TXlsWorkbookEh read GetWorkbook;
+  end;
+
+{ TXlsWorkbookEh }
+
+  TXlsWorkbookEh = class(TObject)
+  private
+    FWorkSheets: TObjectListEh;
+    FStyles: TXlsFileStylesEh;
+
+    function GetWorksheet(WorksheetId: Variant): TXlsWorksheetEh;
+    function GetWorksheetCount: Integer;
+    function GetStyles: TXlsFileStylesEh;
+  protected
+    procedure RenameWorksheet(Worksheet: TXlsWorksheetEh; NewName: string);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function AddWorksheet(WorksheetName: string): TXlsWorksheetEh;
+    function FindWorksheet(WorksheetName: string): TXlsWorksheetEh;
+
+    procedure MoveWorksheet(FromIndex, ToIndex: Integer);
+    procedure RemoveWorksheet(WorksheetEh: TXlsWorksheetEh);
+
+    property Worksheets[WorksheetId: Variant]: TXlsWorksheetEh read GetWorksheet;
+    property WorksheetCount: Integer read GetWorksheetCount;
+
+    property Styles: TXlsFileStylesEh read GetStyles;
+  end;
+
+{ TXlsWorksheetEh }
+
+  TXlsWorksheetEh = class(TObject)
+  private
+    FName: String;
+    FWorkbook: TXlsWorkbookEh;
+    FColumns:  TXlsFileColumnsEh;
+    FCells: array of array of TXlsFileCellEh;
+    FDimension: TXlsFileWorksheetDimensionEh;
+    FFrozenColCount: Integer;
+    FFrozenRowCount: Integer;
+    FAutoFilterRange: TXlsFileWorksheetCellsRectEh;
+    FRows: TXlsFileRowsEh;
+    FZoomScale: Integer;
+    FDefaultRowHeight: Double;
+    FDefaultColWidth: Double;
+    FPrintParams: TXlsFileWorksheetPrintParamsEh;
+    FTabColor: TColor;
+    FOutlineRowsSummaryBelow: Boolean;
+    FOutlineColsSummaryRight: Boolean;
+    function GetName: String;
+    procedure SetName(const Value: String);
+    function GetColumns: TXlsFileColumnsEh;
+    function GetCell(Col, Row: Integer): TXlsFileCellEh;
+    function GetCellDataExists(Col, Row: Integer): Boolean;
+    function GetRows: TXlsFileRowsEh;
+  public
+    constructor Create(AWorkbook: TXlsWorkbookEh);
+    destructor Destroy; override;
+
+    function GetCellsRange(FromCol, FromRow, ToCol, ToRow: Integer): IXlsFileCellsRangeEh;
+    function GetOutlineLevelForRows: Integer;
+
+    procedure MergeCell(Col, Row, ColCount, RowCount: Integer);
+    procedure UnmergerCell(Col, Row: Integer);
+
+    property AutoFilterRange: TXlsFileWorksheetCellsRectEh read FAutoFilterRange write FAutoFilterRange;
+    property CellDataExists[Col, Row: Integer]: Boolean read GetCellDataExists;
+    property Cells[Col, Row: Integer]: TXlsFileCellEh read GetCell;
+    property Columns: TXlsFileColumnsEh read GetColumns;
+    property DefaultColWidth: Double read FDefaultColWidth write FDefaultColWidth; 
+    property DefaultRowHeight: Double read FDefaultRowHeight write FDefaultRowHeight; 
+    property Dimension: TXlsFileWorksheetDimensionEh read FDimension;
+    property FrozenColCount: Integer read FFrozenColCount write FFrozenColCount;
+    property FrozenRowCount: Integer read FFrozenRowCount write FFrozenRowCount;
+    property Name: String read GetName write SetName;
+    property OutlineRowsSummaryBelow: Boolean read FOutlineRowsSummaryBelow write FOutlineRowsSummaryBelow default True;
+    property OutlineColsSummaryRight: Boolean read FOutlineColsSummaryRight write FOutlineColsSummaryRight default True;
+    property PrintParams: TXlsFileWorksheetPrintParamsEh read FPrintParams;
+    property Rows: TXlsFileRowsEh read GetRows;
+    property TabColor: TColor read FTabColor write FTabColor;
+    property ZoomScale: Integer read FZoomScale write FZoomScale;
+  end;
+
+{ TXlsFileColumns }
+
+  TXlsFileColumnsEh = class(TObject)
+  private
+    FColumns: TObjectListEh;
+    function GetColumn(ColumnIndex: Integer): TXlsFileColumnEh;
+    function GetCurrentCount: Integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function ScreenToXlsWidth(ScreenWidth: Integer): Double;
+    function ColumnIsCreated(ColumnIndex: Integer): Boolean;
+
+    property Column[ColumnIndex: Integer]: TXlsFileColumnEh read GetColumn; default;
+    property CurrentCount: Integer read GetCurrentCount;
+  end;
+
+{ TXlsFileColumn }
+
+  TXlsFileColumnEh = class(TObject)
+  private
+    FOutlineLevel: Integer;
+    FOutlineNodeCollapsed: Boolean;
+    FVisible: Boolean;
+    FWidth: Double;
+
+    function GetVisible: Boolean;
+    function GetWidth: Double;
+
+    procedure SetVisible(const Value: Boolean);
+    procedure SetWidth(const Value: Double);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property OutlineLevel: Integer read FOutlineLevel write FOutlineLevel;
+    property OutlineNodeCollapsed: Boolean read FOutlineNodeCollapsed write FOutlineNodeCollapsed;
+    property Width: Double read GetWidth write SetWidth;
+    property Visible: Boolean read GetVisible write SetVisible;
+  end;
+
+{ TXlsFileRowsEh }
+
+  TXlsFileRowsEh = class(TObject)
+  private
+    FRows: TObjectListEh;
+    function GetRow(RowIndex: Integer): TXlsFileRowEh;
+    function GetCount: Integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function ScreenToXlsHeight(ScreenHeight: Integer): Double;
+    function RowIsCreated(RowIndex: Integer): Boolean;
+
+    property Row[RowIndex: Integer]: TXlsFileRowEh read GetRow; default;
+    property Count: Integer read GetCount;
+  end;
+
+{ TXlsFileRowEh }
+
+  TXlsFileRowEh = class(TObject)
+  private
+    FHeight: Double;
+    FHeightHasValue: Boolean;
+    FVisible: Boolean;
+    FOutlineNodeCollapsed: Boolean;
+    FOutlineLevel: Integer;
+
+    function GetHeight: Double;
+    function GetHeightHasValue: Boolean;
+    function GetVisible: Boolean;
+
+    procedure SetHeight(const Value: Double);
+    procedure SetHeightHasValue(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Height: Double read GetHeight write SetHeight;
+    property HeightHasValue: Boolean read GetHeightHasValue write SetHeightHasValue;
+    property Visible: Boolean read GetVisible write SetVisible;
+    property OutlineLevel: Integer read FOutlineLevel write FOutlineLevel;
+    property OutlineNodeCollapsed: Boolean read FOutlineNodeCollapsed write FOutlineNodeCollapsed;
+  end;
+
+{ TXlsFileStyleFont }
+
+  TXlsFileStyleFont = class(TObject)
+  private
+    FName: String;
+    FIsUnderline: Boolean;
+    FColor: TColor;
+    FIsItalic: Boolean;
+    FIsBold: Boolean;
+    FSize: Integer;
+    FIndex: Integer;
+  public
+    property Name: String read FName write FName;
+    property Size: Integer read FSize write FSize;
+    property Color: TColor read FColor write FColor;
+    property IsBold: Boolean read FIsBold write FIsBold;
+    property IsItalic: Boolean read FIsItalic write FIsItalic;
+    property IsUnderline: Boolean read FIsUnderline write FIsUnderline;
+    property Index: Integer read FIndex;
+  end;
+
+  TXlsFileStyleFillPatternTypeEh = (
+    fptNoneEh,
+    fptSolidEh,
+    fptMediumGrayEh,
+    fptDarkGrayEh,
+    fptLightGrayEh,
+    fptDarkHorizontalEh,
+    fptDarkVerticalEh,
+    fptDarkDownEh,
+    fptDarkUpEh,
+    fptDarkGridEh,
+    fptDarkTrellisEh,
+    fptLightHorizontalEh,
+    fptLightVerticalEh,
+    fptLightDownEh,
+    fptLightUpEh,
+    fptLightGridEh,
+    fptLightTrellisEh,
+    fptGray125Eh,
+    fptGray0625Eh);
+
+
+{ TXlsFileStyleFill }
+
+  TXlsFileStyleFill = class(TObject)
+  private
+    FColor: TColor;
+    FPatternType: TXlsFileStyleFillPatternTypeEh;
+    FIndex: Integer;
+    FPatternColor: TColor;
+  public
+    property Color: TColor read FColor write FColor;
+    property PatternColor: TColor read FPatternColor write FPatternColor;
+    property PatternType: TXlsFileStyleFillPatternTypeEh read FPatternType;
+    property Index: Integer read FIndex;
+  end;
+
+{ TXlsFileStyleLineEh }
+
+  TXlsFileStyleLineEh = class(TObject)
+  private
+    FColor: TColor;
+    FStyle: TXlsFileCellLineStyleEh;
+
+  public
+    property Color: TColor read FColor write FColor;
+    property Style: TXlsFileCellLineStyleEh read FStyle write FStyle;
+  end;
+
+{ TXlsFileStyleLinesEh }
+
+  TXlsFileStyleLinesEh = class(TObject)
+  private
+    FBottom: TXlsFileStyleLineEh;
+    FDiagonalDown: TXlsFileStyleLineEh;
+    FDiagonalUp: TXlsFileStyleLineEh;
+    FIndex: Integer;
+    FLeft: TXlsFileStyleLineEh;
+    FRight: TXlsFileStyleLineEh;
+    FTop: TXlsFileStyleLineEh;
+
+  public
+    constructor Create();
+    destructor Destroy; override;
+
+    property Left: TXlsFileStyleLineEh read FLeft;
+    property Right: TXlsFileStyleLineEh read FRight;
+    property Top: TXlsFileStyleLineEh read FTop;
+    property Bottom: TXlsFileStyleLineEh read FBottom;
+    property DiagonalDown: TXlsFileStyleLineEh read FDiagonalDown;
+    property DiagonalUp: TXlsFileStyleLineEh read FDiagonalUp;
+
+    property Index: Integer read FIndex;
+  end;
+
+{ TXlsFileStyleLineEh }
+
+  TXlsFileStyleNumberFormatEh = class(TObject)
+  private
+    FFormatId: Integer;
+    FFormatStr: String;
+    FIsStandardFormat: Boolean;
+
+  public
+    property FormatStr: String read FFormatStr write FFormatStr;
+    property FormatId: Integer read FFormatId write FFormatId;
+    property IsStandardFormat: Boolean read FIsStandardFormat write FIsStandardFormat;
+  end;
+
+{ TXlsFileCellStyle }
+
+  TXlsFileCellStyle = class(TObject)
+  private
+    FBorder: TXlsFileStyleLinesEh;
+    FCharsFlowDirection: TXlsFileCharsFlowDirectionEh;
+    FFill: TXlsFileStyleFill;
+    FFont: TXlsFileStyleFont;
+    FHorzAlign: TXlsFileCellHorzAlign;
+    FIndent: Integer;
+    FIndex: Integer;
+    FNumberFormat: TXlsFileStyleNumberFormatEh;
+    FRotation: Integer;
+    FVertAlign: TXlsFileCellVertAlign;
+    FWrapText: Boolean;
+  public
+    property Border: TXlsFileStyleLinesEh read FBorder;
+    property CharsFlowDirection: TXlsFileCharsFlowDirectionEh read FCharsFlowDirection;
+    property Fill: TXlsFileStyleFill read FFill;
+    property Font: TXlsFileStyleFont read FFont;
+    property HorzAlign: TXlsFileCellHorzAlign read FHorzAlign;
+    property Indent: Integer read FIndent;
+    property Index: Integer read FIndex;
+    property NumberFormat: TXlsFileStyleNumberFormatEh read FNumberFormat;
+    property Rotation: Integer read FRotation; //Degrees
+    property VertAlign: TXlsFileCellVertAlign read FVertAlign;
+    property WrapText: Boolean read FWrapText;
+  end;
+
+{ TXlsFileStyles }
+
+  TXlsFileStylesEh = class(TObject)
+  private
+    FCellStyles: TObjectListEh;
+    FFonts: TObjectListEh;
+    FFills: TObjectListEh;
+    FBorders: TObjectListEh;
+    FNumberFormats: TObjectListEh;
+
+    function GetCellStyle(Index: Integer): TXlsFileCellStyle;
+    function GetFill(Index: Integer): TXlsFileStyleFill;
+    function GetFont(Index: Integer): TXlsFileStyleFont;
+    function GetFontCount: Integer;
+    function GetFillCount: Integer;
+    function GetCellStyleCount: Integer;
+    function GetBorder(Index: Integer): TXlsFileStyleLinesEh;
+    function GetBorderCount: Integer;
+    function GetNumberFormat(Index: Integer): TXlsFileStyleNumberFormatEh;
+    function GetNumberFormatCount: Integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function GetOrCreateNumberFormat(FormatStr: String): TXlsFileStyleNumberFormatEh;
+    function GetOrCreateFont(FontName: String; FontSize: Integer; FontColor: TColor; FontIsBold: Boolean; FontIsItalic: Boolean; FontIsUnderline: Boolean): TXlsFileStyleFont;
+    function GetOrCreateFill(FillColor: TColor; FillPatternColor: TColor; FillPatternType: TXlsFileStyleFillPatternTypeEh): TXlsFileStyleFill;
+    function GetOrCreateBorder(LeftLineColor: TColor; LeftLineStyle: TXlsFileCellLineStyleEh; RightLineColor: TColor; RightLineStyle: TXlsFileCellLineStyleEh; TopLineColor: TColor; TopLineStyle: TXlsFileCellLineStyleEh; BottomLineColor: TColor; BottomLineStyle: TXlsFileCellLineStyleEh; DiagonalDownLineColor: TColor; DiagonalDownLineStyle: TXlsFileCellLineStyleEh; DiagonalUpLineColor: TColor; DiagonalUpLineStyle: TXlsFileCellLineStyleEh): TXlsFileStyleLinesEh;
+    function GetOrCreateCellStyle(ANumberFormat: TXlsFileStyleNumberFormatEh; AFont: TXlsFileStyleFont; AFill: TXlsFileStyleFill; ABorder: TXlsFileStyleLinesEh; AHorzAlign: TXlsFileCellHorzAlign; AVertAlign: TXlsFileCellVertAlign; AWrapText: Boolean; ARotation: Integer; AIndent: Integer; ACharsFlowDirection: TXlsFileCharsFlowDirectionEh): TXlsFileCellStyle;
+
+    property CellStyle[Index: Integer]: TXlsFileCellStyle read GetCellStyle;
+    property Font[Index: Integer]: TXlsFileStyleFont read GetFont;
+    property Fill[Index: Integer]: TXlsFileStyleFill read GetFill;
+    property Border[Index: Integer]: TXlsFileStyleLinesEh read GetBorder;
+    property NumberFormat[Index: Integer]: TXlsFileStyleNumberFormatEh read GetNumberFormat;
+
+    property FontCount: Integer read GetFontCount;
+    property FillCount: Integer read GetFillCount;
+    property BorderCount: Integer read GetBorderCount;
+    property CellStyleCount: Integer read GetCellStyleCount;
+    property NumberFormatCount: Integer read GetNumberFormatCount;
+  end;
+
+{ TXlsFileCellMergeRangeEh }
+
+  TXlsFileCellMergeRangeEh = class(TObject)
+  private
+    FColCount: Integer;
+    FRowCount: Integer;
+  public
+    constructor Create;
+
+    property ColCount: Integer read FColCount;
+    property RowCount: Integer read FRowCount;
+  end;
+
+  TCellValueType = (cvtEmpty, cvtBoolean, cvtDate, cvtError, cvtInlineStr, cvtNumber,
+    cvtSharedString, cvtString);
+
+{ TXlsFileColumn }
+
+  TXlsFileCellEh = class(TObject)
+  private
+    FValue: Variant;
+    FStyle: TXlsFileCellStyle;
+    FMergeRange: TXlsFileCellMergeRangeEh;
+    FWorksheet: TXlsWorksheetEh;
+    FFormula: String;
+
+    function GetStyle: TXlsFileCellStyle;
+    function GetValue: Variant;
+    function GetValueType: TCellValueType;
+    procedure SetValue(const Value: Variant);
+    procedure SetValueType(const Value: TCellValueType);
+
+  public
+    constructor Create(AWorksheet: TXlsWorksheetEh);
+    destructor Destroy; override;
+
+    property ValueType: TCellValueType read GetValueType write SetValueType;
+    property Value: Variant read GetValue write SetValue;
+    property Formula: String read FFormula write FFormula;
+    property Style: TXlsFileCellStyle read GetStyle;
+    property MergeRange: TXlsFileCellMergeRangeEh read FMergeRange;
+  end;
+
+{ TXlsFileWorksheetCellsRectEh }
+
+  TXlsFileWorksheetCellsRectEh = class(TObject)
+  private
+    FFromCol: Integer;
+    FToCol: Integer;
+    FFromRow: Integer;
+    FToRow: Integer;
+    FWorksheet: TXlsWorksheetEh;
+
+  protected
+  public
+    constructor Create(Worksheet: TXlsWorksheetEh);
+    destructor Destroy; override;
+
+    procedure Clear;
+    function IsEmpty: Boolean;
+
+    property FromCol: Integer read FFromCol write FFromCol;
+    property ToCol: Integer read FToCol write FToCol;
+    property FromRow: Integer read FFromRow write FFromRow;
+    property ToRow: Integer read FToRow write FToRow;
+  end;
+
+{ TXlsFileWorksheetDimensionEh }
+
+  TXlsFileWorksheetDimensionEh = class(TObject)
+  private
+    FFromCol: Integer;
+    FToCol: Integer;
+    FFromRow: Integer;
+    FToRow: Integer;
+    FWorksheet: TXlsWorksheetEh;
+
+    function GetFromCol: Integer;
+    function GetFromRow: Integer;
+    function GetToCol: Integer;
+    function GetToRow: Integer;
+  protected
+    procedure Update;
+  public
+    constructor Create(Worksheet: TXlsWorksheetEh);
+    destructor Destroy; override;
+
+    property FromCol: Integer read GetFromCol;
+    property ToCol: Integer read GetToCol;
+    property FromRow: Integer read GetFromRow;
+    property ToRow: Integer read GetToRow;
+  end;
+
+{ TXlsFileWorksheetPrintParamsEh }
+
+  TXlsFileWorksheetPrintParamsEh = class(TPersistent)
+  private
+    FWorksheet: TXlsWorksheetEh;
+    FPageMargins: TXlsFileWorksheetPrintPageMarginsEh;
+    FScale: Integer;
+    FScalingMode: TXlsFilePrintScalingModeEh;
+    FFitToPagesTall: Integer;
+    FFitToPagesWide: Integer;
+    FOrientation: TPrinterOrientation;
+    FVerticalCentered: Boolean;
+    FHorizontalCentered: Boolean;
+    FPageHeader: String;
+    FPageFooter: String;
+    procedure SetPageMargins(const Value: TXlsFileWorksheetPrintPageMarginsEh);
+
+  public
+    constructor Create(AWorksheet: TXlsWorksheetEh);
+    destructor Destroy; override;
+
+    property PageMargins: TXlsFileWorksheetPrintPageMarginsEh read FPageMargins write SetPageMargins;
+    property Scale: Integer read FScale write FScale default 100;
+    property FitToPagesWide: Integer read FFitToPagesWide write FFitToPagesWide default 0;
+    property FitToPagesTall: Integer read FFitToPagesTall write FFitToPagesTall default 0;
+    property ScalingMode: TXlsFilePrintScalingModeEh read FScalingMode write FScalingMode default fpsmAdjustToScaleEh;
+    property Orientation: TPrinterOrientation read FOrientation write FOrientation;
+    property HorizontalCentered: Boolean read FHorizontalCentered write FHorizontalCentered;
+    property VerticalCentered: Boolean read FVerticalCentered write FVerticalCentered;
+    property PageHeader: String read FPageHeader write FPageHeader;
+    property PageFooter: String read FPageFooter write FPageFooter;
+  end;
+
+{ TXlsFileWorksheetPrintPageMarginsEh }
+
+  TXlsFileWorksheetPrintPageMarginsEh = class(TPersistent)
+  private
+    FRight: Double;
+    FHeader: Double;
+    FBottom: Double;
+    FFooter: Double;
+    FTop: Double;
+    FLeft: Double;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Left: Double read FLeft write FLeft;
+    property Right: Double read FRight write FRight;
+    property Top: Double read FTop write FTop;
+    property Bottom: Double read FBottom write FBottom;
+
+    property Header: Double read FHeader write FHeader;
+    property Footer: Double read FFooter write FFooter;
+  end;
+
+{ TXlsFileCellsRangeFontEh }
+
+  TXlsFileCellsRangeFontEh = class(TObject)
+  private
+    FName: String;
+    FNameChanged: Boolean;
+    FIsUnderline: Boolean;
+    FIsUnderlineChanged: Boolean;
+    FColor: TColor;
+    FColorChanged: Boolean;
+    FIsItalic: Boolean;
+    FIsItalicChanged: Boolean;
+    FIsBold: Boolean;
+    FIsBoldChanged: Boolean;
+    FSize: Integer;
+    FSizeChanged: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetIsBold(const Value: Boolean);
+    procedure SetIsItalic(const Value: Boolean);
+    procedure SetIsUnderline(const Value: Boolean);
+    procedure SetName(const Value: String);
+    procedure SetSize(const Value: Integer);
+
+  public
+    function HasChanges: Boolean;
+
+    property Name: String read FName write SetName;
+    property Size: Integer read FSize write SetSize;
+    property Color: TColor read FColor write SetColor;
+    property IsBold: Boolean read FIsBold write SetIsBold;
+    property IsItalic: Boolean read FIsItalic write SetIsItalic;
+    property IsUnderline: Boolean read FIsUnderline write SetIsUnderline;
+  end;
+
+{ TXlsFileCellsRangeFillEh }
+
+  TXlsFileCellsRangeFillEh = class(TObject)
+  private
+    FColor: TColor;
+    FColorChanged: Boolean;
+    FPatternColor: TColor;
+    FPatternColorChanged: Boolean;
+    FPatternType: TXlsFileStyleFillPatternTypeEh;
+    FPatternTypeChanged: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetPatternColor(const Value: TColor);
+    procedure SetPatternType(const Value: TXlsFileStyleFillPatternTypeEh);
+
+  public
+    function HasChanges: Boolean;
+
+    property Color: TColor read FColor write SetColor;
+    property PatternColor: TColor read FPatternColor write SetPatternColor;
+    property PatternType: TXlsFileStyleFillPatternTypeEh read FPatternType write SetPatternType;
+  end;
+
+{ TXlsFileCellsRangeLineEh }
+
+  TXlsFileCellsRangeLineEh = class(TObject)
+  private
+    FColor: TColor;
+    FColorChanged: Boolean;
+    FStyle: TXlsFileCellLineStyleEh;
+    FStyleChanged: Boolean;
+
+    procedure SetColor(const Value: TColor);
+    procedure SetStyle(const Value: TXlsFileCellLineStyleEh);
+
+  public
+    constructor Create;
+
+    function HasChanges: Boolean;
+
+    property Color: TColor read FColor write SetColor;
+    property Style: TXlsFileCellLineStyleEh read FStyle write SetStyle;
+  end;
+
+{ TXlsFileCellsRangeLinesEh }
+
+  TXlsFileCellsRangeLinesEh = class(TObject)
+  private
+    FRight: TXlsFileCellsRangeLineEh;
+    FBottom: TXlsFileCellsRangeLineEh;
+    FTop: TXlsFileCellsRangeLineEh;
+    FLeft: TXlsFileCellsRangeLineEh;
+    FDiagonalDown: TXlsFileCellsRangeLineEh;
+    FDiagonalUp: TXlsFileCellsRangeLineEh;
+    FInsideVertical: TXlsFileCellsRangeLineEh;
+    FInsideHorizontal: TXlsFileCellsRangeLineEh;
+
+  protected
+    procedure Normalize;
+
+  public
+    constructor Create();
+    destructor Destroy; override;
+
+    function HasChanges: Boolean;
+
+    property Left: TXlsFileCellsRangeLineEh read FLeft;
+    property Right: TXlsFileCellsRangeLineEh read FRight;
+    property Top: TXlsFileCellsRangeLineEh read FTop;
+    property Bottom: TXlsFileCellsRangeLineEh read FBottom;
+    property DiagonalDown: TXlsFileCellsRangeLineEh read FDiagonalDown;
+    property DiagonalUp: TXlsFileCellsRangeLineEh read FDiagonalUp;
+    property InsideVertical: TXlsFileCellsRangeLineEh read FInsideVertical;
+    property InsideHorizontal: TXlsFileCellsRangeLineEh read FInsideHorizontal;
+  end;
+
+  IXlsFileCellsRangeEh = interface
+    function GetBorder: TXlsFileCellsRangeLinesEh;
+    function GetCharsFlowDirection: TXlsFileCharsFlowDirectionEh;
+    function GetFill: TXlsFileCellsRangeFillEh;
+    function GetFont: TXlsFileCellsRangeFontEh;
+    function GetHorzAlign: TXlsFileCellHorzAlign;
+    function GetIndent: Integer;
+    function GetNumberFormat: String;
+    function GetRotation: Integer;
+    function GetVertAlign: TXlsFileCellVertAlign;
+    function GetWrapText: Boolean;
+
+    procedure SetHorzAlign(const Value: TXlsFileCellHorzAlign);
+    procedure SetIndent(const Value: Integer);
+    procedure SetNumberFormat(const Value: String);
+    procedure SetRotation(const Value: Integer);
+    procedure SetVertAlign(const Value: TXlsFileCellVertAlign);
+    procedure SetWrapText(const Value: Boolean);
+    procedure SetCharsFlowDirection(const Value: TXlsFileCharsFlowDirectionEh);
+
+    procedure ApplyChages;
+
+    property Font: TXlsFileCellsRangeFontEh read GetFont;
+    property Fill: TXlsFileCellsRangeFillEh read GetFill;
+    property Border: TXlsFileCellsRangeLinesEh read GetBorder;
+
+    property HorzAlign: TXlsFileCellHorzAlign read GetHorzAlign write SetHorzAlign;
+    property VertAlign: TXlsFileCellVertAlign read GetVertAlign write SetVertAlign;
+    property WrapText: Boolean read GetWrapText write SetWrapText;
+    property Rotation: Integer read GetRotation write SetRotation; //Degrees
+    property Indent: Integer read GetIndent write SetIndent;
+    property CharsFlowDirection: TXlsFileCharsFlowDirectionEh read GetCharsFlowDirection write SetCharsFlowDirection;
+
+    property NumberFormat: String read GetNumberFormat write SetNumberFormat;
+  end;
+
+{ TXlsFileCellsRangeEh }
+
+  TXlsFileCellsRangeEh = class(TInterfacedObject, IXlsFileCellsRangeEh)
+  private
+    FBorder: TXlsFileCellsRangeLinesEh;
+    FCharsFlowDirection: TXlsFileCharsFlowDirectionEh;
+    FCharsFlowDirectionChanged: Boolean;
+    FFill: TXlsFileCellsRangeFillEh;
+    FFont: TXlsFileCellsRangeFontEh;
+    FFromCol: Integer;
+    FFromRow: Integer;
+    FHorzAlign: TXlsFileCellHorzAlign;
+    FHorzAlignChanged: Boolean;
+    FIndent: Integer;
+    FIndentChanged: Boolean;
+    FNumberFormat: String;
+    FNumberFormatChanged: Boolean;
+    FRotation: Integer;
+    FRotationChanged: Boolean;
+    FToCol: Integer;
+    FToRow: Integer;
+    FVertAlign: TXlsFileCellVertAlign;
+    FVertAlignChanged: Boolean;
+    FWorksheet: TXlsWorksheetEh;
+    FWrapText: Boolean;
+    FWrapTextChanged: Boolean;
+
+    function GetBorder: TXlsFileCellsRangeLinesEh;
+    function GetCharsFlowDirection: TXlsFileCharsFlowDirectionEh;
+    function GetFill: TXlsFileCellsRangeFillEh;
+    function GetFont: TXlsFileCellsRangeFontEh;
+    function GetFromCol: Integer;
+    function GetFromRow: Integer;
+    function GetHorzAlign: TXlsFileCellHorzAlign;
+    function GetIndent: Integer;
+    function GetNewBorder(Cell: TXlsFileCellEh; UseLeftOutsideBorder, UseRightOutsideBorder, UseTopOutsideBorder, UseBottomOutsideBorder: Boolean): TXlsFileStyleLinesEh;
+    function GetNewFill(Cell: TXlsFileCellEh): TXlsFileStyleFill;
+    function GetNewFont(Cell: TXlsFileCellEh): TXlsFileStyleFont;
+    function GetNewNumberFormat(Cell: TXlsFileCellEh): TXlsFileStyleNumberFormatEh;
+    function GetNewStyle(NewNumberFormat: TXlsFileStyleNumberFormatEh; NewFont: TXlsFileStyleFont; NewFill: TXlsFileStyleFill; NewBorder: TXlsFileStyleLinesEh; AHorzAlign: TXlsFileCellHorzAlign; AVertAlign: TXlsFileCellVertAlign; AWrapText: Boolean; ARotation: Integer; AIndent: Integer; ACharsFlowDirection: TXlsFileCharsFlowDirectionEh): TXlsFileCellStyle;
+    function GetNumberFormat: String;
+    function GetRotation: Integer;
+    function GetToCol: Integer;
+    function GetToRow: Integer;
+    function GetVertAlign: TXlsFileCellVertAlign;
+    function GetWrapText: Boolean;
+
+    procedure SetCharsFlowDirection(const Value: TXlsFileCharsFlowDirectionEh);
+    procedure SetHorzAlign(const Value: TXlsFileCellHorzAlign);
+    procedure SetIndent(const Value: Integer);
+    procedure SetNumberFormat(const Value: String);
+    procedure SetRotation(const Value: Integer);
+    procedure SetVertAlign(const Value: TXlsFileCellVertAlign);
+    procedure SetWrapText(const Value: Boolean);
+
+    procedure UpdateStyleFromChangedRange(Cell: TXlsFileCellEh; ACol, ARow: Integer);
+
+  public
+    constructor Create(Worksheet: TXlsWorksheetEh);
+    destructor Destroy; override;
+
+    procedure ApplyChages;
+
+    property FromCol: Integer read GetFromCol;
+    property ToCol: Integer read GetToCol;
+    property FromRow: Integer read GetFromRow;
+    property ToRow: Integer read GetToRow;
+
+    property Font: TXlsFileCellsRangeFontEh read GetFont;
+    property Fill: TXlsFileCellsRangeFillEh read GetFill;
+    property Border: TXlsFileCellsRangeLinesEh read GetBorder;
+
+    property CharsFlowDirection: TXlsFileCharsFlowDirectionEh read GetCharsFlowDirection write SetCharsFlowDirection;
+    property HorzAlign: TXlsFileCellHorzAlign read GetHorzAlign write SetHorzAlign;
+    property VertAlign: TXlsFileCellVertAlign read GetVertAlign write SetVertAlign;
+    property WrapText: Boolean read GetWrapText write SetWrapText;
+    property Rotation: Integer read GetRotation write SetRotation; //Degrees
+    property Indent: Integer read GetIndent write SetIndent;
+
+    property NumberFormat: String read GetNumberFormat write SetNumberFormat;
+  end;
+
+function AlignmentToXlsFileCellHorzAlign(Alignment: TAlignment): TXlsFileCellHorzAlign;
+function XlsAZTo19Pos(XlsAZPos: String): String;
+function Xls19ToAZPos(Xls19Pos: String): String;
+function VCLDisplayFormatToXlsNumFormat(const VCLDisplayFormat: String): String;
+
+implementation

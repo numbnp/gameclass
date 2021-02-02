@@ -1,0 +1,155 @@
+object frLiveRestructure: TfrLiveRestructure
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 320
+  ClientHeight = 240
+  ClientWidth = 320
+  TabOrder = 0
+  DesignLeft = 680
+  DesignTop = 327
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 0
+    Width = 320
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 33
+    ClientWidth = 320
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 0
+      Height = 33
+      Top = 0
+      Width = 320
+      Align = alClient
+      Font.Color = clNavy
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      ParentFont = False
+      OnPaint = PaintBox1Paint
+    end
+    object Label1: TLabel
+      Left = 22
+      Height = 23
+      Top = 4
+      Width = 157
+      Caption = 'Live Restructure'
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = clNavy
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 40
+    Top = 33
+    Width = 320
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 320
+    TabOrder = 1
+    object Button1: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 113
+      Caption = 'Add New Field'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Height = 167
+    Top = 73
+    Width = 320
+    Align = alClient
+    DataSource = DataSource1
+    DynProps = <>
+    Flat = True
+    TabOrder = 2
+    object RowDetailData: TRowDetailPanelControlEh
+    end
+  end
+  object MemTableEh1: TMemTableEh
+    Active = True
+    Params = <>
+    left = 8
+    top = 368
+    object MemTableData: TMemTableDataEh
+      object DataStruct: TMTDataStructEh
+        object IntField: TMTNumericDataFieldEh
+          FieldName = 'IntField'
+          NumericDataType = fdtSmallintEh
+          AutoIncrement = False
+          DisplayWidth = 10
+          currency = False
+          MaxValue = 0
+          MinValue = 0
+          Precision = 15
+        end
+        object StringField: TMTStringDataFieldEh
+          FieldName = 'StringField'
+          StringDataType = fdtStringEh
+          DisplayWidth = 20
+        end
+      end
+      object RecordsList: TRecordsListEh
+        Data = (
+          (
+            1
+            'Text1'
+          )
+          (
+            2
+            'Text2'
+          )
+          (
+            3
+            'Text3'
+          )
+          (
+            4
+            'Text4'
+          )
+          (
+            5
+            'Text5'
+          )
+          (
+            6
+            'Text6'
+          )
+          (
+            7
+            'Text7'
+          )
+          (
+            8
+            'Text8'
+          )
+          (
+            9
+            'Text9'
+          )
+          (
+            10
+            'Text10'
+          )
+        )
+      end
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = MemTableEh1
+    left = 40
+    top = 368
+  end
+end

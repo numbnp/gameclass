@@ -1,0 +1,145 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{              Design window for DBVertGrid             }
+{                                                       }
+{   Copyright (c) 1998-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+
+unit DBVertGridsDesignEditorEh {$IFDEF CIL} platform{$ENDIF};
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils,
+{$IFDEF CIL} Borland.Vcl.Design.DesignIntf,
+             Borland.Vcl.Design.DesignEditors,
+             Borland.Vcl.Design.ColnEdit,
+             Variants, Types,
+  EhLibVCLNET,
+{$ELSE}
+  {$IFDEF FPC}
+  EhLibLCL, DBVertGridsEh,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  Windows, Messages,
+  ColnEdit,
+  Variants, DesignEditors, DesignIntf,
+
+  EhLibVCL, PSAPI, ToolsAPI,
+  Graphics, Controls, Forms,
+  Dialogs, ImgList, Menus, ActnList, ExtCtrls, ComCtrls,
+  DBAxisGridsEh, DBVertGridsEh, DBLookupEh, DBGridEhGrouping,
+  ToolWin, MemTableEh,
+  {$ENDIF}
+
+{$ENDIF}
+  ToolCtrlsEh, GridsEh, DataDriverEh,
+  Classes;
+
+type
+
+{$IFDEF FPC}
+{$ELSE}
+
+  TDBVertGridEhColumnsEditor = class(TCollectionEditor)
+    N1: TMenuItem;
+    AddAllFields1: TMenuItem;
+    RestoreDefaults1: TMenuItem;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    AddAllFieldsCmd: TAction;
+    RestoreDefaultsCmd: TAction;
+    procedure AddAllFieldsCmdExecute(Sender: TObject);
+    procedure RestoreDefaultsCmdExecute(Sender: TObject);
+    procedure AddAllFieldsCmdUpdate(Sender: TObject);
+    procedure RestoreDefaultsCmdUpdate(Sender: TObject);
+  private
+    { Private declarations }
+  protected
+    function CanAdd(Index: Integer): Boolean; override;
+  public
+    { Public declarations }
+  end;
+
+
+{ TDBGridEhColumnsProperty }
+
+  TDBGridEhColumnsProperty = class(TPropertyEditor {TClassProperty})
+    function GetAttributes: TPropertyAttributes; override;
+    function GetValue: string; override;
+    procedure Edit; override;
+  end;
+
+{ TDBVertGridEhEditor }
+
+  TDBVertGridEhEditor = class(TComponentEditor)
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+  end;
+
+{$ENDIF}
+
+{ TDBGridEhFieldProperty }
+
+  TDBGridEhFieldProperty = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+{ TDBVertGridEhRowCategoryProperty }
+
+  TDBVertGridEhRowCategoryProperty = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValueList(List: TStrings); virtual;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+{$IFDEF FPC}
+{$ELSE}
+
+{ TPanelMenuItem }
+
+  TPanelMenuItem = class(TMenuItem)
+  public
+    ComponentEditor: IComponentEditor;
+    VerbNo: Integer;
+  end;
+
+{ TSaveComponentDesignInfoEh }
+
+  TSaveComponentDesignInfoItemEh = class(TCollectionItem)
+  private
+    FLeft: Integer;
+    FTop: Integer;
+    FComponentName: String;
+  public
+    InGrid: Boolean;
+  published
+    property Left: Integer read FLeft write FLeft;
+    property Top: Integer read FTop write FTop;
+    property ComponentName: String read FComponentName write FComponentName;
+  end;
+
+var
+  DBVertGridEhColumnsEditor: TDBVertGridEhColumnsEditor;
+  ComponentsBitmap: TStringList;
+  GlobalHideConnectedComponens: Boolean;
+  GlobalHideConnectedComponensLoaded: Boolean;
+
+  function GetGlobalHideConnectedComponens: Boolean;
+
+{$ENDIF}
+
+procedure Register;
+
+implementation

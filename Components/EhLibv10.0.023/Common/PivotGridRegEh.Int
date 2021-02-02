@@ -1,0 +1,46 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                      }
+{                     PivotGridRegEh                    }
+{                                                       }
+{   Copyright (c) 2014-2020 by Dmitry V. Bolshakov      }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit PivotGridRegEh;
+
+interface
+
+uses
+  SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, DB,
+{$IFDEF EH_LIB_17} System.UITypes, {$ENDIF}
+{$IFDEF FPC}
+  ComponentEditors,
+{$ELSE}
+  DesignIntf, DesignEditors, VCLEditors, ToolsAPI, DesignWindows,
+  ColnEdit, EhLibVCL, Windows,
+{$ENDIF}
+  Messages, PivotGridsEh, PivotGridToolsEh,
+  MemTableEh,
+  PivotGridPivotFieldsEditors;
+
+{$IFDEF FPC}
+{$ELSE}
+type
+
+{ TPivotDataSourceEhEditor }
+
+  TPivotDataSourceEhEditor = class(TComponentEditor)
+   public
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: Integer); override;
+  end;
+{$ENDIF}
+
+procedure Register;
+
+implementation

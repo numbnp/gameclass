@@ -1,0 +1,136 @@
+EhLib 9.5 Lazarus Edition
+
+Текущая версия библиотеки тестировалась на следующих платформах:
+
+- Windows Lazarus 2.0.10 r61665 FPC 3.0.4 x86_64-win64-win32/win64
+- Linux   Lazarus 2.0
+
+Установка библиотеки в Lazarus IDE
+----------------------------------
+
+1. Создайте папку, в которой будут храниться исходные и бинарные файлы библиотеки для установки в Lazarus.
+   Например: C:\lazarus\components\EhLib.
+
+2. Скопируйте содержимое папки <EhLib Archive>\Larasus<*>\*.* в C:\lazarus\components\EhLib\
+
+2.1 Скопируйте папку <EhLib Archive>\Demos\Data в C:\lazarus\components\EhLib\Demos
+
+3. Запустите lazarus IDE
+
+4. Откройте C:\lazarus\components\EhLib\Lib\ehlib.lpk
+
+5. При открытии выберите "Open Package" 
+
+6. В инспекторе пакета выберите Use->Install
+
+7. После компиляции и перезапуска IDE в палитре компонент должны появиться закладки "EhLib Controls" и "Ehlib Components".
+
+8. Протестируйте работу компонент на примере проекта C:\lazarus\components\EhLib\Demos\MainDemo\project1.lpr 
+
+
+Известные проблемы при установке EhLib:
+--------------------------------------
+
+При компиляции оценочной (Evaluation) версии библиотеки компилятор Lazarus может выдать следующую ошибку:
+
+   Compile package EhLib 9.1: Exit code 1, Errors: 1, Warnings: 1
+   Warning: Recompiling GridsEh, checksum changed for Themes
+   ehlib.pas(10,3) Fatal: Cannot find GridsEh used by EhLib, incompatible ppu=C:\RADStudio\lazarus\EhLib\lib\i386-win32\GridsEh.ppu, package EhLib
+
+Это значит, что в новой версии Lazarus были изменены интерфейсные части библиотеки LCL и текущие версии бинарных файлов EhLib стали
+с ними несовместимы. Т.к. Оценочная (Evaluation) версия EhLib не содержит исходных кодов, то Lazarus не может перекомпилировать бинарные 
+файлы EhLib под новую версию библиотеки LCL.
+Для исправления ошибки, необходимо перекомпилировать библиотеку EhLib под последнюю версию Lazarus.
+Пожалуйста, сообщите об ошибке по адресу support@ehlib.com чтобы мы могли перекомпилировать и предоставить бинарные файлы библиотеки EhLib
+совместимые с последней версией Lazarus.
+
+
+Отличия в названиях модулей
+---------------------------
+
+В Lazarus версии библиотеки EhLib названия следующих модулей изменено:
+
+ EhLibVCL.pas -> EhLibLCL.pas
+ (Вместо модуля EhLibVCL.pas используйте модуль EhLibLCL.pas)
+
+ DBGridEh.Pas -> DBGridsEh.Pas
+
+
+Портированные компонент:
+------------------------
+
+Большинство design-time возможностей реализованных под Delphi IDE для 
+таких компонент как TDBGridEh, TMemTableEh и т.д. в Lazarus IDE не реализованы.
+
+В Lazarus версию библиотеки EhLib портированы следующие компоненты:
+
++TDBGridEh
+  Run-Time functional work fully as in VCL version.
+    Artefacts on drawing grid futter.
+  Design-Time functional works partly:
+    TDBGridEh Compomnent Editor - don't work.    
+
++TDBVertGridEh
+  Run-Time functional work fully as in VCL version.
+
++TDBEditEh
+  Run-Time functional work fully as in VCL version.
+
++TDBDateTimeEditEh 
+  Run-Time functional work fully as in VCL version.
+
++TDBNumberEditEh
+  Run-Time functional work fully as in VCL version.
+
++TDBComboBoxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBLookupComboboxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBCheckBoxEh
+  Run-Time functional work fully as in VCL version.
+
++TDBMemoEh
+  Run-Time functional work fully as in VCL version.
+
++TDBImageEh
+  Run-Time functional work fully as in VCL version.
+
++TDBRadioGroupEh
+  Run-Time functional work fully as in VCL version.
+
++TDBSumList
+  Run-Time functional work fully as in VCL version.
+
++TPropStorageEh, 
+  Run-Time functional work fully as in VCL version.
+
++TIniPropStorageManEh, 
+  Run-Time functional work fully as in VCL version.
+
++TRegPropStorageManEh
+  Run-Time functional work fully as in VCL version.
+
+
+-TDBRichEditEh
+  Doesn't exists in Lazarus version as there is no base class in Lazarus to inherit.
+
+-TPreviewBox
+  Doesn't exists in Lazarus version as there is no TMetafile class in Lazarus.
+  EhLib Printing and Preview technique is based on Metafile objects.
+
+-TPrintDBGridEh
+  Doesn't exists in Lazarus version as there is no TMetafile class in Lazarus.
+
+* Компоненты TDBEditEh, TDBDateTimeEditEh, TDBNumberEditEh, TDBComboBoxEh, TDBLookupComboboxEh, 
+  не поддерживают элементы EditButtons. В Win32 версии, EditButtons отображаются, 
+  но курсор редактора текста может уходить под элементы EditButtons, когда весь текст 
+  не вмещается в видимую область. В GTK2 EditButtons не отображаются вообще. 
+
+  В режиме “не кроссплатформенный, только Win32” у вас все еще есть возможность обеспечить 
+  полную поддержку EditButtons. Для этого надо закомментировать IFDEF символ директивы компилятора 
+  FPC_CROSSP в файле EhLib.Inc и перекомпилировать библиотеку.
+
+
+  

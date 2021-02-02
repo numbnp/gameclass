@@ -1,0 +1,273 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{                                                       }
+{             TMemTableFieldsEditorEh component         }
+{                                                       }
+{       Copyright (c) 2003-2020 by EhLib Team and       }
+{                Dmitry V. Bolshakov                    }
+{                                                       }
+{*******************************************************}
+
+unit MemTableDesignEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils,
+{$IFDEF CIL} Borland.Vcl.Design.DesignIntf,
+             Borland.Vcl.Design.DesignEditors,
+             Borland.Vcl.Design.ColnEdit,
+             Borland.Vcl.Design.DSDesign,
+             Borland.Vcl.Design.DsnDBCst,
+             Borland.Vcl.Design.StringsEdit,
+             Borland.Vcl.Design.PicEdit,
+  EhLibVCLNET,
+{$ELSE}
+  {$IFDEF FPC}
+  DBGridsEh,
+  EhLibLCL, LCLType,
+  PropEdits, ComponentEditors,
+  {$ELSE}
+  EhLibVCL, DBGridEh,
+  DSDesign, DsnDBCst, PicEdit, FldLinks,
+  StringsEdit, VCLEditors, DesignEditors, DesignIntf, DesignWindows,
+  DesignMenus, MTCreateDataDriver,
+  DB, Windows, Messages, StdCtrls, ComCtrls,
+  {$ENDIF}
+{$ENDIF}
+  Classes, Graphics, Controls, Forms, Variants,
+  Dialogs, Menus, DBCtrls, ExtCtrls, GridsEh,
+  Buttons, ActnList, MemTableEh, DBGridEhImpExp,
+  DBGridEhGrouping, MemTableDataEh, ToolCtrlsEh, DBGridEhToolCtrls;
+
+{$IFDEF FPC}
+{$ELSE}
+
+type
+
+  TMemTableFieldsEditorEh = class(TFieldsEditor)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    DBGridEh1: TDBGridEh;
+    TabSheet3: TTabSheet;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
+    SpeedButton5: TSpeedButton;
+    SpeedButton6: TSpeedButton;
+    SpeedButton7: TSpeedButton;
+    SpeedButton8: TSpeedButton;
+    SpeedButton10: TSpeedButton;
+    SpeedButton11: TSpeedButton;
+    ActionList1: TActionList;
+    actFetchParams: TAction;
+    actAssignLocalData: TAction;
+    actLoadFromMyBaseTable: TAction;
+    actCreateDataSet: TAction;
+    actSaveToMyBaseXmlTable: TAction;
+    actSaveToMyBaseXmlUTF8Table: TAction;
+    actSaveToBinaryMyBaseTable: TAction;
+    actLoadDataSet: TAction;
+    actSaveDataSet: TAction;
+    actClearData: TAction;
+    GridMenu: TPopupMenu;
+    GridCut: TMenuItem;
+    GridCopy: TMenuItem;
+    GridPaste: TMenuItem;
+    GridDelete: TMenuItem;
+    GridSelectAll: TMenuItem;
+    SpeedButton9: TSpeedButton;
+    actCreateDataDriver: TAction;
+    TabSheet4: TTabSheet;
+    gridStructure: TDBGridEh;
+    dsStructure: TDataSource;
+    mtStructure: TMemTableEh;
+    mtStructureFName: TStringField;
+    mtStructureFType: TStringField;
+    Panel2: TPanel;
+    sbCancel: TSpeedButton;
+    sbApply: TSpeedButton;
+    mtStructureRefDataField: TRefObjectField;
+    DBNavigator1: TDBNavigator;
+    cbPersistentStructure: TCheckBox;
+
+    procedure actFetchParamsExecute(Sender: TObject);
+    procedure actAssignLocalDataExecute(Sender: TObject);
+    procedure actLoadFromMyBaseTableExecute(Sender: TObject);
+    procedure actCreateDataSetExecute(Sender: TObject);
+    procedure actSaveToMyBaseXmlTableExecute(Sender: TObject);
+    procedure actSaveToMyBaseXmlUTF8TableExecute(Sender: TObject);
+    procedure actSaveToBinaryMyBaseTableExecute(Sender: TObject);
+    procedure actClearDataExecute(Sender: TObject);
+    procedure actCreateDataSetUpdate(Sender: TObject);
+    procedure actLoadDataSetExecute(Sender: TObject);
+    procedure actSaveDataSetExecute(Sender: TObject);
+    procedure SelectTable(Sender: TObject);
+    procedure GridCutClick(Sender: TObject);
+    procedure GridCopyClick(Sender: TObject);
+    procedure GridPasteClick(Sender: TObject);
+    procedure GridDeleteClick(Sender: TObject);
+    procedure GridSelectAllClick(Sender: TObject);
+    procedure DBGridEh1ContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+    procedure actCreateDataDriverExecute(Sender: TObject);
+    procedure dsStructureDataChange(Sender: TObject; Field: TField);
+    procedure sbCancelClick(Sender: TObject);
+    procedure sbApplyClick(Sender: TObject);
+    procedure DBGridEh2Columns0UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure mtStructureAfterPost(DataSet: TDataSet);
+    procedure mtStructureBeforeDelete(DataSet: TDataSet);
+    procedure mtStructureBeforePost(DataSet: TDataSet);
+    procedure gridStructureEnter(Sender: TObject);
+    procedure gridStructureExit(Sender: TObject);
+    procedure cbPersistentStructureClick(Sender: TObject);
+    procedure mtStructureNewRecord(DataSet: TDataSet);
+
+  private
+    { Private declarations }
+    MTNotificator: TRecordsListNotificatorEh;
+    ChStruct: TMTDataStructEh;
+    FChStructChanged: Boolean;
+
+    function GetMemTableEh: TCustomMemTableEh;
+    procedure MTStructChanged(AMemTableData: TMemTableDataEh);
+    procedure ChStructChanged(Sender: TObject);
+    procedure SetMemTableEh(Value: TCustomMemTableEh);
+    procedure UpdateStructButtons;
+
+  public
+    { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    procedure DataSourceDataChange(Sender: TObject; Field: TField);
+    procedure UpdateColumnProps;
+    procedure DBGridEh1EditButtonClick(Sender: TObject);
+    function EditStrings(sl: TStrings): Boolean;
+    function EditPicture(Pic: TPicture): Boolean;
+    destructor Destroy; override;
+    procedure UpdateStructureList;
+    property MemTable: TCustomMemTableEh read GetMemTableEh write SetMemTableEh;
+    function GetEditState: TEditState; override;
+    function EditAction(Action: TEditAction): Boolean; override;
+  end;
+
+{ TMemTableEditorEh }
+
+  TMemTableEditorEh = class(TComponentEditor{$IFDEF LINUX}, IDesignerThreadAffinity{$ENDIF})
+  protected
+    FMenuItem: IMenuItem;
+    DDRPropName: String;
+    FDataDriversList: TStringList;
+    function GetDSDesignerClass: TDSDesignerClass; virtual;
+    procedure HandleCreateDataDriverSubMenu(Sender: TObject);
+    procedure HandleAssignDataDriverSubMenu(Sender: TObject);
+    procedure CheckComponent(const Value: string);
+   public
+    destructor Destroy; override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    procedure PrepareItem(Index: Integer; const AItem: IMenuItem); override;
+{$IFDEF LINUX}
+    procedure Edit; override;
+    {IDesignerThreadAffinity}
+    function GetThreadAffinity: TThreadAffinity;
+{$ENDIF}
+  end;
+
+{ TDataSourceEditor }
+
+  TDataSourceEditor = class(TComponentEditor)
+  protected
+    FMenuItem: IMenuItem;
+    DDRPropName: String;
+    FDataSetList: TStringList;
+    procedure HandleCreateDataSetSubMenu(Sender: TObject);
+    procedure HandleAssignDataSetSubMenu(Sender: TObject);
+    procedure CheckComponent(const Value: string);
+   public
+    destructor Destroy; override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    procedure PrepareItem(Index: Integer; const AItem: IMenuItem); override;
+  end;
+
+{ TDataSetDriverEhEditor }
+
+  TDataSetDriverEhEditor = class(TComponentEditor)
+    FMenuItem: IMenuItem;
+    DDRPropName: String;
+    FDataSetList: TStringList;
+    procedure HandleCreateDataSetSubMenu(Sender: TObject);
+    procedure HandleAssignDataSetSubMenu(Sender: TObject);
+    procedure CheckComponent(const Value: string);
+  public
+    destructor Destroy; override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+    procedure ExecuteVerb(Index: Integer); override;
+    procedure PrepareItem(Index: Integer; const AItem: IMenuItem); override;
+  end;
+
+{ TSQLDataDriverEhEditor }
+
+  TSQLDataDriverEhEditor = class(TComponentEditor)
+  public
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+  end;
+
+{ TServerTypePropertyEditor }
+
+  TServerTypePropertyEditor = class(TStringProperty)
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
+{ TMemTableFieldLinkProperty }
+
+  TMemTableFieldLinkProperty = class(TFieldLinkProperty)
+  private
+    FMemTable: TMemTableEh;
+  protected
+    function GetIndexFieldNames: string; override;
+    function GetMasterFields: string; override;
+    procedure SetIndexFieldNames(const Value: string); override;
+    procedure SetMasterFields(const Value: string); override;
+  public
+    procedure Edit; override;
+  end;
+
+  TSQLCommandProperty  = class(TClassProperty)
+  public
+    FCommandTextProp: IProperty;
+    function GetAttributes: TPropertyAttributes; override;
+    procedure Edit; override;
+    procedure SetCommandTextProp(const Prop: IProperty);
+  end;
+
+ TDataDriverEhSelectionEditor = class(TSelectionEditor)
+ public
+   procedure RequiresUnits(Proc: TGetStrProc); override;
+ end;
+
+procedure ShowFieldsEditorEh(Designer: IDesigner; MemTable: TCustomMemTableEh;
+  DesignerClass: TDSDesignerClass);
+function CreateFieldsEditorEh(Designer: IDesigner; MemTable: TCustomMemTableEh;
+  DesignerClass: TDSDesignerClass; var Shared: Boolean): TMemTableFieldsEditorEh;
+
+
+var
+  MemTableFieldsEditor: TMemTableFieldsEditorEh;
+
+{$ENDIF}
+
+procedure Register;
+
+implementation

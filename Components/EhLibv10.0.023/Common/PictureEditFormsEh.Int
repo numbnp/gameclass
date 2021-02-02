@@ -1,0 +1,103 @@
+{*******************************************************}
+{                                                       }
+{                       EhLib 10.0                     }
+{                    PictureEdit Dialog                 }
+{                                                       }
+{     Copyright (c) 2013-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit PictureEditFormsEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  Messages,
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType, LCLIntf,
+    {$IFDEF FPC_CROSSP}
+    {$ELSE}
+      Windows,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, Windows,
+  {$ENDIF}
+  Classes, Graphics, Forms, Controls, Dialogs, Buttons,
+  ToolCtrlsEh, LanguageResManEh,
+  StdCtrls, ExtCtrls, ExtDlgs, DBCtrlsEh;
+
+type
+
+  TDialogAllowedEditOperationEh = (dealopCutEh, dealopCopyEh, dealopPasteEh,
+    dealopLoadEh, dealopSaveEh, dealopClearEh, dealopZoomingEh, dealopShiftEh);
+
+  TDialogAllowedEditOperationsEh = set of TDialogAllowedEditOperationEh;
+
+const
+  DialogAllowedEditOperationsAll = [dealopCutEh, dealopCopyEh, dealopPasteEh,
+    dealopLoadEh, dealopSaveEh, dealopClearEh, dealopZoomingEh, dealopShiftEh];
+
+type
+
+{ TCustomPictureEditorDialog }
+
+  TCustomPictureEditorDialog = class(TForm)
+  public
+    function Edit(Picture: TPicture; AllowsOperations: TDialogAllowedEditOperationsEh = DialogAllowedEditOperationsAll): Boolean; virtual;
+  end;
+
+  TCustomPictureEditorDialogClass = class of TCustomPictureEditorDialog;
+
+{ TPictureEditorDialog }
+
+  TPictureEditorDialog = class(TCustomPictureEditorDialog)
+    OpenDialog: TOpenPictureDialog;
+    SaveDialog: TSavePictureDialog;
+    OKButton: TButton;
+    CancelButton: TButton;
+    GroupBox1: TGroupBox;
+    Load: TButton;
+    Save: TButton;
+    Clear: TButton;
+    bCut: TButton;
+    bCopy: TButton;
+    bPaste: TButton;
+    bZoomIn: TButton;
+    bZoomOut: TButton;
+    bReset: TButton;
+    ImageShape: TShape;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure LoadClick(Sender: TObject);
+    procedure SaveClick(Sender: TObject);
+    procedure ClearClick(Sender: TObject);
+    procedure ImagePaintBoxPaint(Sender: TObject);
+    procedure bCutClick(Sender: TObject);
+    procedure bCopyClick(Sender: TObject);
+    procedure bPasteClick(Sender: TObject);
+    procedure bResetClick(Sender: TObject);
+    procedure bZoomOutClick(Sender: TObject);
+    procedure bZoomInClick(Sender: TObject);
+  private
+    Image: TDBImageEh;
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+  protected
+    procedure ResourceLanguageChanged; virtual;
+  public
+
+    function Edit(Picture: TPicture; AllowsOperations: TDialogAllowedEditOperationsEh = DialogAllowedEditOperationsAll): Boolean; override;
+  end;
+
+function DefaultShowPictureEditDialogEh(Picture: TPicture): Boolean;
+
+type
+  TShowPictureEditDialogEhProg = function (Picture: TPicture): Boolean;
+
+var
+  PictureEditorDialog: TCustomPictureEditorDialog;
+  DefaultDBImageEhEditDialogClass: TCustomPictureEditorDialogClass;
+  ShowPictureEditDialogEhProg: TShowPictureEditDialogEhProg;
+
+implementation

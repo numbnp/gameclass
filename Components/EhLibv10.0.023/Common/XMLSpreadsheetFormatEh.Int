@@ -1,0 +1,118 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{               XML Spreadsheet Format                  }
+{                                                       }
+{     Copyright (c) 2014-2020 by Dmitry V. Bolshakov    }
+{                                                       }
+{*******************************************************}
+
+unit XMLSpreadsheetFormatEh;
+
+{$I EhLib.Inc}
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Dialogs, Controls,
+  Variants, Clipbrd,
+{$IFDEF EH_LIB_17} System.UITypes, System.Contnrs, {$ENDIF}
+{$IFDEF FPC}
+  LCLIntf,
+  {$IFDEF FPC_CROSSP}
+  {$ELSE}
+    Windows,
+  {$ENDIF}
+{$ELSE}
+  Windows,
+{$ENDIF}
+  ToolCtrlsEh,
+  StdCtrls;
+type
+
+  TExportAsXMLSpShOptionEh = (xmlssColoredEh, xmlssDataAsDisplayTextEh,
+    xmlssDataAsEditTextEh);
+  TExportAsXMLSpShOptionsEh = set of TExportAsXMLSpShOptionEh;
+
+  TSpShLineStyleEh = (lsNoneEh, lsContinuousEh, lsDashEh, lsDotEh, lsDashDotEh,
+    lsDashDotDotEh, lsSlantDashDotEh, lsDoubleEh);
+  TSpShInteriorPatternEh = (ipNoneEh, ipSolidEh);
+  TSpShHorizontalAlignmentEh = (haDefaultEh, haLeftJustifyEh, haRightJustifyEh,
+    haCenterEh);
+  TSpShVerticalAlignmentEh = (vaDefaultEh, vaTopEh, vaCenterEh, vaBottomEh);
+  TSpShBorderPlacementEh = (bpLeftEh, bpTopEh, bpRightEh, bpBottomEh);
+
+  TSpShBorderEh = record
+    LineStyle: TSpShLineStyleEh;
+    Weight: Integer;
+    Color: TColor;
+  end;
+
+  TSpShInteriorEh = record
+    Pattern: TSpShInteriorPatternEh;
+    Color: TColor;
+  end;
+
+  TSpShFontEh = record
+    Name: String;
+    CharSet: Integer;
+    Family: String;
+    Size: Integer;
+    Color: TColor;
+    Style: TFontStyles;
+  end;
+
+  TSpShMergeCells = record
+    ColSpan: Integer;
+    RowSpan: Integer;
+  end;
+
+  TSpShStyleEh = record
+    StyleNum: Integer;
+    StyleName: String;
+
+    AlignmentHorizontal: TSpShHorizontalAlignmentEh;
+    AlignmentVertical: TSpShVerticalAlignmentEh;
+    AlignmentRotate: Integer;
+    AlignmentWrapText: Boolean;
+
+    Border: array[TSpShBorderPlacementEh] of TSpShBorderEh;
+    Interior: TSpShInteriorEh;
+    Font: TSpShFontEh;
+
+    MergeCells: TSpShMergeCells;
+
+    SpShNumberFormat: String;
+  end;
+
+  TSpShStyleArrEh = array of TSpShStyleEh;
+
+{ TXMLSpreadsheetExportEh }
+
+  TXMLSpreadsheetExportEh = class(TObject)
+  private
+    FColCount: Word;
+    FRowCount: Word;
+    FStyles: TSpShStyleArrEh;
+    FXMLStream: TStringStream;
+    function AddStyle(AStyle: TSpShStyleEh): String;
+  protected
+    procedure WriteHeader(AStream: TStringStream);
+    procedure WriteStyles(AStream: TStringStream);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure InitializeStyle(out AStyle: TSpShStyleEh);
+    procedure SetFont(var AStyle: TSpShStyleEh; Font: TFont);
+    procedure BeginRow();
+    procedure EndRow();
+    procedure AddColumn(ColumnWidth: Integer);
+    procedure AddCell(AStyle: TSpShStyleEh; const ColIndex: String; const CellType: String; const CellValue: String);
+    procedure ExportToStream(AStream: TStream);
+  end;
+
+var
+  CF_XML_Spreadsheet: Word;
+
+implementation

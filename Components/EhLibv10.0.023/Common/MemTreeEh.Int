@@ -1,0 +1,171 @@
+{*******************************************************}
+{                                                       }
+{                     EhLib 10.0                        }
+{              TMemTreeListEh component                 }
+{                                                       }
+{       Copyright (c) 2004-2020 by EhLib Team and       }
+{                Dmitry V. Bolshakov                    }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit MemTreeEh;
+
+interface
+
+uses SysUtils, Classes, ComCtrls,
+  {$IFDEF FPC}
+  EhLibLCL,
+  {$ELSE}
+  EhLibVCL,
+  {$ENDIF}
+  {$IFDEF EH_LIB_17} System.UITypes, System.Generics.Collections, {$ENDIF}
+  Contnrs;
+
+type
+
+  TTreeListEh = class;
+  TBaseTreeNodeEh = class;
+  TNodeAttachModeEh = (naAddEh, naAddFirstEh, naAddChildEh, naAddChildFirstEh, naInsertEh, naAddAfterEh);
+  TAddModeEh = (taAddFirstEh, taAddEh, taInsertEh);
+
+  TCompareNodesEh = function (Node1, Node2: TBaseTreeNodeEh; ParamSort: TObject): Integer of object;
+  TTreeNodeNotifyEvent = procedure (Sender: TBaseTreeNodeEh) of object;
+  TTreeNodeNotifyResultEvent = function (Sender: TBaseTreeNodeEh): Boolean of object;
+  TTreeNodeIterativeEvent = procedure (Sender: TBaseTreeNodeEh; Param: TObject) of object;
+
+  TTreeListNotificationEh = (tlnNodeAddedEh, tlnNodeDeletedEh, tlnTreeListChangedEh);
+
+{ TBaseTreeNodeEh }
+
+  TBaseTreeNodeEh = class(TPersistent)
+  private
+    FData: TObject;
+    FExpanded: Boolean;
+    FHasChildren: Boolean;
+    FHasVisibleChildren: Boolean;
+    FIndex: Integer;
+    FItems: TObjectListEh;
+    FLevel: Integer;
+    FOwner: TTreeListEh;
+    FParent: TBaseTreeNodeEh;
+    FText: string;
+    FVisible: Boolean;
+    FVisibleCount: Integer;
+    FVisibleIndex: Integer;
+    FVisibleItems: TObjectListEh;
+    FVisibleItemsObsolete: Boolean;
+
+    function GetHasVisibleChildren: Boolean;
+    function GetVisibleItem(const Index: Integer): TBaseTreeNodeEh;
+
+    procedure InternalBuildVisibleItems;
+    procedure SetExpanded(const Value: Boolean);
+    procedure SetVisible(const Value: Boolean);
+
+  protected
+    function Add(Item: TBaseTreeNodeEh): Integer;
+    function ExpandedChanging: Boolean; virtual;
+    function GetCount: Integer;
+    function GetItem(const Index: Integer): TBaseTreeNodeEh; {$IFDEF EH_LIB_9} inline; {virtual;} {$ENDIF}
+    function GetVisibleCount: Integer;
+    function HasParentOf(Node: TBaseTreeNodeEh): Boolean;
+    function VisibleChanging: Boolean; virtual;
+    function VisibleItems: TObjectList;
+
+    procedure BuildVisibleItems; virtual;
+    procedure ChildVisibleChanged(ChildNode: TBaseTreeNodeEh); virtual;
+    procedure Clear; virtual;
+    procedure Delete(Index: Integer);
+    procedure Exchange(Index1, Index2: Integer);
+    procedure ExpandedChanged; virtual;
+    procedure Insert(Index: Integer; Item: TBaseTreeNodeEh);
+    procedure QuickSort(L, R: Integer; Compare: TCompareNodesEh; ParamSort: TObject);
+    procedure SetLevel(ALevel: Integer);
+    procedure SortData(CompareProg: TCompareNodesEh; ParamSort: TObject; ARecurse: Boolean = True); virtual;
+    procedure VisibleChanged; virtual;
+
+    property Count: Integer read GetCount;
+    property Data: TObject read FData write FData;
+    property Expanded: Boolean read FExpanded write SetExpanded;
+    property HasChildren: Boolean read FHasChildren write FHasChildren;
+    property HasVisibleChildren: Boolean read GetHasVisibleChildren write FHasVisibleChildren;
+    property Index: Integer read FIndex;
+    property Items[const Index: Integer]: TBaseTreeNodeEh read GetItem; default;
+    property Level: Integer read FLevel;
+    property Owner: TTreeListEh read FOwner;
+    property Parent: TBaseTreeNodeEh read FParent write FParent;
+    property Text: string read FText write FText;
+    property Visible: Boolean read FVisible write SetVisible default True;
+    property VisibleCount: Integer read GetVisibleCount;
+    property VisibleIndex: Integer read FVisibleIndex;
+    property VisibleItem[const Index: Integer]: TBaseTreeNodeEh read GetVisibleItem;
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+  end;
+
+  TTreeNodeClassEh = class of TBaseTreeNodeEh;
+
+{ TTreeListEh }
+
+  TTreeListEh = class(TComponent)
+  private
+    FItemClass: TTreeNodeClassEh;
+    FMaxLevel: Integer;
+    FRoot: TBaseTreeNodeEh;
+
+    FOnExpandedChanged: TTreeNodeNotifyEvent;
+    FOnExpandedChanging: TTreeNodeNotifyResultEvent;
+
+  protected
+    function AddChild(const Text: string; Parent: TBaseTreeNodeEh; Data: TObject): TBaseTreeNodeEh;
+    function CompareTreeNodes(Rec1, Rec2: TBaseTreeNodeEh; ParamSort: TObject): Integer; virtual;
+    function CountChildren(Node: TBaseTreeNodeEh = nil): Integer;
+    function CreateNodeApart(const Text: string; Data: TObject): TBaseTreeNodeEh;
+    function ExpandedChanging(Node: TBaseTreeNodeEh): Boolean; virtual;
+    function GetFirst: TBaseTreeNodeEh;
+    function GetFirstChild(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetFirstVisible: TBaseTreeNodeEh;
+    function GetLast(Node: TBaseTreeNodeEh = nil): TBaseTreeNodeEh;
+    function GetLastChild(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetNext(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetNextSibling(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetNextVisible(Node: TBaseTreeNodeEh; ConsiderCollapsed: Boolean): TBaseTreeNodeEh;
+    function GetNextVisibleSibling(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetNode(StartNode: TBaseTreeNodeEh; Data: TObject): TBaseTreeNodeEh;
+    function GetParentAtLevel(Node: TBaseTreeNodeEh; ParentLevel: Integer): TBaseTreeNodeEh;   //
+    function GetParentVisible(Node: TBaseTreeNodeEh; ConsiderCollapsed: Boolean): TBaseTreeNodeEh;
+    function GetPathVisible(Node: TBaseTreeNodeEh; ConsiderCollapsed: Boolean): Boolean;
+    function GetPrevious(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetPrevSibling(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function GetPrevVisibleSibling(Node: TBaseTreeNodeEh): TBaseTreeNodeEh;
+    function IsHasChildren(Node: TBaseTreeNodeEh = nil): Boolean;
+
+    procedure AddNode(Node: TBaseTreeNodeEh; Destination: TBaseTreeNodeEh; Mode: TNodeAttachModeEh; ReIndex: Boolean);
+    procedure BuildChildrenIndex(Node: TBaseTreeNodeEh = nil; Recurse: Boolean = True; FromIndex: Integer = -1; ToIndex: Integer = -1);
+    procedure Clear;
+    procedure Collapse(Node: TBaseTreeNodeEh; Recurse: Boolean);
+    procedure DeleteChildren(Node: TBaseTreeNodeEh);
+    procedure DeleteNode(Node: TBaseTreeNodeEh; ReIndex: Boolean);
+    procedure Expand(Node: TBaseTreeNodeEh; Recurse: Boolean);
+    procedure ExpandedChanged(Node: TBaseTreeNodeEh); virtual;
+    procedure ExportToTreeView(TreeView: TTreeView; Node: TBaseTreeNodeEh; NodeTree: TTreeNode; AddChild: Boolean);
+    procedure ExtractNode(Node: TBaseTreeNodeEh; ReIndex: Boolean);
+    procedure MoveTo(Node: TBaseTreeNodeEh; Destination: TBaseTreeNodeEh; Mode: TNodeAttachModeEh; ReIndex: Boolean); virtual;
+    procedure QuickSort(L, R: Integer; Compare: TCompareNodesEh);
+    procedure SortData(CompareProg: TCompareNodesEh; ParamSort: TObject; ARecurse: Boolean = True); virtual;
+    procedure TreeChanged(Node: TBaseTreeNodeEh; Operation: TTreeListNotificationEh; OldIndex: Integer; OldParentNode: TBaseTreeNodeEh); virtual;
+
+    property MaxLevel: Integer read FMaxLevel write FMaxLevel default 1000;
+    property Root: TBaseTreeNodeEh read FRoot write FRoot;
+
+    property OnExpandedChanged: TTreeNodeNotifyEvent read FOnExpandedChanged write FOnExpandedChanged;
+    property OnExpandedChanging: TTreeNodeNotifyResultEvent read FOnExpandedChanging write FOnExpandedChanging;
+  public
+    constructor Create(ItemClass: TTreeNodeClassEh); reintroduce;
+    destructor Destroy; override;
+  end;
+
+implementation

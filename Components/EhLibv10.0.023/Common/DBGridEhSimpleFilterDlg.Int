@@ -1,0 +1,74 @@
+{*******************************************************}
+{                                                       }
+{                      EhLib 10.0                       }
+{                                                       }
+{        Find dialog for TDBGridEh component            }
+{                                                       }
+{    Copyright (c) 2011-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit DBGridEhSimpleFilterDlg;
+
+interface
+
+uses
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Messages, Types, Variants,
+  {$IFDEF FPC}
+    EhLibLCL, LCLType, DBGridsEh, MaskEdit, LMessages,
+  {$ELSE}
+    EhLibVCL, DBGridEh, Mask, Windows,
+  {$ENDIF}
+  StdCtrls, ExtCtrls, DBCtrlsEh, LanguageResManEh,
+  ToolCtrlsEh;
+
+type
+  TDBGridEhSimpleFilterDialog = class(TForm)
+    ComboBox1: TComboBox;
+    ComboBox2: TComboBox;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Label1: TLabel;
+    Bevel1: TBevel;
+    rbAnd: TRadioButton;
+    rbOr: TRadioButton;
+    Label2: TLabel;
+    Label3: TLabel;
+    bOk: TButton;
+    bCancel: TButton;
+    DBComboBoxEh1: TDBComboBoxEh;
+    DBComboBoxEh2: TDBComboBoxEh;
+    DBDateTimeEditEh1: TDBDateTimeEditEh;
+    DBDateTimeEditEh2: TDBDateTimeEditEh;
+    DBNumberEditEh1: TDBNumberEditEh;
+    DBNumberEditEh2: TDBNumberEditEh;
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure DBComboBoxEh1Change(Sender: TObject);
+  private
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+    procedure WMSettingChange(var Message: TMessage); message WM_SETTINGCHANGE;
+  protected
+    procedure ResourceLanguageChanged; virtual;
+  public
+    FieldValueList: IMemTableDataFieldValueListEh;
+    Column: TColumnEh;
+    ChildrenRightToLeft: Boolean;
+    procedure Init;
+    procedure InitSignComboBox(ComboBox: TComboBox);
+    procedure InitValuesComboBox(ComboBox: TDBComboBoxEh; Pos: TPoint);
+    procedure FillColumnValueList(Items: TStrings);
+    procedure FillDialogFromColumnFilter(STFilter: TSTColumnFilterEh);
+    procedure FillDialogFromColumnFilter1(Operator: TSTFilterOperatorEh; Operand: Variant; OperatorComboBox: TComboBox; OperandComboBox: TDBComboBoxEh);
+    procedure SetFilterFromDialog;
+    procedure SetFilterFromDialog1(out FilterString: String; OperatorComboBox: TComboBox; OperandComboBox: TDBComboBoxEh);
+  end;
+
+var
+  DBGridEhSimpleFilterDialog: TDBGridEhSimpleFilterDialog;
+
+function StartDBGridEhColumnFilterDialog(Column: TColumnEh): Boolean;
+
+implementation

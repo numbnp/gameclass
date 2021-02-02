@@ -1,0 +1,284 @@
+{*******************************************************}
+{                                                       }
+{                        EhLib 10.0                     }
+{                                                       }
+{                  TDBVertGrid component                }
+{                                                       }
+{    Copyright (c) 2013-2020 by Dmitry V. Bolshakov     }
+{                                                       }
+{*******************************************************}
+
+{$I EhLib.Inc}
+
+unit ObjectInspectorEh;
+
+interface
+
+uses
+  SysUtils, Classes, Controls, Graphics,
+  MemTreeEh, Contnrs,
+  {$IFDEF FPC}
+    EhLibLCL, LMessages, LCLType,
+    {$IFDEF FPC_CROSSP}
+      LCLIntf,
+    {$ELSE}
+      Windows, Win32Extra, UxTheme,
+    {$ENDIF}
+  {$ELSE}
+    EhLibVCL, StdCtrls, Windows,
+  {$ENDIF}
+  Messages,
+  TypInfo, DBAxisGridsEh, GridsEh, ToolCtrlsEh,
+  Themes,
+{$IFDEF EH_LIB_16} System.UITypes, {$ENDIF}
+{$IFDEF EH_LIB_17} System.Generics.Collections, {$ENDIF}
+  Variants, Forms;
+
+type
+  TPropTreeListEh = class;
+  TObjectInspectorEh = class;
+  TInspectorInplaceEditEh = class;
+
+{ TPropTreeNodeEh }
+
+  TPropTreeNodeEh = class(TBaseTreeNodeEh)
+  private
+    FColorList: TStrings;
+    FInstance: TObject;
+    FIsCompmentSubrops: Boolean;
+    FIsSetValue: Boolean;
+    FPropInfo: PPropInfo;
+    FPropName: String;
+    FPropStrValue: String;
+    FSetIndex: Integer;
+    FTypeInfo: PTypeInfo;
+
+    function GetItem(const Index: Integer): TPropTreeNodeEh; reintroduce;
+    function GetNodeOwner: TPropTreeListEh;
+    function GetNodeParent: TPropTreeNodeEh;
+    function GetVisibleItem(const Index: Integer): TPropTreeNodeEh;
+
+    procedure SetNodeParent(const Value: TPropTreeNodeEh);
+
+  protected
+    procedure GetColorStrProc(const S: string);
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    function GetFontStyle: TFontStyles;
+    function GetEditStyle: TEditStyle;
+
+    procedure Collapse;
+    procedure Expand;
+    procedure GetListValues(Items: TStrings);
+    procedure RefreshValue;
+    procedure SetValueAsString(const SValue: String);
+
+    property Expanded;
+    property HasChildren;
+    property Instance: TObject read FInstance write FInstance;
+    property IsCompmentSubrops: Boolean read FIsCompmentSubrops;
+    property IsSetValue: Boolean read FIsSetValue write FIsSetValue;
+    property Items[const Index: Integer]: TPropTreeNodeEh read GetItem; default;
+    property Owner: TPropTreeListEh read GetNodeOwner;
+    property Parent: TPropTreeNodeEh read GetNodeParent write SetNodeParent;
+    property PropInfo: PPropInfo read FPropInfo write FPropInfo;
+    property PropName: String read FPropName write FPropName;
+    property PropStrValue: String read FPropStrValue write FPropStrValue;
+    property SetIndex: Integer read FSetIndex write FSetIndex;
+    property TypeInfo: PTypeInfo read FTypeInfo write FTypeInfo;
+    property VisibleItem[const Index: Integer]: TPropTreeNodeEh read GetVisibleItem;
+  end;
+
+  TPropTreeNodeClassEh = class of TPropTreeNodeEh;
+
+{ TPropTreeListEh }
+
+  TPropTreeListEh = class(TTreeListEh)
+  private
+    FVisibleExpandedItems: TObjectList;
+    FVisibleItemsObsolete: Boolean;
+    FObjInspector: TObjectInspectorEh;
+    function GetRoot: TPropTreeNodeEh;
+
+  protected
+    function GetVisibleCount: Integer;
+    function GetVisibleExpandedItem(const Index: Integer): TPropTreeNodeEh; virtual;
+
+  public
+    constructor Create(ItemClass: TPropTreeNodeClassEh; ObjInspector: TObjectInspectorEh);
+    destructor Destroy; override;
+
+    procedure BuildVisibleItems;
+    procedure VisibleItemsBecomeObsolete;
+    procedure RefreshAllValues;
+
+    property ObjectInspector: TObjectInspectorEh read FObjInspector;
+    property Root: TPropTreeNodeEh read GetRoot;
+    property VisibleExpandedCount: Integer read GetVisibleCount;
+    property VisibleExpandedItem[const Index: Integer]: TPropTreeNodeEh read GetVisibleExpandedItem; default;
+    property VisibleExpandedItems: TObjectList read FVisibleExpandedItems;
+    property VisibleItemsObsolete: Boolean read FVisibleItemsObsolete;
+  end;
+
+{ TObjectInspectorEh }
+
+  TObjectInspectorEh = class(TCustomGridEh)
+  private
+    FEditChangedThroughEnChangeCode: Boolean;
+    FLabelColWidth: Integer;
+    FLayoutLock: Integer;
+    FObservableObject: TObject;
+    FPropTreeList: TPropTreeListEh;
+    FRowCaptionFont: TFont;
+
+    function GetComponent: TObject;
+    function GetLabelColWidth: Integer;
+    function GetInplaceEdit: TInspectorInplaceEditEh;
+
+    procedure SetComponent(const Value: TObject);
+    procedure SetLabelColWidth(const Value: Integer);
+
+    procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
+    procedure CMHintsShowPause(var Message: TCMHintShowPause); message CM_HINTSHOWPAUSE;
+
+    procedure WMCommand(var Message: TWMCommand); message WM_COMMAND;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+
+  protected
+    function AcquireLayoutLock: Boolean;
+    function CreateEditor: TInplaceEdit; override;
+    function IsSmoothVertScroll: Boolean; override;
+
+    procedure BeginLayout;
+    procedure CalcSizingState(X, Y: Integer; var State: TGridStateEh; var Index: Longint; var SizingPos, SizingOfs: Integer); override;
+    procedure CellMouseClick(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure CellMouseDown(const Cell: TGridCoord; Button: TMouseButton; Shift: TShiftState; const ACellRect: TRect; const GridMousePos, CellMousePos: TPoint); override;
+    procedure ColWidthsChanged; override;
+    procedure ComponentChanged;
+    procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
+    procedure DrawDataCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState); virtual;
+    procedure DrawLabelCell(ACol, ARow: Longint; AreaCol, AreaRow: Longint; ARect: TRect; AState: TGridDrawState); virtual;
+    procedure EndLayout;
+    procedure InternalLayout;
+    procedure LayoutChanged;
+    procedure RowCaptionFontChanged(Sender: TObject);
+    procedure ScrollBarMessage(ScrollBar, ScrollCode, Pos: Integer; UseRightToLeft: Boolean); override;
+    procedure UpdateRowCount;
+    procedure UpdateRowHeights;
+
+{ Inplace Editor }
+    function GetEditStyle(ACol, ARow: Longint): TEditStyle; override;
+    function GetEditText(ACol, ARow: Longint): string; override;
+    procedure CurrentCellMoved(OldCurrent: TGridCoord); override;
+    procedure SetEditText(ACol, ARow: Longint; const Value: string); override;
+    procedure UpdateText(EditorChanged: Boolean); override;
+
+    procedure EditButtonClick;
+    procedure GetPickListItems(ACol, ARow: Integer; Items: TStrings);
+
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function GetTreeNodeAt(ARow: Integer): TPropTreeNodeEh;
+
+    property LabelColWidth: Integer read GetLabelColWidth write SetLabelColWidth default 64;
+    property PropTreeList: TPropTreeListEh read FPropTreeList;
+    property InplaceEditor: TInspectorInplaceEditEh read GetInplaceEdit;
+
+  published
+    property Component: TObject read GetComponent write SetComponent;
+    property ParentFont;
+    property Options;
+  end;
+
+{ TInspectorInplaceEditEh }
+
+  TOnGetPickListItems = procedure(ACol, ARow: Integer; Items: TStrings) of Object;
+
+  TInspectorInplaceEditEh = class(TInplaceEdit)
+  private
+    FActiveList: TWinControl;
+    FButtonWidth: Integer;
+    FDropDownRows: Integer;
+    FEditStyle: TEditStyle;
+    FListVisible: Boolean;
+    FMouseInControl: Boolean;
+    FOnEditButtonClick: TNotifyEvent;
+    FOnGetPickListitems: TOnGetPickListItems;
+    FPickList: TComboBoxPopupListboxEh;
+    FPickListLoaded: Boolean;
+    FPressed: Boolean;
+    FTracking: Boolean;
+
+    function GetGrid: TObjectInspectorEh;
+    function GetPickList: TComboBoxPopupListboxEh;
+
+    {$IFDEF FPC}
+    {$ELSE}
+    procedure CMCancelMode(var Message: TCMCancelMode); message CM_CANCELMODE;
+    {$ENDIF}
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+
+    procedure WMCancelMode(var Message: TMessage); message WM_CANCELMODE;
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
+    procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
+    procedure WMSetCursor(var Message: TWMSetCursor); message WM_SETCURSOR;
+
+  protected
+    function ButtonRect: TRect;
+    function GetEditCoreBounds: TRect; override;
+    function OverButton(const P: TPoint): Boolean;
+
+    procedure BoundsChanged; override;
+    procedure Change; override;
+    procedure CloseUp(Accept: Boolean); dynamic;
+    procedure DblClick; override;
+    procedure DoDropDownKeys(var Key: Word; Shift: TShiftState); virtual;
+    procedure DoEditButtonClick; virtual;
+    procedure DoGetPickListItems; dynamic;
+    procedure DropDown; dynamic;
+    procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure ListMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure LoseFocus(NewFocusWnd: HWND); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure PaintWindow(DC: HDC); override;
+    procedure StopTracking;
+    procedure TrackButton(X,Y: Integer);
+    procedure UpdateContents; override;
+    procedure WndProc(var Message: TMessage); override;
+
+  public
+    constructor Create(Owner: TComponent); override;
+
+    procedure RestoreContents;
+
+    property ActiveList: TWinControl read FActiveList write FActiveList;
+    property ButtonWidth: Integer read FButtonWidth write FButtonWidth;
+    property DropDownRows: Integer read FDropDownRows write FDropDownRows;
+    property EditStyle: TEditStyle read FEditStyle;
+    property Grid: TObjectInspectorEh read GetGrid;
+    property ListVisible: Boolean read FListVisible write FListVisible;
+    property PickList: TComboBoxPopupListboxEh read GetPickList;
+    property PickListLoaded: Boolean read FPickListLoaded write FPickListLoaded;
+    property Pressed: Boolean read FPressed;
+
+    property OnEditButtonClick: TNotifyEvent read FOnEditButtonClick write FOnEditButtonClick;
+    property OnGetPickListitems: TOnGetPickListItems read FOnGetPickListitems write FOnGetPickListitems;
+  end;
+
+
+procedure ShowObjectInspectorForm(Component: TObject; FormBounds: TRect;
+  NewForm: Boolean = False);
+
+var
+  ObjectInspectorForm: TCustomForm;
+
+implementation
