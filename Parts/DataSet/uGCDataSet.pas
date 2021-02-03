@@ -222,7 +222,7 @@ function TGCDataSet.Select(AnId: Integer): Boolean;
 var
   dtsResult: TADODataSet;
   i: Integer;
-  bookmark: Pointer;
+  bookmark: TBookmark;
   bInsert: Boolean;
 begin
   FbInAutoUpdate := True;
@@ -263,7 +263,7 @@ end;
 
 function TGCDataSet.Update(AnId: Integer): Boolean;
 var
-  bookmark: Pointer;
+  bookmark: TBookmark;
 begin
   FbInAutoUpdate := True;
   bookmark := GetBookmark;
@@ -279,7 +279,7 @@ end;
 function TGCDataSet.Delete(const AnId: Integer;
     AbLocal: Boolean = False): Boolean;
 var
-  bookmark: Pointer;
+  bookmark: TBookmark;
 begin
   FbInAutoUpdate := True;
   bookmark := GetBookmark;
@@ -303,7 +303,7 @@ end;
 function TGCDataSet.Insert(var AnId: Integer): Boolean;
 var
   dtsResult: TADODataSet;
-  bookmark: Pointer;
+  bookmark: TBookmark;
 begin
   FbInAutoUpdate := True;
   bookmark := GetBookmark;

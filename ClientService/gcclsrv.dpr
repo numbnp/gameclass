@@ -4,7 +4,7 @@ uses
   SvcMgr,
   SysUtils,
   ActiveX,
-  ActiveDs_TLB,
+//  ActiveDs_TLB,
   tlhelp32,
   gcconst in '..\Server\gcconst.pas',
   uAnswerRemoteCommand in '..\parts\RemoteCommands\uAnswerRemoteCommand.pas',

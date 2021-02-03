@@ -54,7 +54,7 @@ uses
   ufrmOperatorOpt,
   uGCSendRecieve, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh,
   DBAxisGridsEh,
-  IdGlobal, MemTableDataEh, MemTableEh, DynVarsEh, EhLibVCL;
+  IdGlobal, MemTableDataEh, MemTableEh, DynVarsEh, EhLibVCL, System.ImageList;
 
 type
   TformMain = class(TForm)
@@ -605,7 +605,7 @@ begin
 
    j:=1; //0 индекс оставим для текущей записи
    for i := 0 to gridComps.SelectedRows.Count-1 do begin
-      cdsComps.GotoBookmark(pointer(gridComps.SelectedRows.Items[i]));
+      cdsComps.GotoBookmark(TBookmark(gridComps.SelectedRows.Items[i]));
       cdsComps.Edit;
       if cdsComps.FieldValues['Selection'] = DS_SELECTION_CLICK then
          begin

@@ -7,7 +7,7 @@ uses
   SvcMgr,
   SysUtils,
   ActiveX,
-  ActiveDs_TLB,
+//  ActiveDs_TLB,
   tlhelp32,
   Vcl.Forms,
   gcclsrv_dbg in 'gcclsrv_dbg.pas' {Form1},

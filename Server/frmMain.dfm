@@ -190,9 +190,9 @@ object formMain: TformMain
         Top = 32
         Width = 93
         Height = 21
-        Date = 37622.988824849500000000
+        Date = 37622.000000000000000000
         Format = 'dd MMM yyy'
-        Time = 37622.988824849500000000
+        Time = 0.988824849497177600
         DateFormat = dfLong
         Enabled = False
         TabOrder = 1
@@ -230,6 +230,10 @@ object formMain: TformMain
     OnChange = PageControlChange
     object tabComputers: TTabSheet
       Caption = 'Computers'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object splitComps: TSplitter
         Left = 0
         Top = 469
@@ -271,6 +275,7 @@ object formMain: TformMain
         Columns = <
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Ping'
@@ -295,6 +300,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Computer'
@@ -306,6 +312,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'State'
@@ -316,6 +323,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Tarif'
@@ -325,6 +333,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Balance'
@@ -334,6 +343,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Start'
@@ -343,6 +353,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'End'
@@ -352,6 +363,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Time'
@@ -360,6 +372,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'TimeLeft'
@@ -369,6 +382,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Printed'
@@ -378,6 +392,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Traffic'
@@ -387,6 +402,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Client'
@@ -396,6 +412,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Description'
@@ -404,6 +421,7 @@ object formMain: TformMain
           end
           item
             AutoFitColWidth = False
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'Group'
@@ -538,6 +556,10 @@ object formMain: TformMain
     object tabMessages: TTabSheet
       Caption = 'Messages'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       inline frameMessages: TframeMessages
         Left = 0
         Top = 0
@@ -571,8 +593,8 @@ object formMain: TformMain
           ExplicitWidth = 831
           ExplicitHeight = 570
           inherited memMessages: TMemo
-            Width = 669
-            Height = 568
+            Width = 659
+            Height = 558
             Lines.Strings = ()
             ExplicitWidth = 659
             ExplicitHeight = 558
@@ -978,7 +1000,7 @@ object formMain: TformMain
     Left = 472
     Top = 168
     Bitmap = {
-      494C01010B000E0040001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010B000E0004001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000005D000000010020000000000030B4
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2479,7 +2501,7 @@ object formMain: TformMain
     Left = 472
     Top = 200
     Bitmap = {
-      494C01010C000E00400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010C000E00000010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3029,7 +3051,7 @@ object formMain: TformMain
     Left = 568
     Top = 200
     Bitmap = {
-      494C010107000900400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107000900040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -3329,7 +3351,7 @@ object formMain: TformMain
     Left = 600
     Top = 202
     Bitmap = {
-      494C010101000400400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3555,7 +3577,7 @@ object formMain: TformMain
     Left = 356
     Top = 289
     Bitmap = {
-      494C01010400090040001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
+      494C01010400090004001F001F0000000000FF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000007C0000003E00000001002000000000002078
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

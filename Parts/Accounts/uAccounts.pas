@@ -44,6 +44,7 @@ uses
   uGCDataSet,
   uAccountSystem,
   ADODB,
+  DB,
   uSQLTools,
   gcconst,
   gccomputers;
@@ -70,7 +71,7 @@ end;
 
 function TAccounts.CheckFreeName(AstrName: String): Boolean;
 var
-  bookmark: Pointer;
+  bookmark: TBookmark;
 begin
   Result := True;
   exit;
@@ -98,7 +99,7 @@ end;
 function TAccounts.CheckLogon(const AstrNameOrId, AstrPassword, AstrCode: String;
     const AnCodeIndex: Integer; var AnId: Integer): Boolean;
 var
-  bookmark: Pointer;
+  bookmark: TBookmark;
 begin
   Result := False;
   FbInAutoUpdate := True;

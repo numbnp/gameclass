@@ -387,15 +387,11 @@ var
   stream : TStringStream;
   imgAccountPhoto: TImage;
 begin
-//  stream := TStringStream.Create(FdsMain.FieldValues['photo']);
-//  imgAccountPhoto.Picture.Graphic.LoadFromStream(stream);
 
   imgAccountPhoto := TImage.Create(Nil);
 //  picture := TPicture.Create;
-  stream := TStringStream.Create(FAccountsDataSet.FieldValues['photo']);
+  stream := TStringStream.Create(System.TArray<System.Byte>( FAccountsDataSet.FieldValues['photo']));
   imgAccountPhoto.Picture.Graphic.LoadFromStream(stream);
-//  imgAccountPhoto.Picture.Graphic.LoadFromStream(stream);
-//  picture.Graphic.LoadFromStream(stream);
   stream.Free;
 end;
 

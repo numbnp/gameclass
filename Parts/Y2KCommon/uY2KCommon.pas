@@ -109,7 +109,7 @@ end; // STUB
 procedure FreeAndNilWithAssert(var Aobj);
 begin
   ASSERT(Assigned(Pointer(Aobj)));
-  FreeAndNil(Aobj);
+  FreeAndNil(TObject(Aobj));
 end; // FreeAndNilWithAssert
 
 

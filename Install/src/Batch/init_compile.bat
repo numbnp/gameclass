@@ -1,41 +1,40 @@
-set regpath="hklm\SOFTWARE\Wow6432Node\Embarcadero\BDS\15.0"
+set regpath="hklm\SOFTWARE\Wow6432Node\Embarcadero\BDS\21.0"
 
 for /f "tokens=2,*" %%i in (' reg query "%regpath%" /v "RootDir" ') do set DCCPACTH=%%j
 
 set DelphiPath=%DCCPACTH%
-set DCCLib=%DelphiPath%\lib\Win32\release
-set DCCLib=%DCCLib%;%DelphiPath%\Imports
-set DCCLib=%DCCLib%;%DelphiPath%\Dcp
-set DCCLib=%DCCLib%;%DelphiPath%\include
-set DCCLib=%DCCLib%;C:\Program Files (x86)\FastReports\LibD21
-set DCCLib=%DCCLib%;C:\Program Files (x86)\Raize\CS5\Lib\RS-XE7\Win32
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\DCEF3\src
+set DCCLib="%DelphiPath%lib\Win32\release"
+set DCCLib=%DCCLib%;"%DelphiPath%Imports"
+set DCCLib=%DCCLib%;"%DelphiPath%Dcp"
+set DCCLib=%DCCLib%;"%DelphiPath%include"
+@REM set DCCLib=%DCCLib%;C:\Program Files (x86)\FastReports\LibD21
+@REM set DCCLib=%DCCLib%;C:\Program Files (x86)\Raize\CS5\Lib\RS-XE7\Win32
+set DCCLib=%DCCLib%;"%PRootDir%\Components\DCEF3\src"
 set DCCLib=%DCCLib%;%PRootDir%\Components\FastMM\
-set DCCLib=%DCCLib%;%PRootDir%\Components\Ehlibv7\RADStudioXE7
 set DCCLib=%DCCLib%;%PRootDir%\Components\ExtControll
 set DCCLib=%DCCLib%;%PRootDir%\Components\rxlib\units
 set DCCLib=%DCCLib%;%PRootDir%\Components\SynEdit\Source
-set DCCLib=%DCCLib%;%PRootDir%\Components\VirtualTreeviewV5.3.0\Source
-set DCCLib=%DCCLib%;%PRootDir%\Components\y2kControls\Current\Product\Src
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\jcl\jcl\lib\d21\win32
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\jcl\jcl\source\include
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\jvcl\jvcl\lib\D21\win32
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\jvcl\jvcl\common
-set DCCLib=%DCCLib%;%PRootDir%\Components\github\jvcl\jvcl\Resources
-set DCCLib=%DCCLib%;%PRootDir%\Components\jwapi\Win32API
-set DCCLib=%DCCLib%;%PRootDir%\Components\jwapi\Common
-set DCCLib=%DCCLib%;%PRootDir%\Components\Ehlibv7\RADStudioXE7\Win32\Release
-set DCCLib=%DCCLib%;%USERPROFILE%\Documents\Embarcadero\Studio\15.0\Imports
-set DCCLib="%DCCLib%"
+set DCCLib=%DCCLib%;%PRootDir%\Components\VirtualTreeview\Source
+@REM set DCCLib=%DCCLib%;"%PRootDir%\Components\y2kControls\Current\Product\Src"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jcl\jcl\lib\d27\win32"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jcl\jcl\source\include"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jvcl\jvcl\lib\D27\win32"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jvcl\jvcl\common"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jvcl\jvcl\Resources"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jwapi\Win32API"
+set DCCLib=%DCCLib%;"%PRootDir%\Components\jwapi\Common"
+set DCCLib=%DCCLib%;"%DelphiPath%Components\EhLib\Lib\Win32\Release"
+set DCCLib=%DCCLib%;"%USERPROFILE%\Documents\Embarcadero\Studio\21.0\Imports"
+@REM set DCCLib="%DCCLib%"
 
 set DCCLogs=Install\Src\Logs
 set DCCOutput=Output\Release
 set DCCDcu=Output\Dcu\Release
-set DCC32="%DelphiPath%\bin\dcc32.exe"
+set DCC32="%DelphiPath%bin\dcc32.exe"
 
-rem “¤ «ï¥¬ exe ¨ dcu
+rem ï¿½ï¿½ï¿½ï¿½ï¥¬ exe ï¿½ dcu
 del %DCCOutput%\*.* /q 2>nul
 del %DCCDcu%\*.* /q 2>nul
-rem ˆ­¨æ¨ «¨§ æ¨ï ®¡à ¡ âª¨ «®£-ä ©«ë
+rem ï¿½ï¿½ï¿½æ¨ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½à ¡ï¿½âª¨ ï¿½ï¿½ï¿½-ä ©ï¿½ï¿½
 del %DCCLogs%\ErrorCheck.txt 2>nul
 Set error_check=
