@@ -122,6 +122,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure PaintImageOn(Mycanvas: TCanvas; x, y: Integer); virtual;
   published
     property Align;
     {$IFDEF RX_D4}
@@ -672,6 +673,33 @@ begin
   begin
     if AutoSize and (FImageWidth > 0) and (FImageHeight > 0) then
       SetBounds(Left, Top, FImageWidth, FImageHeight);
+  end;
+end;
+
+type
+  TParentControl = class(TWinControl);
+
+procedure TAnimatedImage.PaintImageOn(Mycanvas: TCanvas; x, y: Integer);
+var
+  BmpIndex: Integer;
+  SrcRect: TRect;
+begin
+  if (not Active) and (FInactiveGlyph >= 0) and (FInactiveGlyph < FNumGlyphs) then
+    BmpIndex := FInactiveGlyph
+  else
+    BmpIndex := FGlyphNum;
+  { copy image from parent and back-level controls }
+
+  if (FImageWidth > 0) and (FImageHeight > 0) then
+  begin
+    if Orientation = goHorizontal then
+      SrcRect := Bounds(BmpIndex * FImageWidth, 0, FImageWidth, FImageHeight)
+    else {if Orientation = goVertical then}
+      SrcRect := Bounds(0, BmpIndex * FImageHeight, FImageWidth, FImageHeight);
+    if FStretch then
+      StretchBitmapRectTransparent(MyCanvas, x, y, Width, Height, SrcRect, FGlyph, FTransparentColor)
+    else
+      DrawBitmapRectTransparent(MyCanvas, x, y, SrcRect, FGlyph, FTransparentColor);
   end;
 end;
 

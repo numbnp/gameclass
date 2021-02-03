@@ -60,14 +60,14 @@ type
   { TInplaceEdit }
   { The inplace editor is not intended to be used outside the Grid }
 
-  TrCustomRecGrid = class;
+  TRxCustomRecGrid = class;
 
   TInplaceEdit = class(TCustomMaskEdit)
   private
-    FGrid: TrCustomRecGrid;
+    FGrid: TRxCustomRecGrid;
     FClickTime: Longint;
     procedure InternalMove(const Loc: TRect; Redraw: Boolean);
-    procedure SetGrid(Value: TrCustomRecGrid);
+    procedure SetGrid(Value: TRxCustomRecGrid);
     procedure CMShowingChanged(var Message: TMessage); message CM_SHOWINGCHANGED;
     procedure WMGetDlgCode(var Message: TWMGetDlgCode); message WM_GETDLGCODE;
     procedure WMPaste(var Message); message WM_PASTE;
@@ -83,7 +83,7 @@ type
     procedure BoundsChanged; virtual;
     procedure UpdateContents; virtual;
     procedure WndProc(var Message: TMessage); override;
-    property Grid: TrCustomRecGrid read FGrid;
+    property Grid: TRxCustomRecGrid read FGrid;
   public
     constructor Create(AOwner: TComponent); override;
     procedure SetFocus; override;
@@ -96,7 +96,7 @@ type
     function Visible: Boolean;
   end;
 
-  { TrCustomRecGrid }
+  { TRxCustomRecGrid }
 
   TGridOption = (goFixedVertLine, goFixedHorzLine, goHorzLine,
     goColSizing, goEditing, goTabs, goAlwaysShowEditor, goThumbTracking);
@@ -120,7 +120,7 @@ type
   TDrawCellEvent = procedure(Sender: TObject; Col, Row: Longint;
     Rect: TRect; State: TGridDrawState) of object;
 
-  TrCustomRecGrid = class(TCustomControl)
+  TRxCustomRecGrid = class(TCustomControl)
   private
     FAnchor: TGridCoord;
     FBorderStyle: TBorderStyle;
@@ -538,7 +538,7 @@ type
 
   TRecGridState = (gsDefault, gsCustomized);
 
-  TRxDBRecordGrid = class(TrCustomRecGrid)
+  TRxDBRecordGrid = class(TRxCustomRecGrid)
   private
     FDataLink: TrGridDataLink;
     FRows: TRecGridRows;
@@ -865,7 +865,7 @@ begin
   Params.Style := Params.Style or ES_MULTILINE;
 end;
 
-procedure TInplaceEdit.SetGrid(Value: TrCustomRecGrid);
+procedure TInplaceEdit.SetGrid(Value: TRxCustomRecGrid);
 begin
   FGrid := Value;
 end;
@@ -1126,9 +1126,9 @@ begin
   MaxLength := Grid.GetEditLimit;
 end;
 
-{ TrCustomRecGrid }
+{ TRxCustomRecGrid }
 
-constructor TrCustomRecGrid.Create(AOwner: TComponent);
+constructor TRxCustomRecGrid.Create(AOwner: TComponent);
 const
   GridStyle = [csCaptureMouse, csOpaque, csDoubleClicks];
 begin
@@ -1162,7 +1162,7 @@ begin
   Initialize;
 end;
 
-procedure TrCustomRecGrid.Reset;
+procedure TRxCustomRecGrid.Reset;
 begin
   FRowCount := 1;
   FInplaceCol := -1;
@@ -1175,15 +1175,15 @@ begin
   inherited Invalidate;
 end;
 
-destructor TrCustomRecGrid.Destroy;
+destructor TRxCustomRecGrid.Destroy;
 begin
   FInplaceEdit.Free;
-  inherited Destroy;
   FreeMem(FColWidths);
   FreeMem(FTabStops);
+  inherited Destroy;
 end;
 
-function TrCustomRecGrid.BoxRect(ALeft, ATop, ARight, ABottom: Longint): TRect;
+function TRxCustomRecGrid.BoxRect(ALeft, ATop, ARight, ABottom: Longint): TRect;
 var
   GridRect: TGridRect;
 begin
@@ -1194,40 +1194,40 @@ begin
   GridRectToScreenRect(GridRect, Result, False);
 end;
 
-procedure TrCustomRecGrid.DoExit;
+procedure TRxCustomRecGrid.DoExit;
 begin
   inherited DoExit;
   if not (goAlwaysShowEditor in Options) then HideEditor;
 end;
 
-function TrCustomRecGrid.CellRect(ACol, ARow: Longint): TRect;
+function TRxCustomRecGrid.CellRect(ACol, ARow: Longint): TRect;
 begin
   Result := BoxRect(ACol, ARow, ACol, ARow);
 end;
 
-function TrCustomRecGrid.CanEditAcceptKey(Key: Char): Boolean;
+function TRxCustomRecGrid.CanEditAcceptKey(Key: Char): Boolean;
 begin
   Result := True;
 end;
 
-function TrCustomRecGrid.CanGridAcceptKey(Key: Word; Shift: TShiftState): Boolean;
+function TRxCustomRecGrid.CanGridAcceptKey(Key: Word; Shift: TShiftState): Boolean;
 begin
   Result := True;
 end;
 
-function TrCustomRecGrid.CanEditModify: Boolean;
+function TRxCustomRecGrid.CanEditModify: Boolean;
 begin
   Result := FCanEditModify;
 end;
 
-function TrCustomRecGrid.CanEditShow: Boolean;
+function TRxCustomRecGrid.CanEditShow: Boolean;
 begin
   Result := (goEditing in Options) and
     FEditorMode and not (csDesigning in ComponentState) and HandleAllocated and
     ((goAlwaysShowEditor in Options) or IsActiveControl);
 end;
 
-function TrCustomRecGrid.IsActiveControl: Boolean;
+function TRxCustomRecGrid.IsActiveControl: Boolean;
 var
   H: Hwnd;
   ParentForm: TCustomForm;
@@ -1252,26 +1252,26 @@ begin
   end;
 end;
 
-function TrCustomRecGrid.GetEditMask(ACol, ARow: Longint): string;
+function TRxCustomRecGrid.GetEditMask(ACol, ARow: Longint): string;
 begin
   Result := '';
 end;
 
-function TrCustomRecGrid.GetEditText(ACol, ARow: Longint): string;
+function TRxCustomRecGrid.GetEditText(ACol, ARow: Longint): string;
 begin
   Result := '';
 end;
 
-procedure TrCustomRecGrid.SetEditText(ACol, ARow: Longint; const Value: string);
+procedure TRxCustomRecGrid.SetEditText(ACol, ARow: Longint; const Value: string);
 begin
 end;
 
-function TrCustomRecGrid.GetEditLimit: Integer;
+function TRxCustomRecGrid.GetEditLimit: Integer;
 begin
   Result := 0;
 end;
 
-procedure TrCustomRecGrid.HideEditor;
+procedure TRxCustomRecGrid.HideEditor;
 begin
   FEditorMode := False;
   HideEdit;
@@ -1280,20 +1280,20 @@ begin
   FInplaceRow := -1;
 end;
 
-procedure TrCustomRecGrid.ShowEditor;
+procedure TRxCustomRecGrid.ShowEditor;
 begin
   FEditorMode := True;
   UpdateEdit;
 end;
 
-procedure TrCustomRecGrid.ShowEditorChar(Ch: Char);
+procedure TRxCustomRecGrid.ShowEditorChar(Ch: Char);
 begin
   ShowEditor;
   if FInplaceEdit <> nil then
     PostMessage(FInplaceEdit.Handle, WM_CHAR, Word(Ch), 0);
 end;
 
-procedure TrCustomRecGrid.ReadColWidths(Reader: TReader);
+procedure TRxCustomRecGrid.ReadColWidths(Reader: TReader);
 var
   I: Integer;
 begin
@@ -1306,7 +1306,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.WriteColWidths(Writer: TWriter);
+procedure TRxCustomRecGrid.WriteColWidths(Writer: TWriter);
 var
   I: Integer;
 begin
@@ -1319,12 +1319,12 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.DefineProperties(Filer: TFiler);
+procedure TRxCustomRecGrid.DefineProperties(Filer: TFiler);
 
   function DoColWidths: Boolean;
   begin
     if Filer.Ancestor <> nil then
-      Result := not CompareExtents(TrCustomRecGrid(Filer.Ancestor).FColWidths, FColWidths)
+      Result := not CompareExtents(TRxCustomRecGrid(Filer.Ancestor).FColWidths, FColWidths)
     else
       Result := FColWidths <> nil;
   end;
@@ -1335,7 +1335,7 @@ begin
     with Filer do Defineproperty('ColWidths', ReadColWidths, WriteColWidths, DoColWidths);
 end;
 
-function TrCustomRecGrid.MouseCoord(X, Y: Integer): TGridCoord;
+function TRxCustomRecGrid.MouseCoord(X, Y: Integer): TGridCoord;
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -1345,16 +1345,16 @@ begin
   else if Result.Y < 0 then Result.X := -1;
 end;
 
-function TrCustomRecGrid.SelectCell(ACol, ARow: Longint): Boolean;
+function TRxCustomRecGrid.SelectCell(ACol, ARow: Longint): Boolean;
 begin
   Result := True;
 end;
 
-procedure TrCustomRecGrid.SizeChanged(OldColCount, OldRowCount: Longint);
+procedure TRxCustomRecGrid.SizeChanged(OldColCount, OldRowCount: Longint);
 begin
 end;
 
-function TrCustomRecGrid.Sizing(X, Y: Integer): Boolean;
+function TRxCustomRecGrid.Sizing(X, Y: Integer): Boolean;
 var
   DrawInfo: TGridDrawInfo;
   State: TGridState;
@@ -1370,7 +1370,7 @@ begin
   Result := State <> gsNormal;
 end;
 
-procedure TrCustomRecGrid.TopLeftChanged;
+procedure TRxCustomRecGrid.TopLeftChanged;
 begin
   if FEditorMode and (FInplaceEdit <> nil) then FInplaceEdit.UpdateLoc(CellRect(Col, Row));
 end;
@@ -1460,7 +1460,7 @@ end;
 
 
 
-procedure TrCustomRecGrid.Paint;
+procedure TRxCustomRecGrid.Paint;
 var
   LineColor: TColor;
   FixedLineColor: TColor;
@@ -1679,7 +1679,7 @@ begin
     then FInplaceEdit.SetFocus;
 end;
 
-function TrCustomRecGrid.CalcCoordFromPoint(X, Y: Integer;
+function TRxCustomRecGrid.CalcCoordFromPoint(X, Y: Integer;
   const DrawInfo: TGridDrawInfo): TGridCoord;
 
   function DoCalc(const AxisInfo: TGridAxisDrawInfo; N: Integer): Integer;
@@ -1719,12 +1719,12 @@ begin
   Result.Y := DoCalc(DrawInfo.Vert, Y);
 end;
 
-procedure TrCustomRecGrid.CalcDrawInfo(var DrawInfo: TGridDrawInfo);
+procedure TRxCustomRecGrid.CalcDrawInfo(var DrawInfo: TGridDrawInfo);
 begin
   CalcDrawInfoXY(DrawInfo, ClientWidth, ClientHeight);
 end;
 
-procedure TrCustomRecGrid.CalcDrawInfoXY(var DrawInfo: TGridDrawInfo;
+procedure TRxCustomRecGrid.CalcDrawInfoXY(var DrawInfo: TGridDrawInfo;
   UseWidth, UseHeight: Integer);
 
   procedure CalcAxis(var AxisInfo: TGridAxisDrawInfo; UseExtent: Integer);
@@ -1757,7 +1757,7 @@ begin
   CalcAxis(DrawInfo.Vert, UseHeight);
 end;
 
-procedure TrCustomRecGrid.CalcFixedInfo(var DrawInfo: TGridDrawInfo);
+procedure TRxCustomRecGrid.CalcFixedInfo(var DrawInfo: TGridDrawInfo);
 
   procedure CalcFixedAxis(var Axis: TGridAxisDrawInfo; LineOptions: TGridOptions;
     FixedCount, FirstCell, CellCount: Integer; GetExtentFunc: TGetExtentsFunc);
@@ -1791,7 +1791,7 @@ end;
 
 { Calculates the TopLeft that will put the given Coord in view }
 
-function TrCustomRecGrid.CalcMaxTopLeft(const Coord: TGridCoord;
+function TRxCustomRecGrid.CalcMaxTopLeft(const Coord: TGridCoord;
   const DrawInfo: TGridDrawInfo): TGridCoord;
 
   function CalcMaxCell(const Axis: TGridAxisDrawInfo; Start: Integer): Integer;
@@ -1818,7 +1818,7 @@ begin
   Result.Y := CalcMaxCell(DrawInfo.Vert, Coord.Y);
 end;
 
-procedure TrCustomRecGrid.CalcSizingState(X, Y: Integer; var State: TGridState;
+procedure TRxCustomRecGrid.CalcSizingState(X, Y: Integer; var State: TGridState;
   var Index: Longint; var SizingPos, SizingOfs: Integer;
   var FixedInfo: TGridDrawInfo);
 
@@ -1865,7 +1865,7 @@ begin
     end;
 end;
 
-procedure TrCustomRecGrid.ChangeSize(NewColCount, NewRowCount: Longint);
+procedure TRxCustomRecGrid.ChangeSize(NewColCount, NewRowCount: Longint);
 var
   OldColCount, OldRowCount: Longint;
   OldDrawInfo: TGridDrawInfo;
@@ -1940,7 +1940,7 @@ end;
 
 { Will move TopLeft so that Coord is in view }
 
-procedure TrCustomRecGrid.ClampInView(const Coord: TGridCoord);
+procedure TRxCustomRecGrid.ClampInView(const Coord: TGridCoord);
 var
   DrawInfo: TGridDrawInfo;
   MaxTopLeft: TGridCoord;
@@ -1970,7 +1970,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.DrawSizingLine(const DrawInfo: TGridDrawInfo);
+procedure TRxCustomRecGrid.DrawSizingLine(const DrawInfo: TGridDrawInfo);
 var
   OldPen: TPen;
 begin
@@ -1994,7 +1994,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.DrawMove;
+procedure TRxCustomRecGrid.DrawMove;
 var
   OldPen: TPen;
   Pos: Integer;
@@ -2025,14 +2025,14 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.FocusCell(ACol, ARow: Longint; MoveAnchor: Boolean);
+procedure TRxCustomRecGrid.FocusCell(ACol, ARow: Longint; MoveAnchor: Boolean);
 begin
   MoveCurrent(ACol, ARow, MoveAnchor, True);
   UpdateEdit;
   Click;
 end;
 
-procedure TrCustomRecGrid.GridRectToScreenRect(GridRect: TGridRect;
+procedure TRxCustomRecGrid.GridRectToScreenRect(GridRect: TGridRect;
   var ScreenRect: TRect; IncludeLine: Boolean);
 
   function LinePos(const AxisInfo: TGridAxisDrawInfo; Line: Integer): Integer;
@@ -2110,7 +2110,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.Initialize;
+procedure TRxCustomRecGrid.Initialize;
 begin
   FTopLeft.X := FixedCols;
   FTopLeft.Y := FixedRows;
@@ -2120,7 +2120,7 @@ begin
   FAnchor := FCurrent;
 end;
 
-procedure TrCustomRecGrid.InvalidateData;
+procedure TRxCustomRecGrid.InvalidateData;
 var
   Rect: TGridRect;
 begin
@@ -2132,7 +2132,7 @@ begin
   InvalidateRect(Rect);
 end;
 
-procedure TrCustomRecGrid.InvalidateRow(ARow: Longint);
+procedure TRxCustomRecGrid.InvalidateRow(ARow: Longint);
 var
   Rect: TGridRect;
 begin
@@ -2144,12 +2144,12 @@ begin
   InvalidateRect(Rect);
 end;
 
-procedure TrCustomRecGrid.Invalidate;
+procedure TRxCustomRecGrid.Invalidate;
 begin
   inherited Invalidate;
 end;
 
-procedure TrCustomRecGrid.InvalidateRect(ARect: TGridRect);
+procedure TRxCustomRecGrid.InvalidateRect(ARect: TGridRect);
 var
   InvalidRect: TRect;
 begin
@@ -2158,7 +2158,7 @@ begin
   Windows.InvalidateRect(Handle, @InvalidRect, False);
 end;
 
-procedure TrCustomRecGrid.ModifyScrollBar(ScrollBar, ScrollCode, Pos: Cardinal);
+procedure TRxCustomRecGrid.ModifyScrollBar(ScrollBar, ScrollCode, Pos: Cardinal);
 var
   NewTopLeft, MaxTopLeft: TGridCoord;
   DrawInfo: TGridDrawInfo;
@@ -2282,7 +2282,7 @@ begin
     MoveTopLeft(NewTopLeft.X, NewTopLeft.Y);
 end;
 
-procedure TrCustomRecGrid.MoveAnchor(const NewAnchor: TGridCoord);
+procedure TRxCustomRecGrid.MoveAnchor(const NewAnchor: TGridCoord);
 var
   OldSel: TGridRect;
 begin
@@ -2296,15 +2296,15 @@ begin
   else MoveCurrent(NewAnchor.X, NewAnchor.Y, True, True);
 end;
 
-procedure TrCustomRecGrid.ColEnter;
+procedure TRxCustomRecGrid.ColEnter;
 begin
 end;
 
-procedure TrCustomRecGrid.ColExit;
+procedure TRxCustomRecGrid.ColExit;
 begin
 end;
 
-procedure TrCustomRecGrid.MoveCurrent(ACol, ARow: Longint; MoveAnchor,
+procedure TRxCustomRecGrid.MoveCurrent(ACol, ARow: Longint; MoveAnchor,
   Show: Boolean);
 var
   OldSel: TGridRect;
@@ -2340,7 +2340,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.MoveTopLeft(ALeft, ATop: Longint);
+procedure TRxCustomRecGrid.MoveTopLeft(ALeft, ATop: Longint);
 var
   OldTopLeft: TGridCoord;
 begin
@@ -2352,12 +2352,12 @@ begin
   TopLeftMoved(OldTopLeft);
 end;
 
-procedure TrCustomRecGrid.ResizeCol(Index: Longint; OldSize, NewSize: Integer);
+procedure TRxCustomRecGrid.ResizeCol(Index: Longint; OldSize, NewSize: Integer);
 begin
   Invalidate;
 end;
 
-procedure TrCustomRecGrid.SelectionMoved(const OldSel: TGridRect);
+procedure TRxCustomRecGrid.SelectionMoved(const OldSel: TGridRect);
 var
   OldRect, NewRect: TRect;
   AXorRects: TXorRects;
@@ -2371,7 +2371,7 @@ begin
     Windows.InvalidateRect(Handle, @AXorRects[I], False);
 end;
 
-procedure TrCustomRecGrid.ScrollDataInfo(DX, DY: Integer;
+procedure TRxCustomRecGrid.ScrollDataInfo(DX, DY: Integer;
   var DrawInfo: TGridDrawInfo);
 var
   ScrollArea: TRect;
@@ -2413,7 +2413,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.ScrollData(DX, DY: Integer);
+procedure TRxCustomRecGrid.ScrollData(DX, DY: Integer);
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2421,7 +2421,7 @@ begin
   ScrollDataInfo(DX, DY, DrawInfo);
 end;
 
-procedure TrCustomRecGrid.TopLeftMoved(const OldTopLeft: TGridCoord);
+procedure TRxCustomRecGrid.TopLeftMoved(const OldTopLeft: TGridCoord);
 
   function CalcScroll(const AxisInfo: TGridAxisDrawInfo;
     OldPos, CurrentPos: Integer; var Amount: Longint): Boolean;
@@ -2470,7 +2470,7 @@ begin
   TopLeftChanged;
 end;
 
-procedure TrCustomRecGrid.UpdateScrollPos;
+procedure TRxCustomRecGrid.UpdateScrollPos;
 var
   DrawInfo: TGridDrawInfo;
   MaxTopLeft: TGridCoord;
@@ -2492,7 +2492,7 @@ begin
       MaxTopLeft.Y - FixedRows));
 end;
 
-procedure TrCustomRecGrid.UpdateScrollRange;
+procedure TRxCustomRecGrid.UpdateScrollRange;
 var
   MaxTopLeft, OldTopLeft: TGridCoord;
   DrawInfo: TGridDrawInfo;
@@ -2587,12 +2587,12 @@ begin
     TopLeftMoved(OldTopLeft);
 end;
 
-function TrCustomRecGrid.CreateEditor: TInplaceEdit;
+function TRxCustomRecGrid.CreateEditor: TInplaceEdit;
 begin
   Result := TInplaceEdit.Create(Self);
 end;
 
-procedure TrCustomRecGrid.CreateParams(var Params: TCreateParams);
+procedure TRxCustomRecGrid.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
   with Params do
@@ -2611,7 +2611,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.KeyDown(var Key: Word; Shift: TShiftState);
+procedure TRxCustomRecGrid.KeyDown(var Key: Word; Shift: TShiftState);
 var
   NewTopLeft, NewCurrent, MaxTopLeft: TGridCoord;
   DrawInfo: TGridDrawInfo;
@@ -2726,7 +2726,7 @@ begin
     FocusCell(NewCurrent.X, NewCurrent.Y, not (ssShift in Shift));
 end;
 
-procedure TrCustomRecGrid.KeyPress(var Key: Char);
+procedure TRxCustomRecGrid.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if not (goAlwaysShowEditor in Options) and (Key = #13) then
@@ -2739,7 +2739,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.MouseDown(Button: TMouseButton; Shift: TShiftState;
+procedure TRxCustomRecGrid.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
 var
   CellHit: TGridCoord;
@@ -2790,7 +2790,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.MouseMove(Shift: TShiftState; X, Y: Integer);
+procedure TRxCustomRecGrid.MouseMove(Shift: TShiftState; X, Y: Integer);
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2806,7 +2806,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TrCustomRecGrid.MouseUp(Button: TMouseButton; Shift: TShiftState;
+procedure TRxCustomRecGrid.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
 var
   DrawInfo: TGridDrawInfo;
@@ -2851,7 +2851,7 @@ begin
   end;
 end;
 
-function TrCustomRecGrid.GetColWidths(Index: Longint): Integer;
+function TRxCustomRecGrid.GetColWidths(Index: Longint): Integer;
 begin
   if (FColWidths = nil) or (Index >= ColCount) then
     Result := DefaultColWidth
@@ -2859,12 +2859,12 @@ begin
     Result := PIntArray(FColWidths)^[Index + 1];
 end;
 
-function TrCustomRecGrid.GetRowHeights(Index: Longint): Integer;
+function TRxCustomRecGrid.GetRowHeights(Index: Longint): Integer;
 begin
   Result := FDefaultRowHeight;
 end;
 
-function TrCustomRecGrid.GetGridWidth: Integer;
+function TRxCustomRecGrid.GetGridWidth: Integer;
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2872,7 +2872,7 @@ begin
   Result := DrawInfo.Horz.GridBoundary;
 end;
 
-function TrCustomRecGrid.GetGridHeight: Integer;
+function TRxCustomRecGrid.GetGridHeight: Integer;
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2880,18 +2880,18 @@ begin
   Result := DrawInfo.Vert.GridBoundary;
 end;
 
-function TrCustomRecGrid.GetSelection: TGridRect;
+function TRxCustomRecGrid.GetSelection: TGridRect;
 begin
   Result := GridRect(FCurrent, FAnchor);
 end;
 
-function TrCustomRecGrid.GetTabStops(Index: Longint): Boolean;
+function TRxCustomRecGrid.GetTabStops(Index: Longint): Boolean;
 begin
   if FTabStops = nil then Result := True
   else Result := Boolean(PIntArray(FTabStops)^[Index + 1]);
 end;
 
-function TrCustomRecGrid.GetVisibleColCount: Integer;
+function TRxCustomRecGrid.GetVisibleColCount: Integer;
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2899,7 +2899,7 @@ begin
   Result := DrawInfo.Horz.LastFullVisibleCell - LeftCol + 1;
 end;
 
-function TrCustomRecGrid.GetVisibleRowCount: Integer;
+function TRxCustomRecGrid.GetVisibleRowCount: Integer;
 var
   DrawInfo: TGridDrawInfo;
 begin
@@ -2907,7 +2907,7 @@ begin
   Result := DrawInfo.Vert.LastFullVisibleCell - TopRow + 1;
 end;
 
-procedure TrCustomRecGrid.SetBorderStyle(Value: TBorderStyle);
+procedure TRxCustomRecGrid.SetBorderStyle(Value: TBorderStyle);
 begin
   if FBorderStyle <> Value then
   begin
@@ -2916,12 +2916,12 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetCol(Value: Longint);
+procedure TRxCustomRecGrid.SetCol(Value: Longint);
 begin
   if Col <> Value then FocusCell(Value, Row, True);
 end;
 
-procedure TrCustomRecGrid.SetColCount(Value: Longint);
+procedure TRxCustomRecGrid.SetColCount(Value: Longint);
 begin
   if FColCount <> Value then
   begin
@@ -2932,7 +2932,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetColWidths(Index: Longint; Value: Integer);
+procedure TRxCustomRecGrid.SetColWidths(Index: Longint; Value: Integer);
 begin
   if FColWidths = nil then
     UpdateExtents(FColWidths, ColCount, DefaultColWidth);
@@ -2945,7 +2945,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetDefaultColWidth(Value: Integer);
+procedure TRxCustomRecGrid.SetDefaultColWidth(Value: Integer);
 begin
   if FColWidths <> nil then UpdateExtents(FColWidths, 0, 0);
   FDefaultColWidth := Value;
@@ -2953,7 +2953,7 @@ begin
   Invalidate;
 end;
 
-procedure TrCustomRecGrid.SetDefaultRowHeight(Value: Integer);
+procedure TRxCustomRecGrid.SetDefaultRowHeight(Value: Integer);
 begin
   FDefaultRowHeight := Value;
   UpdateScrollRange;
@@ -2961,7 +2961,7 @@ begin
   Invalidate;
 end;
 
-procedure TrCustomRecGrid.SetFixedColor(Value: TColor);
+procedure TRxCustomRecGrid.SetFixedColor(Value: TColor);
 begin
   if FFixedColor <> Value then
   begin
@@ -2970,7 +2970,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetFixedCols(Value: Integer);
+procedure TRxCustomRecGrid.SetFixedCols(Value: Integer);
 begin
   if FFixedCols <> Value then
   begin
@@ -2982,7 +2982,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetFixedRows(Value: Integer);
+procedure TRxCustomRecGrid.SetFixedRows(Value: Integer);
 begin
   if FFixedRows <> Value then
   begin
@@ -2994,7 +2994,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetEditorMode(Value: Boolean);
+procedure TRxCustomRecGrid.SetEditorMode(Value: Boolean);
 begin
   if not Value
     then HideEditor
@@ -3004,7 +3004,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetGridLineWidth(Value: Integer);
+procedure TRxCustomRecGrid.SetGridLineWidth(Value: Integer);
 begin
   if FGridLineWidth <> Value then
   begin
@@ -3013,12 +3013,12 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetLeftCol(Value: Longint);
+procedure TRxCustomRecGrid.SetLeftCol(Value: Longint);
 begin
   if FTopLeft.X <> Value then MoveTopLeft(Value, TopRow);
 end;
 
-procedure TrCustomRecGrid.SetOptions(Value: TGridOptions);
+procedure TRxCustomRecGrid.SetOptions(Value: TGridOptions);
 begin
   if FOptions <> Value then
   begin
@@ -3031,12 +3031,12 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetRow(Value: Longint);
+procedure TRxCustomRecGrid.SetRow(Value: Longint);
 begin
   if Row <> Value then FocusCell(Col, Value, True);
 end;
 
-procedure TrCustomRecGrid.SetRowCount(Value: Longint);
+procedure TRxCustomRecGrid.SetRowCount(Value: Longint);
 begin
   if FRowCount <> Value then
   begin
@@ -3046,7 +3046,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetScrollBars(Value: TScrollStyle);
+procedure TRxCustomRecGrid.SetScrollBars(Value: TScrollStyle);
 begin
   if FScrollBars <> Value then
   begin
@@ -3055,7 +3055,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.SetSelection(Value: TGridRect);
+procedure TRxCustomRecGrid.SetSelection(Value: TGridRect);
 var
   OldSel: TGridRect;
 begin
@@ -3065,7 +3065,7 @@ begin
   SelectionMoved(OldSel);
 end;
 
-procedure TrCustomRecGrid.SetTabStops(Index: Longint; Value: Boolean);
+procedure TRxCustomRecGrid.SetTabStops(Index: Longint; Value: Boolean);
 begin
   if FTabStops = nil then
     UpdateExtents(FTabStops, ColCount, Integer(True));
@@ -3073,12 +3073,12 @@ begin
   PIntArray(FTabStops)^[Index + 1] := Integer(Value);
 end;
 
-procedure TrCustomRecGrid.SetTopRow(Value: Longint);
+procedure TRxCustomRecGrid.SetTopRow(Value: Longint);
 begin
   if FTopLeft.Y <> Value then MoveTopLeft(LeftCol, Value);
 end;
 
-procedure TrCustomRecGrid.HideEdit;
+procedure TRxCustomRecGrid.HideEdit;
 begin
   if FInplaceEdit <> nil then
   try
@@ -3089,7 +3089,7 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.UpdateEdit;
+procedure TRxCustomRecGrid.UpdateEdit;
 var
   FocRect: TRect;
 
@@ -3130,20 +3130,20 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.UpdateText;
+procedure TRxCustomRecGrid.UpdateText;
 begin
   if (FInplaceRow <> -1) and (FInplaceRow < RowCount) then
     SetEditText(FInplaceCol, FInplaceRow, FInplaceEdit.Text);
 end;
 
-procedure TrCustomRecGrid.WMChar(var Msg: TWMChar);
+procedure TRxCustomRecGrid.WMChar(var Msg: TWMChar);
 begin
   if (goEditing in Options) and CharInSet(Char(Msg.CharCode), [^H, #32..#255])
     then ShowEditorChar(Char(Msg.CharCode))
   else inherited;
 end;
 
-procedure TrCustomRecGrid.WMCommand(var Message: TWMCommand);
+procedure TRxCustomRecGrid.WMCommand(var Message: TWMCommand);
 begin
   with Message do
   begin
@@ -3154,14 +3154,14 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.WMGetDlgCode(var Msg: TWMGetDlgCode);
+procedure TRxCustomRecGrid.WMGetDlgCode(var Msg: TWMGetDlgCode);
 begin
   Msg.Result := DLGC_WANTARROWS;
   if goTabs in Options then Msg.Result := Msg.Result or DLGC_WANTTAB;
   if goEditing in Options then Msg.Result := Msg.Result or DLGC_WANTCHARS;
 end;
 
-procedure TrCustomRecGrid.WMKillFocus(var Msg: TWMKillFocus);
+procedure TRxCustomRecGrid.WMKillFocus(var Msg: TWMKillFocus);
 begin
   inherited;
   InvalidateRect(Selection);
@@ -3169,7 +3169,7 @@ begin
     then HideEdit;
 end;
 
-procedure TrCustomRecGrid.WMSetFocus(var Msg: TWMSetFocus);
+procedure TRxCustomRecGrid.WMSetFocus(var Msg: TWMSetFocus);
 begin
   inherited;
   if (FInplaceEdit = nil) or (Msg.FocusedWnd <> FInplaceEdit.Handle) then begin
@@ -3178,19 +3178,19 @@ begin
   end;
 end;
 
-procedure TrCustomRecGrid.WMLButtonDown(var Message: TMessage);
+procedure TRxCustomRecGrid.WMLButtonDown(var Message: TMessage);
 begin
   inherited;
   if FInplaceEdit <> nil then FInplaceEdit.FClickTime := GetMessageTime;
 end;
 
-procedure TrCustomRecGrid.WMNCHitTest(var Msg: TWMNCHitTest);
+procedure TRxCustomRecGrid.WMNCHitTest(var Msg: TWMNCHitTest);
 begin
   DefaultHandler(Msg);
   FHitTest := ScreenToClient(SmallPointToPoint(Msg.Pos));
 end;
 
-procedure TrCustomRecGrid.WMSetCursor(var Msg: TWMSetCursor);
+procedure TRxCustomRecGrid.WMSetCursor(var Msg: TWMSetCursor);
 var
   DrawInfo: TGridDrawInfo;
   State: TGridState;
@@ -3220,52 +3220,52 @@ begin
   else inherited;
 end;
 
-procedure TrCustomRecGrid.WMSize(var Msg: TWMSize);
+procedure TRxCustomRecGrid.WMSize(var Msg: TWMSize);
 begin
   inherited;
   UpdateScrollRange;
 end;
 
-procedure TrCustomRecGrid.WMVScroll(var Msg: TWMVScroll);
+procedure TRxCustomRecGrid.WMVScroll(var Msg: TWMVScroll);
 begin
   ModifyScrollBar(SB_VERT, Msg.ScrollCode, Msg.Pos);
 end;
 
-procedure TrCustomRecGrid.WMHScroll(var Msg: TWMHScroll);
+procedure TRxCustomRecGrid.WMHScroll(var Msg: TWMHScroll);
 begin
   ModifyScrollBar(SB_HORZ, Msg.ScrollCode, Msg.Pos);
 end;
 
-procedure TrCustomRecGrid.CMCancelMode(var Msg: TMessage);
+procedure TRxCustomRecGrid.CMCancelMode(var Msg: TMessage);
 begin
   if Assigned(FInplaceEdit) then FInplaceEdit.WndProc(Msg);
   inherited;
 end;
 
-procedure TrCustomRecGrid.CMFontChanged(var Message: TMessage);
+procedure TRxCustomRecGrid.CMFontChanged(var Message: TMessage);
 begin
   if FInplaceEdit <> nil then FInplaceEdit.Font := Font;
   inherited;
 end;
 
-procedure TrCustomRecGrid.CMCtl3DChanged(var Message: TMessage);
+procedure TRxCustomRecGrid.CMCtl3DChanged(var Message: TMessage);
 begin
   inherited;
   RecreateWnd;
 end;
 
-procedure TrCustomRecGrid.CMDesignHitTest(var Msg: TCMDesignHitTest);
+procedure TRxCustomRecGrid.CMDesignHitTest(var Msg: TCMDesignHitTest);
 begin
   Msg.Result := Longint(BOOL(Sizing(Msg.Pos.X, Msg.Pos.Y)));
 end;
 
-procedure TrCustomRecGrid.CMWantSpecialKey(var Msg: TCMWantSpecialKey);
+procedure TRxCustomRecGrid.CMWantSpecialKey(var Msg: TCMWantSpecialKey);
 begin
   inherited;
   if (goEditing in Options) and (Char(Msg.CharCode) = #13) then Msg.Result := 1;
 end;
 
-procedure TrCustomRecGrid.TimedScroll(Direction: TGridScrollDirection);
+procedure TRxCustomRecGrid.TimedScroll(Direction: TGridScrollDirection);
 var
   MaxAnchor, NewAnchor: TGridCoord;
 begin
@@ -3280,13 +3280,13 @@ begin
     MoveAnchor(NewAnchor);
 end;
 
-procedure TrCustomRecGrid.ColWidthsChanged;
+procedure TRxCustomRecGrid.ColWidthsChanged;
 begin
   UpdateScrollRange;
   UpdateEdit;
 end;
 
-procedure TrCustomRecGrid.UpdateDesigner;
+procedure TRxCustomRecGrid.UpdateDesigner;
 var
   ParentForm: TCustomForm;
 begin
@@ -3593,6 +3593,7 @@ begin
     ImeMode := imDontCare;
   end
   else
+  if Assigned(Rows) then
   begin
     Column := Rows[Row];
     ImeName := FOriginalImeName;
@@ -3837,6 +3838,7 @@ end;
 constructor TRxDBRecordGrid.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  //Parent := TWinControl(AOwner);
   FRows := CreateRows;
   FDataLink := TrGridDataLink.Create(Self);
   FOriginalImeName := ImeName;

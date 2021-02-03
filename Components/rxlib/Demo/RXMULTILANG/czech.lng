@@ -1,0 +1,18 @@
+[Translations]
+ToolsForm.FileMenuItem.Caption  = &Soubor
+ToolsForm.AboutMenuItem.Caption = &Info
+ToolsForm.HelpMenuItem.Caption  = &Pomoc
+ToolsForm.ExitMenuItem.Caption  = &Konec
+ToolsForm.FruitsLabel.Caption   = &Ovoce
+ToolsForm.LanguageLabel.Caption = &Vyberte jazyk
+ToolsForm.AboutBtn.Caption      = I&nfo o TLanguage
+ToolsForm.MessageBtn.Caption    = &Ukaž zprávu
+ToolsForm.AboutBtn.Hint         = Prosím cvaknìte zde!
+ToolsForm.MessageBtn.Hint       = Ukázka zprávy ve zvoleném jazyce
+ToolsForm.FruitList.Items       = Jablko,Jahoda,Višeò
+ToolsForm.mml_title.Caption = Komponent TRxTranslator pøekládá øetìzcové konstanty (vlastnosti) jako popisky nebo seznamy a podporuje pøepínání více jazykù v aplikaci.
+ToolsForm.mml_desctription.Caption = Toto je èást demonstrace založená na øešní TLanguage od Serge Sushko s pøiloženými jazykovými soubory (.lng) pod copyrighttem (c) Serge Sushko, 1998 E-mail: sushko@iname.com, WWW: http://members.tripod.com/~sushko/
+
+[messages]
+Selected fruit is              = Vybrané ovoce je
+No one fruit is selected       = Žádné ovoce není vybráno

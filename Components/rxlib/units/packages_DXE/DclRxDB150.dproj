@@ -57,6 +57,7 @@
 			<DCCReference Include="dcldb.dcp"/>
 			<DCCReference Include="DclRxCtl150.dcp"/>
 			<DCCReference Include="RtmRxDB150.dcp"/>
+			<DCCReference Include="VclImg.dcp"/>
 			<DCCReference Include="designide.dcp"/>
 			<DCCReference Include="..\RxSelDSFrm.pas"/>
 			<DCCReference Include="..\RxDBReg.pas"/>

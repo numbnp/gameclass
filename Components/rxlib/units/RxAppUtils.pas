@@ -110,6 +110,7 @@ procedure InternalRestoreMDIChildren(MainForm: TForm; IniFile: TObject);
 implementation
 
 uses
+  {$IFDEF RX_D20}System.Win.TaskbarCore,{$ENDIF}
   SysUtils, Messages, Consts, RxFileUtil, RxPlacemnt,
   {$IFDEF RX_D6}RTLConsts, {$ENDIF}RxStrUtils; // Polaris
 
@@ -733,14 +734,23 @@ type
 {                                                       }
 {*******************************************************}
 
+{$IFDEF RX_D23} // For newer versions than 10 Seattle
+  {$DEFINE CHECK_TNASTYFORM}
+{$ENDIF}
+
   TNastyForm = class(TScrollingWinControl)
   private
+    {$IFDEF RX_D20}
+    FTaskbarHandler: TTaskbarHandler; // added in XE6
+    {$ENDIF}
     FActiveControl: TWinControl;
     FFocusedControl: TWinControl;
     FBorderIcons: TBorderIcons;
     FBorderStyle: TFormBorderStyle;
     {$IFDEF RX_D4}
-    FSizeChanging: Boolean;
+      {$IFNDEF RX_D14}
+    FSizeChanging: Boolean; // deleted in 2010
+      {$ENDIF}
     {$ENDIF}
     FWindowState: TWindowState; { !! }
   end;
@@ -749,6 +759,35 @@ type
   {$IFNDEF VER80}
   {$HINTS ON}
   {$ENDIF}
+
+{$IFDEF CHECK_TNASTYFORM}
+procedure CheckTNastyForm(Form: TForm);
+var
+  WinState: TWindowState;
+
+  procedure RaiseException;
+  begin
+    raise Exception.Create('Invalid TNastyForm definition. ' +
+      'Match field definitions of the TNastyForm (RxAppUtil.pas) and TCustomForm (VCL.Forms.pas).');
+  end;
+
+begin
+  {Save state. Procedure may be used anywhere}
+  WinState := Form.WindowState;
+
+  TNastyForm(Form).FWindowState := wsNormal;
+  if Form.WindowState <> wsNormal then RaiseException;
+
+  TNastyForm(Form).FWindowState := wsMinimized;
+  if Form.WindowState <> wsMinimized then RaiseException;
+
+  TNastyForm(Form).FWindowState := wsMaximized;
+  if Form.WindowState <> wsMaximized then RaiseException;
+
+  {Restore state}
+  TNastyForm(Form).FWindowState := WinState;
+end;
+{$ENDIF}
 
 procedure InternalReadFormPlacement(Form: TForm; IniFile: TObject;
   const Section: string; LoadState, LoadPosition: Boolean);
@@ -832,13 +871,21 @@ begin
       if (WinState = wsMinimized) and ((Form = Application.MainForm)
         {$IFDEF RX_D4} or (Application.MainForm = nil){$ENDIF}) then
       begin
+        {$IFDEF CHECK_TNASTYFORM}
+        CheckTNastyForm(Form);
+        {$ENDIF}
         TNastyForm(Form).FWindowState := wsNormal;
         PostMessage(Application.Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         Exit;
       end;
       {$ENDIF}
       if FormStyle in [fsMDIChild, fsMDIForm] then
-        TNastyForm(Form).FWindowState := WinState
+      begin
+        {$IFDEF CHECK_TNASTYFORM}
+        CheckTNastyForm(Form);
+        {$ENDIF}
+        TNastyForm(Form).FWindowState := WinState;
+      end
       else
         WindowState := WinState;
     end;

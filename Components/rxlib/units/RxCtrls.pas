@@ -1299,6 +1299,39 @@ type
     {$ENDIF}
   end;
 
+  {  TRxColorButton  }
+
+  TRxColorButton = class(TButton)
+  private
+    ShowBackColor  : Boolean;
+    FCanvas        : TCanvas;
+    IsFocused      : Boolean;
+    FBackColor     : TColor;
+    FForeColor     : TColor;
+    FHoverColor    : TColor;
+    procedure SetBackColor(const Value: TColor);
+    procedure SetForeColor(const Value: TColor);
+    procedure SetHoverColor(const Value: TColor);
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure WndProc(var Message : TMessage); override;
+
+    procedure SetButtonStyle(Value: Boolean); override;
+    procedure DrawButton(Rect: TRect; State: UINT);
+
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CNMeasureItem(var Message: TWMMeasureItem); message CN_MEASUREITEM;
+    procedure CNDrawItem(var Message: TWMDrawItem); message CN_DRAWITEM;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property BackColor : TColor read FBackColor  write SetBackColor default clBtnFace;
+    property ForeColor : TColor read FForeColor  write SetForeColor default clBtnText;
+    property HoverColor: TColor read FHoverColor write SetHoverColor default clBtnFace;
+  end;
+
 function DrawShadowText(DC: HDC; Str: PChar; Count: Integer; var Rect: TRect;
   Format: Word; ShadowSize: Byte; ShadowColor: TColorRef;
   ShadowPos: TShadowPosition): Integer; {$IFDEF RX_D9}inline; {$ENDIF}
@@ -1322,11 +1355,15 @@ type
     {$IFNDEF RX_D9}
     FVerticalAlignment: TVerticalAlignment;
     {$ENDIF}
+    FBlotter: Boolean;
     procedure PictureChanged(ASender: TObject);
     procedure WMEraseBkGnd(var Message: TMessage); message WM_ERASEBKGND;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
     procedure SetBackground(const Value: TPicture);
     procedure SetBevelShape(const Value: TRxBevelShape);
     procedure SetBevelStyle(const Value: TRxBevelStyle);
+    procedure SetBlotter(const Value: Boolean);
   protected
     procedure Paint; override;
     procedure DoChanges(Sender: TObject);
@@ -1340,6 +1377,7 @@ type
     property BackgroundImage: TPicture read FBackground write SetBackground;
     property BevelStyle: TRxBevelStyle read FBevelStyle write SetBevelStyle default bsRxRaised;
     property BevelShape: TRxBevelShape read FBevelShape write SetBevelShape default bsRxNone;
+    property Blotter: Boolean read FBlotter write SetBlotter default False;
     property Gradient: TRxGradient read FGradient write FGradient;
     property TileImage: Boolean read FTileImage write FTileImage;
   end;
@@ -1356,6 +1394,18 @@ uses
 
 {  TRxPanel  }
 
+procedure TRxPanel.CMColorChanged(var Message: TMessage);
+begin
+  inherited;
+  Self.Repaint;
+end;
+
+procedure TRxPanel.CMFontChanged(var Message: TMessage);
+begin
+  inherited;
+  Self.Repaint;
+end;
+
 constructor TRxPanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -1368,6 +1418,7 @@ begin
   FGradient.OnChange := DoChanges;
   FBevelStyle := bsRxRaised;
   FBevelShape := bsRxNone;
+  FBlotter := False;
 end;
 
 destructor TRxPanel.Destroy;
@@ -1413,7 +1464,7 @@ var
     end;
   end;
 
-  procedure DoDrawBevel;
+  procedure DoDrawBevel();
   begin
     //copy of standard tbevel
     if FBevelShape <> bsRxNone then
@@ -1468,6 +1519,286 @@ var
       end;
   end;
 
+  procedure DoDrawBorderLimit(cBackColor: TColor = clGreen; cLine: TColor = clBlack; cLineShadow: TColor = clSilver;
+    cCorner: TColor = clYellow; cCornerShadow: TColor = clOlive);
+  var
+    CanDrawBackground: Boolean;
+  begin
+    if not FBlotter then Exit;
+
+    {draw on the canvas directly}
+    with Canvas do
+    begin
+      if (Assigned(FGradient) and FGradient.Visible) or
+        (Assigned(FBackground) and (FBackground.Graphic <> nil) and (not FBackground.Graphic.Empty)) then
+        CanDrawBackground := False
+      else
+        CanDrawBackground := True;
+      if CanDrawBackground then
+      begin
+        Brush.Color := cBackColor;
+        Rectangle(0, 0, Width, Height);
+      end;
+
+    {**************************************************}
+      {draw vertical lines on left side of form}
+      Pen.Color := cLine;
+      Moveto(0, 0); {column,row}
+      Lineto(0, Height);
+
+      Pen.Color := cLineShadow;
+      Moveto(0 + 1, 0); {column,row}
+      Lineto(0 + 1, Height);
+
+      Pen.Color := cLine;
+      Moveto(0 + 4, 0); {column,row}
+      Lineto(0 + 4, Height);
+
+      {draw vertical line on right side of form}
+      Pen.Color := cLineShadow;
+      Moveto(Width - 4, 0);
+      Lineto(Width - 4, Height);
+
+      Pen.Color := cLine;
+      Moveto(Width - 1, 0);
+      Lineto(Width - 1, Height);
+
+      {draw horizontal line on top side of form}
+      Pen.Color := cLine;
+      Moveto(0, 0);
+      Lineto(Width, 0);
+
+      Pen.Color := cLineShadow;
+      Moveto(0, 0 + 1);
+      Lineto(Width, 0 + 1);
+
+      Pen.Color := cLine;
+      Moveto(0, 0 + 4);
+      Lineto(Width, 0 + 4);
+
+      {draw horizontal line on bottom side of form}
+      Pen.Color := cLineShadow;
+      Moveto(0, Height - 4);
+      Lineto(Width, Height - 4);
+
+      Pen.Color := cLine;
+      Moveto(0, Height - 1);
+      Lineto(Width, Height - 1);
+
+    {***************************************************}
+      {draw blotter outer corners}
+      Pen.Color := cCorner;
+      {Upper Left vertical and horizontal}
+      MoveTo(0 + 1, 0 + 1);
+      LineTo(0 + 1, 15);
+      Moveto(0 + 1, 0 + 1);
+      LineTo(15, 0 + 1);
+      {Lower Left vertical only }
+      MoveTo(0 + 1, Height - 1);
+      LineTo(0 + 1, Height - 16);
+      {Lower Right}
+      Pen.Color := cLine;
+      MoveTo(Width - 2, Height - 1);
+      LineTo(Width - 15, Height - 1);
+      MoveTo(Width - 1, Height - 1);
+      LineTo(Width - 1, Height - 15);
+      Pen.Color := cCorner;
+      MoveTo(Width - 15, Height - 1);
+      LineTo(Width - 16, Height - 1);
+      MoveTo(Width - 1, Height - 15);
+      LineTo(Width - 1, Height - 16);
+      {Upper Right, horizontal only}
+      MoveTo(Width - 15, 1);
+      LineTo(Width - 1, 1);
+
+    {************************************************}
+      {draw blotter inner corners}
+      Pen.Color := cLine;
+      Brush.Color := cLine;
+      {Upper Left}
+      MoveTo(0 + 5, 0 + 5);
+      LineTo(0 + 5, 6 + 6);
+      Moveto(0 + 5, 0 + 5);
+      LineTo(6 + 6, 0 + 5);
+
+      {Lower Left}
+      MoveTo(0 + 5, Height - 5);
+      LineTo(0 + 5, (Height - 5) - 7); {draw vert}
+      Moveto(0 + 5, Height - 5);
+      LineTo(12, Height - 5); {draw horiz}
+
+      Pen.Color := cCorner;
+      MoveTo(0 + 6, Height - 5);
+      LineTo(11, Height - 5);
+      Pen.Color := cLine;
+
+      {lower right}
+      Pen.Color := cCorner;
+      MoveTo(Width - 5, Height - 5);
+      LineTo(Width - 5, Height - 12);
+      MoveTo(Width - 5, Height - 5);
+      LineTo(Width - 12, Height - 5);
+
+      {Upper Right}
+      Pen.Color := cLine;
+      MoveTo(Width - 11, 5);
+      LineTo(Width - 5, 5);
+      Pen.Color := cCorner;
+      MoveTo(Width - 5, 5);
+      LineTo(Width - 5, 13);
+
+    {************************************************}
+      {draw the staircase pixels}
+      Pen.Color := cLine;
+
+      {upper left}
+      {lower pixels}
+      MoveTo(0 + 1, 15);
+      LineTo(0 + 4, 12);
+
+      Moveto(2, Height - 13);
+      LineTo(3, Height - 12);
+      Moveto(4, Height - 11);
+      LineTo(4, Height - 11);
+
+      {upper pixels}
+      MoveTo(15, 0 + 1);
+      LineTo(12, 0 + 4);
+
+
+      {lower left}
+      {upper pixels}
+      Pen.Color := cCorner;
+      Moveto(2, Height - 14);
+      LineTo(5, Height - 11);
+
+      Pen.Color := cLine;
+      MoveTo(11, Height - 5);
+      LineTo(15, Height - 1);
+
+      {lower right}
+      Pen.Color := cCorner;
+      MoveTo(Width - 15, Height - 1);
+      LineTo(Width - 10, Height - 6);
+      MoveTo(Width - 1, Height - 15);
+      LineTo(Width - 6, Height - 10);
+
+      { Upper Right}
+      Pen.Color := cLine;
+      MoveTo(Width - 1, 16);
+      LineTo(Width - 5, 12);
+
+      MoveTo(Width - 14, 2);
+      LineTo(Width - 12, 4);
+
+    {****************************************************}
+      {fill in "brass" areas for corners}
+      Brush.Color := cCornerShadow;
+      Pen.Color := cCornerShadow;
+
+      {upper left}
+      {fill in large areas}
+      Rectangle(2, 2, 5, 12);
+      Rectangle(2, 2, 12, 5);
+
+      {fill in upper pixels}
+      Moveto(12, 2);
+      LineTo(14, 2);
+      Moveto(12, 3);
+      LineTo(13, 3);
+      {fill in lower pixels}
+      MoveTo(2, 12);
+      LineTo(2, 14);
+      MoveTo(3, 12);
+      LineTo(3, 13);
+
+    {------------------------}
+      {lower left}
+      {fill in large areas}
+      Rectangle(2, Height - 1, 12, Height - 4);
+      Rectangle(2, Height - 2, 5, Height - 11);
+
+      {fill in upper pixels}
+      Moveto(2, Height - 13);
+      LineTo(3, Height - 12);
+      Moveto(2, Height - 12);
+      LineTo(4, Height - 12);
+      Moveto(4, Height - 11);
+      LineTo(4, Height - 11);
+      {fill in lower pixels}
+      MoveTo(12, Height - 3);
+      LineTo(13, Height - 2);
+      MoveTo(14, Height - 1);
+      LineTo(14, Height - 1);
+      MoveTo(12, Height - 2);
+      LineTo(14, Height - 2);
+
+    {-----------------------}
+      {lower right}
+
+      {fill in large areas}
+      Rectangle(Width - 1, Height - 1, Width - 11,
+        Height - 4);
+      Rectangle(Width - 1, Height - 1, Width - 4, Height - 11);
+
+      {fill in upper pixels}
+      MoveTo(Width - 3, Height - 12);
+      LineTo(Width - 1, Height - 12);
+      MoveTo(Width - 2, Height - 13);
+      LineTo(Width - 1, Height - 13);
+
+      {fill in lower pixels}
+      MoveTo(Width - 12, Height - 3);
+      LineTo(Width - 12, Height - 1);
+      MoveTo(Width - 13, Height - 2);
+      LineTo(Width - 13, Height - 1);
+
+    {-----------------------}
+      {upper right}
+
+      {fill in large areas}
+      Rectangle(Width - 11, 2, Width - 1, 5);
+      Rectangle(Width - 1, 13, Width - 4, 2);
+
+      {fill in upper pixels}
+      MoveTo(Width - 12, 2);
+      LineTo(Width - 12, 4);
+      MoveTo(Width - 13, 2);
+      LineTo(Width - 13, 1);
+
+      {fill in lower pixels}
+      MoveTo(Width - 2, 13);
+      LineTo(Width - 4, 13);
+      MoveTo(Width - 2, 14);
+      LineTo(Width - 1, 14);
+
+    {***************************************************}
+      {cleanup corner pixels}
+      Pen.Color := cLine;
+      Moveto(0, 0);
+      LineTo(0, 10);
+
+      {Lower Left}
+      MoveTo(0, Height - 1);
+      LineTo(13, Height - 1);
+      MoveTo(0, Height - 1);
+      LineTo(0, Height - 14);
+
+      {Upper Right}
+      Moveto(Width - 1, 0);
+      LineTo(Width - 14, 0);
+      Moveto(Width - 1, 0);
+      LineTo(Width - 1, 13);
+
+      {Lower Right}
+      MoveTo(Width - 1, Height - 1);
+      LineTo(Width - 14, Height - 1);
+      MoveTo(Width - 1, Height - 1);
+      LineTo(Width - 1, Height - 14);
+
+    end;
+  end;
+
   procedure DoDrawText;
   const
     Alignments: array[TAlignment] of LongInt = (DT_LEFT, DT_RIGHT, DT_CENTER);
@@ -1493,6 +1824,7 @@ begin
   begin
     FGradient.Draw(Self.Canvas, Self.ClientRect);
     DoDrawBevel;
+    DoDrawBorderLimit();
     DoDrawText;
   end
   else if Assigned(FBackground) and (FBackground.Graphic <> nil) and (not FBackground.Graphic.Empty) then
@@ -1502,10 +1834,14 @@ begin
     else
       Canvas.StretchDraw(ClientRect, FBackground.Graphic);
     DoDrawBevel;
+    DoDrawBorderLimit();
     DoDrawText;
   end
   else
+  begin
     inherited;
+    DoDrawBorderLimit(Color);
+  end;
 
   if (csDesigning in ComponentState) and (BevelInner = bvNone) and (BevelOuter = bvNone) then
     with Canvas do
@@ -1536,6 +1872,12 @@ end;
 procedure TRxPanel.SetBevelStyle(const Value: TRxBevelStyle);
 begin
   FBevelStyle := Value;
+  Invalidate;
+end;
+
+procedure TRxPanel.SetBlotter(const Value: Boolean);
+begin
+  FBlotter := Value;
   Invalidate;
 end;
 
@@ -7454,7 +7796,7 @@ begin
   if FMouseInControl and Enabled and not FDragging then
   begin
     FMouseInControl := False;
-    if FFlat then Invalidate;
+    if FFlat then Repaint;
     MouseLeave;
   end;
 end;
@@ -7577,9 +7919,205 @@ begin
 end;
 {$ENDIF RX_D4}
 
+{  TRxColorButton  }
+
+constructor TRxColorButton.Create(AOwner: TComponent);
+begin
+ inherited Create(AOwner);
+ ShowBackColor := True;
+ FCanvas := TCanvas.Create;
+ BackColor := clBtnFace;
+ ForeColor := clBtnText;
+ HoverColor := clBtnFace;
+end;
+
+destructor TRxColorButton.Destroy;
+begin
+ FreeAndNil(FCanvas);
+ inherited Destroy;
+end;
+
+procedure TRxColorButton.WndProc(var Message : TMessage);
+begin
+ if (Message.Msg = CM_MOUSELEAVE) then
+  begin
+   ShowBackColor := True;
+   Invalidate;
+  end;
+ if (Message.Msg = CM_MOUSEENTER) then
+  begin
+   ShowBackColor := False;
+   Invalidate;
+  end;
+ inherited;
+end;
+
+procedure TRxColorButton.CreateParams(var Params: TCreateParams);
+begin
+ inherited CreateParams(Params);
+  with Params do
+    Style := Style or BS_OWNERDRAW;
+end;
+
+procedure TRxColorButton.SetButtonStyle(Value: Boolean);
+begin
+ if Value <> IsFocused then
+  begin
+   IsFocused := Value;
+   Invalidate;
+  end;
+end;
+
+procedure TRxColorButton.CNMeasureItem(var Message: TWMMeasureItem);
+begin
+ with Message.MeasureItemStruct^ do
+  begin
+   itemWidth  := Width;
+   itemHeight := Height;
+  end;
+end;
+
+procedure TRxColorButton.CNDrawItem(var Message: TWMDrawItem);
+var
+  SaveIndex: Integer;
+begin
+ with Message.DrawItemStruct^ do
+  begin
+   SaveIndex := SaveDC(hDC);
+   FCanvas.Lock;
+   try
+    FCanvas.Handle := hDC;
+    FCanvas.Font   := Font;
+    FCanvas.Brush  := Brush;
+    DrawButton(rcItem, itemState);
+   finally
+    FCanvas.Handle := 0;
+    FCanvas.Unlock;
+    RestoreDC(hDC, SaveIndex);
+   end;
+ end;
+ Message.Result := 1;
+end;
+
+procedure TRxColorButton.CMEnabledChanged(var Message: TMessage);
+begin
+ inherited;
+ Invalidate;
+end;
+
+procedure TRxColorButton.CMFontChanged(var Message: TMessage);
+begin
+ inherited;
+ Invalidate;
+end;
+
+procedure TRxColorButton.SetBackColor(const Value: TColor);
+begin
+ if FBackColor <> Value then
+  begin
+   FBackColor:= Value;
+   Invalidate;
+  end;
+end;
+
+procedure TRxColorButton.SetForeColor(const Value: TColor);
+begin
+ if FForeColor <> Value then
+  begin
+   FForeColor:= Value;
+   Invalidate;
+  end;
+end;
+
+procedure TRxColorButton.SetHoverColor(const Value: TColor);
+begin
+ if FHoverColor <> Value then
+  begin
+   FHoverColor:= Value;
+   Invalidate;
+  end;
+end;
+
+procedure TRxColorButton.DrawButton(Rect: TRect; State: UINT);
+
+var Flags, OldMode: Longint;
+    IsDown, IsDefault, IsDisabled: Boolean;
+    OldColor: TColor;
+    OrgRect: TRect;
+    NewCaption : string;
+
+begin
+ NewCaption := Caption;
+ OrgRect := Rect;
+ Flags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
+ IsDown := State and ODS_SELECTED <> 0;
+ IsDisabled := State and ODS_DISABLED <> 0;
+ IsDefault := State and ODS_FOCUS <> 0;
+
+ if IsDown then Flags := Flags or DFCS_PUSHED;
+ if IsDisabled then Flags := Flags or DFCS_INACTIVE;
+
+ if (IsFocused or IsDefault) then
+  begin
+   FCanvas.Pen.Color   := clWindowFrame;
+   FCanvas.Pen.Width   := 1;
+   FCanvas.Brush.Style := bsClear;
+   FCanvas.Rectangle(Rect.Left, Rect.Top, Rect.Right, Rect.Bottom);
+   InflateRect(Rect, - 1, - 1);
+  end;
+
+  if IsDown then
+  begin
+   FCanvas.Pen.Color   := clBtnShadow;
+   FCanvas.Pen.Width   := 1;
+   FCanvas.Brush.Color := clBtnFace;
+   FCanvas.Rectangle(Rect.Left, Rect.Top, Rect.Right, Rect.Bottom);
+   InflateRect(Rect, - 1, - 1);
+  end
+ else
+  begin
+   DrawFrameControl(FCanvas.Handle, Rect, DFC_BUTTON, Flags);
+  end;
+
+  if IsDown then OffsetRect(Rect, 1, 1);
+
+  OldColor := FCanvas.Brush.Color;
+  if ShowBackColor then
+   FCanvas.Brush.Color := BackColor
+  else
+   FCanvas.Brush.Color := HoverColor;
+  FCanvas.FillRect(Rect);
+  FCanvas.Brush.Color := OldColor;
+  OldMode := SetBkMode(FCanvas.Handle, TRANSPARENT);
+  FCanvas.Font.Color := ForeColor;
+  if IsDisabled then
+   DrawState(FCanvas.Handle, FCanvas.Brush.Handle, nil, {$IFDEF  WIN64}NativeInt{$ELSE}Integer{$ENDIF}(NewCaption), 0,
+             ((Rect.Right - Rect.Left) - FCanvas.TextWidth(NewCaption)) div 2,
+             ((Rect.Bottom - Rect.Top) - FCanvas.TextHeight(NewCaption)) div 2,
+             0, 0, DST_TEXT or DSS_DISABLED)
+  else
+   begin
+    InflateRect(Rect, -4, -4);
+    DrawText(FCanvas.Handle, PChar(NewCaption), - 1, Rect, DT_WORDBREAK or DT_CENTER);
+   end;
+
+  SetBkMode(FCanvas.Handle, OldMode);
+
+ if (IsFocused and IsDefault) then
+  begin
+   Rect := OrgRect;
+   InflateRect(Rect, - 4, - 4);
+   FCanvas.Pen.Color   := clWindowFrame;
+   FCanvas.Brush.Color := clBtnFace;
+   DrawFocusRect(FCanvas.Handle, Rect);
+  end;
+end;
+
 {$IFNDEF VER80}
 initialization
   FCheckBitmap := nil;
+  RegisterClass(TRxColorButton); // needed for persistence at runtime
+
 finalization
   DestroyLocals;
   {$ELSE}

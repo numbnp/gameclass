@@ -12,10 +12,11 @@ unit RxImagPrvw;
 interface
 
 {$I RX.INC}
-
+{$WARN UNIT_PLATFORM OFF}
 uses
   SysUtils, {$IFNDEF VER80}Windows, {$ELSE}WinTypes, WinProcs, {$ENDIF}
   Classes, Graphics, Forms, Controls, FileCtrl, StdCtrls, ExtCtrls, Buttons,
+  {$IFDEF RX_D6}Types, {$ENDIF}
   RxCtrls, RxPicClip, RxPlacemnt, RxObjStr;
 
 type

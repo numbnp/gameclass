@@ -148,6 +148,32 @@ const
   SDelphiKey = 'Software\Embarcadero\BDS\15.0'; {Delphi XE7}
   {$ENDIF}
 
+  {$IFDEF VER290} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\16.0'; {Delphi XE8}
+  {$ENDIF}
+
+  {$IFDEF VER300} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\17.0'; {Delphi 10 Seattle}
+  {$ENDIF}  
+
+  {$IFDEF VER310} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\18.0'; {Delphi 10.1 Berlin}
+  {$ENDIF}
+  {$IFDEF VER320} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\19.0'; {Delphi 10.2 Tokyo}
+  {$ENDIF}
+  {$IFDEF VER330} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\20.0'; {Delphi 10.3 Rio}
+  {$ENDIF}
+  {$IFDEF VER340} // JB
+const
+  SDelphiKey = 'Software\Embarcadero\BDS\21.0'; {Delphi 10.4 Sydney}
+  {$ENDIF}
 implementation
 
 uses{$IFNDEF VER80}Windows, {$ELSE}WinProcs, {$ENDIF}Forms;

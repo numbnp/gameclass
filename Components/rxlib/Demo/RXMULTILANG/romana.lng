@@ -1,0 +1,18 @@
+[Translations]
+ToolsForm.FileMenuItem.Caption  = &Fila
+ToolsForm.AboutMenuItem.Caption = &Despre
+ToolsForm.HelpMenuItem.Caption  = &Ajutor
+ToolsForm.ExitMenuItem.Caption  = &Afara
+ToolsForm.FruitsLabel.Caption   = Fr&ucte
+ToolsForm.LanguageLabel.Caption = &Selectati o limba
+ToolsForm.AboutBtn.Caption      = &Despre TLanguage
+ToolsForm.MessageBtn.Caption    = &Arata un mesaj
+ToolsForm.AboutBtn.Hint         = Va rog apasati aici !
+ToolsForm.MessageBtn.Hint       = Arata mesaj in limba selectata
+ToolsForm.FruitList.Items       = Mar,Capsuna,Cireasa
+ToolsForm.mml_title.Caption = TRxTranslator component translates string properties such as label captions and list box items and allows to support multiple languages within your application.
+ToolsForm.mml_desctription.Caption = This part of demo is based TLanguage, demo application written by Serge Sushko, TLanguage component and included .lng files are copyright (c) by Serge Sushko, 1998 E-mail: sushko@iname.com, WWW: http://members.tripod.com/~sushko/
+
+[messages]
+Selected fruit is              = Fructul selectat este
+No one fruit is selected       = Nici un fruct selectat

@@ -16,6 +16,7 @@ interface
 
 uses
   {$IFNDEF VER80}Windows, Registry, {$ELSE}WinTypes, WinProcs, {$ENDIF}
+  {$IFDEF RX_D16}System.UITypes, {$ENDIF}
   Classes, IniFiles, Graphics;
 
 type

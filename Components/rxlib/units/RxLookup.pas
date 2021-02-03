@@ -2146,7 +2146,13 @@ begin
   with Message, FLookupLink.DataSet do
     case ScrollCode of
       SB_LINEUP: MoveBy(-FRecordIndex - 1);
-      SB_LINEDOWN: MoveBy(FRecordCount - FRecordIndex);
+      SB_LINEDOWN: //MoveBy(FRecordCount - FRecordIndex);
+       begin // improvement by SIDNEI
+         if FRecordIndex = 0 then
+           MoveBy (+ RowCount)
+         else
+           MoveBy (+1);
+       end;
       SB_PAGEUP: MoveBy(-FRecordIndex - FRecordCount + 1);
       SB_PAGEDOWN: MoveBy(FRecordCount - FRecordIndex + FRecordCount - 2);
       SB_THUMBPOSITION:

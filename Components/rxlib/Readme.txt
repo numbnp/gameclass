@@ -1,4 +1,5 @@
-Unofficial version Rx library for Delphi 2005/2006/2007/2009/2010/XE/XE2/XE3/XE4/XE5/XE6/XE7
+Unofficial version Rx library
+for Delphi 2005/2006/2007/2009/2010/XE/XE2/XE3/XE4/XE5/XE6/XE7/XE8/Seattle/Berlin/Tokyo/Rio/Sydney
 
 DISCLAIMER:
  * This software is provided "as is" and is without warranty of any kind.
@@ -12,11 +13,34 @@ DISCLAIMER:
    any responsibility.
  * All rights held by the author(s) or owner(s) of units or documents.
 
+Update 1.20
+
+ 1/ Update for Delphi 10.4 Sydney
+_______________________________________________________________________________
+Update 1.19
+
+ 1/ Update for Delphi 10.3 Rio
+_______________________________________________________________________________
+Update 1.18
+
+ 1/ Update for Delphi 10.2 Tokyo
+_______________________________________________________________________________
+Update 1.17
+
+ 1/ Update for Delphi 10.1 Berlin
+_______________________________________________________________________________
+Update 1.16
+
+ 1/ Update for Delphi 10 Seattle
+ 2/ Some improvements of code
+_______________________________________________________________________________
+Update 1.15
+
+ 1/ Update for Delphi XE8
+_______________________________________________________________________________
 Update 1.14
 
  1/ Update for Delphi XE7
-_______________________________________________________________________________
-
 _______________________________________________________________________________
 Update 1.13
 

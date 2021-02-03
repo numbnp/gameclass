@@ -16,6 +16,7 @@ interface
 
 uses
   SysUtils, Classes, Menus, IniFiles{$IFNDEF VER80}, Registry{$ENDIF},
+  {$IFDEF RX_D6}Types, {$ENDIF}
   RxPlacemnt;
 
 type

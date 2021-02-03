@@ -249,8 +249,6 @@ const
   clHtmDarkSeaGreen4 =   TColor($00587C61);
   clHtmMediumAquamarine =TColor($00818734);
 
-
-
   clHtmMediumSeaGreen =    TColor($00546730);
   clHtmSeaGreen =          TColor($0075894E);
   clHtmDarkGreen =         TColor($00174125);
@@ -378,6 +376,8 @@ const
   clHtmLemonChiffon =   TColor($00C6F8FF);
   clHtmLightGoldenrodYellow = TColor($00CCF8FA);
 
+  clCosmicLatte = TColor($00E7F8FF);
+
 implementation
 
 uses
@@ -390,7 +390,7 @@ type
   end;
 
 const
-  ColorCount = 3{$IFDEF RX_COLOR_APPENDED} + 34 + 295{$ENDIF};
+  ColorCount = 3{$IFDEF RX_COLOR_APPENDED} + 34 + 295 + 1{$ENDIF};
 
   Colors: array[0..ColorCount - 1] of TColorEntry = (
 
@@ -742,7 +742,8 @@ const
     (Value: clHtmLightGoldenrod1; Name: 'clHtmLightGoldenrod1'),
     (Value: clHtmLemonChiffon2; Name: 'clHtmLemonChiffon2'),
     (Value: clHtmLemonChiffon; Name: 'clHtmLemonChiffon'),
-    (Value: clHtmLightGoldenrodYellow; Name: 'clHtmLightGoldenrodYellow')
+    (Value: clHtmLightGoldenrodYellow; Name: 'clHtmLightGoldenrodYellow'),
+    (Value: clCosmicLatte; Name: 'clCosmicLatte')
     {$ENDIF}
     );
 

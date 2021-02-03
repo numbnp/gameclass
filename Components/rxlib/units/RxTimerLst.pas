@@ -15,6 +15,7 @@ interface
 
 uses
   {$IFNDEF VER80}Windows, {$ELSE}WinTypes, WinProcs, {$ENDIF}
+  {$IFDEF RX_D6}Types, {$ENDIF}
   Messages, Classes;
 
 const

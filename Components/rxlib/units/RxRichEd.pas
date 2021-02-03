@@ -3319,17 +3319,37 @@ begin
   end;
 end;
 
+{$IFDEF UNICODE}
+function TRichEditStrings.Get(Index: Integer): string;
+var
+  Text: array of Char;
+  L: Integer;
+  W: Word;
+begin
+  SetLength(Text, SizeOf(Char) * 4096);
+  L := SendMessage(RichEdit.Handle, EM_LINELENGTH, Index, 0);
+  if L > Length(Text) then SetLength(Text, SizeOf(Char) * L);
+  W := Length(Text);
+  Text[0] := Char(W);
+  L := SendMessage(RichEdit.Handle, EM_GETLINE, Index, LongInt(@Text[0]));
+  if ((L - 2) >= 0) and (Text[L - 2] = #13) and (Text[L - 1] = #10) then Dec(L, 2)
+  else if (RichEditVersion >= 2) and ((L - 1) >= 0) and (Text[L - 1] = #13) then Dec(L);
+  SetString(Result, PChar(@Text[0]), L);
+end;
+{$ELSE}
 function TRichEditStrings.Get(Index: Integer): string;
 var
   Text: array[0..4095] of Char;
   L: Integer;
 begin
+  if SendMessage(RichEdit.Handle, EM_LINELENGTH, Index, 0) > SizeOf(Text) then Exit;
   Word((@Text)^) := SizeOf(Text);
   L := SendMessage(RichEdit.Handle, EM_GETLINE, Index, Longint(@Text));
   if (Text[L - 2] = #13) and (Text[L - 1] = #10) then Dec(L, 2)
   else if (RichEditVersion >= 2) and (Text[L - 1] = #13) then Dec(L);
   SetString(Result, Text, L);
 end;
+{$ENDIF}
 
 procedure TRichEditStrings.Put(Index: Integer; const S: string);
 var
@@ -5717,15 +5737,11 @@ initialization
   OldError := SetErrorMode(SEM_NOOPENFILEERRORBOX);
   try
 {$IFNDEF RICHEDIT_VER_10}
-    {$IFDEF UNICODE}
     FLibHandle := LoadLibrary(RichEdit41ModuleName); //last version
     if (FLibHandle > 0) and (FLibHandle < HINSTANCE_ERROR) then
       FLibHandle := LoadLibrary(RichEdit20ModuleName) //most common version
     else
       RichEditVersion := 4;
-    {$ELSE}
-    FLibHandle := LoadLibrary(RichEdit20ModuleName);
-    {$ENDIF}
     if (FLibHandle > 0) and (FLibHandle < HINSTANCE_ERROR) then FLibHandle := 0;
 {$ELSE}
     FLibHandle := 0;

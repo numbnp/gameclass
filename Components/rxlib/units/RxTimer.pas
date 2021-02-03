@@ -264,7 +264,7 @@ begin
     // in the alertable state to avoid 100% CPU usage. Note that the delay
     // should not be 0 as it may lead to 100% CPU in that case. 10 is a safe
     // value that is small enough not to have a big impact on restart.
-    while Paused and not Terminated do
+    while not Terminated and Paused do
       SleepEx(10, True);
   until Terminated;
 end;
@@ -342,16 +342,19 @@ begin
   begin
     { Don't destroy the thread or the timer if we are currently in the event }
     if FInTimerEvent then
-    begin
-      if FTimerThread <> nil then
-        TTimerThread(FTimerThread).Paused := True;
-      if FTimer <> nil then
-        FTimer.Enabled := False;
       Exit;
+
+    if (FTimerThread <> nil) then
+    begin
+      TTimerThread(FTimerThread).Terminate;
+      FreeAndNil(FTimerThread);
     end;
 
-    FreeAndNil(FTimerThread);
-    FreeAndNil(FTimer);
+    if (FTimer <> nil) then
+    begin
+      FTimer.Enabled := False;
+      FreeAndNil(FTimer);
+    end;
   end;
 end;
 

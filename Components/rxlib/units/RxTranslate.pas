@@ -6,6 +6,7 @@
 {                                                       }
 { Adopted from Delphi VCL Library (vgLib)               }
 { National Language Support                             }
+{ Unicode revision (utf-8) by JB.                       }
 {*******************************************************}
 
 unit RxTranslate;
@@ -376,7 +377,6 @@ end;
 procedure TRxCustomTranslator.TranslateProps(Instance: TObject);
 
 {$IFNDEF UNICODE}
-
 function FindInteger(Value: Integer; const Buff; Count: Integer): Integer; assembler;
   asm
           XCHG    EDI,EDX
@@ -620,7 +620,7 @@ begin
   end
   else
     {$ENDIF}
-    FLanguageFile := TIniFile.Create(FLanguageFileName); {open extra file}
+    FLanguageFile := {$IFDEF UNICODE}TMemIniFile.Create(FLanguageFileName, TEncoding.UTF8){$ELSE}TIniFile.Create(FLanguageFileName){$ENDIF}; {open extra file}
 end;
 
 procedure TRxTranslator.DoDeactivate;
@@ -718,7 +718,7 @@ begin
       LanguageFileName := FileName;
       FInCreateFile := True;
       try
-        Translate;
+        Translate;{$IFDEF UNICODE}FLanguageFile.UpdateFile;{$ENDIF}
       finally
         FInCreateFile := False;
       end;

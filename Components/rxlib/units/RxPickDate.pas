@@ -286,13 +286,20 @@ var
   end;
 
   function IsNumber(S: string): Boolean;
+  {$IFDEF CONDITIONALEXPRESSIONS}
+  var I: Integer;
+  {$ENDIF}
   begin
+    {$IFDEF CONDITIONALEXPRESSIONS}
+    Result := TryStrToInt(S, I);
+    {$ELSE}
     try
       Result := True;
       StrToInt(S);
     except
       Result := False;
     end
+    {$ENDIF}
   end;
 //<Polaris
 begin

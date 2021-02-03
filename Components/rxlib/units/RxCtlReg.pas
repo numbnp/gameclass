@@ -804,7 +804,7 @@ begin
       TRxFlexHelpPanel, TRxHoleShape, TRxAnimBitBtn, TRxAnimSpeedButton,
       TRxClock, TAnimatedImage, TRxDrawGrid, TRxSpeedButton, TRxProgress,
       {$IFDEF USE_RX_GIF}TRxGIFAnimator, {$ENDIF}TRxSpinButton, TRxSpinEdit,
-    TRxTimeEdit, TRxSwitch, TRxDice, TRxPanel]);
+    TRxTimeEdit, TRxSwitch, TRxDice, TRxPanel, TRxColorButton]);
   {$IFDEF CBUILDER}
   {$IFNDEF RX_V110} { C++Builder 1.0 }
   RegisterComponents(srSamples, [TScroller]);
@@ -848,7 +848,7 @@ begin
   RegisterPropertyEditor(TypeInfo(TModalResult), TPersistent, '', TRxModalResultProperty);
   {$ENDIF}
 
-  RegisterPropertyEditor(TypeInfo(TColor), {$IFNDEF RX_D6}TPersistent{$ELSE}nil{$ENDIF}, '', TRxColorProperty); ;
+  RegisterPropertyEditor(TypeInfo(TColor), {$IFNDEF RX_D6}TPersistent{$ELSE}nil{$ENDIF}, '', TRxColorProperty);
   RegisterPropertyEditor(TypeInfo(TCaption), TLabel, 'Caption', THintProperty);
   RegisterPropertyEditor(TypeInfo(TCaption), TRxLabel, 'Caption', THintProperty);
   RegisterPropertyEditor(TypeInfo(TCaption), TRxSpeedButton, 'Caption', THintProperty);

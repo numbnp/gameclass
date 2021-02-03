@@ -881,9 +881,7 @@ function PaintComboEdit(Editor: TCustomComboEdit; const AText: string;
   var ACanvas: TControlCanvas; var Message: TWMPaint): Boolean;
 var
   AWidth, ALeft: Integer;
-  {$IFNDEF RX_D10}
   _Margins: TPoint;
-  {$ENDIF}
   R: TRect;
   DC: HDC;
   PS: TPaintStruct;
@@ -897,14 +895,14 @@ const
 {$ENDIF}
 begin
   Result := True;
-  with Editor do begin
-{$IFDEF RX_D4}
+  with Editor do
+  begin
+    {$IFDEF RX_D4}
     if UseRightToLeftAlignment then ChangeBiDiModeAlignment(AAlignment);
-{$ENDIF}
-    if StandardPaint {$IFNDEF VER80} and not
-      (csPaintCopy in ControlState) {$ENDIF} then
+    {$ENDIF}
+    if StandardPaint {$IFNDEF VER80} and not (csPaintCopy in ControlState) {$ENDIF} then
     begin
-{$IFDEF RX_D4}
+      {$IFDEF RX_D4}
       if SysLocale.MiddleEast and HandleAllocated and (IsRightToLeft) then
       begin { This keeps the right aligned text, right aligned }
         ExStyle := DWORD(GetWindowLong(Handle, GWL_EXSTYLE)) and (not WS_EX_RIGHT) and
@@ -918,7 +916,7 @@ begin
         if DWORD(GetWindowLong(Handle, GWL_EXSTYLE)) <> ExStyle then
           SetWindowLong(Handle, GWL_EXSTYLE, ExStyle);
       end;
-{$ENDIF RX_D4}
+      {$ENDIF RX_D4}
       Result := False;
       { return false if we need to use standard paint handler }
       Exit;
@@ -926,7 +924,8 @@ begin
     { Since edit controls do not handle justification unless multi-line (and
       then only poorly) we will draw right and center justify manually unless
       the edit has the focus. }
-    if ACanvas = nil then begin
+    if ACanvas = nil then
+    begin
       ACanvas := TControlCanvas.Create;
       ACanvas.Control := Editor;
     end;
@@ -951,44 +950,28 @@ begin
         Brush.Color := Color;
         S := AText;
         AWidth := TextWidth(S);
-        {$IFDEF RX_D10}
-        Editor.Margins.Left := EditorTextMargins(Editor).X;
-        Editor.Margins.Top := EditorTextMargins(Editor).Y;
-        {$ELSE}
         _Margins := EditorTextMargins(Editor);
-        {$ENDIF}
         {$IFDEF RX_D10}
         if PopupVisible then ALeft := Editor.Margins.Left
         {$ELSE}
         if PopupVisible then ALeft := _Margins.X
         {$ENDIF}
-        else begin
+        else
+        begin
           if ButtonWidth > 0 then Inc(AWidth);
           case AAlignment of
             taLeftJustify:
-              {$IFDEF RX_D10}
-              ALeft := Editor.Margins.Left;
-              {$ELSE}
               ALeft := _Margins.X;
-              {$ENDIF}
             taRightJustify:
-              {$IFDEF RX_D10}
-              ALeft := Editor.ClientWidth - Editor.ButtonWidth - AWidth - Editor.Margins.Left - 2;
-              {$ELSE}
               ALeft := ClientWidth - ButtonWidth - AWidth - _Margins.X{Polaris - 2};
-              {$ENDIF}
-            else
+          else
               ALeft := (ClientWidth - ButtonWidth - AWidth) div 2;
           end;
         end;
         {$IFDEF RX_D4}
         if SysLocale.MiddleEast then UpdateTextFlags;
         {$ENDIF}
-        {$IFDEF RX_D10}
-        TextRect(R, ALeft, Editor.Margins.Top, S);
-        {$ELSE}
         TextRect(R, ALeft, _Margins.Y, S);
-        {$ENDIF}
       end;
     finally
       ACanvas.Handle := 0;
@@ -2121,7 +2104,7 @@ begin
     inherited Text := ExtFilename(Value);
     ClearFileList;
   end
-  else raise EComboEditError.CreateFmt(ResStr(SInvalidFilename), [Value]);
+  else raise EComboEditError.CreateFmt(ResStr({$IFDEF RX_D26}SInvalidKnownFilename{$ELSE}SInvalidFilename{$ENDIF}), [Value]);
 end;
 
 {$IFNDEF VER80}
